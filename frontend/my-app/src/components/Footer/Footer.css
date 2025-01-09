@@ -1,7 +1,74 @@
-.footer-container {
-    border-top: 1px solid #ccc;
-    padding: 1rem;
-    margin-top: 2rem;
-    text-align: center;
-  }
-  
+@font-face {
+  font-family: 'CustomFont';
+  src: url('../../assets/fonts/Pretendard-Regular.ttf');
+}
+
+body{
+  font-family: 'CustomFont',sans-serif;
+}
+
+.footer-top{
+  text-align: left;
+}
+
+.footer-links{
+  display: flex;
+  gap: 20px;
+}
+
+.footer-link{
+  text-decoration: none;
+  color: inherit;
+}
+
+.footer-content{
+  display: flex;
+  gap: 45px;
+}
+
+.footer-info{
+  text-align: left;
+}
+
+.footer-info-1{
+  font-size: 18px;
+}
+
+.footer-info-2{
+  font-size: 12px;
+}
+
+.footer-inquiry{
+  margin: 0 30px;
+  text-align: left;
+}
+
+.footer-inquiry-1{
+  font-size: 18px;
+}
+
+.footer-inquiry-2{
+  font-size: 12px;
+}
+
+.kakao-button{
+  cursor: pointer;
+}
+
+.footer-service{
+  margin: 0 30px;
+  text-align: left;
+}
+
+.footer-service-1{
+  font-size: 18px;
+}
+
+.footer-service-2{
+  font-size: 12px;
+}
+
+.footer-bottom{
+  text-align: left;
+  margin-top: 5px;
+}

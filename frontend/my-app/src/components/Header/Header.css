@@ -1,22 +1,68 @@
-.header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .header-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .header-search input {
-    padding: 0.3rem 0.5rem;
-    border: 1px solid #ccc;
-  }
-  
-  .header-icons button {
-    margin-left: 0.5rem;
-  }
-  
+@font-face {
+  font-family: 'CustomFont';
+  src: url('../../assets/fonts/Pretendard-Regular.ttf');
+}
+
+body{
+  font-family: 'CustomFont',sans-serif;
+}
+
+.header{
+  padding-top: 20px;
+}
+
+.header-content{
+  display: flex;
+  padding-bottom: 5px;
+}
+
+.header-menu{
+  display: flex;
+  gap: 45px;
+}
+
+.header-logo{
+  width: 200px;
+  height: 41px;
+}
+
+.header-link{
+  text-decoration: none;
+  color:inherit;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar{
+  display: flex;
+  align-items: center;
+  margin: auto;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  height: 35px;
+  width: 350px;
+}
+
+.search-input{
+  flex: 1;
+  border: none;
+  outline:none;
+  font-size: 14px;
+  cursor: text;
+  background-color: transparent;
+  margin: 10px;
+}
+
+.search-icon{
+  width: 20px;
+  height: 20px;
+  margin-bottom: 3px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.header-icons{
+  display: flex;
+  gap:35px;
+  margin-left: auto;
+}
