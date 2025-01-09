@@ -1,0 +1,35 @@
+.product-section {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .product-section h3 {
+    margin: 1rem 0;
+  }
+  
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .product-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .product-name {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
+  .product-price {
+    margin-bottom: 0.5rem;
+  }
+  
+  .product-discount {
+    color: red;
+  }
+  

@@ -1,0 +1,22 @@
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .header-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .header-search input {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid #ccc;
+  }
+  
+  .header-icons button {
+    margin-left: 0.5rem;
+  }
+  
