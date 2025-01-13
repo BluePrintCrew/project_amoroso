@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: AmorosoBackend
   datasource:
     url: jdbc:mysql://localhost:3306/amoroso
     username: root
