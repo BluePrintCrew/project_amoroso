@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./Header.css";
 import logo from "../../assets/logo.png";
 import search from "../../assets/search.png";
@@ -7,8 +8,14 @@ import cart from "../../assets/cart_button.png";
 import mypage from "../../assets/mypage_button.png";
 
 const Header = () => {
-  const handleClick = () => {
+  const navigate = useNavigate();
+
+  const handleSearchClick = () => {
     alert("검색버튼 클릭.");
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
   };
 
   return (
@@ -34,12 +41,17 @@ const Header = () => {
             src={search}
             alt="Search"
             className="search-icon"
-            onClick={handleClick}
+            onClick={handleSearchClick}
           />
         </div>
 
         <div className="header-icons">
-          <img src={login} alt="Login" className="login-icon" />
+          <img
+            src={login}
+            alt="Login"
+            className="login-icon"
+            onClick={handleLoginClick}
+          />
           <img src={cart} alt="Cart" className="cart-icon" />
           <img src={mypage} alt="Mypage" className="mypage-icon" />
         </div>
