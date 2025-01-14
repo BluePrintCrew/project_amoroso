@@ -34,7 +34,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // access token 반은 후 , 유저 로그인 하도록 처리
+    // access token 받은 후 , 유저 로그인 하도록 처리
     public LoginResponse loginUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));

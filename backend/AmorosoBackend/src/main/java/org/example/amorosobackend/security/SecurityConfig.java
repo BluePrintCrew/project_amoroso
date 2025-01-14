@@ -44,9 +44,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login") // 커스텀 로그인 페이지 (필요 시)
-                        .defaultSuccessUrl("/loginSuccess") // 로그인 성공 후 이동할 URL
-                        .failureUrl("/loginFailure") // 로그인 실패 후 이동할 URL
+                        .loginPage("http://localhost:3000/login")
+                        .defaultSuccessUrl("http://localhost:3000/loginSuccess")
+                        .failureUrl("http://localhost:3000/loginFailure")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService) // 소셜 사용자 정보 처리
                         )
