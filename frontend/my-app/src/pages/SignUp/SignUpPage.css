@@ -106,6 +106,8 @@
   .address-group .zipcode {
     flex: 2;
     padding: 0 15px; /* 우편번호 입력 패딩 수정 */
+    border: 1px solid #E2E2E2;
+    border-radius: 15px;
   }
   
   .address-group .search-button {
@@ -206,5 +208,82 @@
   
   .submit-button:hover {
     background-color: #5A524E;
+    margin-bottom: 40px;
+  }
+ 
+  .agreement-item-marketing {
+   /* border: 1px solid #e2e2e2;
+    border-radius: 15px;
+    padding: 20px; */
+    margin-bottom: 20px;
+  }
+  
+  .marketing-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .marketing-header input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .marketing-header label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #222222;
+    display: flex;
+    align-items: center;
+  }
+  
+  .marketing-header .optional {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    margin-left: 5px;
+  }
+  
+  .coupon-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: #766e68;
+    background-color: #f6f6f6;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .marketing-options {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .option-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .option-item input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+  }
+  
+  .option-item label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #222222;
+  }
+  
+  .marketing-description {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16.8px;
+    color: #666666;
+    margin-top: 10px;
   }
   

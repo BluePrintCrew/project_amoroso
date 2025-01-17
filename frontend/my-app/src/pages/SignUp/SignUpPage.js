@@ -88,10 +88,33 @@ const SignUpPage = () => {
             <label htmlFor="privacy-agree">개인정보 수집 및 이용 동의</label>
             <span className="required">(필수)</span>
           </div>
-          <div className="agreement-item">
-            <input type="checkbox" id="marketing-agree" />
-            <label htmlFor="marketing-agree">마케팅 수신 동의</label>
-          </div>
+          <div className="agreement-item-marketing">
+  <div className="marketing-header">
+    <input type="checkbox" id="marketing-agree" />
+    <label htmlFor="marketing-agree">
+      마케팅 수신 동의 <span className="optional">(선택)</span>
+    </label>
+    <div className="coupon-info">5% 쿠폰(최대 10,000원)</div>
+  </div>
+  <div className="marketing-options">
+    <div className="option-item">
+      <input type="checkbox" id="email-agree" />
+      <label htmlFor="email-agree">이메일</label>
+    </div>
+    <div className="option-item">
+      <input type="checkbox" id="sms-agree" />
+      <label htmlFor="sms-agree">SMS</label>
+    </div>
+    <div className="option-item">
+      <input type="checkbox" id="dm-agree" />
+      <label htmlFor="dm-agree">DM</label>
+    </div>
+  </div>
+  <p className="marketing-description">
+    Amoroso에서 제공하는 정보 등을 받으실 수 있습니다. 단, 상품 구매정보는
+    수신동의 여부에 관계없이 발송됩니다.
+  </p>
+</div>
           <div className="agreement-item">
             <input type="checkbox" id="age-agree" />
             <label htmlFor="age-agree">만 14세 이상입니다.</label>
