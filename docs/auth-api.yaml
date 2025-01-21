@@ -1,0 +1,217 @@
+openapi: 3.0.1
+info:
+  title: Vintage Furniture Platform API
+  description: 로그인/회원가입 및 회원정보 관리 기능을 위한 API 문서
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+paths:
+  /api/v1/auth/register:
+    post:
+      summary: 회원가입 (이메일/비밀번호 기반)
+      description: 이메일과 비밀번호를 사용하여 회원가입을 수행합니다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+                name:
+                  type: string
+                  example: John Doe
+                phoneNumber:
+                  type: string
+                  example: 010-1234-5678
+      responses:
+        201:
+          description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+        400:
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Email already in use
+  /api/v1/auth/login:
+    post:
+      summary: 로그인 (이메일/비밀번호 기반)
+      description: 이메일과 비밀번호를 사용하여 로그인을 수행합니다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+      responses:
+        200:
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+        401:
+          description: 인증 실패
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid email or password
+  /api/v1/auth/oauth2/{provider}:
+    post:
+      summary: 소셜 로그인/회원가입
+      description: 소셜 로그인 및 회원가입을 수행합니다.
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [google, kakao, naver]
+          description: OAuth2 제공자 이름
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: OAuth2 Access Token
+      responses:
+        200:
+          description: 로그인 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+        201:
+          description: 회원가입 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered via social login
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+                  refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+  /api/v1/users/me:
+    get:
+      summary: 회원 정보 조회
+      description: 현재 로그인된 사용자의 정보를 반환합니다.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: 회원 정보 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: user@example.com
+                  name:
+                    type: string
+                    example: John Doe
+                  phoneNumber:
+                    type: string
+                    example: 010-1234-5678
+                  role:
+                    type: string
+                    example: USER
+    put:
+      summary: 회원 정보 수정
+      description: 사용자가 자신의 프로필 정보를 수정합니다.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Smith
+                phoneNumber:
+                  type: string
+                  example: 010-9876-5432
+      responses:
+        200:
+          description: 회원 정보 수정 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Profile updated successfully
+    delete:
+      summary: 회원 탈퇴
+      description: 사용자가 자신의 계정을 삭제합니다.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: 회원 탈퇴 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account deleted successfully
