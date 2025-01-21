@@ -58,14 +58,14 @@ public class UserService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole());
+        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole(), user.getNickname());
     }
 
     public void updateUserProfile(UserControllerDTO.UserUpdateRequest request) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.updateProfile(request.getName(), request.getPhoneNumber());
+        user.updateProfile(request.getName(), request.getPhoneNumber(), request.getNickname());
         userRepository.save(user);
     }
 

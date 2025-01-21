@@ -30,6 +30,7 @@ public class User {
     private String socialProvider;  // kakao, naver, google 등
     private String socialId;
 
+    private String nickname;
     @Column(nullable = false, length = 50)
     private String name;
 
@@ -97,8 +98,9 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateProfile(String name, String phoneNumber) {
+    public void updateProfile(String name, String phoneNumber, String nickname) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.nickname = nickname;
     }
 }

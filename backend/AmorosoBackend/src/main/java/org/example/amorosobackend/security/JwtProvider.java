@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.Keys; // 이를 통해서 내 설정한 hmacShakeyFor() 생성 가능.
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

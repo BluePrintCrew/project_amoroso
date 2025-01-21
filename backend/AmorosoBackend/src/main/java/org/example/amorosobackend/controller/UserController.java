@@ -26,17 +26,20 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/oauth2/{provider}")
-    public ResponseEntity<OAuth2LoginResponse> socialLogin(@PathVariable String provider, @RequestBody OAuth2LoginRequest request) {
-        OAuth2LoginResponse response = userService.socialLogin(provider, request);
-        return ResponseEntity.ok(response);
-    }
+
+
+//    @PostMapping("/oauth2/{provider}")
+//    public ResponseEntity<OAuth2LoginResponse> socialLogin(@PathVariable String provider, @RequestBody OAuth2LoginRequest request) {
+//        OAuth2LoginResponse response = userService.socialLogin(provider, request);
+//        return ResponseEntity.ok(response);
+//    }
 
     @GetMapping("/users/me")
     public ResponseEntity<UserProfileResponse> getCurrentUser() {
         UserProfileResponse response = userService.getCurrentUserProfile();
         return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("/users/me")
     public ResponseEntity<ApiResponse> updateUserProfile(@RequestBody UserUpdateRequest request) {
