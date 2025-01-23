@@ -21,7 +21,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -32,7 +32,9 @@ public class Product {
     private String description;  // AI를 이용해 생성된 상세 설명
 
     @Column(nullable = false)
-    private Double price;
+    private int price;
+
+
 
     @Column(nullable = false)
     private Integer stock;
@@ -40,6 +42,9 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @OneToOne
+    @JoinColumn(name = "product_image_Id")
+    private ProductImage primaryImage;
     // 상품 이미지
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages = new ArrayList<>();
@@ -73,7 +78,7 @@ public class Product {
     private Product(Category category,
                     String productName,
                     String description,
-                    Double price,
+                    int price,
                     Integer stock) {
         this.category = category;
         this.productName = productName;

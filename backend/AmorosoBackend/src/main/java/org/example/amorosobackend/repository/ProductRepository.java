@@ -3,10 +3,14 @@ package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.Product;
 import org.example.amorosobackend.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    // 추후 성능 최적화 필요 개발시 만 객체 위주로 조회 2025-01-23
+    Page<Product> findAllByCategory_CategoryId(Long categoryId, Pageable pageable);
 }
