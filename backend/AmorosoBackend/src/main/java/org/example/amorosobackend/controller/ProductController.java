@@ -45,6 +45,12 @@ public class ProductController {
 
     }
 
+//    @GetMapping("/{productId}")
+//    public ProductControllerDTO.ProductInfoDetailDTO getProductDetail(@RequestParam Long productId ){
+//
+//    }
+
+
     // step.2 사진 가져오는 controller 작성. 해당 페이징을 통해 사진을 어떻게 전달할지 생각해보자.
 
     // step.3 detail 조회. - 이때 상세 설명과 같은 사진을 어떻게 줘야할 지 잘 생각해봐야함
