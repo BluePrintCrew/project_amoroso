@@ -4,15 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.controller.ProductController;
 import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.ProductImage;
+import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,6 +28,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
 
     // direction static 클래스 : Sort.Direction 클래스는 "asc" 또는 "desc" 문자열을 자동으로 파싱하는 메서드를 제공합니다.
     //IllegalArgumentException은 fromString 메서드 내부에서 자동으로 발생합니다.
@@ -40,7 +49,7 @@ public class ProductService {
 
         // 페이지로 받은 것들 DTO 페이지로 변환
         Page<ProductControllerDTO.ProductInfoDTO> productInfoDTOs = productList
-                .map(ProductControllerDTO::toProductInfoDTO);
+                .map(ProductService::toProductInfoDTO);
 
         // 받은 DTO ProductListResponse로 변환
         ProductControllerDTO.ProductListResponse response = new ProductControllerDTO.ProductListResponse(
@@ -51,5 +60,69 @@ public class ProductService {
         );
 
         return response;
+    }
+
+    public ProductControllerDTO.ProductInfoDetailDTO getProductDetail(Long productId) {
+        // Product와 Review를 조회
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        List<Review> reviews = reviewRepository.findByProduct(product);
+
+        // DTO로 변환
+        return toProductInfoDetailDTO(product, reviews);
+    }
+
+    public Product getProductById(Long productId){
+        return productRepository.findByProductId(productId)
+                .orElseThrow(() -> new NullPointerException("Invaild productId"));
+    }
+
+    private ProductControllerDTO.ProductInfoDetailDTO toProductInfoDetailDTO(Product product, List<Review> reviews) {
+        List<String> imagesURL = product.getProductImages().stream()
+                .map(ProductImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        List<ProductControllerDTO.ProductReviewDTO> reviewDTOs = reviews.stream()
+                .map(review -> new ProductControllerDTO.ProductReviewDTO(
+                        review.getReviewId(),
+                        review.getUser().getName(),
+                        review.getRating(),
+                        review.getContent(),
+                        dateToString(review.getCreatedAt())
+                ))
+                .collect(Collectors.toList());
+
+        return new ProductControllerDTO.ProductInfoDetailDTO(
+                product.getProductId(),
+                product.getProductName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStock(),
+                imagesURL,
+                reviewDTOs
+        );
+    }
+
+    public static ProductControllerDTO.ProductInfoDTO toProductInfoDTO(Product product) {
+        // DateTimeFormatter 정의 (원하는 포맷으로 설정)
+        String formattedCreatedAt = dateToString(product.getCreatedAt());
+
+        return new ProductControllerDTO.ProductInfoDTO(
+                product.getProductId(),
+                product.getProductName(),
+                product.getPrice(),
+                product.getCategory().getCategoryCode(),
+                product.getPrimaryImage().getImageUrl(),
+                formattedCreatedAt // 변환된 문자열 값
+        );
+    }
+
+    public static String dateToString(LocalDateTime dateTime){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // createdAt을 문자열로 변환
+        return dateTime.format(formatter);
+
     }
 }

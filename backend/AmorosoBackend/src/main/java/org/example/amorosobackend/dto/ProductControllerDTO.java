@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.ProductImage;
 import org.example.amorosobackend.domain.Review;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductControllerDTO {
 
@@ -63,26 +65,42 @@ public class ProductControllerDTO {
         String createdAt;
     }
 
-    public static ProductInfoDTO toProductInfoDTO(Product product) {
-        // DateTimeFormatter 정의 (원하는 포맷으로 설정)
-        String formattedCreatedAt = dateToString(product.getCreatedAt());
-
-        return new ProductInfoDTO(
-                product.getProductId(),
-                product.getProductName(),
-                product.getPrice(),
-                product.getCategory().getCategoryCode(),
-                product.getPrimaryImage().getImageUrl(),
-                formattedCreatedAt // 변환된 문자열 값
-        );
-    }
-
-    public static String dateToString(LocalDateTime dateTime){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // createdAt을 문자열로 변환
-        return dateTime.format(formatter);
-
-    }
+//    public static ProductInfoDetailDTO productInfoDetailDTO(Product product){
+//        List<String> imagesURL = product.getProductImages()
+//                .stream()
+//                .map(ProductImage::getImageUrl) // 각 ProductImage 객체에서 imageUrl 필드 추출
+//                .collect(Collectors.toList());
+//
+//        toProductReviewDTOByproduct(product);
+//
+//        new ProductInfoDetailDTO(product.getProductId(), product.getProductName(), product.getDescription(),
+//                product.getPrice(), product.getStock(), imagesURL,
+//    }
+//
+//    private static void toProductReviewDTOByproduct(Product product) {
+//
+//    }
+//
+//    public static ProductInfoDTO toProductInfoDTO(Product product) {
+//        // DateTimeFormatter 정의 (원하는 포맷으로 설정)
+//        String formattedCreatedAt = dateToString(product.getCreatedAt());
+//
+//        return new ProductInfoDTO(
+//                product.getProductId(),
+//                product.getProductName(),
+//                product.getPrice(),
+//                product.getCategory().getCategoryCode(),
+//                product.getPrimaryImage().getImageUrl(),
+//                formattedCreatedAt // 변환된 문자열 값
+//        );
+//    }
+//
+//    public static String dateToString(LocalDateTime dateTime){
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//
+//        // createdAt을 문자열로 변환
+//        return dateTime.format(formatter);
+//
+//    }
 
 }

@@ -3,14 +3,13 @@ package org.example.amorosobackend.controller;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.Category;
+import org.example.amorosobackend.domain.Product;
 import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.repository.ProductRepository;
 import org.example.amorosobackend.service.CategoryService;
 import org.example.amorosobackend.service.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,25 +29,29 @@ public class ProductController {
     */
 
     @GetMapping("/")
-    public ProductControllerDTO.ProductListResponse getProducts(
-             @RequestParam(required = false) String categoryCode
-            ,@RequestParam(required = false) Integer page
-            ,@RequestParam(required = false)String sortBy
-             ,@RequestParam(required = false) Integer size
-            ,@RequestParam(required = false)String order ) {
+    public ResponseEntity<ProductControllerDTO.ProductListResponse> getProducts(
+            @RequestParam(required = false) String categoryCode,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String order) {
 
+        // Category 조회
         Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
-        ProductControllerDTO.ProductListResponse products = productService.getProducts(byCategoryCode.getCategoryId(), page, size, sortBy, order);
 
-        return products;
+        // Product 리스트 조회
+        ProductControllerDTO.ProductListResponse products =
+                productService.getProducts(byCategoryCode.getCategoryId(), page, size, sortBy, order);
 
-
+        // ResponseEntity로 반환
+        return ResponseEntity.ok(products);
     }
 
-//    @GetMapping("/{productId}")
-//    public ProductControllerDTO.ProductInfoDetailDTO getProductDetail(@RequestParam Long productId ){
-//
-//    }
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductControllerDTO.ProductInfoDetailDTO> getProductDetail(@PathVariable Long productId) {
+        ProductControllerDTO.ProductInfoDetailDTO productDetail = productService.getProductDetail(productId);
+        return ResponseEntity.ok(productDetail);
+    }
 
 
     // step.2 사진 가져오는 controller 작성. 해당 페이징을 통해 사진을 어떻게 전달할지 생각해보자.
