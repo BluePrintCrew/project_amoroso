@@ -9,6 +9,7 @@ body{
 
 .footer-top{
   text-align: left;
+  margin-bottom: 5px;
 }
 
 .footer-links{
@@ -24,6 +25,11 @@ body{
 .footer-content{
   display: flex;
   gap: 45px;
+  margin-top: 5px;
+}
+
+.footer-logo{
+  margin-bottom: 5px;
 }
 
 .footer-info{
@@ -32,6 +38,7 @@ body{
 
 .footer-info-1{
   font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .footer-info-2{
@@ -45,6 +52,7 @@ body{
 
 .footer-inquiry-1{
   font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .footer-inquiry-2{
@@ -53,6 +61,7 @@ body{
 
 .kakao-button{
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .footer-service{
@@ -62,6 +71,7 @@ body{
 
 .footer-service-1{
   font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .footer-service-2{
