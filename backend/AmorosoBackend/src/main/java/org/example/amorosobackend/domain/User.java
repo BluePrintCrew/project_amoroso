@@ -27,12 +27,14 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(nullable = false, length = 50)
+    private String name;
+
     private String socialProvider;  // kakao, naver, google 등
     private String socialId;
 
     private String nickname;
-    @Column(nullable = false, length = 50)
-    private String name;
+
 
     private String phoneNumber;
 
