@@ -37,10 +37,37 @@ class UserRepositoryTest {
 
     @Test
     void findBySocialProviderAndSocialId() {
+        // given
+        User user = User.builder()
+                .email("test@example.com")
+                .name("Test")
+                .password("123456")
+                .socialProvider("naver")
+                .socialId("9999")
+                .build();
+
+        userRepository.save(user);
+        // when
+        User bySocialId = userRepository.findBySocialProviderAndSocialId("naver", "9999")
+                .orElseThrow(() -> new NullPointerException("there is not email"));
+
+        //then
+        assertThat(user).isEqualTo(bySocialId);
 
     }
 
     @Test
     void existsByEmail() {
+        User user = User.builder()
+                .email("test@example.com")
+                .name("Test")
+                .password("123456")
+                .build();
+
+        userRepository.save(user);
+        // when
+        boolean exists = userRepository.existsByEmail("test@example.com");
+        //then
+        assertThat(exists).isTrue();
     }
 }

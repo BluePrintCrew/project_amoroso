@@ -31,7 +31,7 @@ public class User {
     private String name;
 
     private String socialProvider;  // kakao, naver, google 등
-    private String socialId;
+    private String socialId; // 각 플랫폼에서 제공받은 고유 id
 
     private String nickname;
 
