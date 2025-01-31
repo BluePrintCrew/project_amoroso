@@ -79,12 +79,14 @@ public class Product {
                     String productName,
                     String description,
                     int price,
-                    Integer stock) {
+                    Integer stock,
+                    LocalDateTime createdAt) {
         this.category = category;
         this.productName = productName;
         this.description = description;
         this.price = price;
         this.stock = stock;
+        this.createdAt = createdAt;
     }
 
     @PrePersist

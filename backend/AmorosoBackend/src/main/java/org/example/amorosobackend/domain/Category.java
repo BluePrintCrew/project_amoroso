@@ -38,8 +38,9 @@ public class Category {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Category(String categoryName, Category parent) {
+    private Category(String categoryName,String categoryCode, Category parent) {
         this.categoryName = categoryName;
+        this.categoryCode = categoryCode;
         this.parent = parent;
     }
 
