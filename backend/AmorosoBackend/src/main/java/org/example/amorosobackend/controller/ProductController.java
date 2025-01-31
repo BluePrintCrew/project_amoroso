@@ -1,5 +1,7 @@
 package org.example.amorosobackend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.Category;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Tag(name = "제품 관련 API", description = "제품 상세, 제품 목록")
 public class ProductController {
 
     // product photo 저장하는 로직, 이를 조회하는 로직 service 층에서 설계 필요, 이때 데이터베이스를 먼저 넣어서 해당 경로를 잘 쿼리를 통해
@@ -29,6 +32,7 @@ public class ProductController {
     */
 
     @GetMapping("/")
+    @Operation(description = "제품 목록 API")
     public ResponseEntity<ProductControllerDTO.ProductListResponse> getProducts(
             @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false) Integer page,
@@ -48,6 +52,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
+    @Operation(description = "제품 상세 API")
     public ResponseEntity<ProductControllerDTO.ProductInfoDetailDTO> getProductDetail(@PathVariable Long productId) {
         ProductControllerDTO.ProductInfoDetailDTO productDetail = productService.getProductDetail(productId);
         return ResponseEntity.ok(productDetail);

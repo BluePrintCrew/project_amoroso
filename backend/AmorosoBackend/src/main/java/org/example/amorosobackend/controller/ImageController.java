@@ -1,6 +1,7 @@
 package org.example.amorosobackend.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.service.ImageService;
 import org.springframework.core.io.Resource;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/images")
 @RequiredArgsConstructor
+@Tag(name = "이미지 조회 API",description = "uri를 통한 이미지 조회")
 public class ImageController {
 
     private final ImageService imageService;
