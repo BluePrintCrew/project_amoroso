@@ -5,17 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.OrderItem;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderControllerDTO {
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OrderRequestDTO {
-        private Double totalPrice;
-    }
 
     @Data
     @NoArgsConstructor
@@ -27,6 +23,7 @@ public class OrderControllerDTO {
         private String orderStatus;
         private String paymentStatus;
         private LocalDateTime createdAt;
+        private List<OrderItemDTO> orderItems;
 
         public OrderResponseDTO(Order order) {
             this.orderId = order.getOrderId();
@@ -35,7 +32,43 @@ public class OrderControllerDTO {
             this.orderStatus = order.getOrderStatus();
             this.paymentStatus = order.getPaymentStatus();
             this.createdAt = order.getCreatedAt();
+            this.orderItems = order.getOrderItems().stream()
+                    .map(OrderItemDTO::new)
+                    .collect(Collectors.toList());
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderRequestDTO {
+        private Double totalPrice;
+        private List<OrderItemRequestDTO> orderItems;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderItemDTO {
+        private Long productId;
+        private String productName;
+        private Integer quantity;
+        private Double unitPrice;
+
+        public OrderItemDTO(OrderItem orderItem) {
+            this.productId = orderItem.getProduct().getProductId();
+            this.productName = orderItem.getProduct().getProductName();
+            this.quantity = orderItem.getQuantity();
+            this.unitPrice = orderItem.getUnitPrice();
+        }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderItemRequestDTO {
+        private Long productId;
+        private Integer quantity;
     }
 
 

@@ -35,7 +35,7 @@ public class ProductControllerDTO {
     public static class ProductInfoDTO {
         Long productId;
         String productName;
-        int price;
+        double price;
         String category;
         String primaryImageURL;
         String createdAt;
@@ -48,7 +48,7 @@ public class ProductControllerDTO {
         Long productId;
         String productName;
         String description;
-        int price;
+        double price;
         int stock;
         List<String> imagesURL;
         List<ProductReviewDTO> reviews;

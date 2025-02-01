@@ -25,7 +25,7 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Double totalPrice;
+    private double totalPrice;
 
     @Column(length = 50)
     private String orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
@@ -64,6 +64,10 @@ public class Order {
     public void setOrderStatus( String orderStatus){
         this.orderStatus = orderStatus;
     }
+    public void setTotalPrice( double totalPrice){
+        this.totalPrice = totalPrice;
+    }
+
 
     @PreUpdate
     public void onPreUpdate() {

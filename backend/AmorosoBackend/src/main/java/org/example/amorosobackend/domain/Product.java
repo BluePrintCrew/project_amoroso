@@ -32,7 +32,7 @@ public class Product {
     private String description;  // AI를 이용해 생성된 상세 설명
 
     @Column(nullable = false)
-    private int price;
+    private double price;
 
 
 

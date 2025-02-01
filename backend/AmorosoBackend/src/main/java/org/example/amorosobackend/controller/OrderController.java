@@ -22,11 +22,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
     // (현재 로그인한 사용자 기준)
     @PostMapping
     @Operation(description = "현재 로그인한 사용자의 주문 생성")
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO) {
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderControllerDTO.OrderRequestDTO requestDTO) {
         String email = getCurrentUserEmail();
         OrderResponseDTO createdOrder = orderService.createOrder(email, requestDTO);
         return ResponseEntity.ok(createdOrder);

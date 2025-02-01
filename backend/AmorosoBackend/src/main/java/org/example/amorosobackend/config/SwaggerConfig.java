@@ -21,7 +21,7 @@ public class SwaggerConfig {
                                                 new Info()
                                                         .title("amorosoAPI") // API 제목
                                                         .description("my API") // API 설명
-                                                        .version("1.0.1") // API 버전
+                                                        .version("1.0.2") // API 버전
                                         )
                 )
                 .build();
