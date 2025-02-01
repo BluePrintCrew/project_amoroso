@@ -33,6 +33,12 @@ function CartPage() {
       
       <h2 className="cart-title">장바구니 ({cartItems.length})</h2>
       <CartTable cartItems={cartItems} />
+      <div className="cart-information-text">
+        <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>
+        <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>
+        <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>
+        <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>
+      </div>
       <CartSummary cartItems={cartItems} />
       <CartFooter />
     </div>

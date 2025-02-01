@@ -180,3 +180,18 @@
     border: none;
   }
   
+ 
+/* 안내 문구 */
+.cart-information-text {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  .cart-information-text p {
+    margin: 4px 0;
+  }
+  
+
+
+
+

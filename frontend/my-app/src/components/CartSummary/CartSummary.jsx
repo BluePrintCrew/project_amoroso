@@ -13,7 +13,7 @@ function CartSummary({ cartItems = [] }) {
   );
   const totalDiscount = totalOriginalPrice - totalPrice;
 
-  // 배송비나 포인트 로직이 있다면 동일하게 계산해서 사용
+
   const shippingPrice = 0;       // 예시로 고정 0원
   const point = 9918;           // 예시로 고정
 

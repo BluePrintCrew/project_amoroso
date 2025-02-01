@@ -1,5 +1,6 @@
 /* 전체 컨테이너 */
 .order-summary {
+  margin-top: 300px;
   width: 100%; /* 예시로 고정폭 */
   margin: 0 auto;
   border-radius: 6px;
