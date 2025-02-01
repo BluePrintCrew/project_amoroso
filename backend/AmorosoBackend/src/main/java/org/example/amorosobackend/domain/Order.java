@@ -61,6 +61,10 @@ public class Order {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void setOrderStatus( String orderStatus){
+        this.orderStatus = orderStatus;
+    }
+
     @PreUpdate
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
