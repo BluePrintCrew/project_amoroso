@@ -24,7 +24,7 @@ const LoginForm = () => {
               className="form-input"
             />
           </div>
-          <div className="from-group">
+          <div className="form-group">
             <label htmlFor="password" className="form-label">
               비밀번호
             </label>
