@@ -1,0 +1,113 @@
+/* 전체 컨테이너 */
+.order-summary {
+  margin-top: 300px;
+  width: 100%; /* 예시로 고정폭 */
+  margin: 0 auto;
+  border-radius: 6px;
+  font-family: "Pretendard", sans-serif;
+  overflow: hidden;
+}
+
+/* 상단 헤더 */
+.summary-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 2px solid black; 
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  font-weight: 500;
+  padding: 12px 0;
+}
+
+/* 중간 요약 금액들 */
+.summary-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid #ddd;
+  height: 120px;
+}
+.price {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.discount {
+  color: #ff3c3c;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.total {
+  color: #ff3c3c;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.operator {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+
+/* 하단 상세 영역 */
+.summary-detail {
+  padding: 16px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.detail-row {
+  /* 4개의 동일한 너비 컬럼 */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; /* 칸 사이 간격 */
+}
+
+/* 각 칸(컬럼) 공통 스타일 */
+.item {
+  display: flex;
+  flex-direction: row;  /* 라벨, 값(버튼) 수직 배치 */
+  justify-content: center;
+  gap: 8px; /* 내부 항목들 간 간격 */
+}
+
+/* 라벨과 버튼이 같은 줄에 있길 원하면 .coupon-box에 flex 적용 */
+.coupon-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  color: #666;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.value {
+  color: #222;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.value.discount {
+  color: #ff3c3c;
+}
+
+.coupon-btn {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+
+/* 안내 문구 */
+.summary-notice {
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+.summary-notice p {
+  margin: 4px 0;
+}

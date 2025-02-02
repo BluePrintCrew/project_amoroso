@@ -1,30 +1,13 @@
-import React from "react";
-import "./Banner.css"; // Banner 전용 CSS
-import banner from "../../assets/main_banner.png";
-import Slider from "react-slick";
+import React from 'react';
+import './Banner.css'; // Banner 전용 CSS
 
-const images = [{ id: 1, src: banner, alt: "배너 이미지 1" }];
-
-const Banner = () => {
-  const settings = {
-    dots: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    infinite: false,
-  };
-
+function Banner() {
   return (
-    <div className="slider-container">
-      <Slider {...settings}>
-        {images.map((image) => (
-          <div key={image.id} className="slide">
-            <img src={image.src} alt={image.alt} className="slide-image" />
-          </div>
-        ))}
-      </Slider>
-    </div>
+    <section className="banner-container">
+      <h2>당신의 일상을 이탈리아 품격으로</h2>
+      <p>이탈리아 가구 국내 30% 할인</p>
+    </section>
   );
-};
+}
+
 export default Banner;
