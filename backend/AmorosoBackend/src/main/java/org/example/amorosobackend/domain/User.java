@@ -27,11 +27,14 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
-    private String socialProvider;  // kakao, naver, google 등
-    private String socialId;
-
     @Column(nullable = false, length = 50)
     private String name;
+
+    private String socialProvider;  // kakao, naver, google 등
+    private String socialId; // 각 플랫폼에서 제공받은 고유 id
+
+    private String nickname;
+
 
     private String phoneNumber;
 
@@ -97,8 +100,9 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateProfile(String name, String phoneNumber) {
+    public void updateProfile(String name, String phoneNumber, String nickname) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.nickname = nickname;
     }
 }

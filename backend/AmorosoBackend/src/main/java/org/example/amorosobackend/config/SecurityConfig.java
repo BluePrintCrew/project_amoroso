@@ -1,7 +1,10 @@
-package org.example.amorosobackend.security;
+package org.example.amorosobackend.config;
 
 
 import lombok.RequiredArgsConstructor; // @RequiredArgsConstructor
+import org.example.amorosobackend.security.CustomOAuth2UserService;
+import org.example.amorosobackend.security.JwtAuthenticationFilter;
+import org.example.amorosobackend.security.JwtProvider;
 import org.springframework.context.annotation.Bean; // @Bean
 import org.springframework.context.annotation.Configuration; // @Configuration
 import org.springframework.security.authentication.AuthenticationManager; // AuthenticationManager
@@ -40,7 +43,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (REST API에 불필요)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/oauth2/**").permitAll() // 인증 없이 접근 가능
+                        .requestMatchers("/","/v3/api-docs/**","/swagger-ui/**","/api/v1/auth/**", "/oauth2/**").permitAll() // 인증 없이 접근 가능
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2

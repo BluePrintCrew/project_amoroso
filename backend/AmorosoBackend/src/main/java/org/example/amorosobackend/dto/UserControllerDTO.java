@@ -32,6 +32,7 @@ public class UserControllerDTO {
         private String accessToken;
     }
 
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -40,6 +41,7 @@ public class UserControllerDTO {
         private String name;
         private String phoneNumber;
         private String role;
+        private String nickname;
     }
 
     @Data
@@ -48,6 +50,7 @@ public class UserControllerDTO {
     public static class UserUpdateRequest {
         private String name;
         private String phoneNumber;
+        private String nickname;
     }
 
     @Data
