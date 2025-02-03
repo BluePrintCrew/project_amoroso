@@ -30,15 +30,18 @@ public class OrderItem {
     private Integer quantity;
     private Double unitPrice;  // 구매 당시 가격
 
+    private String mainImageUri; // 대표 이미지
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
-    private OrderItem(Order order, Product product, Integer quantity, Double unitPrice) {
+    private OrderItem(Order order, Product product, Integer quantity, Double unitPrice, String mainImageUri) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.mainImageUri = mainImageUri;
     }
 
     @PrePersist
@@ -46,6 +49,7 @@ public class OrderItem {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
+
 
     @PreUpdate
     public void onPreUpdate() {

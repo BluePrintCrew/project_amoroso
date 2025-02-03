@@ -29,4 +29,6 @@ public class ImageController {
                 .contentType(MediaType.IMAGE_JPEG) // 기본적으로 JPEG으로 설정
                 .body(image);
     }
+
+
 }

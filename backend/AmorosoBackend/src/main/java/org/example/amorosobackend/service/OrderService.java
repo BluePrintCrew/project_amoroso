@@ -2,9 +2,10 @@ package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.dto.OrderControllerDTO;
 import org.example.amorosobackend.repository.OrderItemRepository;
 import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.enums.OrderStatus;
+import org.example.amorosobackend.enums.PaymentStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -14,7 +15,6 @@ import org.example.amorosobackend.domain.Order;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.repository.OrderRepository;
 import org.example.amorosobackend.repository.UserRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
 
-    // 주문 생성
+
     // 주문 생성
     public OrderResponseDTO createOrder(String email, OrderRequestDTO requestDTO) {
         User user = userRepository.findByEmail(email)
@@ -40,11 +40,11 @@ public class OrderService {
 
         Order order = Order.builder()
                 .user(user)
-                .orderStatus("PENDING")
-                .paymentStatus("WAITING")
+                .orderStatus(OrderStatus.PENDING)
+                .paymentStatus(PaymentStatus.WAITING)
                 .build();
 
-        final Order savedOrder = orderRepository.save(order); // ✅ 해결: order를 final로 선언
+        final Order savedOrder = orderRepository.save(order); // 해결: order를 final로 선언
 
         List<OrderItem> orderItems = requestDTO.getOrderItems().stream().map(itemDTO -> {
             Product product = productRepository.findById(itemDTO.getProductId())
@@ -55,6 +55,7 @@ public class OrderService {
                     .product(product)
                     .quantity(itemDTO.getQuantity())
                     .unitPrice(product.getPrice())
+                    .mainImageUri(product.getMainImageUri())
                     .build();
         }).collect(Collectors.toList());
 
@@ -106,8 +107,17 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 
-        order.setOrderStatus(status);
+
+        order.setOrderStatus(fromString(status));
         Order updatedOrder = orderRepository.save(order);
         return new OrderResponseDTO(updatedOrder);
+    }
+
+    public static OrderStatus fromString(String status) {
+        try {
+            return OrderStatus.valueOf(status.toUpperCase()); // 대소문자 무시 처리
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null; // 잘못된 값이면 null 반환
+        }
     }
 }

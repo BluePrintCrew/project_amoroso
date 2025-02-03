@@ -52,9 +52,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 ));
 
         // JWT 생성 및 반환
-        String token = jwtProvider.createToken(user.getEmail(), user.getRole());
+        String token = jwtProvider.createToken(user.getEmail(), user.getRole().name());
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getRole())),
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())),
                 attributes,
                 "email" // OAuth2User의 기본 사용자 식별 필드
         );
@@ -89,4 +89,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 throw new IllegalArgumentException("지원하지 않는 소셜 제공자입니다.");
         }
     }
+
+
+
 }

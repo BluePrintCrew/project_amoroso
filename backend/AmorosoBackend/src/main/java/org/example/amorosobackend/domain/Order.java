@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.example.amorosobackend.enums.OrderStatus;
+import org.example.amorosobackend.enums.PaymentStatus;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +31,10 @@ public class Order {
     private double totalPrice;
 
     @Column(length = 50)
-    private String orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
+    private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
 
     @Column(length = 50)
-    private String paymentStatus; // WAITING, COMPLETED, CANCELED 등
+    private PaymentStatus paymentStatus; // WAITING, COMPLETED, CANCELED 등
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -47,8 +50,8 @@ public class Order {
     @Builder
     private Order(User user,
                   Double totalPrice,
-                  String orderStatus,
-                  String paymentStatus) {
+                  OrderStatus orderStatus,
+                  PaymentStatus paymentStatus) {
         this.user = user;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
@@ -61,7 +64,7 @@ public class Order {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void setOrderStatus( String orderStatus){
+    public void setOrderStatus( OrderStatus orderStatus){
         this.orderStatus = orderStatus;
     }
     public void setTotalPrice( double totalPrice){

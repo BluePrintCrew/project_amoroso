@@ -34,6 +34,8 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
+    private String mainImageUri; // 대표 이미지 Uri 나중에 사진 등록 API를 개발할 때 사용해야함
+
 
 
     @Column(nullable = false)

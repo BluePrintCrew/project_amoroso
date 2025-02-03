@@ -31,7 +31,7 @@ public class OrderController {
         return ResponseEntity.ok(createdOrder);
     }
 
-    // 📦 특정 주문 조회
+    // 특정 주문 조회
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable Long orderId) {
         String email = getCurrentUserEmail();
@@ -39,7 +39,7 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-    // 🛍 사용자의 모든 주문 조회
+    // 사용자의 모든 주문 조회
     @GetMapping("/my-orders")
     public ResponseEntity<List<OrderResponseDTO>> getUserOrders() {
         String email = getCurrentUserEmail();

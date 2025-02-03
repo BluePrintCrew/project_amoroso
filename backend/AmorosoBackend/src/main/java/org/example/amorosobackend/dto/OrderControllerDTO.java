@@ -29,8 +29,8 @@ public class OrderControllerDTO {
             this.orderId = order.getOrderId();
             this.userEmail = order.getUser().getEmail();
             this.totalPrice = order.getTotalPrice();
-            this.orderStatus = order.getOrderStatus();
-            this.paymentStatus = order.getPaymentStatus();
+            this.orderStatus = order.getOrderStatus().name();
+            this.paymentStatus = order.getPaymentStatus().name();
             this.createdAt = order.getCreatedAt();
             this.orderItems = order.getOrderItems().stream()
                     .map(OrderItemDTO::new)
@@ -52,12 +52,15 @@ public class OrderControllerDTO {
     public static class OrderItemDTO {
         private Long productId;
         private String productName;
+        private String mainImageUri;
         private Integer quantity;
         private Double unitPrice;
+
 
         public OrderItemDTO(OrderItem orderItem) {
             this.productId = orderItem.getProduct().getProductId();
             this.productName = orderItem.getProduct().getProductName();
+            this.mainImageUri = orderItem.getMainImageUri();
             this.quantity = orderItem.getQuantity();
             this.unitPrice = orderItem.getUnitPrice();
         }
