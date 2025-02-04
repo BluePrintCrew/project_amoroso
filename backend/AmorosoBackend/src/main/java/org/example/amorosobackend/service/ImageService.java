@@ -1,9 +1,20 @@
 package org.example.amorosobackend.service;
 
+import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.ProductImage;
+import org.example.amorosobackend.dto.ImageControllerDTO;
+import org.example.amorosobackend.dto.ProductControllerDTO;
+import org.example.amorosobackend.repository.ProductImageRepository;
+import org.example.amorosobackend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
+import java.util.UUID;
+
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +29,8 @@ public class ImageService {
 
     @Value("${app.image-directory}")
     private String IMAGE_DIRECTORY;
+    private final ProductImageRepository productImageRepository;
+    private final ProductRepository productRepository;
 
     public Resource loadImage(String filename) throws IOException {
         //  image에 대한 주소를 만드는 역할 - 파싱된 것을 붙이는 과정
@@ -31,6 +44,36 @@ public class ImageService {
         }
 
         return resouce;
+    }
+
+    public ImageControllerDTO.ImageResponseDTO saveImage(MultipartFile image, ImageControllerDTO.ImageRequestDTO requestDTO) throws IOException {
+        // 파일 저장
+        String imageUri = saveImageToFileSystem(image);
+        Product byProductId = productRepository.findByProductId(requestDTO.getProductId())
+                .orElseThrow(() -> new NullPointerException("there is no Product with id: " + requestDTO.getProductId()));
+
+        if(requestDTO.getIsMainImage()){
+           byProductId.setMainImageUri(imageUri);
+        }
+
+        ProductImage productImage = ProductImage.builder()
+                .imageUrl(imageUri)
+                .product(byProductId)
+                .build();
+
+        productImageRepository.save(productImage);
+
+
+
+        //대표 이미지 여부에 따라 응답 반환
+        return new ImageControllerDTO.ImageResponseDTO(imageUri, requestDTO.getIsMainImage(),requestDTO.getProductId());
+    }
+
+    private String saveImageToFileSystem(MultipartFile file) throws IOException {
+        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path imagePath = Paths.get(IMAGE_DIRECTORY).resolve(filename).normalize();
+        Files.copy(file.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
+        return "/images/" + filename;
     }
 
 //    public Resource loadOptimizedImage(String filename) throws IOException {

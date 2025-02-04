@@ -2,6 +2,7 @@ package org.example.amorosobackend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.Product;
 import org.example.amorosobackend.domain.ProductImage;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class ProductControllerDTO {
 
@@ -64,6 +66,8 @@ public class ProductControllerDTO {
         String content;
         String createdAt;
     }
+
+
 
 //    public static ProductInfoDetailDTO productInfoDetailDTO(Product product){
 //        List<String> imagesURL = product.getProductImages()

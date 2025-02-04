@@ -101,4 +101,8 @@ public class Product {
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void setMainImageUri(String mainImageUri) {
+        this.mainImageUri = mainImageUri;
+    }
 }

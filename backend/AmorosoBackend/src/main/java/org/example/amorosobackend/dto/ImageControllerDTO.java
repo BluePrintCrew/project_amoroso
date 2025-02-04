@@ -1,0 +1,26 @@
+package org.example.amorosobackend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+public class ImageControllerDTO {
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageRequestDTO {
+        private Long productId;
+        private Boolean isMainImage;
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageResponseDTO {
+        private String imageUri;
+        private boolean isMainImage;
+        private Long productId;
+    }
+}
