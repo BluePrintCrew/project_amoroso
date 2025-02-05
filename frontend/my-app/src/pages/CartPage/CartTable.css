@@ -1,16 +1,50 @@
-/* 전체 컨테이너(표 감싸는 영역) */
-.cart-table-container {
+/*******************************************************
+  BASIC LAYOUT & TYPOGRAPHY
+*******************************************************/
+.cart-container {
     width: 100%;
     max-width: 1170px;
     margin: 0 auto;
     font-family: "Pretendard", sans-serif;
-    border-top: 2px solid #666; /* 상단 굵은 선 */
+    border-top: 2px solid #666;
   }
   
-  /* ===== 헤더(6열) ===== */
+  .cart-title {
+    font-size: 1.8rem;
+    margin: 16px 0;
+    font-weight: 600;
+  }
+  
+  .cart-top-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  .checkbox-col {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .top-label {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .cart-divider {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 0.5rem;
+  }
+  
+  /*******************************************************
+    TABLE HEADER (6 columns)
+  *******************************************************/
   .cart-table-header {
     display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr; /* 체크박스, 상품정보, 수량, 금액, 배송, 주문 */
+    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
     align-items: center;
     padding: 14px 0;
     font-weight: 500;
@@ -18,37 +52,51 @@
     border-bottom: 1px solid #ddd;
   }
   
-  /* ===== 실제 상품 행(6열) ===== */
+  .header-checkbox {
+    text-align: center;
+  }
+  
+  /*******************************************************
+    TABLE ROWS (6 columns)
+  *******************************************************/
   .cart-table-row {
     display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr; 
+    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
     align-items: center;
     padding: 16px 0;
     border-bottom: 1px solid #eee;
   }
   
-  /* 공통: 가운데 정렬 등 */
-  .cell-checkbox, .cell-quantity, .cell-price, .cell-shipping, .cell-actions {
+  .cell-checkbox,
+  .cell-quantity,
+  .cell-price,
+  .cell-shipping,
+  .cell-actions {
     text-align: center;
   }
   
-  /* ========== (2) 상품정보 영역 ========== */
+  /*******************************************************
+    PRODUCT INFO
+  *******************************************************/
   .cell-product-info {
     display: flex;
     gap: 12px;
-    align-items: flex-start; /* 썸네일과 텍스트 상단 맞춤 */
+    align-items: flex-start;
   }
+  
   .product-thumb img {
     width: 80px;
     height: 80px;
     border-radius: 8px;
-    object-fit: cover; 
+    object-fit: cover;
   }
+  
   .product-details {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
+  
   .product-tags span {
     display: inline-block;
     margin-right: 6px;
@@ -58,10 +106,12 @@
     font-size: 0.8rem;
     color: #555;
   }
+  
   .product-name {
     font-weight: 500;
     color: #333;
   }
+  
   .option-change-btn {
     border: none;
     background: none;
@@ -72,51 +122,67 @@
     text-decoration: underline;
   }
   
-  /* ========== (3) 수량 ========== */
+  /*******************************************************
+    QUANTITY
+  *******************************************************/
   .cell-quantity {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
   }
+  
   .quantity-box {
     display: flex;
     gap: 6px;
     align-items: center;
   }
+  
   .quantity-box button {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 1px solid #ddd;
-    background: white;
+    background: #fff;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  
   .apply-button {
     border: 1px solid #ddd;
-    background: white;
+    background: #fff;
     font-size: 0.9rem;
     cursor: pointer;
     padding: 4px 8px;
+    border-radius: 20px;
   }
   
-  /* ========== (4) 상품금액 ========== */
+  /*******************************************************
+    PRICE
+  *******************************************************/
   .cell-price {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
+  
   .sale-price {
     font-size: 1.1rem;
     font-weight: bold;
   }
+  
   .original-price {
     font-size: 0.9rem;
     color: #999;
     text-decoration: line-through;
   }
   
-  /* ========== (5) 배송정보 ========== */
+  /*******************************************************
+    SHIPPING INFO
+  *******************************************************/
   .cell-shipping {
     display: flex;
     flex-direction: column;
@@ -124,37 +190,110 @@
     font-size: 0.85rem;
     color: #666;
   }
+  
   .shipping-info {
-    color: #0080ff;  /* 예: 파란색 */
+    color: #0080ff;
   }
+  
   .shipping-desc {
     color: #999;
     font-size: 0.8rem;
   }
   
-  /* ========== (6) 주문하기 ========== */
+  /*******************************************************
+    FOOTER
+  *******************************************************/
+  .cart-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 0;
+  }
+  
+  .bulk-delete-btn {
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    display: inline-block;
+    width: 120px;
+    margin-top:10px;
+  }
+  
+  .order-guidance {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding: 12px 20px;
+  }
+  
+  /*******************************************************
+    CUSTOM CHECKBOX
+  *******************************************************/
+  .custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #666;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+  }
+  
+  .custom-checkbox:checked {
+    background-color: #666;
+    border-color: #666;
+  }
+  
+  .custom-checkbox:checked::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  /*******************************************************
+    ACTION BUTTONS (Buy Now, Wishlist, Delete)
+  *******************************************************/
+  /* Layout the buttons vertically with a gap */
   .cell-actions {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
   }
-  .order-now-button {
-    background: #ff3c3c;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
+  
+  /* Buy Now & Wishlist share common styling:
+     White background, red border, curved corners. */
+  .order-now-button,
   .wishlist-button {
+    width: 80px;
+    height: 35px;
     background: #fff;
-    border: 1px solid #ddd;
-    color: #333;
-    padding: 5px 12px;
+    border: 1px solid #ff3c3c;
+    color: #ff3c3c;
+    border-radius: 15px;
     cursor: pointer;
-    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    font-family: "Pretendard", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
   }
+  
   .delete-button {
     background: #fff;
     border: none;

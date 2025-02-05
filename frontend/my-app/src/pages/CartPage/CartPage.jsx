@@ -3,6 +3,8 @@ import CartTable from "./CartTable";
 import CartSummary from "../../components/CartSummary/CartSummary";
 import CartFooter from "./CartFooter";
 import "./CartPage.css";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
 
 const cartItems = [
   {
@@ -29,8 +31,9 @@ const cartItems = [
 
 function CartPage() {
   return (
+    
     <div className="cart-page">
-      
+       <Header />
       <h2 className="cart-title">장바구니 ({cartItems.length})</h2>
       <CartTable cartItems={cartItems} />
       <div className="cart-information-text">
@@ -41,6 +44,7 @@ function CartPage() {
       </div>
       <CartSummary cartItems={cartItems} />
       <CartFooter />
+      <Footer />
     </div>
   );
 }

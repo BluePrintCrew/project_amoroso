@@ -18,7 +18,7 @@ function Home() {
       <ProductList />
       <BenefitsSection />
       <MagazineSection />
-      <Footer />i
+      <Footer />
     </div>
   );
 }

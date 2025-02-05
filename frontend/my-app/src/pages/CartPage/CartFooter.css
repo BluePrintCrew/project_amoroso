@@ -1,15 +1,53 @@
-.cart-footer {
+/*******************************************************
+  BUTTON WRAPPER: Centered horizontally
+*******************************************************/
+.cart-footer-buttons {
+    /* Flex container to center buttons horizontally */
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    justify-content: center; 
+    align-items: center;
+    gap: 16px; /* Space between buttons */
+    margin-top: 20px; /* Optional spacing from the top */
   }
   
-  .order-button {
-    background: brown;
-    color: white;
+  /*******************************************************
+    BUTTON STYLES
+  *******************************************************/
+  /* "선택 상품 주문": White background, dark text, curved corners */
+  .select-order-btn {
+    background: #ffffff;
+    color: #766E68;
+    border: 1px solid #ccc;  /* Light gray border */
+    border-radius: 25px;     /* Pill shape */
     padding: 10px 20px;
-    border: none;
-    cursor: pointer;
     font-size: 16px;
+    cursor: pointer;
+    min-width: 130px;        /* Keep consistent width if you like */
   }
+  
+  /* "전체 상품 주문": Brown background, white text, also curved corners */
+  .all-order-btn {
+    background: #795548; /* Brown color */
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 130px;
+
+  }
+  
+  /* Optional hover effects */
+  .select-order-btn:hover {
+    border-color: #999;
+  }
+  
+  .all-order-btn:hover {
+    opacity: 0.8;
+  }
+  .select-order-btn {
+    margin-right: 20px; /* A 20px gap between .select-order-btn and the next button */
+  }
+  
   

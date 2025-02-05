@@ -8,7 +8,7 @@ import Order from './pages/OrderPage/OrderForm';
 import ProductList from './pages/home/ProductList/ProductList';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
-
+import Products from './pages/CartPage/CartPage';
 function App() {
   return (
     <Router>
@@ -21,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/list" element={<ProductList />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/products" element={<Products />} />
         </Routes>
       </div>
     </Router>
