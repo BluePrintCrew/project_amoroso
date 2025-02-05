@@ -46,12 +46,14 @@ public class Review {
                    Product product,
                    int rating,
                    String content,
-                   boolean isReported) {
+                   boolean isReported,
+                    LocalDateTime createdAt) {
         this.user = user;
         this.product = product;
         this.rating = rating;
         this.content = content;
         this.isReported = isReported;
+        this.createdAt = createdAt;
     }
 
     @PrePersist
