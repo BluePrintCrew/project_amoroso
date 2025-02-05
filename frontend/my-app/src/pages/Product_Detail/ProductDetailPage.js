@@ -1,25 +1,30 @@
-import React, { useRef } from "react";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
-import "./ProductDetailPage.css";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
-import getCoupon from "../../assets/get_coupon.png";
-import couponPack from "../../assets/coupon_pack.png";
-import likeButton from "../../assets/like.png";
-import shareButton from "../../assets/share.png";
+import './ProductDetailPage.css';
+
+import React, { useRef } from 'react';
+
+import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
+import Footer from '../../components/Footer/Footer';
+import Header from '../../components/Header/Header';
+import couponPack from '../../assets/coupon_pack.png';
+import getCoupon from '../../assets/get_coupon.png';
+import likeButton from '../../assets/like.png';
+import shareButton from '../../assets/share.png';
+import { useNavigate } from 'react-router-dom';
 
 const ProductDetailPage = () => {
   const thumbnailContainerRef = useRef(null);
 
   const scrollThumbnails = (direction) => {
     if (thumbnailContainerRef.current) {
-      const scrollAmount = direction === "left" ? -100 : 100;
+      const scrollAmount = direction === 'left' ? -100 : 100;
       thumbnailContainerRef.current.scrollBy({
         left: scrollAmount,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="product-detail-page">
@@ -33,7 +38,7 @@ const ProductDetailPage = () => {
           <div className="thumbnail-container">
             <button
               className="arrow left"
-              onClick={() => scrollThumbnails("left")}
+              onClick={() => scrollThumbnails('left')}
             >
               ◀
             </button>
@@ -46,7 +51,7 @@ const ProductDetailPage = () => {
             </div>
             <button
               className="arrow right"
-              onClick={() => scrollThumbnails("right")}
+              onClick={() => scrollThumbnails('right')}
             >
               ▶
             </button>
@@ -56,7 +61,7 @@ const ProductDetailPage = () => {
           <div className="breadcrumb">
             <a href="#" className="breadcrumb-link">
               Amoroso
-            </a>{" "}
+            </a>{' '}
             &gt;
             <div className="breadcrumb-actions">
               <button className="icon-button">
@@ -127,7 +132,9 @@ const ProductDetailPage = () => {
           </div>
           <div className="button-group">
             <button className="cart-button">장바구니</button>
-            <button className="buy-button">구매하기</button>
+            <button className="buy-button" onClick={() => navigate('/order')}>
+              구매하기
+            </button>
           </div>
         </div>
       </div>
