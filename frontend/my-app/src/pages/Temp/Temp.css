@@ -1,0 +1,134 @@
+/* 전체 컨테이너 설정 */
+.signup-container {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+  }
+  
+  /* 상단 헤더 영역 */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .nav-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .search-box {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .right-icons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* 메인 영역 */
+  .main-content {
+    flex: 1;
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .input-label {
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .save-id-box {
+    text-align: left;
+  }
+  
+  .login-button {
+    background-color: #7b6d5e; /* 예시: 브라운 계열 색상 */
+    color: #fff;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .social-login {
+    margin-top: 20px;
+  }
+  
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .social-icon {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: #ccc; /* 임시 배경색 */
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .help-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  /* 푸터 영역 */
+  .footer {
+    padding: 20px 40px;
+    background-color: #f8f8f8;
+  }
+  
+  .footer-links a {
+    margin-right: 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .company-info p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
