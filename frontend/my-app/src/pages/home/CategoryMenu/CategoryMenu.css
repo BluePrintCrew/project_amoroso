@@ -1,0 +1,19 @@
+.category-menu {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .category-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+    border: 1px solid #ccc;
+  }
+  
+  .category-button:hover {
+    background-color: #eee;
+  }
+  
