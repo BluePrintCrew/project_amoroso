@@ -28,7 +28,7 @@ public class OrderItem {
     private Product product;
 
     private Integer quantity;
-    private Double unitPrice;  // 구매 당시 가격
+    private Integer unitPrice;  // 구매 당시 가격
 
     private String mainImageUri; // 대표 이미지
 
@@ -36,7 +36,7 @@ public class OrderItem {
     private LocalDateTime updatedAt;
 
     @Builder
-    private OrderItem(Order order, Product product, Integer quantity, Double unitPrice, String mainImageUri) {
+    private OrderItem(Order order, Product product, Integer quantity, Integer unitPrice, String mainImageUri) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;

@@ -32,7 +32,7 @@ public class Product {
     private String description;  // AI를 이용해 생성된 상세 설명
 
     @Column(nullable = false)
-    private double price;
+    private Integer price;
 
     private String mainImageUri; // 대표 이미지 Uri 나중에 사진 등록 API를 개발할 때 사용해야함
 

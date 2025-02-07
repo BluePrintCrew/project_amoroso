@@ -47,7 +47,7 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    // ❌ 주문 취소
+    //  주문 취소
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
         String email = getCurrentUserEmail();
@@ -55,7 +55,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    // 🚚 주문 상태 변경 (관리자만 가능하도록 설정 가능)
+    // 주문 상태 변경 (관리자만 가능하도록 설정 가능)
     @PatchMapping("/{orderId}/status")
     public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long orderId,
                                                               @RequestParam String status) {
@@ -63,7 +63,7 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    // 🔒 현재 로그인한 사용자 이메일 가져오기
+    //현재 로그인한 사용자 이메일 가져오기
     // JwtAuthenticationFilter.class 에서 SecurityContext에 저장하는 과정에 왜 Email이 나오는지 로직이 나와있음
     private String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

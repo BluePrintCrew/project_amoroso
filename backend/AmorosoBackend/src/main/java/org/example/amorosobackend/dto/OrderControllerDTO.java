@@ -42,7 +42,7 @@ public class OrderControllerDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderRequestDTO {
-        private Double totalPrice;
+        private Integer totalPrice;
         private List<OrderItemRequestDTO> orderItems;
     }
 
@@ -54,7 +54,7 @@ public class OrderControllerDTO {
         private String productName;
         private String mainImageUri;
         private Integer quantity;
-        private Double unitPrice;
+        private Integer unitPrice;
 
 
         public OrderItemDTO(OrderItem orderItem) {

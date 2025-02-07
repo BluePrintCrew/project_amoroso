@@ -28,7 +28,13 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private double totalPrice;
+    @OneToOne
+    @JoinColumn(name ="user_coupon_id")
+    private UserCoupon usercoupon;
+
+    private Double totalPrice;
+
+    private Double discountPrice;
 
     @Column(length = 50)
     private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등

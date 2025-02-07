@@ -25,16 +25,32 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private Integer quantity;
+    @Column(nullable = false)
+    private Integer quantity = 1;
+
+    @Column(nullable = false)
+    private Integer priceSnapshot; // 장바구니 추가 당시 가격 저장
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public void updateQuantity(Integer quantity) {
+        if (quantity == null || quantity < 1) {
+            throw new IllegalArgumentException("장바구니 수량은 1 이상이어야 합니다.");
+        }
+        this.quantity = quantity;
+    }
+
+    public void removeProduct() {
+        this.product = null;
+    }
 
     @Builder
     private CartItem(User user, Product product, Integer quantity) {
         this.user = user;
         this.product = product;
-        this.quantity = quantity;
+        this.quantity = (quantity != null && quantity > 0) ? quantity : 1;
+        this.priceSnapshot = product.getPrice(); // 장바구니 추가 시점의 가격 저장
     }
 
     @PrePersist
@@ -46,5 +62,18 @@ public class CartItem {
     @PreUpdate
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        return cartItemId != null && cartItemId.equals(cartItem.cartItemId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
