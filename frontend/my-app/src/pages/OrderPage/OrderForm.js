@@ -32,7 +32,7 @@ const OrderForm = () => {
                   className="product-image"
                 />
                 <div>
-                  <p>한샘 설치기사</p>
+                  <p>Amoroso</p>
                   <p className="product-name">
                     제품명 1 제품명 1 제품명 1 제품명 1
                   </p>
@@ -45,16 +45,62 @@ const OrderForm = () => {
             </div>
 
             <div className="column center-align">
-              <div className="price-info">
-                <p className="price">3,306,000원</p>
-                <p className="original-price">4,272,000원</p>
-                <button className="discount-info">할인내역</button>
+              <p className="price">3,306,000원</p>
+              <p className="original-price">4,272,000원</p>
+              <button className="discount-info">할인내역</button>
+            </div>
+
+            <div className="column center-align">
+              <p className="shipping1">무료배송</p>
+              <p className="shipping2">지역별/옵션별 배송비 추가</p>
+              <p className="shipping3">지역별 배송비</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="info-bottom">
+          <p>
+            • 배송일자 안내 내용입니다. 배송일자 안내 내용입니다. 배송일자 안내
+            내용입니다.
+          </p>
+        </div>
+      </div>
+      <CartSummary />
+
+      <div className="delivery">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">주문상품 배송정보</h2>
+            <p className="section-description">
+              • 주문상품 배송정보 안내입니다. 주문상품 배송정보 안내입니다.
+              <br />• 주문상품 배송정보 안내입니다.주문상품 배송정보
+              안내입니다.주문상품 배송정보 안내입니다.
+            </p>
+          </div>
+        </div>
+
+        <hr className="sep-line" />
+
+        <div className="delivery-info">
+          <h3>배송정보</h3>
+          <div className="delivery-table">
+            <div className="row-1">
+              <div className="cell label-1">
+                주문자명/연락처<span className="required">*</span>
+              </div>
+              <div className="cell">
+                홍길동 / 010-1234-5678
+                <button className="edit-button">주문자 정보 변경</button>
+              </div>
+            </div>
+            <div className="row-1">
+              <div className="cell label-1">
+                배송지 주소<span className="required">*</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <CartSummary />
     </div>
   );
 };

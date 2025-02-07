@@ -1,10 +1,11 @@
 .order-title{
     margin-top: 20px;
     margin-bottom: 40px;
+    font-size: 32px;
 }
 
 .info-table{
-    margin-bottom: 40px;
+    margin-bottom: 70px;
     font-size: 14px;
 }
 
@@ -49,13 +50,15 @@
     display: grid;
     grid-template-columns: 3fr 1fr 1fr 1fr;
     align-items: center;
-    padding: 20px;
+    border-bottom: 1px solid #e2e2e2;
 }
 
 .product-info{
     display: flex;
     flex-direction: row;
     gap: 10px;
+    padding-top: 28px;
+    padding-left: 20px;
 }
 
 .product-info div{
@@ -66,13 +69,14 @@
 .product-image{
     height: 120px;
     width: 120px;
+    border-radius: 10px;
 }
 
 .price-info{
     display: flex;
     flex-direction: column;
-    align-items: center;
     max-width: 100%;
+    
 }
 
 .price{
@@ -82,5 +86,92 @@
 
 .original-price{
     font-size: 14px;
+    text-decoration: line-through;
     color: #999;
 }
+
+.discount-info{
+    margin-top: 5px;
+    padding: 3px 10px;
+    border: 1px solid #e2e2e2;
+    background-color: #fff;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #666666;
+    cursor: pointer;
+}
+
+.shipping1{
+    font-size: 12px;
+    color: #0064ff;
+}
+
+.shipping2{
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.shipping3{
+    font-size: 14px;
+    color: #666666;
+    text-decoration: underline;
+    margin-top: 3px;
+    cursor: pointer;;
+}
+
+.info-bottom{
+    padding: 12px 20px;
+    font-size: 12px;
+    color: #666;
+}
+
+.delivery{
+    margin-top: 20px;
+}
+
+.section-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-title{
+    font-size: 32px;
+}
+
+.section-description{
+    font-size: 12px;
+    margin-top: 10px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.sep-line{
+    margin-top: 20px;
+    border: none;
+    border-top: 2px solid #766e68;
+    margin-bottom: 40px;
+}
+
+.delivery-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.row-1{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    border-bottom: 2px solid #e2e2e2;
+    padding: 10px 0;
+}
+
+.cell{
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.label-1{
+    background-color: #f7f7f7;
+}
+
