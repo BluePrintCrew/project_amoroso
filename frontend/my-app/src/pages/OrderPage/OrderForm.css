@@ -153,6 +153,10 @@
     margin-bottom: 40px;
 }
 
+.sub-title{
+    margin-bottom: 12px;
+}
+
 .delivery-table{
     width: 100%;
     border-collapse: collapse;
@@ -161,8 +165,7 @@
 .row-1{
     display: grid;
     grid-template-columns: 1fr 5fr;
-    border-bottom: 2px solid #e2e2e2;
-    padding: 10px 0;
+    border-bottom: 1px solid #e2e2e2;
 }
 
 .cell{
@@ -173,5 +176,243 @@
 
 .label-1{
     background-color: #f7f7f7;
+}
+
+.required{
+    color: red;
+}
+
+.edit-button{
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+    margin-left: 12px;
+    padding: 2px 10px;
+    cursor: pointer;
+}
+
+.elevator-options,
+.vehicle-options{
+    margin-bottom: 3px;
+}
+
+.elevator-options span,
+.vehicle-options span{
+    display: inline-block;
+    font-weight: bold;
+}
+
+.elevator-options label,
+.vehicle-options label{
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.checkbox-options label{
+    display: block;
+    margin-bottom: 10px;
+}
+
+
+.additional-info{
+    font-size: 12px;
+    color: #666;
+    padding: 15px 5px;
+    background-color: #f7f7f7;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="checkbox"]{
+    margin-right: 4px;
+}
+
+.delivery-request{
+    width: 100%;
+    height: 50px;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+    padding: 7px;
+    resize: none;
+}
+
+.divider{
+    margin: 32px 0;
+}
+
+.apply-product{
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+    margin-left: 12px;
+    padding: 2px 10px;
+    cursor: pointer;
+}
+
+.delivery-date-input{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f7f7f7;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.date-box{
+    display: flex;
+    gap: 10px;
+}
+
+.date-bundle{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.date-item{
+    width: 50px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+}
+
+.reservation-timer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-left: 60px;
+    gap: 5px;
+}
+
+.timer-minute,
+.timer-second{
+    font-weight: bold;
+    color: red;
+    font-size: 20px;
+}
+
+.payment-section{
+    margin-top: 25px;
+    display: flex;
+}
+
+.price-table{
+    margin-top: 12px;
+}
+
+.price-cell{
+    display: flex;
+    align-items: center;
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.price-bundle{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-item{
+    width: 160px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 15px;
+    background-color: #f7f7f7;
+    color: #999;
+}
+
+.coupon-button{
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+.final-payment{
+    float: right;
+    width: 315px;
+    border: 1px solid #766e68;
+    border-radius: 10px;
+    padding: 20px;
+    margin-left: 65px;
+}
+
+.final-payment h3{
+    font-size: 18px;
+}
+
+.divider1{
+    margin-top: 8px;
+    margin-bottom: 20px;
+    color: #e2e2e2;
+}
+
+.detail-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.divider2{
+    margin: 20px 0;
+    color: #766e68;
+}
+
+.agreement{
+    font-size: 12px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.pay-button{
+    display: block;
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: #766e68;
+    color: #fff;
+    font-size: 16px;
+}
+
+.payment-method{
+    margin-top: 25px;
+}
+
+.divider3{
+    margin: 20px 0;
+}
+
+.method-options{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 5px;
+}
+
+.method-button{
+    padding: 10px 0;
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
+    cursor: pointer;
+}
+
+.agreement1{
+    margin-top: 15px;
+    font-size: 14px;
 }
 
