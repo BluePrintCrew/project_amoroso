@@ -3,12 +3,12 @@ package org.example.amorosobackend.service;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.controller.ProductController;
-import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.domain.ProductImage;
-import org.example.amorosobackend.domain.Review;
+import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.repository.ProductRepository;
 import org.example.amorosobackend.repository.ReviewRepository;
+import org.example.amorosobackend.repository.SellerRepository;
+import org.example.amorosobackend.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +29,8 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
+    private final SellerRepository sellerRepository;
 
     // direction static 클래스 : Sort.Direction 클래스는 "asc" 또는 "desc" 문자열을 자동으로 파싱하는 메서드를 제공합니다.
     //IllegalArgumentException은 fromString 메서드 내부에서 자동으로 발생합니다.
@@ -125,4 +127,12 @@ public class ProductService {
         return dateTime.format(formatter);
 
     }
+
+    public List<Product> getSellerProducts(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Seller seller = sellerRepository.findByUser(user).orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+
+        return productRepository.findBySeller(seller);
+    }
+
 }

@@ -106,4 +106,8 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
     }
+
+    public boolean isSeller() {
+        return this.role == UserRole.SELLER;
+    }
 }

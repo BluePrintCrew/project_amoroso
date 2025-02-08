@@ -28,6 +28,9 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String productName;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
     @Lob
     private String description;  // AI를 이용해 생성된 상세 설명
 
