@@ -83,12 +83,14 @@ public class Product {
     private Product(Category category,
                     String productName,
                     String description,
+                    Seller seller,
                     int price,
                     Integer stock,
                     LocalDateTime createdAt) {
         this.category = category;
         this.productName = productName;
         this.description = description;
+        this.seller = seller;
         this.price = price;
         this.stock = stock;
         this.createdAt = createdAt;
