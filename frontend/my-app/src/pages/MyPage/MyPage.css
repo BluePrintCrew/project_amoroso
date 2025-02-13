@@ -1,0 +1,10 @@
+.my-page-container {
+    display: flex;
+    /* Sidebar on the left, content to the right */
+  }
+  
+  .my-page-content {
+    flex: 1;      /* Expand to fill remaining space */
+    padding: 20px;
+  }
+  

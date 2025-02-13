@@ -9,6 +9,7 @@ import ProductList from './pages/home/ProductList/ProductList';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
 import Products from './pages/CartPage/CartPage';
+import MyPage from "./pages/MyPage/MyPage";
 function App() {
   return (
     <Router>
@@ -22,6 +23,7 @@ function App() {
           <Route path="/list" element={<ProductList />} />
           <Route path="/order" element={<Order />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/mypage/*" element={<MyPage />} />
         </Routes>
       </div>
     </Router>

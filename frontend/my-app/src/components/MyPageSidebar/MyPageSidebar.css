@@ -1,0 +1,54 @@
+.my-page-sidebar {
+    width: 240px;
+    padding: 24px;
+    font-family: "Pretendard", sans-serif;
+  }
+  
+  /* Main Title: “MY PAGE” with a thicker separator */
+  .sidebar-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #333; /* Darker line under “MY PAGE” */
+  }
+  
+  /* Sections: remove bullet points, add spacing */
+  .sidebar-section {
+    list-style: none; 
+    margin-bottom: 16px;
+    padding: 0;
+  }
+  
+  /* Section title with a gray line above it */
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e2e2;
+  }
+  
+  /* Remove top border for the very first section */
+  .section-title:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+  
+  /* Items under each title; no bullets */
+  .section-item {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 8px;
+    cursor: pointer;
+    line-height: 1.4;
+    list-style: none;
+  }
+  
+  /* Optional hover effect */
+  .section-item:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+  
