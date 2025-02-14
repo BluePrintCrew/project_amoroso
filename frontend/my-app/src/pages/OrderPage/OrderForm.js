@@ -1,64 +1,68 @@
-import './OrderForm.css';
-
 import CartSummary from '../../components/CartSummary/CartSummary';
+import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import React from 'react';
+import styles from './OrderForm.module.css';
 
 const OrderForm = () => {
   return (
-    <div className="order-page">
+    <div className={styles.orderForm}>
       <Header />
-      <h1 className="order-title">주문서 작성</h1>
-      <div className="info-table">
-        <div className="info-header1">
-          <div className="column left-align">상품정보</div>
-          <div className="column center-align">수량</div>
-          <div className="column center-align">상품금액</div>
-          <div className="column center-align">배송정보</div>
-        </div>
-        <div className="info-header2">
-          <div className="column left-align">
-            <span className="main-text">로젠택배(1)</span>
-            <span className="sub-text">배송/설치일 직접 지정 가능</span>
+      <h1 className={styles.orderTitle}>주문서 작성</h1>
+      <div className={styles.infoTable}>
+        <div className={styles.infoHeader1}>
+          <div className={`${styles.column} ${styles.leftAlign}`}>상품정보</div>
+          <div className={`${styles.column} ${styles.centerAlign}`}>수량</div>
+          <div className={`${styles.column} ${styles.centerAlign}`}>
+            상품금액
+          </div>
+          <div className={`${styles.column} ${styles.centerAlign}`}>
+            배송정보
           </div>
         </div>
-        <div className="info-body">
-          <div className="row">
-            <div className="column left-align">
-              <div className="product-info">
+        <div className={styles.infoHeader2}>
+          <div className={`${styles.column} ${styles.leftAlign}`}>
+            <span className={styles.mainText}>로젠택배(1)</span>
+            <span className={styles.subText}>배송/설치일 직접 지정 가능</span>
+          </div>
+        </div>
+        <div className={styles.infoBody}>
+          <div className={styles.row}>
+            <div className={`${styles.column} ${styles.leftAlign}`}>
+              <div className={styles.productInfo}>
                 <img
                   src="https://placehold.co/120"
                   alt="상품 이미지"
-                  className="product-image"
+                  className={styles.productImage}
                 />
                 <div>
                   <p>Amoroso</p>
-                  <p className="product-name">
+                  <p className={styles.productName}>
                     제품명 1 제품명 1 제품명 1 제품명 1
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="column center-align">
+            <div className={`${styles.column} ${styles.centerAlign}`}>
               <p>1</p>
             </div>
 
-            <div className="column center-align">
-              <p className="price">3,306,000원</p>
-              <p className="original-price">4,272,000원</p>
-              <button className="discount-info">할인내역</button>
+            <div className={`${styles.column} ${styles.centerAlign}`}>
+              <p className={styles.price}>3,306,000원</p>
+              <p className={styles.originalPrice}>4,272,000원</p>
+              <button className={styles.discountInfo}>할인내역</button>
             </div>
 
-            <div className="column center-align">
-              <p className="shipping1">무료배송</p>
-              <p className="shipping2">지역별/옵션별 배송비 추가</p>
-              <p className="shipping3">지역별 배송비</p>
+            <div className={`${styles.column} ${styles.centerAlign}`}>
+              <p className={styles.shipping1}>무료배송</p>
+              <p className={styles.shipping2}>지역별/옵션별 배송비 추가</p>
+              <p className={styles.shipping3}>지역별 배송비</p>
             </div>
           </div>
         </div>
 
-        <div className="info-bottom">
+        <div className={styles.infoBottom}>
           <p>
             • 배송일자 안내 내용입니다. 배송일자 안내 내용입니다. 배송일자 안내
             내용입니다.
@@ -67,11 +71,11 @@ const OrderForm = () => {
       </div>
       <CartSummary />
 
-      <div className="delivery">
-        <div className="section-header">
+      <div className={styles.delivery}>
+        <div className={styles.sectionHeader}>
           <div>
-            <h2 className="section-title">주문상품 배송정보</h2>
-            <p className="section-description">
+            <h2 className={styles.sectionTitle}>주문상품 배송정보</h2>
+            <p className={styles.sectionDescription}>
               • 주문상품 배송정보 안내입니다. 주문상품 배송정보 안내입니다.
               <br />• 주문상품 배송정보 안내입니다.주문상품 배송정보
               안내입니다.주문상품 배송정보 안내입니다.
@@ -79,43 +83,43 @@ const OrderForm = () => {
           </div>
         </div>
 
-        <hr className="sep-line" />
+        <hr className={styles.sepLine} />
 
-        <div className="delivery-info">
-          <h3 className="sub-title">배송정보</h3>
-          <div className="delivery-table">
-            <div className="row-1">
-              <div className="cell label-1">
-                주문자명/연락처<span className="required">*</span>
+        <div className={styles.deliveryInfo}>
+          <h3 className={styles.subTitle}>배송정보</h3>
+          <div className={styles.deliveryTable}>
+            <div className={styles.row}>
+              <div className={`${styles.cell} ${styles.label}`}>
+                주문자명/연락처<span className={styles.required}>*</span>
               </div>
-              <div className="cell">
+              <div className={styles.cell}>
                 홍길동 / 010-1234-5678
-                <button className="edit-button">주문자 정보 변경</button>
+                <button className={styles.editButton}>주문자 정보 변경</button>
               </div>
             </div>
-            <div className="row-1">
-              <div className="cell label-1">
-                배송지 주소<span className="required">*</span>
+            <div className={styles.row}>
+              <div className={`${styles.cell} ${styles.label}`}>
+                배송지 주소<span className={styles.required}>*</span>
               </div>
-              <div className="cell">
+              <div className={styles.cell}>
                 기본배송지: [홍길동] 홍길동
                 <br />
                 (12345) 00시 00구 00번길 12-34 000아파트 5층 607호
-                <button className="edit-button">배송지 목록</button>
+                <button className={styles.editButton}>배송지 목록</button>
                 <br />
                 010-1234-5678
               </div>
             </div>
-            <div className="row-1" style={{ border: 'none' }}>
-              <div className="cell label-1">
-                가구배송 추가정보<span className="required">*</span>
+            <div className={styles.row} style={{ border: 'none' }}>
+              <div className={`${styles.cell} ${styles.label}`}>
+                가구배송 추가정보<span className={styles.required}>*</span>
               </div>
               <div
-                className="cell"
+                className={styles.cell}
                 style={{ borderBottom: '1px solid #e6e6e6' }}
               >
-                <div className="radio-buttons">
-                  <div className="elevator-options">
+                <div className={styles.radioButtons}>
+                  <div className={styles.elevatorOptions}>
                     <span>엘리베이터:</span>
                     <label>
                       <input type="radio" name="elevator" />
@@ -134,7 +138,7 @@ const OrderForm = () => {
                       없음
                     </label>
                   </div>
-                  <div className="vehicle-options">
+                  <div className={styles.vehicleOptions}>
                     <span>차량현장 진입:</span>
                     <label>
                       <input type="radio" name="vehicle" />
@@ -148,15 +152,15 @@ const OrderForm = () => {
                 </div>
               </div>
             </div>
-            <div className="row-1">
-              <div className="cell label-1"></div>
-              <div className="cell">
-                <div className="checkbox-options">
+            <div className={styles.row}>
+              <div className={`${styles.cell} ${styles.label}`}></div>
+              <div className={styles.cell}>
+                <div className={styles.checkboxOptions}>
                   <label>
                     <input type="checkbox" />
                     (필수) 제품 설치 공간 확보 및 사다리차 추가비용 동의합니다.
                   </label>
-                  <p className="additional-info">
+                  <p className={styles.additionalInfo}>
                     • 가구배송 추가정보 내용입니다. 가구배송 추가정보
                     내용입니다.
                   </p>
@@ -167,113 +171,129 @@ const OrderForm = () => {
                 </div>
               </div>
             </div>
-            <div className="row-1">
-              <div className="cell label-1">배송시 요청사항</div>
+            <div className={styles.row}>
+              <div className={`${styles.cell} ${styles.label}`}>
+                배송시 요청사항
+              </div>
               <div className="cell">
                 <textarea
-                  className="delivery-request"
+                  className={styles.deliveryRequest}
                   placeholder="배송시 요청사항 내용을 입력하세요."
                 ></textarea>
               </div>
             </div>
           </div>
 
-          <hr className="divider" />
+          <hr className={styles.divider} />
 
-          <div className="delivery-date">
-            <div className="delivery-date-top">
+          <div className={styles.deliveryDate}>
+            <div className={styles.deliveryDateTop}>
               <span>배송 예정일</span>
-              <button className="apply-product">적용상품보기</button>
+              <button className={styles.applyProduct}>적용상품보기</button>
             </div>
-            <div className="delivery-date-input">
-              <button className="edit-button" style={{ margin: 0 }}>
+            <div className={styles.deliveryDateInput}>
+              <button className={styles.editButton} style={{ margin: 0 }}>
                 📅배송예정일
               </button>
-              <div className="date-box">
-                <div className="date-bundle">
-                  <div className="date-item"></div>
+              <div className={styles.dateBox}>
+                <div className={styles.dateBundle}>
+                  <div className={styles.dateItem}></div>
                   <label>년</label>
                 </div>
-                <div className="date-bundle">
-                  <div className="date-item"></div>
+                <div className={styles.dateBundle}>
+                  <div className={styles.dateItem}></div>
                   <label>월</label>
                 </div>
-                <div className="date-bundle">
-                  <div className="date-item"></div>
+                <div className={styles.dateBundle}>
+                  <div className={styles.dateItem}></div>
                   <label>일</label>
                 </div>
-                <div className="date-bundle">
-                  <div className="date-item"></div>
+                <div className={styles.dateBundle}>
+                  <div className={styles.dateItem}></div>
                   <label>요일</label>
                 </div>
               </div>
-              <div className="reservation-timer">
+              <div className={styles.reservationTimer}>
                 <span>⏰ 남은 예약시간은</span>
-                <span className="timer-minute">12</span>
+                <span className={styles.timerMinute}>12</span>
                 <span>분</span>
-                <span className="timer-second">34</span>
+                <span className={styles.timerSecond}>34</span>
                 <span>초 입니다.</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="payment-section">
-          <div className="discount-benefit">
+        <div className={styles.paymentSection}>
+          <div className={styles.discountBenefit}>
             <h3>할인/혜택 적용</h3>
-            <div className="price-table">
-              <div className="row-1">
-                <div className="price-cell label-1">총 상품금액</div>
-                <div className="price-cell">4,272,000원</div>
+            <div className={styles.priceTable}>
+              <div className={styles.row}>
+                <div className={`${styles.priceCell} ${styles.label}`}>
+                  총 상품금액
+                </div>
+                <div className={styles.priceCell}>4,272,000원</div>
               </div>
-              <div className="row-1">
-                <div className="price-cell label-1">기본할인</div>
-                <div className="price-cell">
-                  <div className="price-bundle">
-                    <div className="price-item">0</div>
+              <div className={styles.row}>
+                <div className={`${styles.priceCell} ${styles.label}`}>
+                  기본할인
+                </div>
+                <div className={styles.priceCell}>
+                  <div className={styles.priceBundle}>
+                    <div className={styles.priceItem}>0</div>
                     <span>원</span>
                   </div>
                 </div>
               </div>
-              <div className="row-1">
-                <div className="price-cell label-1">상품쿠폰할인</div>
-                <div className="price-cell">
-                  <div className="price-bundle">
-                    <div className="price-item">966,000</div>
+              <div className={styles.row}>
+                <div className={`${styles.priceCell} ${styles.label}`}>
+                  상품쿠폰할인
+                </div>
+                <div className={styles.priceCell}>
+                  <div className={styles.priceBundle}>
+                    <div className={styles.priceItem}>966,000</div>
                     <span>원</span>
-                    <button className="coupon-button">적용가능쿠폰</button>
+                    <button className={styles.couponButton}>
+                      적용가능쿠폰
+                    </button>
                   </div>
                 </div>
               </div>
-              <div className="row-1">
-                <div className="price-cell label-1">포인트</div>
-                <div className="price-cell">
-                  <div className="price-bundle">
-                    <div className="price-item">0</div>
+              <div className={styles.row}>
+                <div className={`${styles.priceCell} ${styles.label}`}>
+                  포인트
+                </div>
+                <div className={styles.priceCell}>
+                  <div className={styles.priceBundle}>
+                    <div className={styles.priceItem}>0</div>
                     <span>원(0원 보유)</span>
-                    <button className="coupon-button">전체사용</button>
+                    <button className={styles.couponButton}>전체사용</button>
                   </div>
                 </div>
               </div>
-              <div className="row-1">
-                <div className="price-cell label-1">결제하실 금액</div>
-                <div className="price-cell">3,306,000원 (배송비 포함)</div>
+              <div className={styles.row}>
+                <div className={`${styles.priceCell} ${styles.label}`}>
+                  결제하실 금액
+                </div>
+                <div className={styles.priceCell}>
+                  3,306,000원 (배송비 포함)
+                </div>
               </div>
             </div>
-            <div className="payment-method">
+            <div className={styles.paymentMethod}>
               <h3>결제수단 선택</h3>
-              <hr className="divider3" />
-              <div className="method-options">
-                <button className="method-button">퀵 계좌이체</button>
-                <button className="method-button">신용카드(일반)</button>
-                <button className="method-button">신용카드(법인)</button>
-                <button className="method-button">결제수단1</button>
-                <button className="method-button">토스 페이</button>
-                <button className="method-button">카카오 페이</button>
-                <button className="method-button">네이버 페이</button>
-                <button className="method-button">페이코 결제</button>
+              <hr className={styles.divider3} />
+              <div className={styles.methodOptions}>
+                <button className={styles.methodButton}>퀵 계좌이체</button>
+                <button className={styles.methodButton}>신용카드(일반)</button>
+                <button className={styles.methodButton}>신용카드(법인)</button>
+                <button className={styles.methodButton}>결제수단1</button>
+                <button className={styles.methodButton}>토스 페이</button>
+                <button className={styles.methodButton}>카카오 페이</button>
+                <button className={styles.methodButton}>네이버 페이</button>
+                <button className={styles.methodButton}>페이코 결제</button>
               </div>
-              <div className="agreement1">
+              <div className={styles.agreement1}>
                 <input type="checkbox" id="remember-method" />
                 <label for="remember-method">
                   선택한 결제수단을 다음에도 사용
@@ -281,45 +301,46 @@ const OrderForm = () => {
               </div>
             </div>
           </div>
-          <div className="final-payment">
+          <div className={styles.finalPayment}>
             <h3>최종 결제 금액</h3>
-            <hr className="divider1" />
-            <div className="detail-row">
+            <hr className={styles.divider1} />
+            <div className={styles.detailRow}>
               <span>총 상품금액</span>
-              <span className="amount">4,272,000원</span>
+              <span className={styles.amount}>4,272,000원</span>
             </div>
-            <div className="detail-row">
+            <div className={styles.detailRow}>
               <span>총 배송비</span>
-              <span className="amount">0원</span>
+              <span className={styles.amount}>0원</span>
             </div>
-            <div className="detail-row">
+            <div className={styles.detailRow}>
               <span>총 할인금액</span>
-              <span className="amount">966,000원</span>
+              <span className={styles.amount}>966,000원</span>
             </div>
-            <div className="detail-row">
+            <div className={styles.detailRow}>
               <span>포인트 사용금액</span>
-              <span className="amount">0원</span>
+              <span className={styles.amount}>0원</span>
             </div>
-            <hr className="divider2" />
-            <div className="detail-row">
+            <hr className={styles.divider2} />
+            <div className={styles.detailRow}>
               <span>최종결제금액</span>
               <span
-                className="amount"
+                className={styles.amount}
                 style={{ fontSize: '20px', color: 'red' }}
               >
                 3,306,000원
               </span>
             </div>
-            <div className="agreement">
+            <div className={styles.agreement}>
               <input type="checkbox" id="agree" />
               <label for="agree">
                 하기 필수약관을 모두 확인하였으며 결제에 동의합니다.
               </label>
             </div>
-            <button className="pay-button">결제하기</button>
+            <button className={styles.payButton}>결제하기</button>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
