@@ -1,10 +1,51 @@
+import 'react-datepicker/dist/react-datepicker.css';
+
+import React, { useState } from 'react';
+
 import CartSummary from '../../components/CartSummary/CartSummary';
+import DatePicker from 'react-datepicker';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
-import React from 'react';
 import styles from './OrderForm.module.css';
 
+const paymentMethods = [
+  '퀵 계좌이체',
+  '신용카드(일반)',
+  '신용카드(법인)',
+  '결제수단1',
+  '토스 페이',
+  '카카오 페이',
+  '네이버 페이',
+  '페이코 결제',
+];
+
 const OrderForm = () => {
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const formatDate = (date) => {
+    if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
+
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString();
+    const day = date.getDate().toString();
+    const dayOfWeek = date
+      .toLocaleDateString('ko-KR', { weekday: 'long' })
+      .substring(0, 1);
+
+    return { year, month, day, dayOfWeek };
+  };
+
+  const { year, month, day, dayOfWeek } = formatDate(selectedDate);
+
+  const [selectedMethod, setSelectedMethod] = useState(null);
+
+  const handleMethodClick = (method) => {
+    setSelectedMethod(method);
+  };
   return (
     <div className={styles.orderForm}>
       <Header />
@@ -192,24 +233,33 @@ const OrderForm = () => {
               <button className={styles.applyProduct}>적용상품보기</button>
             </div>
             <div className={styles.deliveryDateInput}>
-              <button className={styles.editButton} style={{ margin: 0 }}>
-                📅배송예정일
-              </button>
+              <DatePicker
+                selected={selectedDate}
+                onChange={handleDateChange}
+                dateFormat="yyyy/MM/dd"
+                className={styles.hiddenDateInput}
+                customInput={
+                  <button className={styles.editButton} style={{ margin: 0 }}>
+                    📅배송예정일
+                  </button>
+                }
+              />
+
               <div className={styles.dateBox}>
                 <div className={styles.dateBundle}>
-                  <div className={styles.dateItem}></div>
+                  <div className={styles.dateItem}>{year}</div>
                   <label>년</label>
                 </div>
                 <div className={styles.dateBundle}>
-                  <div className={styles.dateItem}></div>
+                  <div className={styles.dateItem}>{month}</div>
                   <label>월</label>
                 </div>
                 <div className={styles.dateBundle}>
-                  <div className={styles.dateItem}></div>
+                  <div className={styles.dateItem}>{day}</div>
                   <label>일</label>
                 </div>
                 <div className={styles.dateBundle}>
-                  <div className={styles.dateItem}></div>
+                  <div className={styles.dateItem}>{dayOfWeek}</div>
                   <label>요일</label>
                 </div>
               </div>
@@ -284,14 +334,17 @@ const OrderForm = () => {
               <h3>결제수단 선택</h3>
               <hr className={styles.divider3} />
               <div className={styles.methodOptions}>
-                <button className={styles.methodButton}>퀵 계좌이체</button>
-                <button className={styles.methodButton}>신용카드(일반)</button>
-                <button className={styles.methodButton}>신용카드(법인)</button>
-                <button className={styles.methodButton}>결제수단1</button>
-                <button className={styles.methodButton}>토스 페이</button>
-                <button className={styles.methodButton}>카카오 페이</button>
-                <button className={styles.methodButton}>네이버 페이</button>
-                <button className={styles.methodButton}>페이코 결제</button>
+                {paymentMethods.map((method) => (
+                  <button
+                    key={method}
+                    className={`${styles.methodButton} ${
+                      selectedMethod === method ? styles.selectedMethod : ''
+                    }`}
+                    onClick={() => handleMethodClick(method)}
+                  >
+                    {method}
+                  </button>
+                ))}
               </div>
               <div className={styles.agreement1}>
                 <input type="checkbox" id="remember-method" />

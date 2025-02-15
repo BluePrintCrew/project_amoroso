@@ -410,6 +410,12 @@ input[type="checkbox"]{
     background-color: #fff;
     border: 1px solid #e2e2e2;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.selectedMethod{
+    border: 2px solid #766e68;
+    font-weight: bold;
 }
 
 .agreement1{
