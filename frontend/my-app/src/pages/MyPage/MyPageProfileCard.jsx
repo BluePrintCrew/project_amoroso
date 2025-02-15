@@ -1,10 +1,13 @@
-// src/pages/MyPage/MyPageProfileCard.jsx
-
 import React from "react";
 import "./MyPageProfileCard.css";
 
+// Import your images
+import pointIcon from "../../assets/point_img.png";
+import couponIcon from "../../assets/coupon_img.png";
+import reviewIcon from "../../assets/review_img.png";
+import zzimIcon from "../../assets/zzim_img.png";
+
 function MyPageProfileCard() {
-  // Dummy data for now
   const userInfo = {
     name: "홍길동님",
     greeting: "안녕하세요!",
@@ -15,36 +18,43 @@ function MyPageProfileCard() {
   };
 
   return (
-    <div className="my-page-profile-card">
-      <div className="profile-user-info">
-        <h2>
-          {userInfo.name} &gt;
+    <div className="my-page-profile-wrapper">
+      {/* Left side: name + greeting */}
+      <div className="profile-left">
+        <h2 className="user-name">
+          {userInfo.name} <span className="arrow">&gt;</span>
         </h2>
-        <p>{userInfo.greeting}</p>
+        <p className="greeting">{userInfo.greeting}</p>
       </div>
 
-      <div className="profile-stats">
-        <div className="profile-stat">
-          <span className="icon">P</span>
-          <p>보유 포인트</p>
-          <strong>
-            {userInfo.points.toLocaleString()} P
-          </strong>
+      {/* Right side: 4 stats in a row */}
+      <div className="profile-right">
+        <div className="stat-box">
+          {/* Icon for points */}
+          <img src={pointIcon} alt="포인트 아이콘" className="stat-icon" />
+          <p className="stat-title">보유 포인트</p>
+          <p className="stat-value">{userInfo.points.toLocaleString()} P</p>
         </div>
-        <div className="profile-stat">
-          <span className="icon">🎟</span>
-          <p>사용 가능 쿠폰</p>
-          <strong>{userInfo.coupons}</strong>
+
+        <div className="stat-box">
+          {/* Icon for coupons */}
+          <img src={couponIcon} alt="쿠폰 아이콘" className="stat-icon" />
+          <p className="stat-title">사용 가능 쿠폰</p>
+          <p className="stat-value">{userInfo.coupons}</p>
         </div>
-        <div className="profile-stat">
-          <span className="icon">💬</span>
-          <p>작성 가능 후기</p>
-          <strong>{userInfo.reviewCount}</strong>
+
+        <div className="stat-box">
+          {/* Icon for reviews */}
+          <img src={reviewIcon} alt="후기 아이콘" className="stat-icon" />
+          <p className="stat-title">작성 가능 후기</p>
+          <p className="stat-value">{userInfo.reviewCount}</p>
         </div>
-        <div className="profile-stat">
-          <span className="icon">❤️</span>
-          <p>찜</p>
-          <strong>{userInfo.wishlistCount}</strong>
+
+        <div className="stat-box">
+          {/* Icon for wishlist */}
+          <img src={zzimIcon} alt="찜 아이콘" className="stat-icon" />
+          <p className="stat-title">찜</p>
+          <p className="stat-value">{userInfo.wishlistCount}</p>
         </div>
       </div>
     </div>
