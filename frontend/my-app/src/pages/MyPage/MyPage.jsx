@@ -3,6 +3,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import MyPageSidebar from "../../components/MyPageSidebar/MyPageSidebar";
 import MyPageProfileCard from "./MyPageProfileCard";
+import OrderManagement from "./OrderManagement"; // <-- import your new component
 import "./MyPage.css";
 
 function MyPage() {
@@ -16,10 +17,10 @@ function MyPage() {
       {/* Lower section: sidebar on the left, main content on the right */}
       <div className="my-page-lower">
         <MyPageSidebar />
+
         <div className="my-page-content">
-          <h1>주문 관리</h1>
-          <p>Here you can see your order status, cancellations, etc.</p>
-          {/* Other sections like tables or forms can go here */}
+          {/* Insert the OrderManagement component here */}
+          <OrderManagement />
         </div>
       </div>
 

@@ -2,7 +2,8 @@
     width: 240px;
     padding: 24px;
     font-family: "Pretendard", sans-serif;
-  }
+    padding-left: 0;
+}
   
   /* Main Title: “MY PAGE” with a thicker separator */
   .sidebar-title {
@@ -10,7 +11,7 @@
     font-weight: 600;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #333; /* Darker line under “MY PAGE” */
+    border-bottom: 2px solid #333; /* Darker line under “MY PAGE” */
   }
   
   /* Sections: remove bullet points, add spacing */
@@ -26,7 +27,7 @@
     font-weight: 600;
     margin-bottom: 16px;
     padding-top: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 6px;
     border-bottom: 1px solid #e2e2e2;
   }
   

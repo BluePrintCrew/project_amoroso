@@ -3,7 +3,7 @@
     display: flex;
     max-width: 1200px; /* or whatever page width you like */
     margin: 0 auto;    /* center the content horizontally */
-    padding: 0 20px;   /* optional side padding */
+  /*  padding: 0 20px;  */ /* optional side padding */
   }
   
   /* Sidebar can have a fixed width or flexible width */

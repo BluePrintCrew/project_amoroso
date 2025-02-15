@@ -1,0 +1,66 @@
+.order-management-container {
+    margin: 24px 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ddd;
+    font-family: "Pretendard", sans-serif;
+  }
+  
+  /* Title row: “주문 관리 >” */
+  .order-management-title h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #666;
+  }
+  
+  /* Main row containing each status item */
+  .order-steps {
+    display: flex;
+    align-items: center; 
+    gap: 24px;           /* spacing between each .status-item and divider */
+    margin-top: 40px;
+    margin-bottom: 40px;
+    justify-content: center;
+  }
+  
+  /* Each status item: stack number above label, center-aligned */
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* ensure text is centered if the item width grows */
+  }
+  
+  .status-num {
+    font-size: 1.2rem; /* bigger than the label */
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px; /* small gap before the label */
+  }
+  
+  .status-label {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .divider {
+    color: #121212;
+    font-size: 1.2rem; 
+  }
+ 
+  /* Sub-row: 취소, 반품, 교환 */
+  .order-steps-sub {
+    display: flex;
+    gap: 24px;  
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 8px;
+    justify-content: center;
+  }
+  
+  /* Highlight 취소 count in red */
+  .cancel-text strong {
+    color: red;
+  }
+  
