@@ -1,10 +1,21 @@
-.my-page-container {
+/* This container holds the sidebar + main area in one row */
+.my-page-lower {
     display: flex;
-    /* Sidebar on the left, content to the right */
+    max-width: 1200px; /* or whatever page width you like */
+    margin: 0 auto;    /* center the content horizontally */
+    padding: 0 20px;   /* optional side padding */
   }
   
+  /* Sidebar can have a fixed width or flexible width */
+  .my-page-lower > :first-child {
+    /* This targets MyPageSidebar if it’s the first element */
+    width: 240px; /* adjust as needed */
+    margin-right: 20px; /* gap between sidebar and content */
+  }
+  
+  /* Main content expands to fill remaining space */
   .my-page-content {
-    flex: 1;      /* Expand to fill remaining space */
-    padding: 20px;
+    flex: 1;
+    /* add any padding or background color here if needed */
   }
   
