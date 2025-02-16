@@ -114,7 +114,7 @@ public class ProductService {
                 product.getProductId(),
                 product.getProductName(),
                 product.getPrice(),
-                product.getCategory().getCategoryCode(),
+                product.getCategory().getCategoryCode().getCode(),
                 product.getPrimaryImage() != null ? product.getPrimaryImage().getImageUrl() : null,
                 formattedCreatedAt // 변환된 문자열 값
         );
