@@ -10,6 +10,7 @@ import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
 import Products from './pages/CartPage/CartPage';
 import MyPage from "./pages/MyPage/MyPage";
+import MyInfo from "./pages/MyPage/MyInfoEdit";
 function App() {
   return (
     <Router>
@@ -24,6 +25,7 @@ function App() {
           <Route path="/order" element={<Order />} />
           <Route path="/products" element={<Products />} />
           <Route path="/mypage/*" element={<MyPage />} />
+          <Route path="/mypageinfo" element={<MyInfo />} />
         </Routes>
       </div>
     </Router>

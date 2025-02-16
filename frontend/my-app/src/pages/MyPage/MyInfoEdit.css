@@ -1,0 +1,245 @@
+/* 사이드바 + 메인 컨테이너 */
+.my-page-lower {
+  display: flex;
+}
+
+.my-info-content {
+  flex: 1;
+  padding: 24px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 상단 타이틀 */
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* 탭 영역 */
+.info-tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #ddd; /* 탭 하단 선 */
+}
+
+.info-tab {
+  flex: 1;
+  padding: 12px 0;
+  text-align: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #666;
+  background: #f9f9f9;
+  border: none;
+  border-right: 1px solid #ddd;
+}
+.info-tab:last-child {
+  border-right: none;
+}
+.info-tab.active {
+  background: #766e68;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 폼 컨테이너 */
+.info-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px; /* 섹션 간 간격 */
+}
+
+/* 섹션 */
+.info-form section {
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+.info-form section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  color: #333;
+}
+
+/* form-group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* 아이디/이메일: 읽기 전용 */
+.display-field {
+  margin-bottom: 16px;
+}
+/* Gray block for read-only text */
+.display-value {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #333;
+}
+
+/* Input: 둥근(필) + 바텀 라인 */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  border: none;
+  outline: none;
+  border-radius: 30px; /* pill shape */
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 0 0 #e2e2e2; /* bottom line */
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.form-group input::placeholder,
+.form-group select::placeholder {
+  color: #aaa;
+}
+.form-group input:focus,
+.form-group select:focus {
+  box-shadow: 0 2px 0 0 #766e68;
+  background-color: #fff;
+}
+
+/* 생년월일 + 성별 */
+.birth-gender-row {
+  gap: 12px;
+  align-items: center;
+}
+.birth-input {
+  width: 140px; /* 원하는 폭 */
+}
+
+/* 주소영역 */
+.address-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+/* 우편번호 필드를 좀 더 넓게 */
+.postal-input {
+  flex: 0 0 200px;
+}
+/* 우편번호 찾기 버튼 */
+.search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #666;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.search-btn:hover {
+  background: #f8f8f8;
+  border-color: #999;
+}
+.magnifier-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 계정 인증 여부 + 연동 해지 버튼 */
+.linked-account-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.linked-account-row label {
+  width: 60px; /* 적당히 */
+}
+.linked-account-row p {
+  flex: 1;
+  margin: 0;
+  color: #666;
+}
+.unlink-btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  background: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #666;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.unlink-btn:hover {
+  background: #f8f8f8;
+  border-color: #999;
+}
+
+/* 체크박스 그룹 */
+.checkbox-group {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* 하단 버튼 */
+.bottom-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+/* pill 형태 버튼 */
+.bottom-buttons button {
+  min-width: 100px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.bottom-buttons button:hover {
+  background: #f8f8f8;
+  border-color: #999;
+}
+.leave-btn,
+.cancel-btn {
+  /* if you need special styles for these */
+}
+.submit-btn {
+  background: #766e68;
+  border-color: #766e68;
+  color: #fff;
+  font-weight: 600;
+}
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Optional: required asterisk for labels */
+.required-label::after {
+  content: "*";
+  color: red;
+  margin-left: 4px;
+}
+
+/* Optional: divider line between fields */
+.field-divider {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  margin: 16px 0;
+}
