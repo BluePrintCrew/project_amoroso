@@ -1,4 +1,4 @@
-/* 사이드바 + 메인 컨테이너 */
+/* Sidebar + main container */
 .my-page-lower {
   display: flex;
 }
@@ -9,18 +9,18 @@
   font-family: "Pretendard", sans-serif;
 }
 
-/* 상단 타이틀 */
+/* Top title */
 .page-title {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 24px;
 }
 
-/* 탭 영역 */
+/* Tabs row */
 .info-tabs {
   display: flex;
   margin-bottom: 24px;
-  border-bottom: 2px solid #ddd; /* 탭 하단 선 */
+  border-bottom: 2px solid #ddd; 
 }
 
 .info-tab {
@@ -43,15 +43,15 @@
   font-weight: 600;
 }
 
-/* 폼 컨테이너 */
+/* Form container */
 .info-form {
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 32px; /* 섹션 간 간격 */
+  gap: 32px; /* space between each section */
 }
 
-/* 섹션 */
+/* Sections */
 .info-form section {
   padding: 16px 0;
   border-bottom: 1px solid #eee;
@@ -65,7 +65,7 @@
   color: #333;
 }
 
-/* form-group */
+/* Form groups (each label + input block) */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -78,11 +78,10 @@
   font-size: 0.95rem;
 }
 
-/* 아이디/이메일: 읽기 전용 */
+/* ID/Email read-only fields */
 .display-field {
   margin-bottom: 16px;
 }
-/* Gray block for read-only text */
 .display-value {
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -90,7 +89,7 @@
   color: #333;
 }
 
-/* Input: 둥근(필) + 바텀 라인 */
+/* Pill-shaped input with bottom line */
 .form-group input,
 .form-group select {
   width: 100%;
@@ -98,7 +97,7 @@
   font-size: 0.95rem;
   border: none;
   outline: none;
-  border-radius: 30px; /* pill shape */
+  border-radius: 30px; /* more pill-shaped */
   background-color: #f9f9f9;
   box-shadow: 0 2px 0 0 #e2e2e2; /* bottom line */
   transition: box-shadow 0.2s ease, background-color 0.2s ease;
@@ -113,49 +112,109 @@
   background-color: #fff;
 }
 
-/* 생년월일 + 성별 */
+/* Birth date + 남/여 squares in one group
+   Label above them, so keep .form-group. 
+   Then we place input + squares side by side.
+*/
 .birth-gender-row {
-  gap: 12px;
-  align-items: center;
+  /* keep the default flex-direction: column for label above
+     or if you want label + input in a single row, do display: flex here. */
 }
-.birth-input {
-  width: 140px; /* 원하는 폭 */
+.birth-gender-row .birth-gender-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between birth input and squares */
+  margin-top: 4px; /* small top gap if needed */
 }
 
-/* 주소영역 */
+/* The birth date input (pill shape as above) */
+.birth-input {
+  width: 220px; /* or however wide you need */
+  /* rest of pill input styling is inherited from .form-group input */
+}
+
+/* Two squares for 남/여 immediately after birth input */
+.gender-squares {
+  display: flex;
+  gap: 8px;
+}
+
+/* Common styling for the squares */
+.gender-square {
+  width: 50px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px; 
+  background: #f9f9f9;
+  text-align: center;
+  line-height: 40px; /* vertical center for the text */
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.gender-square:hover {
+  background: #f2f2f2;
+  border-color: #999;
+}
+
+/* Optionally, a 'selected' style if you track state:
+.gender-square.selected {
+  background: #766e68;
+  color: #fff;
+  border-color: #766e68;
+} */
+
+/* Address row (우편번호 + button) */
+/* The row for postal code + button */
 .address-row {
   display: flex;
+  align-items: center;   /* keep them aligned on one line */
   gap: 8px;
   margin-bottom: 8px;
 }
-/* 우편번호 필드를 좀 더 넓게 */
+
+/* Make the postal code input wider */
 .postal-input {
-  flex: 0 0 200px;
+  flex: 1;              /* let it grow to fill space */
+  min-width: 280px;     /* or 300px, etc. */
 }
-/* 우편번호 찾기 버튼 */
+
+/* The other address lines below the postal row */
+.address-line {
+  margin-bottom: 8px;   /* spacing so they don’t overlap each other */
+  /* inherits pill shape & bottom line from your existing .form-group input rules */
+}
+
+/* Button with magnifier icon + text */
 .search-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 6px; 
   padding: 10px 16px;
   border: 1px solid #ccc;
   background: #fff;
-  border-radius: 30px;
+  border-radius: 30px; /* pill shape */
   cursor: pointer;
   font-size: 0.9rem;
   color: #666;
   transition: border-color 0.2s ease, background 0.2s ease;
 }
+
+/* Hover effect */
 .search-btn:hover {
   background: #f8f8f8;
   border-color: #999;
 }
+
+/* The magnifier icon size */
 .magnifier-icon {
   width: 16px;
   height: 16px;
 }
 
-/* 계정 인증 여부 + 연동 해지 버튼 */
+
+/* Linked accounts + "연동 해지" button */
 .linked-account-row {
   display: flex;
   align-items: center;
@@ -163,7 +222,7 @@
   margin-bottom: 12px;
 }
 .linked-account-row label {
-  width: 60px; /* 적당히 */
+  width: 60px; 
 }
 .linked-account-row p {
   flex: 1;
@@ -185,7 +244,7 @@
   border-color: #999;
 }
 
-/* 체크박스 그룹 */
+/* Marketing checkboxes */
 .checkbox-group {
   display: flex;
   gap: 16px;
@@ -193,14 +252,13 @@
   color: #333;
 }
 
-/* 하단 버튼 */
+/* Bottom buttons */
 .bottom-buttons {
   display: flex;
   justify-content: center;
   gap: 16px;
   margin-top: 24px;
 }
-/* pill 형태 버튼 */
 .bottom-buttons button {
   min-width: 100px;
   padding: 12px 24px;
@@ -218,7 +276,7 @@
 }
 .leave-btn,
 .cancel-btn {
-  /* if you need special styles for these */
+  /* custom styles if needed */
 }
 .submit-btn {
   background: #766e68;
@@ -230,7 +288,7 @@
   opacity: 0.9;
 }
 
-/* Optional: required asterisk for labels */
+/* Required asterisk for labels */
 .required-label::after {
   content: "*";
   color: red;

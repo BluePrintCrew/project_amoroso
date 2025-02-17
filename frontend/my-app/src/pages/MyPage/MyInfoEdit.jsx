@@ -3,11 +3,12 @@ import MyPageSidebar from "../../components/MyPageSidebar/MyPageSidebar";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 // If you want a magnifier icon in the postal code button, import it:
-// import magnifierIcon from "../../assets/magnifier.png";
+ import magnifierIcon from "../../assets/magnifier.png";
 import "./MyInfoEdit.css";
 
 function MyInfoEdit() {
   const [activeTab, setActiveTab] = useState("personal");
+  const [gender, setGender] = useState(""); // "male" or "female"
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -20,6 +21,10 @@ function MyInfoEdit() {
 
   const handleCancel = () => {
     alert("Canceled (dummy).");
+  };
+
+  const handleGenderChange = (e) => {
+    setGender(e.target.value);
   };
 
   return (
@@ -62,61 +67,80 @@ function MyInfoEdit() {
                     계정 아이디가 들어갑니다. (읽기전용)
                   </div>
                 </div>
-                {/* optional divider line: <hr className="field-divider" /> */}
 
                 {/* 이메일 - editable */}
                 <div className="form-group">
                   <label className="required-label">이메일</label>
                   <input type="email" placeholder="아이디(이메일) 입력" />
                 </div>
-                {/* optional divider line: <hr className="field-divider" /> */}
               </section>
 
-              {/* (2) 본인 인증 정보 */}
+              {/* (2) 본인인증정보 */}
               <section>
-                <h3>본인인증정보</h3>
-                <div className="form-group">
-                  <label>이름</label>
-                  <input type="text" placeholder="이름을 입력하세요" />
-                </div>
+  <h3>본인인증정보</h3>
 
-                <div className="form-group birth-gender-row">
-                  <label>생년월일</label>
-                  <input type="text" placeholder="YYYYMMDD" className="birth-input" />
-                  <select>
-                    <option>성별</option>
-                    <option value="male">남</option>
-                    <option value="female">여</option>
-                  </select>
-                </div>
+  {/* 이름 */}
+  <div className="form-group">
+    <label>이름</label>
+    <input type="text" placeholder="이름이 들어갑니다" />
+  </div>
 
-                <div className="form-group">
-                  <label>휴대폰번호</label>
-                  <input type="tel" placeholder="휴대폰번호를 입력하세요" />
-                </div>
-              </section>
+  {/* 생년월일 + 성별 (남/여) in squares */}
+  <div className="form-group birth-gender-row">
+    <label className="required-label">생년월일/성별</label>
 
-              {/* (3) 주소정보 입력 */}
-              <section>
-                <h3>주소정보 입력</h3>
-                <div className="form-group">
-                  <label>주소</label>
-                  <div className="address-row">
-                    <input
-                      type="text"
-                      className="postal-input"
-                      placeholder="우편번호가 들어갑니다"
-                    />
-                    <button type="button" className="search-btn">
-                      {/* <img src={magnifierIcon} alt="돋보기" className="magnifier-icon" /> */}
-                      우편번호 찾기
-                    </button>
-                  </div>
-                  <input type="text" placeholder="주소가 들어갑니다" />
-                  <input type="text" placeholder="상세 주소가 들어갑니다" />
-                </div>
-              </section>
+    <div className="birth-gender-container">
+      {/* Birth date input */}
+      <input
+        type="text"
+        placeholder="생년월일이 들어갑니다"
+        className="birth-input"
+      />
 
+      {/* Two squares for 남/여 */}
+      <div className="gender-squares">
+        <div className="gender-square male-square">
+          남
+        </div>
+        <div className="gender-square female-square">
+          여
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* 휴대폰번호 */}
+  <div className="form-group">
+    <label>휴대폰번호</label>
+    <input type="tel" placeholder="휴대폰번호가 들어갑니다" />
+  </div>
+</section>
+ 
+<section>
+  <h3>주소정보 입력</h3>
+  <div className="form-group">
+    <label>주소</label>
+
+    {/* Row with postal code + button in one line */}
+    <div className="address-row">
+      <input
+        type="text"
+        className="postal-input"
+        placeholder="우편번호가 들어갑니다"
+      />
+      <button type="button" className="search-btn">
+        <img src={magnifierIcon} alt="돋보기" className="magnifier-icon" />
+        우편번호 찾기
+      </button>
+    </div>
+
+    {/* Next lines for main address & detail address */}
+    <input type="text" placeholder="주소가 들어갑니다" className="address-line" />
+    <input type="text" placeholder="상세 주소가 들어갑니다" className="address-line" />
+  </div>
+</section>
+
+ 
               {/* (4) 계정 인증 여부 */}
               <section>
                 <h3>계정 인증 여부</h3>
