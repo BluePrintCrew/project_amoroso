@@ -5,7 +5,7 @@ import Detail from './pages/Product_Detail/ProductDetailPage';
 import Home from './pages/home/Home';
 import Login from './pages/Login/LoginForm';
 import Order from './pages/OrderPage/OrderForm';
-import ProductList from './pages/home/ProductList/ProductList';
+import ProductList from './pages/ProductListPage/ProductListPage';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
 import Products from './pages/CartPage/CartPage';
