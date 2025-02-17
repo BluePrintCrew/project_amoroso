@@ -1,0 +1,14 @@
+.admin-page-container {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .admin-page-content {
+    flex: 1;
+    padding: 24px;
+    background-color: #fafafa;
+    overflow-y: auto;
+  }
+  

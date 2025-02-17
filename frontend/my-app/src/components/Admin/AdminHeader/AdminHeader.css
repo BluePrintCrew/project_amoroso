@@ -1,0 +1,44 @@
+.admin-header {
+    display: flex;
+    justify-content: space-between; /* left icon + right icons separated */
+    align-items: center;
+    height: 60px;           /* or whatever suits your design */
+    background-color: #fff; /* white background */
+    border-bottom: 1px solid #ddd;
+    padding: 0 16px;        /* horizontal padding */
+  }
+  
+  /* Left container: the list/hamburger icon */
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Right container: bell, user icon, user name */
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* space between each icon and user name */
+  }
+  
+  /* The hamburger/list icon */
+  .menu-icon {
+    width: 24px;  /* adjust as needed */
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  /* Common styling for right-side icons */
+  .header-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  /* The user name next to the icons */
+  .user-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+  }
+  

@@ -1,0 +1,65 @@
+.admin-sidebar {
+    width: 240px;
+    height: 100vh;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+  }
+  
+  .sidebar-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .logo-img {
+    width: 120px;
+    height: auto;
+  }
+  
+  .sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* space between each nav item */
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #766e68;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  
+  /* Example active styling */
+  .menu-item.active {
+    background-color: #766e68;
+    color: #fff;
+  }
+  
+  .menu-item:hover {
+    background-color: #f9f9f9;
+  }
+  
+  /* Icon next to text */
+  .menu-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px; /* small space between icon and text */
+  }
+  
+
+  
+  /* The arrow icon is placed last, so we can push it further away from text */
+  .arrow-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: auto;  /* push the arrow to the far right */
+    /* or if you want a fixed gap from the text, e.g. margin-left: 16px; */
+  }
+  
