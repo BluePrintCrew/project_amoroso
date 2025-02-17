@@ -11,6 +11,7 @@ import SignUp from './pages/SignUp/SignUpPage';
 import Products from './pages/CartPage/CartPage';
 import MyPage from "./pages/MyPage/MyPage";
 import MyInfo from "./pages/MyPage/MyInfoEdit";
+import Admin from "./pages/AdminPage/AdminPage";
 function App() {
   return (
     <Router>
@@ -26,6 +27,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/mypage/*" element={<MyPage />} />
           <Route path="/mypageinfo" element={<MyInfo />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
     </Router>
