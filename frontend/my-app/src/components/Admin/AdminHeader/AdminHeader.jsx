@@ -9,16 +9,19 @@ import peopleIcon from "../../../assets/people.png";
 function AdminHeader() {
   return (
     <header className="admin-header">
-      {/* Left side: list/hamburger icon */}
+      {/* Left: hamburger icon */}
       <div className="header-left">
         <img src={listIcon} alt="Menu" className="menu-icon" />
       </div>
 
-      {/* Right side: notifications + user info */}
+      {/* Right: bell icon + profile icon + user name */}
       <div className="header-right">
         <img src={bellIcon} alt="Notifications" className="header-icon" />
-        <img src={peopleIcon} alt="User" className="header-icon" />
-        <span className="user-name">홍길동님</span>
+        
+        <div className="profile-section">
+          <img src={peopleIcon} alt="Profile" className="header-icon" />
+          <span className="user-name">홍길동님</span>
+        </div>
       </div>
     </header>
   );

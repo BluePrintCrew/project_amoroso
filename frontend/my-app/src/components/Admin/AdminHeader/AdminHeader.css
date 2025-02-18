@@ -1,44 +1,49 @@
 .admin-header {
-    display: flex;
-    justify-content: space-between; /* left icon + right icons separated */
-    align-items: center;
-    height: 60px;           /* or whatever suits your design */
-    background-color: #fff; /* white background */
-    border-bottom: 1px solid #ddd;
-    padding: 0 16px;        /* horizontal padding */
-  }
-  
-  /* Left container: the list/hamburger icon */
-  .header-left {
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Right container: bell, user icon, user name */
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 16px; /* space between each icon and user name */
-  }
-  
-  /* The hamburger/list icon */
-  .menu-icon {
-    width: 24px;  /* adjust as needed */
-    height: 24px;
-    cursor: pointer;
-  }
-  
-  /* Common styling for right-side icons */
-  .header-icon {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-  }
-  
-  /* The user name next to the icons */
-  .user-name {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
-  }
-  
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  height: 60px;              /* or whatever fits your design */
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 0 16px;
+  width: 128%;               /* spans the full width of the parent container */
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+/* Right side: bell + profile + user name */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* space between bell icon and profile section */
+}
+
+/* Profile icon + user name side by side */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* user name is 8px to the right of the icon */
+}
+
+/* Common styling for icons on the right */
+.header-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+/* User name next to the profile icon */
+.user-name {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}

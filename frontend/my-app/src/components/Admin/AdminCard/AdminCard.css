@@ -1,0 +1,32 @@
+.admin-card {
+    /* Basic card styling */
+    width: 30%;
+    min-height: 150px;
+    background-color: #fff;
+    height: 30%;
+    /* Rounded corners + drop shadow for the “card” effect */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  
+    /* Optional margin/padding */
+    margin: 16px 0;
+    position: relative; /* So the title can be positioned inside the card if needed */
+  }
+  
+  .card-content {
+    padding: 24px;
+    /* You can also add display: flex; if you want a flex layout inside the card */
+  }
+  
+  .card-title {
+    position: absolute;
+    bottom: 16px;
+    left: 24px;
+  
+    /* Font styles */
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+  
