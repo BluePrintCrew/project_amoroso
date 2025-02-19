@@ -40,7 +40,6 @@ public enum CategoryCode {
     CategoryCode(String code) {
         this.code = code;
     }
-
     public String getCode() {
         return code;
     }

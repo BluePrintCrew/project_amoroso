@@ -47,7 +47,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://localhost:3000/login")
                         .defaultSuccessUrl("http://localhost:3000/loginSuccess")
                         .failureUrl("http://localhost:3000/loginFailure")
                         .userInfoEndpoint(userInfo -> userInfo
