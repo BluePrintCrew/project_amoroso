@@ -44,7 +44,7 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        String accessToken = jwtProvider.createToken(user.getEmail(), user.getRole());
+        String accessToken = jwtProvider.createToken(user.getEmail(), user.getRole().name());
         LoginResponse loginResponse = new LoginResponse(accessToken);
         return loginResponse;
     }
@@ -58,7 +58,7 @@ public class UserService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole(), user.getNickname());
+        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole().name(), user.getNickname());
     }
 
     public void updateUserProfile(UserControllerDTO.UserUpdateRequest request) {

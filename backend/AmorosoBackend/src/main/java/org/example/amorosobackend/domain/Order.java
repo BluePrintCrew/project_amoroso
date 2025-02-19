@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.example.amorosobackend.enums.OrderStatus;
+import org.example.amorosobackend.enums.PaymentStatus;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +28,19 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToOne
+    @JoinColumn(name ="user_coupon_id")
+    private UserCoupon usercoupon;
+
     private Double totalPrice;
 
-    @Column(length = 50)
-    private String orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
+    private Double discountPrice;
 
     @Column(length = 50)
-    private String paymentStatus; // WAITING, COMPLETED, CANCELED 등
+    private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
+
+    @Column(length = 50)
+    private PaymentStatus paymentStatus; // WAITING, COMPLETED, CANCELED 등
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -47,8 +56,8 @@ public class Order {
     @Builder
     private Order(User user,
                   Double totalPrice,
-                  String orderStatus,
-                  String paymentStatus) {
+                  OrderStatus orderStatus,
+                  PaymentStatus paymentStatus) {
         this.user = user;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
@@ -60,6 +69,14 @@ public class Order {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void setOrderStatus( OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+    }
+    public void setTotalPrice( double totalPrice){
+        this.totalPrice = totalPrice;
+    }
+
 
     @PreUpdate
     public void onPreUpdate() {

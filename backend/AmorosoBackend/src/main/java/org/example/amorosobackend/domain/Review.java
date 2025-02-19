@@ -70,4 +70,10 @@ public class Review {
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateReview(int newRating, String newContent) {
+        this.rating = newRating;
+        this.content = newContent;
+        this.updatedAt = LocalDateTime.now(); // JPA가 변경을 감지하도록 설정
+    }
 }

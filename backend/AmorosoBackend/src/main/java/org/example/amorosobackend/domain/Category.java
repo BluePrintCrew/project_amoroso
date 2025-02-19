@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.amorosobackend.enums.CategoryCode;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,9 @@ public class Category {
     @Column(nullable = false, length = 100)
     private String categoryName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String categoryCode;
+    private CategoryCode categoryCode;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -38,7 +41,7 @@ public class Category {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Category(String categoryName,String categoryCode, Category parent) {
+    private Category(String categoryName, CategoryCode categoryCode, Category parent) {
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;
         this.parent = parent;

@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.example.amorosobackend.enums.UserRole;
 
 @Entity
 @Table(name = "users")
@@ -39,7 +40,7 @@ public class User {
     private String phoneNumber;
 
     @Column(length = 20)
-    private String role;  // USER, ADMIN 등
+    private UserRole role;  // USER, ADMIN 등
 
     private Boolean isActive;
 
@@ -81,7 +82,7 @@ public class User {
         this.socialId = socialId;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.role = role;
+        this.role = UserRole.valueOf(role);
         // 기본값 설정
         this.isActive = (isActive != null) ? isActive : true;
     }
@@ -104,5 +105,9 @@ public class User {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
+    }
+
+    public boolean isSeller() {
+        return this.role == UserRole.SELLER;
     }
 }

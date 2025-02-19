@@ -28,11 +28,16 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String productName;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
     @Lob
     private String description;  // AI를 이용해 생성된 상세 설명
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
+
+    private String mainImageUri; // 대표 이미지 Uri 나중에 사진 등록 API를 개발할 때 사용해야함
 
 
 
@@ -78,12 +83,14 @@ public class Product {
     private Product(Category category,
                     String productName,
                     String description,
+                    Seller seller,
                     int price,
                     Integer stock,
                     LocalDateTime createdAt) {
         this.category = category;
         this.productName = productName;
         this.description = description;
+        this.seller = seller;
         this.price = price;
         this.stock = stock;
         this.createdAt = createdAt;
@@ -98,5 +105,9 @@ public class Product {
     @PreUpdate
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void setMainImageUri(String mainImageUri) {
+        this.mainImageUri = mainImageUri;
     }
 }
