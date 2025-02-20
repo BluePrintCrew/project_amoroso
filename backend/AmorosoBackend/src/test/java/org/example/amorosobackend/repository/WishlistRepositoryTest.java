@@ -1,6 +1,7 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.*;
+import org.example.amorosobackend.enums.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,9 +56,9 @@ class WishlistRepositoryTest {
                         .user(testUser)
                 .build());
 
-        testCategory = categoryRepository.save(testCategory = Category.builder()
-                .categoryName("testCategoryName")
-                .categoryCode("testCategoryCode")
+        testCategory = categoryRepository.save(Category.builder()
+                .categoryName("소파")
+                .categoryCode(CategoryCode.LIVING_SOFA)  // String 대신 enum 값 직접 사용
                 .build());
         testProduct = productRepository.save(Product.builder()
                 .productName("testProduct")
