@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Header.css";
 import logo from "../../assets/logo.png";
 import search from "../../assets/search.png";
@@ -8,27 +8,23 @@ import cart from "../../assets/cart_button.png";
 import mypage from "../../assets/mypage_button.png";
 
 const Header = () => {
-  const navigate = useNavigate();
-
   const handleSearchClick = () => {
     alert("검색버튼 클릭.");
-  };
-
-  const handleLoginClick = () => {
-    navigate("/login");
   };
 
   return (
     <header className="header">
       <div className="header-content">
         <div className="header-menu">
-          <img src={logo} alt="Logo" className="header-logo" />
-          <a href="/furnishing" className="header-link">
+          <Link to="/">
+            <img src={logo} alt="Logo" className="header-logo" />
+          </Link>
+          <Link to="/furnishing" className="header-link">
             홈퍼니싱
-          </a>
-          <a href="/interior" className="header-link">
+          </Link>
+          <Link to="/interior" className="header-link">
             인테리어
-          </a>
+          </Link>
         </div>
 
         <div className="search-bar">
@@ -46,14 +42,15 @@ const Header = () => {
         </div>
 
         <div className="header-icons">
-          <img
-            src={login}
-            alt="Login"
-            className="login-icon"
-            onClick={handleLoginClick}
-          />
-          <img src={cart} alt="Cart" className="cart-icon" />
-          <img src={mypage} alt="Mypage" className="mypage-icon" />
+          <Link to="/login">
+            <img src={login} alt="Login" className="login-icon" />
+          </Link>
+          <Link to="/cart">
+            <img src={cart} alt="Cart" className="cart-icon" />
+          </Link>
+          <Link to="/mypage">
+            <img src={mypage} alt="Mypage" className="mypage-icon" />
+          </Link>
         </div>
       </div>
 
