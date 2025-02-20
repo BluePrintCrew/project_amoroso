@@ -1,0 +1,23 @@
+.chartContainer{
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title{
+    font-size: 24px;
+}
+
+.subTitle{
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
