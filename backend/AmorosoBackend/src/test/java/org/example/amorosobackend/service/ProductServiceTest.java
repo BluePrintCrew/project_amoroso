@@ -7,6 +7,7 @@ import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.enums.CategoryCode;
+import org.example.amorosobackend.enums.UserRole;
 import org.example.amorosobackend.repository.ProductRepository;
 import org.example.amorosobackend.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -99,6 +100,7 @@ class ProductServiceTest {
         // 유저 생성 - ProductReviewDTO 의 getUser().getName() 을 위함
         User user = User.builder()
                 .name("이현제")
+                .role(UserRole.USER.toString())  // role 필드 추가
                 .build();
 
         // 제품 생성
