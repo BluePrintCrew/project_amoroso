@@ -1,33 +1,32 @@
-.AdminPage {
+.adminPage {
   display: flex;      /* sidebar + main area side by side */
   height: 100vh;      /* fill the vertical screen */
-  margin: 0;          /* no extra margin */
-  padding: 0;
-
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 /* The main column to the right of the sidebar */
-.MainArea {
+.adminContent {
   display: flex;
   flex-direction: column; /* header on top, content below */
-  flex: 1;               /* occupy remaining horizontal space */
+  flex: 1;
+  overflow-y: auto;             /* occupy remaining horizontal space */
+  max-width: calc(100vw - 250px);
 }
 
-/* The main content area, under the header */
-.ContentArea {
+.mainContent{
+  padding: 0 25px;
+
+}
+
+.cardSection{
   display: flex;
-  gap: 16px;
-  padding: 24px;
-  background-color: #fafafa;
-  overflow-y: auto;
-  /* If you want them to wrap if the screen is smaller: */
-  flex-wrap: wrap;
-  width: 128%;
-  height: auto;
+  justify-content: space-between;
+  gap: 25px;
 }
 
-/* Each card gets 25% width so 4 cards fit in one row */
-.ContentArea > div {
-  flex: 0 0 calc(25% - 16px); /* minus gap or so, to ensure they fit nicely */
-  box-sizing: border-box;
+.middleContent{
+  display: flex;
 }
+
+

@@ -6,7 +6,7 @@
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   padding: 0 16px;
-  width: 128%;               /* spans the full width of the parent container */
+  width: 100%;               /* spans the full width of the parent container */
 }
 
 .header-left {
