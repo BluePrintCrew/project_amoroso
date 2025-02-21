@@ -32,7 +32,6 @@ public class UserControllerDTO {
         private String accessToken;
     }
 
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -42,6 +41,29 @@ public class UserControllerDTO {
         private String phoneNumber;
         private String role;
         private String nickname;
+
+        private int availableCoupons;      // 사용 가능한 쿠폰 수
+        private int pendingReviews;        // 작성해야 하는 리뷰 수
+        private int wishlistCount;         // 위시리스트에 담긴 상품 수
+        private int orderCount;            // 총 주문 개수
+        private int cartItemCount;         // 장바구니에 담긴 아이템 수
+
+        private OrderStatusSummary orderStatusSummary; // 주문 상태 요약
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class OrderStatusSummary {
+            private int paymentPending;    // 입금 확인 중 (7)
+            private int paymentCompleted;  // 결제 완료 (5)
+            private int preparingShipment; // 배송 준비 중 (4)
+            private int shipping;          // 배송 중 (1)
+            private int delivered;         // 배송 완료 (0)
+
+            private int cancelled;         // 취소 (1)
+            private int returned;          // 반품 (0)
+            private int exchanged;         // 교환 (0)
+        }
     }
 
     @Data
