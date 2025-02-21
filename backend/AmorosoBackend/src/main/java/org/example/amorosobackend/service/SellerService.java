@@ -20,9 +20,9 @@ public class SellerService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long sellerId = getSellerIdByEmail(email);
 
-        Long paidOrders = orderRepository.countPaidOrdersBySeller(sellerId, PaymentStatus.COMPLETED, OrderStatus.PAID);
-        Long readyShipments = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.PAID);
-        Long inTransitOrders = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.SHIPPED);
+        Long paidOrders = orderRepository.countPaidOrdersBySeller(sellerId, PaymentStatus.COMPLETED, OrderStatus.PAYMENT_COMPLETED);
+        Long readyShipments = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.PAYMENT_COMPLETED);
+        Long inTransitOrders = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.DELIVERED);
 
         return new SellerDTO.SellerStatsResponse(paidOrders, readyShipments, inTransitOrders);
     }

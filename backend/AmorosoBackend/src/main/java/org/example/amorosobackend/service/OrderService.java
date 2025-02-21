@@ -40,7 +40,7 @@ public class OrderService {
 
         Order order = Order.builder()
                 .user(user)
-                .orderStatus(OrderStatus.PENDING)
+                .orderStatus(OrderStatus. PAYMENT_PENDING)
                 .paymentStatus(PaymentStatus.WAITING)
                 .build();
 

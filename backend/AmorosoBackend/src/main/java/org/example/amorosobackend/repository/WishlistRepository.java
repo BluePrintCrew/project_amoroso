@@ -13,4 +13,8 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     List<Wishlist> findByUser(User user);
     Optional<Wishlist> findByUserAndProduct(User user, Product product);
     void deleteByUserAndProduct(User user, Product product);
+
+
+    int countByUser(User user);
+    // select Count(*) from wishlist.w where w.user_id = user_id
 }
