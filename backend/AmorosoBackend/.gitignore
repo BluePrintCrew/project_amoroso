@@ -38,4 +38,11 @@ out/
 
 ### uploaded Images ###
 images/*
-!.gitkeep
+!.gitkeep*.mv.db
+*.trace.db
+*.mv.db
+*.trace.db
+.gradle/
+build/
+out/
+logs/
