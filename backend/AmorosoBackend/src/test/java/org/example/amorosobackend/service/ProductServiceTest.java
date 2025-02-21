@@ -6,6 +6,7 @@ import org.example.amorosobackend.domain.Product;
 import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.ProductControllerDTO;
+import org.example.amorosobackend.enums.CategoryCode;
 import org.example.amorosobackend.repository.ProductRepository;
 import org.example.amorosobackend.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -44,8 +45,8 @@ class ProductServiceTest {
     // Given(Mock 데이터 설정)
         Long categoryId = 1L;
         Category categoryTest = Category.builder()
-                .categoryName("TestCateGory")
-                .categoryCode("12345")
+                .categoryName("소파")
+                .categoryCode(CategoryCode.LIVING_SOFA)  // String 대신 enum 값 직접 사용
                 .build();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "price"));
 
@@ -91,8 +92,8 @@ class ProductServiceTest {
         //given
         //카테고리 생성
         Category categoryTest = Category.builder()
-                .categoryName("TestCateGory")
-                .categoryCode("12345")
+                .categoryName("소파")
+                .categoryCode(CategoryCode.LIVING_SOFA)  // String 대신 enum 값 직접 사용
                 .build();
 
         // 유저 생성 - ProductReviewDTO 의 getUser().getName() 을 위함

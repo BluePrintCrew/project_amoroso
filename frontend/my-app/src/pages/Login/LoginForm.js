@@ -55,6 +55,7 @@ const LoginForm = () => {
             <p className="social-login-title">간편 로그인</p>
             <div className="social-login-buttons">
               <button
+                type="button"
                 onClick={() =>
                   (window.location.href =
                     "http://localhost:8080/oauth2/authorize/kakao")
@@ -64,6 +65,7 @@ const LoginForm = () => {
                 <img src={kakao} alt="카카오 로그인" />
               </button>
               <button
+                type="button"
                 onClick={() =>
                   (window.location.href =
                     "http://localhost:8080/oauth2/authorize/naver")
@@ -73,6 +75,7 @@ const LoginForm = () => {
                 <img src={naver} alt="네이버 로그인" />
               </button>
               <button
+                type="button"
                 onClick={() =>
                   (window.location.href =
                     "http://localhost:8080/oauth2/authorize/google")
