@@ -38,4 +38,5 @@ out/
 
 ### uploaded Images ###
 images/*
-!.gitkeep
+!.gitkeep*.mv.db
+*.trace.db
