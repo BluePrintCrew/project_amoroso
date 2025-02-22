@@ -38,4 +38,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("orderStatus") OrderStatus orderStatus
     );
 
+    int countByUser(User user);
+
+    int countByUserAndOrderStatus(User user, OrderStatus paymentPending);
 }

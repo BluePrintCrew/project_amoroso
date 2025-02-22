@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.controller.UserController;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.*;
-import org.example.amorosobackend.repository.UserRepository;
+import org.example.amorosobackend.enums.OrderStatus;
+import org.example.amorosobackend.repository.*;
 import org.example.amorosobackend.security.JwtProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,11 @@ import org.example.amorosobackend.dto.UserControllerDTO.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserCouponRepository usercouponRepository;
+    private final ReviewRepository reviewRepository;
+    private final WishlistRepository wishlistRepository;
+    private final OrderRepository orderRepository;
+    private final CartItemRepository cartItemRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
@@ -58,7 +64,29 @@ public class UserService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole().name(), user.getNickname());
+        int availableCoupons = usercouponRepository.countByUserAndIsAvailable(user, true);
+        int pendingReviews = reviewRepository.countPendingReviews(user);
+        int wishlistCount = wishlistRepository.countByUser(user);
+        int orderCount = orderRepository.countByUser(user);
+        int cartItemCount = cartItemRepository.countByUser(user);
+
+
+
+        UserProfileResponse.OrderStatusSummary orderStatusSummary = new UserProfileResponse.OrderStatusSummary(
+                orderRepository.countByUserAndOrderStatus(user,OrderStatus.PAYMENT_PENDING),  // 7
+                orderRepository.countByUserAndOrderStatus(user,OrderStatus.PAYMENT_COMPLETED),// 5
+                orderRepository.countByUserAndOrderStatus(user,OrderStatus.PREPARING_SHIPMENT),// 4
+                orderRepository.countByUserAndOrderStatus(user,OrderStatus.PREPARING_SHIPMENT),         // 1
+                orderRepository.countByUserAndOrderStatus(user,OrderStatus.DELIVERED),        // 0
+
+                orderRepository.countByUserAndOrderStatus(user, OrderStatus.CANCELLED),        // 1
+                orderRepository.countByUserAndOrderStatus(user, OrderStatus.RETURNED),         // 0
+                orderRepository.countByUserAndOrderStatus(user, OrderStatus.EXCHANGED)         // 0
+        );
+
+
+        return new UserProfileResponse(user.getEmail(), user.getName(), user.getPhoneNumber(), user.getRole().name(), user.getNickname(),
+                availableCoupons,pendingReviews,wishlistCount,orderCount,cartItemCount, orderStatusSummary);
     }
 
     public void updateUserProfile(UserControllerDTO.UserUpdateRequest request) {
