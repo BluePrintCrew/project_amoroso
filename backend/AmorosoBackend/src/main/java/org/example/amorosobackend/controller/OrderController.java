@@ -4,7 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.OrderControllerDTO;
+import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -69,4 +74,15 @@ public class OrderController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();  // SecurityContext에서 email 가져오기
     }
+
+    @GetMapping("/reviewable-items")
+    @Operation(description = "사용자가 주문한 모든 아이템 중 리뷰를 작성할 수 있는 상품 조회 (최신순 페이징)")
+    public ResponseEntity<Page<ReviewDTO.ReviewableProduct>> getAllReviewableProducts(
+            @RequestParam Long userId,
+            @PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<ReviewDTO.ReviewableProduct> reviewableProducts = orderService.getAllReviewableProducts(userId, pageable);
+        return ResponseEntity.ok(reviewableProducts);
+    }
+
 }

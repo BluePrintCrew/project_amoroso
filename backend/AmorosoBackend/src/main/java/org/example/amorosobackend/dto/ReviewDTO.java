@@ -1,9 +1,7 @@
 package org.example.amorosobackend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,5 +39,17 @@ public class ReviewDTO {
         private String content;
         private List<String> imageUrls;
         private LocalDateTime createdAt;
+    }
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewableProduct{
+        private Long productId;
+        private String productName;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime orderDate;
+        private boolean isReviewable;
+        private String mainImageUri;
+
     }
 }

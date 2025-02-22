@@ -28,4 +28,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT COUNT(r) FROM Review r WHERE r.user = :user AND r.rating IS NULL")
     int countPendingReviews(@Param("user") User user);
+
+    boolean existsByUserAndProduct(User user, Product product);
 }

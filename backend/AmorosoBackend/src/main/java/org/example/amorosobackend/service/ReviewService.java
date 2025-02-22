@@ -1,10 +1,12 @@
 package org.example.amorosobackend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.domain.Product;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.ReviewDTO;
+import org.example.amorosobackend.repository.OrderRepository;
 import org.example.amorosobackend.repository.ReviewRepository;
 import org.example.amorosobackend.repository.ProductRepository;
 import org.example.amorosobackend.repository.UserRepository;
@@ -25,6 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     //
     public ReviewDTO.Response createReview(ReviewDTO.CreateRequest request) {
@@ -103,4 +106,5 @@ public class ReviewService {
                 review.getCreatedAt()
         );
     }
+
 }

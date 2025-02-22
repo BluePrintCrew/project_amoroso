@@ -2,10 +2,12 @@ package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.repository.OrderItemRepository;
-import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.dto.ReviewDTO;
+import org.example.amorosobackend.repository.*;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -13,8 +15,6 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.Order;
 import org.example.amorosobackend.domain.User;
-import org.example.amorosobackend.repository.OrderRepository;
-import org.example.amorosobackend.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
     private final OrderItemRepository orderItemRepository;
 
 
@@ -51,7 +52,7 @@ public class OrderService {
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
             return OrderItem.builder()
-                    .order(savedOrder) // ✅ 해결: final 변수를 사용
+                    .order(savedOrder) // 해결: final 변수를 사용
                     .product(product)
                     .quantity(itemDTO.getQuantity())
                     .unitPrice(product.getPrice())
@@ -119,5 +120,25 @@ public class OrderService {
         } catch (IllegalArgumentException | NullPointerException e) {
             return null; // 잘못된 값이면 null 반환
         }
+    }
+
+    public Page<ReviewDTO.ReviewableProduct> getAllReviewableProducts(Long userId, Pageable pageable) {
+        // 사용자의 모든 주문 아이템 조회 (페이징)
+        Page<OrderItem> orderItems = orderItemRepository.findByUserId(userId, pageable);
+
+        return orderItems.map(orderItem -> {
+            boolean hasReview = reviewRepository.existsByUserAndProduct(
+                    orderItem.getOrder().getUser(),
+                    orderItem.getProduct()
+            );
+
+            return new ReviewDTO.ReviewableProduct(
+                    orderItem.getProduct().getProductId(),
+                    orderItem.getProduct().getProductName(),
+                    orderItem.getOrder().getCreatedAt(),
+                    !hasReview, // 리뷰 가능 여부
+                    orderItem.getProduct().getPrimaryImage().getImageUrl()
+            );
+        });
     }
 }
