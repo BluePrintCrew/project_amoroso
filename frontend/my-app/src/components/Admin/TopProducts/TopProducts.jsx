@@ -48,6 +48,32 @@ const TopProducts = () => {
           <option>연 기준</option>
         </select>
       </div>
+
+      <ul className={styles.productList}>
+        {topProducts.map((product) => (
+          <li key={product.id} className={styles.productItem}>
+            <div className={styles.productInfo}>
+              <div className={styles.imagePlaceholder} />
+              <div>
+                <p className={styles.productName}>{product.name}</p>
+                <p className={styles.category}>{product.category}</p>
+              </div>
+            </div>
+            <div className={styles.productMeta}>
+              <div className={styles.code}>
+                <p className={styles.codeHeader}>상품 코드</p>
+                <span className={styles.productCode}>{product.code}</span>
+              </div>
+              <div className={styles.price}>
+                <p className={styles.priceHeader}>상품 가격</p>
+                <span className={styles.productPrice}>
+                  {product.price.toLocaleString()}원
+                </span>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

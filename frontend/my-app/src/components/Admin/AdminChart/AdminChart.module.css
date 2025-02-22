@@ -10,6 +10,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 10px;
+}
+
+.dropdown{
+    padding: 5px 10px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .title{
@@ -19,5 +27,5 @@
 .subTitle{
     color: #666;
     font-size: 18px;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
 }

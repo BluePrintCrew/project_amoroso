@@ -41,8 +41,12 @@ function AdminPage() {
             </div>
           </div>
           <div className={styles.middleContent}>
-            <AdminChart />
-            <TopProducts />
+            <div className={styles.chartContainer}>
+              <AdminChart />
+            </div>
+            <div className={styles.productContainer}>
+              <TopProducts />
+            </div>
           </div>
         </div>
       </div>

@@ -27,6 +27,20 @@
 
 .middleContent{
   display: flex;
+  gap: 25px;
+  justify-content: space-between;
+  align-items: stretch;
 }
+
+.chartContainer{
+  flex: 6;
+  display: flex;
+}
+
+.productContainer{
+  flex: 4;
+  display: flex;
+}
+
 
 
