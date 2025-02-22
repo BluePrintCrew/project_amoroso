@@ -25,12 +25,12 @@ public class UserAddress {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private String addressLine1;
+    private String postalCode; // 우편번호
 
-    private String addressLine2;
-    private String city;
-    private String state;
-    private String postalCode;
+    @Column(nullable = false)
+    private String address; // 기본 주소 (도로명 주소 또는 지번 주소)
+
+    private String detailAddress; // 상세 주소 (건물명, 동호수 등)
 
     private Boolean isDefault;
 
@@ -38,23 +38,19 @@ public class UserAddress {
     private LocalDateTime updatedAt;
 
     @Builder
-    private UserAddress(User user,
-                        String recipientName,
-                        String phoneNumber,
-                        String addressLine1,
-                        String addressLine2,
-                        String city,
-                        String state,
-                        String postalCode,
-                        Boolean isDefault) {
+    public UserAddress(User user,
+                       String recipientName,
+                       String phoneNumber,
+                       String postalCode,
+                       String address,
+                       String detailAddress,
+                       Boolean isDefault) {
         this.user = user;
         this.recipientName = recipientName;
         this.phoneNumber = phoneNumber;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.city = city;
-        this.state = state;
         this.postalCode = postalCode;
+        this.address = address;
+        this.detailAddress = detailAddress;
         this.isDefault = (isDefault != null) ? isDefault : false;
     }
 

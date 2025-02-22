@@ -71,8 +71,20 @@ public class UserControllerDTO {
     @AllArgsConstructor
     public static class UserUpdateRequest {
         private String name;
+        private String email;
+        private String birthDate; // YYYY-MM-DD 형식의 문자열로 저장 (프론트에서 변환)
         private String phoneNumber;
-        private String nickname;
+
+        // 주소 정보
+        private String postalCode;
+        private String address;
+        private String detailAddress;
+
+        // 마케팅 동의 관련 필드
+        private Boolean emailConsent;
+        private Boolean smsConsent;
+        private Boolean dmConsent;
+        private Boolean locationConsent;
     }
 
     @Data

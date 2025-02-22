@@ -46,6 +46,13 @@ public class User {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime birthDate;
+
+    // 마케팅 및 위치정보 동의
+    private Boolean emailConsent;     // 이메일 동의
+    private Boolean smsConsent;       // SMS 동의
+    private Boolean dmConsent;        // DM 동의
+    private Boolean locationConsent;  // 위치정보 제공 동의
 
     // --- 연관관계 매핑 ---
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,7 +82,11 @@ public class User {
                  String name,
                  String phoneNumber,
                  String role,
-                 Boolean isActive) {
+                 Boolean isActive,
+                 Boolean emailConsent,
+                 Boolean smsConsent,
+                 Boolean dmConsent,
+                 Boolean locationConsent) {
         this.email = email;
         this.password = password;
         this.socialProvider = socialProvider;
@@ -85,6 +96,10 @@ public class User {
         this.role = UserRole.valueOf(role);
         // 기본값 설정
         this.isActive = (isActive != null) ? isActive : true;
+        this.emailConsent = (emailConsent != null) ? emailConsent : false;
+        this.smsConsent = (smsConsent != null) ? smsConsent : false;
+        this.dmConsent = (dmConsent != null) ? dmConsent : false;
+        this.locationConsent = (locationConsent != null) ? locationConsent : false;
     }
 
     @PrePersist
