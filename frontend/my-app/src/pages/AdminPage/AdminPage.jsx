@@ -4,6 +4,7 @@ import AdminCard from '../../components/Admin/AdminCard/AdminCard';
 import AdminChart from '../../components/Admin/AdminChart/AdminChart';
 import AdminHeader from '../../components/Admin/AdminHeader/AdminHeader';
 import AdminSidebar from '../../components/Admin/AdminSidebar/AdminSidebar';
+import OrderTable from '../../components/Admin/OrderTable/OrderTable';
 import TopProducts from '../../components/Admin/TopProducts/TopProducts';
 import styles from './AdminPage.module.css';
 
@@ -47,6 +48,9 @@ function AdminPage() {
             <div className={styles.productContainer}>
               <TopProducts />
             </div>
+          </div>
+          <div className={styles.bottomContent}>
+            <OrderTable />
           </div>
         </div>
       </div>

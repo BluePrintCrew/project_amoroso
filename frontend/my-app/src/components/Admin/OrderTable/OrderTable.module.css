@@ -1,0 +1,64 @@
+.container{
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.title{
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.orderTable{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orderTable th, .orderTable td{
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+.orderTable th{
+    border-top: 2px solid #766e68;
+}
+
+.statusTag{
+    padding: 6px 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.paymentComplete{
+    color: green;
+}
+
+.paymentFailed{
+    color: red;
+}
+
+.statusPending{
+    background: #666;
+    color: white;
+}
+
+.statusConfirmed{
+    background: #FFD87C;
+}
+
+.statusShipping{
+    background: #0064ff;
+    color: white;
+}
+
+.statusDelivered{
+    background: #00940f;
+    color: white;
+}
+
+.statusCanceled{
+    background: #ff3c3c;
+    color: white;
+}
