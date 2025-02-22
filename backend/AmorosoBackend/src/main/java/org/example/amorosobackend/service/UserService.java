@@ -2,7 +2,6 @@ package org.example.amorosobackend.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.controller.UserController;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.*;
 import org.example.amorosobackend.enums.OrderStatus;
@@ -64,7 +63,7 @@ public class UserService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        int availableCoupons = usercouponRepository.countByUserAndIsAvailable(user, true);
+        int availableCoupons = usercouponRepository.countByUserAndIsUsed(user, true);
         int pendingReviews = reviewRepository.countPendingReviews(user);
         int wishlistCount = wishlistRepository.countByUser(user);
         int orderCount = orderRepository.countByUser(user);

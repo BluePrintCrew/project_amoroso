@@ -74,6 +74,7 @@ public class UserControllerDTO {
         private String email;
         private String birthDate; // YYYY-MM-DD 형식의 문자열로 저장 (프론트에서 변환)
         private String phoneNumber;
+        private String nickname;
 
         // 주소 정보
         private String postalCode;

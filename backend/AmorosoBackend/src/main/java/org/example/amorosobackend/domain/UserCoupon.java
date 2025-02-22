@@ -23,23 +23,23 @@ public class UserCoupon {
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon;
 
-    private boolean isAvailable; // 쿠폰 사용 여부
+    private boolean isUsed; // 쿠폰 사용 여부
 
     private LocalDateTime issuedAt; // 쿠폰 발급일
     private LocalDateTime expiredAt; // 쿠폰 만료일
     @Builder
-    public UserCoupon(User user, Coupon coupon, boolean isAvailable) {
+    public UserCoupon(User user, Coupon coupon, boolean isUsed) {
         this.user = user;
         this.coupon = coupon;
-        this.isAvailable = isAvailable;
+        this.isUsed = isUsed;
         this.issuedAt = LocalDateTime.now();
     }
 
     public void useCoupon() {
-        this.isAvailable = false;
+        this.isUsed = false;
     }
     public void updateAvailability() {
         // 만료되었거나 사용된 경우 false, 그렇지 않으면 true
-        this.isAvailable = expiredAt == null || expiredAt.isAfter(LocalDateTime.now());
+        this.isUsed = expiredAt == null || expiredAt.isAfter(LocalDateTime.now());
     }
 }

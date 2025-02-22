@@ -37,7 +37,7 @@ public class UserCouponService {
         UserCoupon userCoupon = UserCoupon.builder()
                 .user(user)
                 .coupon(coupon)
-                .isAvailable(true)
+                .isUsed(false)
                 .build();
 
         userCouponRepository.save(userCoupon);
@@ -58,7 +58,7 @@ public class UserCouponService {
         UserCoupon userCoupon = userCouponRepository.findById(userCouponId)
                 .orElseThrow(() -> new IllegalArgumentException("UserCoupon not found"));
 
-        if (userCoupon.isAvailable()) {
+        if (userCoupon.isUsed()) {
             throw new IllegalStateException("Coupon has already been used.");
         }
 

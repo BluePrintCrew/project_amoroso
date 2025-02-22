@@ -52,7 +52,7 @@ class UserCouponRepositoryTest {
         UserCoupon userCoupon = UserCoupon.builder()
                 .user(user)
                 .coupon(coupon)
-                .isAvailable(true)
+                .isUsed(true)
                 .build();
         userCouponRepository.save(userCoupon);
 

@@ -18,7 +18,7 @@ public class UserCouponDTO {
     public UserCouponDTO(UserCoupon userCoupon) {
         this.userCouponId = userCoupon.getUserCouponId();
         this.couponName = userCoupon.getCoupon().getName();
-        this.isUsed = userCoupon.isAvailable();
+        this.isUsed = userCoupon.isUsed();
         this.issuedAt = userCoupon.getIssuedAt();
     }
 }
