@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.example.amorosobackend.enums.UserRole;
@@ -116,10 +119,19 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateProfile(String name, String phoneNumber, String nickname) {
+    public void updateProfile(String name, String email, String brithDate, String phoneNumber,
+                             Boolean emailConsent, Boolean smsConsent, Boolean dmConsent, Boolean locationConsent) {
+
+
         this.name = name;
+        this.email = email;
+        this.birthDate = LocalDateTime.parse(brithDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.phoneNumber = phoneNumber;
-        this.nickname = nickname;
+        this.emailConsent = emailConsent;
+        this.smsConsent = smsConsent;
+        this.dmConsent = dmConsent;
+        this.locationConsent = locationConsent;
+
     }
 
     public boolean isSeller() {
