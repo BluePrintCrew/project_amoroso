@@ -9,6 +9,6 @@ import java.util.List;
 public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
     List<UserCoupon> findByUser(User user);
 
-    int countByUserAndIsAvailable(User user, boolean b);
+    int countByUserAndIsUsed(User user, boolean b);
 
 }
