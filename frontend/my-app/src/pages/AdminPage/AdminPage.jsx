@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-
 import AdminCard from '../../components/Admin/AdminCard/AdminCard';
 import AdminChart from '../../components/Admin/AdminChart/AdminChart';
 import OrderTable from '../../components/Admin/OrderTable/OrderTable';
