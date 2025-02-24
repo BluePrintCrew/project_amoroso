@@ -133,6 +133,16 @@ public class User {
         this.locationConsent = locationConsent;
 
     }
+    public void addAddress(UserAddress address) {
+        this.addresses.add(address);
+    }
+
+    public void removeAddress(UserAddress address) {
+        this.addresses.remove(address);
+    }
+    public boolean canAddMoreAddresses() {
+        return this.addresses.size() < 3;
+    }
 
     public boolean isSeller() {
         return this.role == UserRole.SELLER;

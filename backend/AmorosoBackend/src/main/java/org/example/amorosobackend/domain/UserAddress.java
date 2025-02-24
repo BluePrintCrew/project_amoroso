@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.amorosobackend.enums.ElevatorType;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,12 @@ public class UserAddress {
     private String detailAddress; // 상세 주소 (건물명, 동호수 등)
 
     private Boolean isDefault;
+    private Boolean freeLoweringService;
+    private Boolean productInstallationAgreement;
+    private Boolean vehicleEntryPossible;
+
+    @Enumerated(EnumType.STRING)
+    private ElevatorType elevatorType;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -66,5 +73,11 @@ public class UserAddress {
     @PreUpdate
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateAddress(String postalCode, String address, String detailAddress) {
+        this.postalCode = postalCode;
+        this.detailAddress = detailAddress;
+        this.address =address;
     }
 }

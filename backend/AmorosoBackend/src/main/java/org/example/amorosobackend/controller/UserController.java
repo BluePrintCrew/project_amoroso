@@ -3,7 +3,9 @@ package org.example.amorosobackend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.example.amorosobackend.domain.UserAddress;
 import org.example.amorosobackend.dto.*;
+import org.example.amorosobackend.service.UserAddressService;
 import org.example.amorosobackend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.example.amorosobackend.dto.UserControllerDTO.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserAddressService userAddressService;
 
     @PostMapping("/register")
     @Operation(description = "소셜로그인 아님 - 추후 필요 시 적용")
@@ -51,6 +54,7 @@ public class UserController {
     @PutMapping("/users/me")
     public ResponseEntity<ApiResponse> updateUserProfile(@RequestBody UserUpdateRequest request) {
         userService.updateUserProfile(request);
+        userAddressService.updateUserAddress(request);
         ApiResponse profileUpdatedSuccessfully = new ApiResponse("Profile updated successfully");
         return ResponseEntity.ok(profileUpdatedSuccessfully);
     }
