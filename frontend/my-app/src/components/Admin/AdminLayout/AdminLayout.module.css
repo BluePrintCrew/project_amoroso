@@ -1,0 +1,18 @@
+.adminPage {
+    display: flex;      /* sidebar + main area side by side */
+    height: 100vh;      /* fill the vertical screen */
+    width: 100vw;
+    overflow-x: hidden;
+  }
+
+.adminContent {
+    display: flex;
+    flex-direction: column; /* header on top, content below */
+    flex: 1;
+    overflow-y: auto;             /* occupy remaining horizontal space */
+    max-width: calc(100vw - 250px);
+}
+
+.mainContent{
+    padding: 0 25px;
+  }
