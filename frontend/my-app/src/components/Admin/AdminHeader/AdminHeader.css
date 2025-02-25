@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between; 
   align-items: center;
-  height: 60px;              /* or whatever fits your design */
+  height: 150px;              /* or whatever fits your design */
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   padding: 0 16px;
