@@ -1,0 +1,137 @@
+.container{
+    width: 100%;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.topContent{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.title{
+    font-size: 24px;
+}
+
+.filterSection{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.dropdown{
+    text-align: left;
+    padding: 7px 5px;
+    border: 1px solid #eeeeee;
+}
+
+.searchBoxContainer{
+    display: flex;
+    align-items: center;
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+}
+
+.searchBox{
+    flex: 1;
+    padding: 7px 5px;
+    border: none;
+    outline: none;
+}
+
+.searchButton{
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+}
+
+.searchButton img{
+    width: 15px;
+    height: 15px;
+}
+
+.showAll{
+    width: 75px;
+    height: 35px;
+    background: #766e68;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.addProduct{
+    width: 75px;
+    height: 35px;
+    background: #00940f;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.productTable{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.productTable th, .productTable td{
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #e2e2e2;
+    font-size: 14px;
+}
+
+.productTable th{
+    font-size: 16px;
+    border-top: 2px solid #766e68;
+}
+
+.productInfo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.imagePlaceholder{
+    width: 50px;
+    height: 50px;
+    background: #d9d9d9;
+}
+
+.statusTag{
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.active{
+    background: #00940f;
+    color: white;
+}
+
+.inactive{
+    background: #666666;
+    color: white;
+}
+
+.buttonSection{
+    gap: 10px;
+}
+
+.actionBtn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
