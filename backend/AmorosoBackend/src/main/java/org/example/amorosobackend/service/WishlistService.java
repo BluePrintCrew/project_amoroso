@@ -4,14 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.Wishlist;
 import org.example.amorosobackend.repository.WishlistRepository;
 import org.springframework.stereotype.Service;
-import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.domain.Wishlist;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.repository.UserRepository;
-import org.example.amorosobackend.repository.ProductRepository;
-import org.example.amorosobackend.repository.WishlistRepository;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;

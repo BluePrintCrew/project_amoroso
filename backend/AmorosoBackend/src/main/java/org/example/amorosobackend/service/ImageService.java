@@ -1,18 +1,15 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.ProductImage;
 import org.example.amorosobackend.dto.ImageControllerDTO;
-import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.repository.ProductImageRepository;
-import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
 import java.util.UUID;
 
 

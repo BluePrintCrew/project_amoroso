@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.ImageControllerDTO;
-import org.example.amorosobackend.dto.ProductControllerDTO;
 import org.example.amorosobackend.service.ImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;

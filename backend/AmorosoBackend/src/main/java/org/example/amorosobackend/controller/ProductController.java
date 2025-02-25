@@ -2,18 +2,13 @@ package org.example.amorosobackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.Category;
-import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.dto.ProductControllerDTO;
-import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.service.CategoryService;
 import org.example.amorosobackend.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -33,7 +28,7 @@ public class ProductController {
 
     @GetMapping("/")
     @Operation(description = "제품 목록 API")
-    public ResponseEntity<ProductControllerDTO.ProductListResponse> getProducts(
+    public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
             @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) String sortBy,
@@ -44,22 +39,50 @@ public class ProductController {
         Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
 
         // Product 리스트 조회
-        ProductControllerDTO.ProductListResponse products =
+        ProductDTO.ProductListResponse products =
                 productService.getProducts(byCategoryCode.getCategoryId(), page, size, sortBy, order);
 
         // ResponseEntity로 반환
         return ResponseEntity.ok(products);
     }
 
+    /**
+     * 단일 상품 상세 API
+     */
     @GetMapping("/{productId}")
-    @Operation(description = "제품 상세 API")
-    public ResponseEntity<ProductControllerDTO.ProductInfoDetailDTO> getProductDetail(@PathVariable Long productId) {
-        ProductControllerDTO.ProductInfoDetailDTO productDetail = productService.getProductDetail(productId);
+    @Operation(summary = "제품 상세 조회", description = "productId로 특정 제품 상세 정보를 반환합니다.")
+    public ResponseEntity<ProductDTO.ProductInfoDetailDTO> getProductDetail(@PathVariable Long productId) {
+        ProductDTO.ProductInfoDetailDTO productDetail = productService.getProductDetail(productId);
         return ResponseEntity.ok(productDetail);
     }
 
+    /**
+     * 상품 등록 API (ADMIN, SELLER 권한)
+     */
+    @PostMapping("/")
+    @Operation(summary = "상품 등록", description = "관리자 또는 판매자 권한만 상품을 등록할 수 있습니다.")
+    public ResponseEntity<Long> createProduct(@RequestBody ProductDTO.Create dto) {
+        Long productId = productService.createProduct(dto);
+        return ResponseEntity.ok(productId);
+    }
 
-
-
-
+    /**
+     * 상품 수정 API (ADMIN, SELLER 권한)
+     */
+    @PutMapping("/{productId}")
+    @Operation(summary = "상품 수정", description = "productId에 해당하는 상품 정보를 수정합니다. 관리자 또는 판매자 권한이 필요합니다.")
+    public ResponseEntity<Long> updateProduct(
+            @PathVariable Long productId,
+            @RequestBody ProductDTO.Update dto
+    ) {
+        // DTO에 productId 세팅
+        dto.setProductId(productId);
+        Long updatedId = productService.updateProduct(dto);
+        return ResponseEntity.ok(updatedId);
+    }
 }
+
+
+
+
+

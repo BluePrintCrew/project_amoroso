@@ -1,11 +1,12 @@
 package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.OrderItem;
-import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.repository.*;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

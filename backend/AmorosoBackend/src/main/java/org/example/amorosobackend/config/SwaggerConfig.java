@@ -21,10 +21,11 @@ public class SwaggerConfig {
                                                 new Info()
                                                         .title("amorosoAPI") // API 제목
                                                         .description("my API") // API 설명
-                                                        .version("1.0.5") // API 버전
+                                                        .version("1.0.4") // API 버전
                                         )
                 )
                 .build();
     }
 }
 /// 1.0.3 : 장바구니 로직추가
+/// 1.0.4 : 상품등록 통합테스트
