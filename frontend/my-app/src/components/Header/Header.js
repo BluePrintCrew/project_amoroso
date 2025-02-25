@@ -54,7 +54,7 @@ const Header = () => {
         </div>
       </div>
 
-      <hr />
+
     </header>
   );
 };
