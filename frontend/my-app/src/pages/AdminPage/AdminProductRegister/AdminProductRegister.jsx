@@ -15,23 +15,23 @@ function AdminProductRegister() {
   const [discount, setDiscount] = useState("");
 
   // 새로 추가된 필드
-  const [maker, setMaker] = useState("");               
-  const [origin, setOrigin] = useState("");             
-  const [basicDesc, setBasicDesc] = useState("");       
-  const [color, setColor] = useState("");               
-  const [components, setComponents] = useState("");     
-  const [material, setMaterial] = useState("");         
-  const [manufactureCountry, setManufactureCountry] = useState(""); 
-  const [asTel, setAsTel] = useState("");               
+  const [maker, setMaker] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [basicDesc, setBasicDesc] = useState("");
+  const [color, setColor] = useState("");
+  const [components, setComponents] = useState("");
+  const [material, setMaterial] = useState("");
+  const [manufactureCountry, setManufactureCountry] = useState("");
+  const [asTel, setAsTel] = useState("");
 
-  // 상품 품절 여부: 라디오 2개로 ("selling" / "soldOut")
+  // 상품 품절 여부 (라디오: "selling" 또는 "soldOut")
   const [productStatus, setProductStatus] = useState("selling");
 
-  // 재고관련
-  const [stock, setStock] = useState("");             
-  const [stockNotify, setStockNotify] = useState(""); 
-  const [minPurchase, setMinPurchase] = useState(""); 
-  const [maxPurchase, setMaxPurchase] = useState(""); 
+  // 재고 관련
+  const [stock, setStock] = useState("");
+  const [stockNotify, setStockNotify] = useState("");
+  const [minPurchase, setMinPurchase] = useState("");
+  const [maxPurchase, setMaxPurchase] = useState("");
 
   // (3) 이미지 등록
   const [mainImage, setMainImage] = useState(null);
@@ -54,40 +54,109 @@ function AdminProductRegister() {
     alert("임시 저장되었습니다!");
   };
 
-  // 폼 제출 (등록하기)
-  const handleRegister = (e) => {
-    e.preventDefault();
-    const productData = {
-      // 1) 카테고리
-      category1, category2,
-
-      // 2) 기존 기본 정보
-      productCode, brand, modelName, price, cost, discount,
-
-      // 새로 추가된 기본 정보
-      maker, origin, basicDesc, color, components, material, manufactureCountry,
-      asTel,
-      productStatus, // 라디오 (판매중 / 품절)
-      stock, stockNotify, minPurchase, maxPurchase,
-
-      // 3) 이미지
-      mainImage,
-      subImages, // multiple files
-
-      // 4) 옵션
-      options,
-
-      // 5) 상세설명
-      description,
-
-      // 6) 배송 (shippingFee)
-      shippingFee,
-
-      // 7) 추가 항목 (쿠폰만 남기고 태그 제거)
-      coupon
+  // 폼 데이터 → 백엔드 API에 맞는 payload로 변환
+  const transformPayload = () => {
+    return {
+      // 카테고리: 필요한 경우 두 값을 합쳐서 처리
+      categoryCode: `${category1}-${category2}`,
+      productCode: productCode,
+      brand: brand,
+      productName: modelName,
+      price: Number(price),
+      costPrice: Number(cost),
+      discount: Number(discount),
+      manufacturer: maker,
+      origin: origin,
+      // 기본 설명을 간단 설명으로 사용 (상세설명은 별도 필드로 추가 가능)
+      description: basicDesc,
+      color: color,
+      components: components,
+      material: material,
+      // 제조국, A/S 전화번호 등 추가 정보
+      size: "", // 필요시 추가
+      shippingInstallationFee: Number(shippingFee),
+      asPhoneNumber: asTel,
+      // 예시로 marketPrice는 원가와 할인율을 고려하여 계산
+      marketPrice: Number(cost) * (discount ? (100 - Number(discount)) / 100 : 1),
+      // 품절 여부: "soldOut"이면 true 처리
+      outOfStock: productStatus === "soldOut",
+      stock: Number(stock),
+      stockNotificationThreshold: Number(stockNotify),
+      // 최소/최대 구매 수량 (API 스키마에 맞게 조정)
+      minPurchase: Number(minPurchase),
+      maxPurchase: Number(maxPurchase),
+      // 옵션 정보: 각 옵션의 값은 배열로 변환
+      productOptions: options.map(opt => ({
+        optionName: opt.optionName,
+        optionValues: [opt.optionValue]
+      })),
+      additionalOptions: [], // 추후 추가 가능
+      // 쿠폰 적용 여부
+      couponApplicable: coupon ? true : false
     };
-    console.log("등록할 데이터:", productData);
-    alert("등록 완료!");
+  };
+
+  // 이미지 업로드 함수 (메인/서브 이미지 모두 처리)
+  const uploadImage = async (imageFile, productId, isMainImage) => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    formData.append("metadata", JSON.stringify({ productId, isMainImage }));
+
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/images/upload", {
+        method: "POST",
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error("이미지 업로드 실패");
+      }
+      const data = await response.json();
+      console.log("이미지 업로드 결과:", data);
+      return data;
+    } catch (error) {
+      console.error("이미지 업로드 에러:", error);
+    }
+  };
+
+  // 폼 제출 (등록하기)
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const payload = transformPayload();
+    console.log("전송할 payload:", payload);
+
+    try {
+      // 제품 등록 API 호출
+      const productResponse = await fetch("http://localhost:8080/api/v1/products/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!productResponse.ok) {
+        throw new Error("제품 등록에 실패했습니다.");
+      }
+      // API 응답에 따라 productId를 추출 (응답 구조에 따라 조정 필요)
+      const productData = await productResponse.json();
+      console.log("등록된 제품 정보:", productData);
+      const productId = productData; // 예시: 실제 응답에서 productId 필드를 사용
+
+      // 이미지 업로드: 메인 이미지가 있으면 업로드
+      if (mainImage) {
+        await uploadImage(mainImage, productId, true);
+      }
+      // 추가 이미지가 있으면 각각 업로드
+      if (subImages.length > 0) {
+        for (let file of subImages) {
+          await uploadImage(file, productId, false);
+        }
+      }
+      alert("제품 등록 완료!");
+    } catch (error) {
+      console.error("제품 등록 중 에러:", error);
+      alert("제품 등록 중 오류가 발생했습니다.");
+    }
   };
 
   // 옵션 추가 로직
@@ -102,7 +171,7 @@ function AdminProductRegister() {
     setOptions(newOpts);
   };
 
-  // 파일 선택 시
+  // 파일 선택 핸들러
   const handleMainImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setMainImage(e.target.files[0]);
@@ -133,7 +202,6 @@ function AdminProductRegister() {
       <div className={styles.topBarDivider} />
 
       <form id="productForm" onSubmit={handleRegister} className={styles.registerForm}>
-
         {/* (1) 상품카테고리 설정 */}
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>상품카테고리 설정</h3>
@@ -150,7 +218,6 @@ function AdminProductRegister() {
                 <option value="bottom">하의</option>
                 <option value="outer">아우터</option>
               </select>
-
               <select
                 value={category2}
                 onChange={(e) => setCategory2(e.target.value)}
@@ -168,7 +235,6 @@ function AdminProductRegister() {
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>기본 정보</h3>
           <div className={styles.formGrid}>
-
             <div className={styles.formLabel}>상품코드</div>
             <div className={styles.formInput}>
               <input
@@ -178,7 +244,6 @@ function AdminProductRegister() {
                 onChange={(e) => setProductCode(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>브랜드</div>
             <div className={styles.formInput}>
               <input
@@ -188,7 +253,6 @@ function AdminProductRegister() {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>모델명</div>
             <div className={styles.formInput}>
               <input
@@ -198,7 +262,6 @@ function AdminProductRegister() {
                 onChange={(e) => setModelName(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>가격</div>
             <div className={styles.formInput}>
               <input
@@ -208,7 +271,6 @@ function AdminProductRegister() {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>원가</div>
             <div className={styles.formInput}>
               <input
@@ -218,7 +280,6 @@ function AdminProductRegister() {
                 onChange={(e) => setCost(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>할인율</div>
             <div className={styles.formInput}>
               <input
@@ -228,8 +289,6 @@ function AdminProductRegister() {
                 onChange={(e) => setDiscount(e.target.value)}
               />
             </div>
-
-            {/* 추가 필드 */}
             <div className={styles.formLabel}>제조사</div>
             <div className={styles.formInput}>
               <input
@@ -239,7 +298,6 @@ function AdminProductRegister() {
                 onChange={(e) => setMaker(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>원산지</div>
             <div className={styles.formInput}>
               <input
@@ -249,7 +307,6 @@ function AdminProductRegister() {
                 onChange={(e) => setOrigin(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>기본 설명</div>
             <div className={styles.formInput}>
               <input
@@ -259,7 +316,6 @@ function AdminProductRegister() {
                 onChange={(e) => setBasicDesc(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>색상</div>
             <div className={styles.formInput}>
               <input
@@ -269,7 +325,6 @@ function AdminProductRegister() {
                 onChange={(e) => setColor(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>구성품</div>
             <div className={styles.formInput}>
               <input
@@ -279,7 +334,6 @@ function AdminProductRegister() {
                 onChange={(e) => setComponents(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>주요소재</div>
             <div className={styles.formInput}>
               <input
@@ -289,7 +343,6 @@ function AdminProductRegister() {
                 onChange={(e) => setMaterial(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>제조국</div>
             <div className={styles.formInput}>
               <input
@@ -299,7 +352,6 @@ function AdminProductRegister() {
                 onChange={(e) => setManufactureCountry(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>A/S 전화번호</div>
             <div className={styles.formInput}>
               <input
@@ -309,10 +361,8 @@ function AdminProductRegister() {
                 onChange={(e) => setAsTel(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>상품 품절 여부</div>
             <div className={styles.formInput}>
-              {/* 라디오 2개 */}
               <label className={styles.radioBox}>
                 <input
                   type="radio"
@@ -334,7 +384,6 @@ function AdminProductRegister() {
                 <span>품절</span>
               </label>
             </div>
-
             <div className={styles.formLabel}>재고 수량</div>
             <div className={styles.formInput}>
               <input
@@ -344,7 +393,6 @@ function AdminProductRegister() {
                 onChange={(e) => setStock(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>재고통보수량</div>
             <div className={styles.formInput}>
               <input
@@ -354,7 +402,6 @@ function AdminProductRegister() {
                 onChange={(e) => setStockNotify(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>최소구매수량</div>
             <div className={styles.formInput}>
               <input
@@ -364,7 +411,6 @@ function AdminProductRegister() {
                 onChange={(e) => setMinPurchase(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>최대구매수량</div>
             <div className={styles.formInput}>
               <input
@@ -383,14 +429,12 @@ function AdminProductRegister() {
           <div className={styles.formGrid}>
             <div className={styles.formLabel}>메인 이미지</div>
             <div className={styles.formInput}>
-              {/* 커스텀 스타일 .fileInput 사용 */}
               <input
                 className={styles.fileInput}
                 type="file"
                 onChange={handleMainImageChange}
               />
             </div>
-
             <div className={styles.formLabel}>추가 이미지</div>
             <div className={styles.formInput}>
               <input
@@ -417,7 +461,6 @@ function AdminProductRegister() {
                   onChange={(e) => updateOption(idx, "optionName", e.target.value)}
                 />
               </div>
-
               <div className={styles.formLabel}>옵션값</div>
               <div className={styles.formInput}>
                 <input
@@ -464,7 +507,6 @@ function AdminProductRegister() {
                 onChange={(e) => setShippingFee(e.target.value)}
               />
             </div>
-
             <div className={styles.formLabel}>재고수량</div>
             <div className={styles.formInput}>
               <input
@@ -477,7 +519,7 @@ function AdminProductRegister() {
           </div>
         </section>
 
-        {/* (7) 추가 항목 (태그 부분 삭제 → 쿠폰만 남김) */}
+        {/* (7) 추가 항목 (쿠폰) */}
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>추가 항목</h3>
           <div className={styles.formGrid}>
@@ -492,7 +534,6 @@ function AdminProductRegister() {
             </div>
           </div>
         </section>
-
       </form>
     </div>
   );
