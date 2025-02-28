@@ -4,7 +4,7 @@ import Admin from './pages/AdminPage/AdminPage';
 import AdminLayout from './components/Admin/AdminLayout/AdminLayout';
 import Cart from './pages/CartPage/CartPage';
 import Detail from './pages/Product_Detail/ProductDetailPage';
-import Home from './pages/home/Home';
+import Home from './pages/MainPage/MainPage';
 import Login from './pages/Login/LoginForm';
 import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';

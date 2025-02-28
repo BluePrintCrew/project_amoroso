@@ -1,0 +1,85 @@
+@font-face {
+  font-family: 'CustomFont';
+  src: url('../../assets/fonts/Pretendard-Regular.ttf');
+}
+
+body{
+  font-family: 'CustomFont',sans-serif;
+}
+
+.header{
+  z-index: 10;
+  padding-top: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.headerContent{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  padding-bottom: 5px;
+}
+
+.headerMenu{
+  display: flex;
+  gap: 45px;
+}
+
+.headerLogo{
+  width: 200px;
+  height: 41px;
+}
+
+.headerLink{
+  text-decoration: none;
+  color:inherit;
+  display: flex;
+  align-items: center;
+}
+
+.searchBar{
+  display: flex;
+  align-items: center;
+  margin: auto;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  height: 35px;
+  width: 350px;
+}
+
+.searchInput{
+  flex: 1;
+  border: none;
+  outline:none;
+  font-size: 14px;
+  cursor: text;
+  background-color: transparent;
+  margin: 10px;
+}
+
+.searchIcon{
+  width: 20px;
+  height: 20px;
+  margin-bottom: 3px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.headerIcons{
+  display: flex;
+  gap:35px;
+  margin-left: auto;
+}
+
+.headerBorder{
+  position: absolute;
+  bottom: 0;
+  left: -50vw;
+  width: 200vw;
+  height: 1px;
+  background: #eee;
+}

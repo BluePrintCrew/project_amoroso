@@ -1,0 +1,98 @@
+@font-face {
+  font-family: 'CustomFont';
+  src: url('../../assets/fonts/Pretendard-Regular.ttf');
+}
+
+body{
+  font-family: 'CustomFont',sans-serif;
+}
+
+.footer{
+  display: flex;
+  flex-direction: column;
+}
+
+.footerTop{
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.footerLinks{
+  display: flex;
+  gap: 20px;
+}
+
+.footerLink{
+  text-decoration: none;
+  color: inherit;
+}
+
+.footerBorder{ 
+  position: relative;
+  width: 200vw;
+  height: 1px;
+  background: #eee;
+  left: -50vw;
+  margin: 10px 0;
+}
+
+.footerContent{
+  display: flex;
+  gap: 45px;
+  margin-top: 5px;
+}
+
+.footerLogo{
+  margin-bottom: 5px;
+}
+
+.footerInfo{
+  text-align: left;
+}
+
+.footerInfo1{
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.footerInfo2{
+  font-size: 12px;
+}
+
+.footerInquiry{
+  margin: 0 30px;
+  text-align: left;
+}
+
+.footerInquiry1{
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.footerInquiry2{
+  font-size: 12px;
+}
+
+.kakaoButton{
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.footerService{
+  margin: 0 30px;
+  text-align: left;
+}
+
+.footerService1{
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.footerService2{
+  font-size: 12px;
+}
+
+.footerBottom{
+  text-align: left;
+  margin-top: 5px;
+}
