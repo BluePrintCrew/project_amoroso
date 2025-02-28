@@ -14,6 +14,7 @@ import Products from './pages/CartPage/CartPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
+import AdminProductRegister from './pages/AdminPage/AdminProductRegister/AdminProductRegister';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Admin />} />
             <Route path="products" element={<ProductsPage />} />
+            <Route path="register" element={<AdminProductRegister />} />
           </Route>
         </Routes>
       </div>

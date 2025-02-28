@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.amorosobackend.domain.product.Product;
 
 import java.time.LocalDateTime;
 

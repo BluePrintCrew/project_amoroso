@@ -1,14 +1,13 @@
 package org.example.amorosobackend.service;
 
-import org.assertj.core.api.Assertions;
 import org.example.amorosobackend.domain.Category;
-import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.domain.User;
-import org.example.amorosobackend.dto.ProductControllerDTO;
+import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.enums.CategoryCode;
 import org.example.amorosobackend.enums.UserRole;
-import org.example.amorosobackend.repository.ProductRepository;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.example.amorosobackend.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,7 +73,7 @@ class ProductServiceTest {
         Mockito.when(productRepository.findAllByCategory_CategoryId(categoryId,pageable)).thenReturn(productPage);
 
         // when
-        ProductControllerDTO.ProductListResponse response = productService.getProducts(categoryId,1,10,"price","asc");
+        ProductDTO.ProductListResponse response = productService.getProducts(categoryId,1,10,"price","asc");
 
         // Then (검증)
         assertThat(response).isNotNull();
@@ -128,7 +125,7 @@ class ProductServiceTest {
 
         // then
 
-        ProductControllerDTO.ProductInfoDetailDTO productDetailTest = productService.getProductDetail(productId);
+        ProductDTO.ProductInfoDetailDTO productDetailTest = productService.getProductDetail(productId);
         assertThat(productDetailTest).isNotNull();
         assertThat(productDetailTest.getProductName()).isEqualTo("Table");
         assertThat(productDetailTest.getDescription()).isEqualTo("Wooden Table");

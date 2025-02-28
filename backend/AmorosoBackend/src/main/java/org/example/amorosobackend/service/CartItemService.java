@@ -1,12 +1,11 @@
 package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.CartItem;
-import org.example.amorosobackend.domain.Product;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.CartItemControllerDTO;
 import org.example.amorosobackend.repository.CartItemRepository;
 import org.example.amorosobackend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

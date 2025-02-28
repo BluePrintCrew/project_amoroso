@@ -1,8 +1,7 @@
 package org.example.amorosobackend.controller;
 
 import org.example.amorosobackend.domain.Category;
-import org.example.amorosobackend.domain.Product;
-import org.example.amorosobackend.dto.ProductControllerDTO;
+import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.service.CategoryService;
 import org.example.amorosobackend.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,13 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,8 +51,8 @@ class ProductControllerTest {
                 .build();
         when(categoryService.findByCategoryCode("CHAIR")).thenReturn(category);
 
-        ProductControllerDTO.ProductListResponse response = new ProductControllerDTO.ProductListResponse(
-                null, 1, 1, List.of(new ProductControllerDTO.ProductInfoDTO(1L, "빈티지 의자", 10000, "CHAIR", "image_url", "2024-01-31 12:00:00"))
+        ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
+                null, 1, 1, List.of(new ProductDTO.ProductInfoDTO(1L, "빈티지 의자", 10000, "CHAIR", "image_url", "2024-01-31 12:00:00"))
         );
 
         when(productService.getProducts(category.getCategoryId(), 1,10,"price", "asc")).thenReturn(response);
@@ -81,10 +77,10 @@ class ProductControllerTest {
     void getProductDetail() throws Exception{
         // Given
         Long productId = 1L;
-        ProductControllerDTO.ProductInfoDetailDTO productDetail = new ProductControllerDTO.ProductInfoDetailDTO(
+        ProductDTO.ProductInfoDetailDTO productDetail = new ProductDTO.ProductInfoDetailDTO(
                 1L, "빈티지 의자", "아름다운 디자인의 빈티지 의자", 10000, 5,
                 List.of("image1.jpg", "image2.jpg"),
-                List.of(new ProductControllerDTO.ProductReviewDTO(1L, "사용자1", 5, "좋아요", "2024-01-31 12:00:00"))
+                List.of(new ProductDTO.ProductReviewDTO(1L, "사용자1", 5, "좋아요", "2024-01-31 12:00:00"))
         );
 
         when(productService.getProductDetail(productId)).thenReturn(productDetail);

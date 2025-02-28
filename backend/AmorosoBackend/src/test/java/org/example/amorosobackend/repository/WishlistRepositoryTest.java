@@ -1,19 +1,17 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.*;
+import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.enums.*;
-import org.junit.jupiter.api.Assertions;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class WishlistRepositoryTest {
