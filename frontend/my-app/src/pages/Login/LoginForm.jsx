@@ -1,5 +1,4 @@
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
+import PageLayout from '../../components/PageLayout/PageLayout';
 import React from 'react';
 import google from '../../assets/google_login.png';
 import kakao from '../../assets/kakao_login.png';
@@ -8,8 +7,7 @@ import styles from './LoginForm.module.css';
 
 const LoginForm = () => {
   return (
-    <>
-      <Header />
+    <PageLayout>
       <div className={styles.loginContainer}>
         <h1 className={styles.loginTitle}>회원 로그인</h1>
         <form className={styles.loginForm}>
@@ -97,8 +95,7 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
-      <Footer />
-    </>
+    </PageLayout>
   );
 };
 

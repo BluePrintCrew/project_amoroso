@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
+import PageLayout from '../../components/PageLayout/PageLayout';
 import couponPack from '../../assets/coupon_pack.png';
 import getCoupon from '../../assets/get_coupon.png';
 import likeButton from '../../assets/like.png';
@@ -26,9 +27,7 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.productDetailPage}>
-      <Header />
-
+    <PageLayout>
       <Breadcrumb />
 
       <div className={styles.productContent}>
@@ -140,7 +139,7 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 };
 
