@@ -84,6 +84,7 @@ public class ProductService {
                 .marketPrice(dto.getMarketPrice())
                 .outOfStock(dto.getOutOfStock())
                 .stockNotificationThreshold(dto.getStockNotificationThreshold())
+                .discountRate(dto.getDiscountRate())
                 // createdAt은 @PrePersist로 자동 세팅
                 .build();
 
@@ -199,6 +200,7 @@ public class ProductService {
         product.updateMarketPrice(dto.getMarketPrice());
         product.updateOutOfStock(dto.getOutOfStock());
         product.updateStockNotificationThreshold(dto.getStockNotificationThreshold());
+        product.updateDiscountRate(dto.getDiscountRate());
 
         // 기존 옵션 삭제 -> 새로 저장 (비즈니스 규칙에 따라 다양하게 처리 가능)
         if (dto.getProductOptions() != null) {
@@ -283,6 +285,7 @@ public class ProductService {
                 product.getMarketPrice(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
+                product.getDiscountPrice(),
                 imageUrls,
                 reviewDTOs
         );

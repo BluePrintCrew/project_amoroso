@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class ProductDTO {
         private Integer marketPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
+        private Integer discountPrice;
 
         private List<String> imagesURL;
         private List<ProductReviewDTO> reviews;
@@ -119,6 +121,7 @@ public class ProductDTO {
         private Integer marketPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
+        private BigDecimal discountRate;
 
         // 옵션들
         private List<ProductOptionDto> productOptions;
@@ -151,6 +154,7 @@ public class ProductDTO {
         private Integer marketPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
+        private BigDecimal discountRate;
 
         // 옵션들
         private List<ProductOptionDto> productOptions;

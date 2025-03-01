@@ -27,6 +27,7 @@ public class CartItemService {
 
     @Transactional
     public CartItemControllerDTO.CartItemResponseDTO addToCart(String email, CartItemControllerDTO.CartItemRequestDTO request) {
+
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Product product = productService.getProductById(request.getProductId());
 

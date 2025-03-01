@@ -13,6 +13,8 @@ public class UserCouponDTO {
     private Long userCouponId;
     private String couponName;
     private boolean isUsed;
+    private int discountValue;
+    private String discountType;
     private LocalDateTime issuedAt;
 
     public UserCouponDTO(UserCoupon userCoupon) {
@@ -20,5 +22,7 @@ public class UserCouponDTO {
         this.couponName = userCoupon.getCoupon().getName();
         this.isUsed = userCoupon.isUsed();
         this.issuedAt = userCoupon.getIssuedAt();
+        this.discountValue = userCoupon.getCoupon().getDiscountValue();;
+        this.discountType = userCoupon.getCoupon().getDiscountType().name();
     }
 }

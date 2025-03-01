@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +93,8 @@ public class Product {
     private Integer marketPrice;
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
+    @Column(precision = 5, scale = 2, nullable = false)
+    private BigDecimal discountRate; // 예: 10.25% → BigDecimal(10.25)
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
@@ -124,7 +129,8 @@ public class Product {
             Integer marketPrice,
             Boolean outOfStock,
             Integer stockNotificationThreshold,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            BigDecimal discountRate
     ) {
         this.category = category;
         this.productName = productName;
@@ -149,6 +155,7 @@ public class Product {
         this.outOfStock = outOfStock;
         this.stockNotificationThreshold = stockNotificationThreshold;
         this.createdAt = createdAt;
+        this.discountRate = discountRate;
     }
 
     @PrePersist
@@ -181,6 +188,23 @@ public class Product {
     public void updateStock(Integer stock) {
         this.stock = stock != null ? stock : 0;
     }
+
+
+    public Integer getDiscountPrice() {
+        if (this.price == null || this.discountRate == null) {
+            return this.price; // 가격 또는 할인율이 없으면 원래 가격 반환
+        }
+
+        // 할인율을 100으로 나누어 소수점 값으로 변환 (예: 10.25% → 0.1025)
+        BigDecimal discountMultiplier = discountRate.divide(new BigDecimal("100"), 5, RoundingMode.HALF_UP);
+
+        // 할인된 가격 = 원래 가격 * (1 - 할인율)
+        BigDecimal discountedPrice = new BigDecimal(this.price).multiply(BigDecimal.ONE.subtract(discountMultiplier));
+
+        // 소수점 이하 반올림하여 정수(Integer)로 변환
+        return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
+    }
+
     public void setMainImageUri(String mainImageUri) {
         this.mainImageUri = mainImageUri;
     }
@@ -200,4 +224,5 @@ public class Product {
     public void updateMarketPrice(Integer marketPrice) { this.marketPrice = marketPrice; }
     public void updateOutOfStock(Boolean outOfStock) { this.outOfStock = outOfStock; }
     public void updateStockNotificationThreshold(Integer threshold) { this.stockNotificationThreshold = threshold; }
+    public void updateDiscountRate( BigDecimal discountRate) { this.discountRate = discountRate; }
 }

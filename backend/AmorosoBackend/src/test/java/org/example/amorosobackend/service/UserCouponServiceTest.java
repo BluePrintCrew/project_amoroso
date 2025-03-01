@@ -81,7 +81,7 @@ class UserCouponServiceTest {
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
-        UserCouponDTO issuedCoupon = userCouponService.issueCouponToUser(1L, 1L);
+        UserCouponDTO issuedCoupon = userCouponService.issueCouponToUser( 1L);
 
         // then
         assertThat(issuedCoupon.getCouponName()).isEqualTo("1000원 할인 쿠폰");
@@ -96,7 +96,7 @@ class UserCouponServiceTest {
         when(userCouponRepository.findByUser(user)).thenReturn(List.of(userCoupon));
 
         // when
-        List<UserCouponDTO> userCoupons = userCouponService.getUserCoupons(1L);
+        List<UserCouponDTO> userCoupons = userCouponService.getUserCoupons();
 
         // then
         assertThat(userCoupons).hasSize(1);

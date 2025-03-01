@@ -42,7 +42,7 @@ public class OrderService {
 
         Order order = Order.builder()
                 .user(user)
-                .orderStatus(OrderStatus. PAYMENT_PENDING)
+                .orderStatus(OrderStatus.PAYMENT_PENDING)
                 .paymentStatus(PaymentStatus.WAITING)
                 .build();
 
@@ -66,6 +66,13 @@ public class OrderService {
         double totalPrice = orderItems.stream().mapToDouble(item -> item.getQuantity() * item.getUnitPrice()).sum();
         savedOrder.setTotalPrice(totalPrice);
         orderRepository.save(savedOrder);
+
+        // 쿠폰을 통한 최종가격 저장
+
+
+
+        // 결제는
+
 
         return new OrderResponseDTO(savedOrder);
     }

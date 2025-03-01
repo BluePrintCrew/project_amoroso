@@ -18,6 +18,7 @@ public class OrderControllerDTO {
     @AllArgsConstructor
     public static class OrderResponseDTO {
         private Long orderId;
+      //  private Long UserCouponId; 주문 처리해야함
         private String userEmail;
         private Double totalPrice;
         private String orderStatus;
