@@ -46,14 +46,14 @@ public class OrderService {
                 .paymentStatus(PaymentStatus.WAITING)
                 .build();
 
-        final Order savedOrder = orderRepository.save(order); // 해결: order를 final로 선언
+        Order savedOrder = orderRepository.save(order); // 해결: order를 final로 선언
 
         List<OrderItem> orderItems = requestDTO.getOrderItems().stream().map(itemDTO -> {
             Product product = productRepository.findById(itemDTO.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
             return OrderItem.builder()
-                    .order(savedOrder) // 해결: final 변수를 사용
+                    .order(savedOrder)
                     .product(product)
                     .quantity(itemDTO.getQuantity())
                     .unitPrice(product.getDiscountPrice() !=null ? product.getDiscountPrice(): product.getMarketPrice())
@@ -63,7 +63,7 @@ public class OrderService {
 
         orderItemRepository.saveAll(orderItems);
 
-        double totalPrice = orderItems.stream().mapToDouble(item -> item.getQuantity() * item.getUnitPrice()).sum();
+        Integer totalPrice = orderItems.stream().mapToInt(item -> item.getQuantity() * item.getUnitPrice()).sum();
         savedOrder.setTotalPrice(totalPrice);
         orderRepository.save(savedOrder);
 

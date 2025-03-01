@@ -34,6 +34,8 @@ public class ProductDTO {
         private Long productId;
         private String productName;
         private Integer marketPrice;
+        private Integer discountPrice;
+        private Integer discountRate;
         private String category;
         private String primaryImageURL;
         private String createdAt;

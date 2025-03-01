@@ -130,7 +130,8 @@ public class Product {
             Boolean outOfStock,
             Integer stockNotificationThreshold,
             LocalDateTime createdAt,
-            Integer discountRate
+            Integer discountRate,
+            Integer discountPrice
     ) {
         this.category = category;
         this.productName = productName;
@@ -155,6 +156,7 @@ public class Product {
         this.stockNotificationThreshold = stockNotificationThreshold;
         this.createdAt = createdAt;
         this.discountRate = discountRate;
+        this.discountPrice = discountPrice;
     }
 
     @PrePersist
@@ -195,10 +197,17 @@ public class Product {
         return discountPrice;
     }
 
+
     public void setMainImageUri(String mainImageUri) {
         this.mainImageUri = mainImageUri;
     }
+    public void setDiscountPrice(Integer discountRate) {
 
+        this.discountPrice = this.discountRate != null ?
+                (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10
+                : 0;
+
+    }
     public void updateProductCode(String productCode) { this.productCode = productCode; }
     public void updateManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
     public void updateOrigin(String origin) { this.origin = origin; }

@@ -32,9 +32,9 @@ public class Order {
     @JoinColumn(name ="user_coupon_id")
     private UserCoupon usercoupon;
 
-    private Double totalPrice;
+    private Integer totalPrice;
 
-    private Double discountPrice;
+    private Integer discountPrice; // coupon으로 감소된 가격
 
     @Column(length = 50)
     private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
@@ -55,7 +55,7 @@ public class Order {
 
     @Builder
     private Order(User user,
-                  Double totalPrice,
+                  Integer totalPrice,
                   OrderStatus orderStatus,
                   PaymentStatus paymentStatus) {
         this.user = user;
@@ -73,7 +73,7 @@ public class Order {
     public void setOrderStatus( OrderStatus orderStatus){
         this.orderStatus = orderStatus;
     }
-    public void setTotalPrice( double totalPrice){
+    public void setTotalPrice( Integer totalPrice){
         this.totalPrice = totalPrice;
     }
 

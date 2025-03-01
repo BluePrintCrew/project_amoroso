@@ -20,7 +20,7 @@ public class OrderControllerDTO {
         private Long orderId;
       //  private Long UserCouponId; 주문 처리해야함
         private String userEmail;
-        private Double totalPrice;
+        private Integer totalPrice;
         private String orderStatus;
         private String paymentStatus;
         private LocalDateTime createdAt;
@@ -55,7 +55,8 @@ public class OrderControllerDTO {
         private String productName;
         private String mainImageUri;
         private Integer quantity;
-        private Integer unitPrice;
+        private Integer marketPrice;
+        private Integer unitPrice; //
 
 
         public OrderItemDTO(OrderItem orderItem) {

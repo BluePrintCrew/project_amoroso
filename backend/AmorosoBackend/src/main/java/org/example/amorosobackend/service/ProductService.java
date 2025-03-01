@@ -87,6 +87,7 @@ public class ProductService {
                 // createdAt은 @PrePersist로 자동 세팅
                 .build();
 
+        product.setDiscountPrice(dto.getDiscountRate()); //
 
 
         // DB 저장
@@ -312,6 +313,8 @@ public class ProductService {
                 product.getProductId(),
                 product.getProductName(),
                 product.getMarketPrice(),
+                product.getDiscountPrice(),
+                product.getDiscountRate(),
                 product.getCategory().getCategoryCode().getCode(),
                 product.getPrimaryImage() != null ? product.getPrimaryImage().getImageUrl() : null,
                 formattedCreatedAt // 변환된 문자열 값
