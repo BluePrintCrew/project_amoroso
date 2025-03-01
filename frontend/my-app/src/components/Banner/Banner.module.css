@@ -1,0 +1,43 @@
+.banner{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  background-image: url("../../assets/main_banner.png");
+  background-size: cover;
+  background-position: center;
+  height: 600px;
+  width: 100vw;
+  z-index: -1;
+}
+
+.bannerContentWrapper{
+  display: flex;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.bannerContent{
+  position: relative;
+  text-align: left;
+  color: white;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.arrowButton{
+  position: relative;
+  top: 50%;
+  transform: translate(-50%);
+  background: transparent;
+  border: none;
+}
+
+.arrowButton.left{
+  left: -50px;
+}
+
+.arrowButton.right{
+  right: -50px;
+}

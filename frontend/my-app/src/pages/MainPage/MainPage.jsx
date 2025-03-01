@@ -1,23 +1,21 @@
-import './MainPage.css'; // 일단 아직 안쓸
-
 import Banner from '../../components/Banner/Banner';
 import BenefitsSection from '../../components/BenefitsSection/BenefitsSection';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu';
+import Header from '../../components/Header/Header';
 import HomeProductList from '../../components/HomeProductList/HomeProductList';
 import MagazineSection from '../../components/MagazineSection/MagazineSection';
-import PageLayout from '../../components/PageLayout/PageLayout';
 import React from 'react';
+import styles from './MainPage.module.css';
 
 function MainPage() {
   return (
-    <PageLayout>
+    <div className={styles.mainPage}>
       <Banner />
-      <CategoryMenu />
-      {/* 메인에서만 쓰는 짧은 추천상품/베스트상품 리스트 */}
-      <HomeProductList />
-      <BenefitsSection />
-      <MagazineSection />
-    </PageLayout>
+      <Header />
+      <div className={styles.content}>
+        <CategoryMenu />
+      </div>
+    </div>
   );
 }
 
