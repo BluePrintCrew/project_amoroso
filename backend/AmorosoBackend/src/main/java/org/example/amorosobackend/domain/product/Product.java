@@ -40,8 +40,7 @@ public class Product {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @Column(nullable = false)
-    private Integer price; // 판매 가격
+
 
     private String mainImageUri; // 대표 이미지 Uri
 
@@ -89,12 +88,14 @@ public class Product {
     private String size;
     private Integer shippingInstallationFee;
     private String asPhoneNumber;
-    private Integer costPrice;
-    private Integer marketPrice;
+    private Integer costPrice; // 원가
+    @Column(nullable = false)
+    private Integer marketPrice; // 판매가
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
     @Column(precision = 5, scale = 2, nullable = false)
-    private BigDecimal discountRate; // 예: 10.25% → BigDecimal(10.25)
+    private Integer discountRate; // 0 ~ 9
+    private Integer discountPrice; // discountRate에 따라 바뀜.
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
@@ -112,7 +113,6 @@ public class Product {
             String productCode,
             String description,
             Seller seller,
-            Integer price,
             String mainImageUri,
             Integer stock,
             String manufacturer,
@@ -130,14 +130,13 @@ public class Product {
             Boolean outOfStock,
             Integer stockNotificationThreshold,
             LocalDateTime createdAt,
-            BigDecimal discountRate
+            Integer discountRate
     ) {
         this.category = category;
         this.productName = productName;
         this.productCode = productCode;
         this.description = description;
         this.seller = seller;
-        this.price = price != null ? price : 0;
         this.mainImageUri = mainImageUri;
         this.stock = stock != null ? stock : 0;
         this.manufacturer = manufacturer;
@@ -151,7 +150,7 @@ public class Product {
         this.shippingInstallationFee = shippingInstallationFee;
         this.asPhoneNumber = asPhoneNumber;
         this.costPrice = costPrice;
-        this.marketPrice = marketPrice;
+        this.marketPrice = marketPrice != null ? marketPrice : 0;
         this.outOfStock = outOfStock;
         this.stockNotificationThreshold = stockNotificationThreshold;
         this.createdAt = createdAt;
@@ -182,27 +181,18 @@ public class Product {
     public void updateDescription(String description) {
         this.description = description;
     }
-    public void updatePrice(Integer price) {
-        this.price = price != null ? price : 0;
-    }
     public void updateStock(Integer stock) {
         this.stock = stock != null ? stock : 0;
     }
 
 
     public Integer getDiscountPrice() {
-        if (this.price == null || this.discountRate == null) {
-            return this.price; // 가격 또는 할인율이 없으면 원래 가격 반환
+        if (this.marketPrice == null || this.discountRate == null) {
+            return this.marketPrice; // 가격 또는 할인율이 없으면 원래 가격 반환
         }
 
-        // 할인율을 100으로 나누어 소수점 값으로 변환 (예: 10.25% → 0.1025)
-        BigDecimal discountMultiplier = discountRate.divide(new BigDecimal("100"), 5, RoundingMode.HALF_UP);
-
-        // 할인된 가격 = 원래 가격 * (1 - 할인율)
-        BigDecimal discountedPrice = new BigDecimal(this.price).multiply(BigDecimal.ONE.subtract(discountMultiplier));
-
-        // 소수점 이하 반올림하여 정수(Integer)로 변환
-        return discountedPrice.setScale(0, RoundingMode.HALF_UP).intValue();
+        Integer discountPrice = (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10;
+        return discountPrice;
     }
 
     public void setMainImageUri(String mainImageUri) {
@@ -224,5 +214,5 @@ public class Product {
     public void updateMarketPrice(Integer marketPrice) { this.marketPrice = marketPrice; }
     public void updateOutOfStock(Boolean outOfStock) { this.outOfStock = outOfStock; }
     public void updateStockNotificationThreshold(Integer threshold) { this.stockNotificationThreshold = threshold; }
-    public void updateDiscountRate( BigDecimal discountRate) { this.discountRate = discountRate; }
+    public void updateDiscountRate( Integer discountRate) { this.discountRate = discountRate; }
 }

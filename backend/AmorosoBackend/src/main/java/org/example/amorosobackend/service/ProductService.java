@@ -68,7 +68,6 @@ public class ProductService {
                 .productCode(dto.getProductCode())
                 .description(dto.getDescription())
                 .seller(seller)
-                .price(dto.getPrice())
                 .stock(dto.getStock())
                 .manufacturer(dto.getManufacturer())
                 .origin(dto.getOrigin())
@@ -138,12 +137,12 @@ public class ProductService {
                 : productRepository.findAll(pageable);
 
         // 페이지로 받은 것들 DTO 페이지로 변환
+
         Page<ProductDTO.ProductInfoDTO> productInfoDTOs = productList
                 .map(ProductService::toProductInfoDTO);
 
         // 받은 DTO ProductListResponse로 변환
         ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
-                null, // productId can be null for list response
                 productInfoDTOs.getTotalPages(),
                 (int) productInfoDTOs.getTotalElements(),
                 productInfoDTOs.getContent() // directly gets the list of DTOs
@@ -182,7 +181,6 @@ public class ProductService {
         // 필드들 업데이트
         if (dto.getProductName() != null) product.updateProductName(dto.getProductName());
         if (dto.getDescription() != null) product.updateDescription(dto.getDescription());
-        if (dto.getPrice() != null) product.updatePrice(dto.getPrice());
         if (dto.getStock() != null) product.updateStock(dto.getStock());
 
         product.updateProductCode(dto.getProductCode());
@@ -268,7 +266,6 @@ public class ProductService {
                 product.getProductId(),
                 product.getProductName(),
                 product.getDescription(),
-                product.getPrice(),
                 product.getStock(),
                 product.getProductCode(),
                 product.getManufacturer(),
@@ -281,12 +278,11 @@ public class ProductService {
                 product.getSize(),
                 product.getShippingInstallationFee(),
                 product.getAsPhoneNumber(),
-                product.getCostPrice(),
                 product.getMarketPrice(),
+                product.getDiscountPrice(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
-                product.getDiscountPrice(),
-                imageUrls,
+                imageUrls,  //
                 reviewDTOs
         );
     }
@@ -315,7 +311,7 @@ public class ProductService {
         return new ProductDTO.ProductInfoDTO(
                 product.getProductId(),
                 product.getProductName(),
-                product.getPrice(),
+                product.getMarketPrice(),
                 product.getCategory().getCategoryCode().getCode(),
                 product.getPrimaryImage() != null ? product.getPrimaryImage().getImageUrl() : null,
                 formattedCreatedAt // 변환된 문자열 값

@@ -22,7 +22,6 @@ public class ProductDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ProductListResponse {
-        private Long productId;
         private int totalPages;
         private int totalItems;
         private List<ProductInfoDTO> products = new ArrayList<>();
@@ -34,7 +33,7 @@ public class ProductDTO {
     public static class ProductInfoDTO {
         private Long productId;
         private String productName;
-        private double price;
+        private Integer marketPrice;
         private String category;
         private String primaryImageURL;
         private String createdAt;
@@ -51,7 +50,6 @@ public class ProductDTO {
         private Long productId;
         private String productName;
         private String description;
-        private double price;
         private int stock;
 
         private String productCode;
@@ -65,11 +63,10 @@ public class ProductDTO {
         private String size;
         private Integer shippingInstallationFee;
         private String asPhoneNumber;
-        private Integer costPrice;
         private Integer marketPrice;
+        private Integer discountPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
-        private Integer discountPrice;
 
         private List<String> imagesURL;
         private List<ProductReviewDTO> reviews;
@@ -103,7 +100,6 @@ public class ProductDTO {
         private String categoryCode;            // 카테고리 코드를 문자열로 전달받음
         private String productName;
         private String description;
-        private Integer price;
         private Integer stock;
 
         private String productCode;
@@ -121,7 +117,7 @@ public class ProductDTO {
         private Integer marketPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
-        private BigDecimal discountRate;
+        private Integer discountRate;
 
         // 옵션들
         private List<ProductOptionDto> productOptions;
@@ -136,7 +132,6 @@ public class ProductDTO {
         private String categoryCode;           // 수정 시 카테고리도 변경 가능
         private String productName;
         private String description;
-        private Integer price;
         private Integer stock;
 
         private String productCode;
@@ -154,7 +149,7 @@ public class ProductDTO {
         private Integer marketPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
-        private BigDecimal discountRate;
+        private Integer discountRate;
 
         // 옵션들
         private List<ProductOptionDto> productOptions;

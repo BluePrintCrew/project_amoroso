@@ -56,7 +56,7 @@ public class OrderService {
                     .order(savedOrder) // 해결: final 변수를 사용
                     .product(product)
                     .quantity(itemDTO.getQuantity())
-                    .unitPrice(product.getPrice())
+                    .unitPrice(product.getDiscountPrice() !=null ? product.getDiscountPrice(): product.getMarketPrice())
                     .mainImageUri(product.getMainImageUri())
                     .build();
         }).collect(Collectors.toList());

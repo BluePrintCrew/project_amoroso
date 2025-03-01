@@ -52,7 +52,7 @@ public class CartItem {
         this.user = user;
         this.product = product;
         this.quantity = (quantity != null && quantity > 0) ? quantity : 1;
-        this.priceSnapshot = product.getPrice(); // 장바구니 추가 시점의 가격 저장
+        this.priceSnapshot = product.getDiscountPrice() != null ? product.getDiscountPrice() : product.getMarketPrice(); // 장바구니 추가 시점의 가격 저장
     }
 
     @PrePersist
