@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Admin from './pages/AdminPage/AdminPage';
 import AdminLayout from './components/Admin/AdminLayout/AdminLayout';
+import AdminProductRegister from './pages/AdminPage/AdminProductRegister/AdminProductRegister';
 import Cart from './pages/CartPage/CartPage';
 import Detail from './pages/Product_Detail/ProductDetailPage';
 import Home from './pages/MainPage/MainPage';
@@ -10,11 +11,10 @@ import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';
 import Order from './pages/OrderPage/OrderForm';
 import ProductList from './pages/ProductListPage/ProductListPage';
-import Products from './pages/CartPage/CartPage';
+import Products from './pages/ProductListPage/ProductListPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
-import AdminProductRegister from './pages/AdminPage/AdminProductRegister/AdminProductRegister';
 
 function App() {
   return (

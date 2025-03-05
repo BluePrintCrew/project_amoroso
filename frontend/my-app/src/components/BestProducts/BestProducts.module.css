@@ -1,0 +1,62 @@
+.bestProduct{
+  padding: 20px;
+}
+
+.header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2{
+  font-size: 32px;
+}
+
+.more{
+  font-size: 16px;
+  color: #666;
+  text-decoration: none;
+}
+
+.slider{
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.arrowButton{
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.arrowButton.left{
+  left: -50px;
+}
+
+.arrowButton.right{
+  right: -50px;
+}
+
+.productList{
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.productCard{
+  height: 350px;
+}
+
+.imagePlaceholder{
+  height: 80%;
+  aspect-ratio: 1/1;
+  background: #eee;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
