@@ -32,7 +32,12 @@ public class ImageController {
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(description = "이미지 등록 이미지 등록 시 비동기 식으로 요청")
+    @Operation(description = "이미지 등록 이미지 등록 시 비동기 식으로 요청" +
+            " 'metadata' 형식은은 다음과 같다.\n" +
+            "         Long productId;\n" +
+            "        Boolean isMainImage;\n" +
+            "\n" +
+            "위 형식에 알맞게 json으로 전달")
     public ResponseEntity<ImageControllerDTO.ImageResponseDTO> uploadSingleImage(
             @RequestPart("image") MultipartFile image,
             @RequestPart("metadata") ImageControllerDTO.ImageRequestDTO requestDTO // 제품 관련한 productID가 필요함

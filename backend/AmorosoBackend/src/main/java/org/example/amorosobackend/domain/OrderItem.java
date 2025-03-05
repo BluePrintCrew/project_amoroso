@@ -30,8 +30,9 @@ public class OrderItem {
     private Product product;
 
     private Integer quantity;
-    private Integer unitPrice;  // 구매 당시 가격
-
+    private Integer unitPrice;  // 원래 가격
+    private Integer discountPrice;  // 할인된 금액 (쿠폰 적용)
+    private Integer finalPrice;  // 최종 결제 금액
     private String mainImageUri; // 대표 이미지
 
     private LocalDateTime createdAt;

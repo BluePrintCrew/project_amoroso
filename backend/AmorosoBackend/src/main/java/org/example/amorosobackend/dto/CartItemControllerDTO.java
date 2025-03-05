@@ -14,7 +14,7 @@ public class CartItemControllerDTO {
         private Long productId;
         private String productName;
         private int quantity;
-        private int price;
+        private int priceSnapshot;
         private int totalPrice;
 
         public CartItemResponseDTO(CartItem cartItem) {
@@ -22,8 +22,12 @@ public class CartItemControllerDTO {
             this.productId = cartItem.getProduct().getProductId();
             this.productName = cartItem.getProduct().getProductName();
             this.quantity = cartItem.getQuantity();
-            this.price = cartItem.getProduct().getPrice();
-            this.totalPrice = cartItem.getQuantity() * cartItem.getProduct().getPrice();
+            int price = cartItem.getProduct().getDiscountPrice() != 0
+                    ? cartItem.getProduct().getDiscountPrice()
+                    : cartItem.getProduct().getMarketPrice();
+
+            this.priceSnapshot = price;
+            this.totalPrice = this.quantity * price;
         }
     }
 

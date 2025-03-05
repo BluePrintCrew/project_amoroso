@@ -27,6 +27,7 @@ public class CartItemService {
 
     @Transactional
     public CartItemControllerDTO.CartItemResponseDTO addToCart(String email, CartItemControllerDTO.CartItemRequestDTO request) {
+
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Product product = productService.getProductById(request.getProductId());
 
@@ -37,7 +38,7 @@ public class CartItemService {
                         .quantity(0)
                         .build());
 
-        cartItem.updateQuantity(cartItem.getQuantity() + request.getQuantity());
+        cartItem.updateQuantity(cartItem.getQuantity() + request.getQuantity()); //이미 장바구니에 있을때 추가
         cartItemRepository.save(cartItem);
 
         return new CartItemControllerDTO.CartItemResponseDTO(cartItem);

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,7 @@ public class Product {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @Column(nullable = false)
-    private Integer price; // 판매 가격
+
 
     private String mainImageUri; // 대표 이미지 Uri
 
@@ -86,10 +88,14 @@ public class Product {
     private String size;
     private Integer shippingInstallationFee;
     private String asPhoneNumber;
-    private Integer costPrice;
-    private Integer marketPrice;
+    private Integer costPrice; // 원가
+    @Column(nullable = false)
+    private Integer marketPrice; // 판매가
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
+    @Column(precision = 5, scale = 2, nullable = false)
+    private Integer discountRate; // 0 ~ 9
+    private Integer discountPrice; // discountRate에 따라 바뀜.
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
@@ -107,7 +113,6 @@ public class Product {
             String productCode,
             String description,
             Seller seller,
-            Integer price,
             String mainImageUri,
             Integer stock,
             String manufacturer,
@@ -124,14 +129,15 @@ public class Product {
             Integer marketPrice,
             Boolean outOfStock,
             Integer stockNotificationThreshold,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            Integer discountRate,
+            Integer discountPrice
     ) {
         this.category = category;
         this.productName = productName;
         this.productCode = productCode;
         this.description = description;
         this.seller = seller;
-        this.price = price != null ? price : 0;
         this.mainImageUri = mainImageUri;
         this.stock = stock != null ? stock : 0;
         this.manufacturer = manufacturer;
@@ -145,10 +151,12 @@ public class Product {
         this.shippingInstallationFee = shippingInstallationFee;
         this.asPhoneNumber = asPhoneNumber;
         this.costPrice = costPrice;
-        this.marketPrice = marketPrice;
+        this.marketPrice = marketPrice != null ? marketPrice : 0;
         this.outOfStock = outOfStock;
         this.stockNotificationThreshold = stockNotificationThreshold;
         this.createdAt = createdAt;
+        this.discountRate = discountRate;
+        this.discountPrice = discountPrice;
     }
 
     @PrePersist
@@ -175,16 +183,31 @@ public class Product {
     public void updateDescription(String description) {
         this.description = description;
     }
-    public void updatePrice(Integer price) {
-        this.price = price != null ? price : 0;
-    }
     public void updateStock(Integer stock) {
         this.stock = stock != null ? stock : 0;
     }
+
+
+    public Integer getDiscountPrice() {
+        if (this.marketPrice == null || this.discountRate == null) {
+            return this.marketPrice; // 가격 또는 할인율이 없으면 원래 가격 반환
+        }
+
+        Integer discountPrice = (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10;
+        return discountPrice;
+    }
+
+
     public void setMainImageUri(String mainImageUri) {
         this.mainImageUri = mainImageUri;
     }
+    public void setDiscountPrice(Integer discountRate) {
 
+        this.discountPrice = this.discountRate != null ?
+                (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10
+                : 0;
+
+    }
     public void updateProductCode(String productCode) { this.productCode = productCode; }
     public void updateManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
     public void updateOrigin(String origin) { this.origin = origin; }
@@ -200,4 +223,5 @@ public class Product {
     public void updateMarketPrice(Integer marketPrice) { this.marketPrice = marketPrice; }
     public void updateOutOfStock(Boolean outOfStock) { this.outOfStock = outOfStock; }
     public void updateStockNotificationThreshold(Integer threshold) { this.stockNotificationThreshold = threshold; }
+    public void updateDiscountRate( Integer discountRate) { this.discountRate = discountRate; }
 }

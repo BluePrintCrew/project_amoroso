@@ -15,6 +15,7 @@ import Products from './pages/ProductListPage/ProductListPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
+import TestJWTProviderPage from './pages/TestPage/TestJWTProviderPage';
 
 function App() {
   return (
@@ -31,6 +32,10 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/mypage/*" element={<MyPage />} />
           <Route path="/mypageinfo" element={<MyInfo />} />
+
+          {/* 테스트 시  사용되는 페이지*/}
+          <Route path="/testJWTProvider" element={<TestJWTProviderPage />} />
+
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Admin />} />
             <Route path="products" element={<ProductsPage />} />
