@@ -18,7 +18,7 @@ const TestJWTProviderPage = () => {
             }
 
             const data = await response.json();
-            localStorage.setItem("jwt_token", data.token);
+            localStorage.setItem("token", data.token);
             alert(`${role} 계정 JWT가 발급되었습니다.`);
             navigate("/");
         } catch (error) {
@@ -38,7 +38,7 @@ const TestJWTProviderPage = () => {
             }
 
             alert("테스트 계정이 삭제되었습니다.");
-            localStorage.removeItem("jwt_token");
+            localStorage.removeItem("token");
         } catch (error) {
             console.error("Error deleting test user:", error);
             alert("테스트 계정 삭제 중 오류가 발생했습니다.");
