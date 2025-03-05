@@ -1,8 +1,8 @@
 import Banner from '../../components/Banner/Banner';
 import BenefitsSection from '../../components/BenefitsSection/BenefitsSection';
+import BestProducts from '../../components/BestProducts/BestProducts';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu';
 import Header from '../../components/Header/Header';
-import HomeProductList from '../../components/HomeProductList/HomeProductList';
 import MagazineSection from '../../components/MagazineSection/MagazineSection';
 import React from 'react';
 import styles from './MainPage.module.css';
@@ -14,6 +14,7 @@ function MainPage() {
       <Header />
       <div className={styles.content}>
         <CategoryMenu />
+        <BestProducts />
       </div>
     </div>
   );
