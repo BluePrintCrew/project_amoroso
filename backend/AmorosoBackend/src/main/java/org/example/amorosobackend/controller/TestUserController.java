@@ -12,17 +12,16 @@ import org.example.amorosobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RestController("/api/v1/Test-User")
+@RestController
+@RequestMapping("/api/v1/Test-User")  //
 @Tag(name = "test 계정을 생성 및 JWT를 발급받기 위한 테스트용 API")
 @RequiredArgsConstructor
 public class TestUserController {
+
 
 
     private final UserRepository userRepository;
