@@ -6,6 +6,8 @@ import naver from '../../assets/naver_login.png';
 import styles from './LoginForm.module.css';
 
 const LoginForm = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
   return (
     <PageLayout>
       <div className={styles.loginContainer}>
@@ -60,7 +62,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    'http://localhost:8080/oauth2/authorize/kakao')
+                    `${API_BASE_URL}/oauth2/authorize/kakao`)
                 }
                 className={`${styles.socialButton} ${styles.kakao}`}
               >
@@ -70,7 +72,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    'http://localhost:8080/oauth2/authorize/naver')
+                    `${API_BASE_URL}/oauth2/authorize/naver`)
                 }
                 className={`${styles.socialButton} ${styles.naver}`}
               >
@@ -80,7 +82,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    'http://localhost:8080/oauth2/authorize/google')
+                    `${API_BASE_URL}/oauth2/authorize/google`)
                 }
                 className={`${styles.socialButton} ${styles.google}`}
               >
