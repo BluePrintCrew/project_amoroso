@@ -93,7 +93,7 @@ public class Product {
     private Integer marketPrice; // 판매가
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
-    @Column(precision = 5, scale = 2, nullable = false)
+    @Column(nullable = false)
     private Integer discountRate; // 0 ~ 9
     private Integer discountPrice; // discountRate에 따라 바뀜.
 

@@ -25,7 +25,7 @@ class UserRepositoryTest {
                 .email("test@example.com")
                 .name("Test")
                 .password("123456")
-                .role(UserRole.USER.toString())  // role 필드 추가
+                .role("USER")  // role 필드 추가
                 .build();
 
         userRepository.save(user);
@@ -46,7 +46,7 @@ class UserRepositoryTest {
                 .password("123456")
                 .socialProvider("naver")
                 .socialId("9999")
-                .role(UserRole.USER.toString())  // role 필드 추가
+                .role("USER")  // role 필드 추가
                 .build();
 
         userRepository.save(user);
@@ -65,7 +65,7 @@ class UserRepositoryTest {
                 .email("test@example.com")
                 .name("Test")
                 .password("123456")
-                .role(UserRole.USER.toString())  // role 필드 추가
+                .role("USER")  // role 필드 추가
                 .build();
 
         userRepository.save(user);

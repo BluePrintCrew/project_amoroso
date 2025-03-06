@@ -33,7 +33,7 @@ class UserCouponRepositoryTest {
                 .email("test@example.com")
                 .password("password")
                 .name("테스트 유저")
-                .role(UserRole.USER.name())
+                .role("USER")
                 .isActive(true)
                 .build();
         userRepository.save(user);

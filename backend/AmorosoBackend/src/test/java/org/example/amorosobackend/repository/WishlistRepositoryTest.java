@@ -46,7 +46,7 @@ class WishlistRepositoryTest {
                 .name("testUser")
                 .email("testEmail@example.com")
                 .password("1234")
-                .role(UserRole.USER.name())
+                .role("USER")
                 .build());
 
         testSeller = sellerRepository.save(Seller.builder()
@@ -62,10 +62,10 @@ class WishlistRepositoryTest {
         testProduct = productRepository.save(Product.builder()
                 .productName("testProduct")
                 .stock(10)
-                .price(1000)
+                .marketPrice(1000)
                 .seller(testSeller)
                 .category(testCategory)
-                .discountRate(new BigDecimal("0.00"))
+                .discountRate(0)
                 .build());
 
         testWishlist = wishlistRepository.save(Wishlist.builder()
