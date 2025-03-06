@@ -3,7 +3,7 @@ package org.example.amorosobackend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.domain.Category;
+import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.service.CategoryService;
 import org.example.amorosobackend.service.ProductService;

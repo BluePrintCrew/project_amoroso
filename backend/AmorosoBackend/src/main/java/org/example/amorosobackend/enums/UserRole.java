@@ -1,5 +1,5 @@
 package org.example.amorosobackend.enums;
 
 public enum UserRole {
-    USER, ADMIN, SELLER
+    ROLE_USER, ROLE_ADMIN, ROLE_SELLER
 }

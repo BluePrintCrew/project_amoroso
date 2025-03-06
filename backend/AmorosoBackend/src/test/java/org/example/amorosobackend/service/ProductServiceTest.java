@@ -1,6 +1,6 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Category;
+import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.Review;
 import org.example.amorosobackend.domain.User;

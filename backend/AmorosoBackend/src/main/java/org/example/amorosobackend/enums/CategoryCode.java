@@ -43,4 +43,17 @@ public enum CategoryCode {
     public String getCode() {
         return code;
     }
+
+    // 3. fromCode() 메서드 추가
+    public static CategoryCode fromCode(String code) {
+        for (CategoryCode category : CategoryCode.values()) {
+            if (category.getCode().equals(code)) {
+                return category;
+            }
+        }
+        throw new IllegalArgumentException("유효하지 않은 카테고리 코드: " + code);
+    }
 }
+
+
+

@@ -4,6 +4,7 @@ package org.example.amorosobackend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.dto.ImageControllerDTO;
 import org.example.amorosobackend.service.ImageService;
 import org.springframework.core.io.Resource;
@@ -18,6 +19,7 @@ import java.io.IOException;
 @RequestMapping("/api/v1/images")
 @RequiredArgsConstructor
 @Tag(name = "이미지 조회 API",description = "uri를 통한 이미지 조회")
+@Slf4j // (수정) 로그 사용
 public class ImageController {
 
     private final ImageService imageService;
@@ -25,27 +27,43 @@ public class ImageController {
     @GetMapping("/{filename}")
     @Operation(description = "단순 이미지 조회, 이미지 조회시 비동기식으로 요청")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) throws IOException {
+        // (수정) 로그 추가
+        log.debug("[getImage] Requested filename: {}", filename);
+
         Resource image = imageService.loadImage(filename);
         return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // 기본적으로 JPEG으로 설정
+                .contentType(MediaType.IMAGE_JPEG)
                 .body(image);
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(description = "이미지 등록 이미지 등록 시 비동기 식으로 요청" +
-            " 'metadata' 형식은은 다음과 같다.\n" +
-            "         Long productId;\n" +
-            "        Boolean isMainImage;\n" +
-            "\n" +
-            "위 형식에 알맞게 json으로 전달")
+    @Operation(description = "이미지 등록(비동기). 'metadata' 형식 예:\n" +
+            "  {\n" +
+            "    \"productId\": 123,\n" +
+            "    \"isMainImage\": true\n" +
+            "  }")
     public ResponseEntity<ImageControllerDTO.ImageResponseDTO> uploadSingleImage(
             @RequestPart("image") MultipartFile image,
-            @RequestPart("metadata") ImageControllerDTO.ImageRequestDTO requestDTO // 제품 관련한 productID가 필요함
+            @RequestPart("metadata") ImageControllerDTO.ImageRequestDTO requestDTO
     ) throws IOException {
 
+        // (수정) 로그 추가
+        log.debug("[uploadSingleImage] Start uploading image: {}, size: {} bytes, productId: {}, isMainImage: {}",
+                image.getOriginalFilename(),
+                image.getSize(),
+                requestDTO.getProductId(),
+                requestDTO.getIsMainImage()
+        );
+
         ImageControllerDTO.ImageResponseDTO response = imageService.saveImage(image, requestDTO);
+
+        // (수정) 업로드 완료 로그
+        log.debug("[uploadSingleImage] Upload finished. imageUri={}, productId={}, isMainImage={}",
+                response.getImageUri(),
+                response.getProductId(),
+                response.isMainImage()
+        );
+
         return ResponseEntity.ok(response);
     }
-
-
 }

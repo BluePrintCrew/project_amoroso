@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.category;
 
 
 
@@ -26,8 +26,7 @@ public class Category {
     @Column(nullable = false, length = 100)
     private String categoryName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Convert(converter = CategoryCodeConverter.class)
     private CategoryCode categoryCode;
 
     @ManyToOne

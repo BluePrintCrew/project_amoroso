@@ -1,6 +1,5 @@
 package org.example.amorosobackend.repository;
 
-import org.example.amorosobackend.domain.Category;
 import org.example.amorosobackend.domain.Order;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.enums.OrderStatus;

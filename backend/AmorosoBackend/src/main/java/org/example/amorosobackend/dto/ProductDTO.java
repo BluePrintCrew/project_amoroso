@@ -99,31 +99,33 @@ public class ProductDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Create {
-        private String categoryCode;            // 카테고리 코드를 문자열로 전달받음
-        private String productName;
-        private String description;
-        private Integer stock;
+        private String categoryCode;            // 카테고리 코드 (상품이 속한 카테고리의 식별 코드)
+        private String productName;             // 상품명
+        private String description;             // 상품의 간단한 설명
+        private Integer stock;                  // 재고 (현재 남아있는 상품의 수량)
 
-        private String productCode;
-        private String manufacturer;
-        private String origin;
-        private String brand;
-        private Boolean couponApplicable;
-        private String color;
-        private String components;
-        private String material;
-        private String size;
-        private Integer shippingInstallationFee;
-        private String asPhoneNumber;
-        private Integer costPrice;
-        private Integer marketPrice;
-        private Boolean outOfStock;
-        private Integer stockNotificationThreshold;
-        private Integer discountRate;
+        private String productCode;             // 해당 제품 코드 (상품을 구별하기 위한 고유 코드)
+        private String manufacturer;            // 생산지 (상품을 제조한 회사 또는 제조 지역)
+        private String origin;                  // 원산지 (상품의 주요 재료 또는 생산 국가)
+        private String brand;                   // 브랜드 (상품의 브랜드명)
+        private Boolean couponApplicable;       // 쿠폰 적용 가능 여부 (쿠폰 사용 가능 여부를 나타내는 값)
+        private String color;                   // 색상 (상품의 색상 정보)
+        private String components;              // 구성품 (상품이 포함하는 구성 요소들)
+        private String material;                // 소재 (상품의 주된 재료)
+        private String size;                    // 크기 (상품의 크기 또는 규격)
+        private Integer shippingInstallationFee;// 배송 및 설치 비용 (추가적인 배송 및 설치 비용)
+
+        private String asPhoneNumber;           // A/S 전화번호 (상품의 A/S를 위한 고객 지원 전화번호)
+        private Integer costPrice;              // 원가 (상품의 제조 또는 도매 가격)
+        private Integer marketPrice;            // 시중 가격 (상품이 시장에서 판매되는 가격)
+        private Boolean outOfStock;             // 품절 여부 (상품이 품절되었는지 여부)
+        private Integer stockNotificationThreshold; // 재고 알림 임계값 (해당 수량 이하로 재고가 줄어들면 알림을 보내기 위한 기준)
+        private Integer discountRate;           // 할인율 (상품의 할인 비율)
 
         // 옵션들
-        private List<ProductOptionDto> productOptions;
-        private List<AdditionalOptionDto> additionalOptions;
+        private List<ProductOptionDto> productOptions;    // 상품 기본 옵션 목록 (색상, 크기 등의 기본적인 옵션)
+        private List<AdditionalOptionDto> additionalOptions; // 추가 옵션 목록 (추가 선택 가능한 부가 옵션)
+
     }
 
     @Data

@@ -1,6 +1,7 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.*;
+import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.enums.*;
 import org.example.amorosobackend.repository.product.ProductRepository;

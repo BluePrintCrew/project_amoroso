@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ public class User {
 
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private UserRole role;  // USER, ADMIN 등
 
@@ -145,6 +145,6 @@ public class User {
     }
 
     public boolean isSeller() {
-        return this.role == UserRole.SELLER;
+        return this.role == UserRole.ROLE_SELLER;
     }
 }

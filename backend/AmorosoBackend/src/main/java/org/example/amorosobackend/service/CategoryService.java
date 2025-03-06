@@ -1,13 +1,11 @@
 package org.example.amorosobackend.service;
 
 import lombok.AllArgsConstructor;
-import org.example.amorosobackend.domain.Category;
+import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.enums.CategoryCode;
 import org.example.amorosobackend.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional

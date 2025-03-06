@@ -6,9 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.*;
+import org.example.amorosobackend.domain.category.Category;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +92,6 @@ public class Product {
     private Integer marketPrice; // 판매가
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
-    @Column(precision = 5, scale = 2, nullable = false)
     private Integer discountRate; // 0 ~ 9
     private Integer discountPrice; // discountRate에 따라 바뀜.
 
