@@ -6,7 +6,9 @@ import org.example.amorosobackend.domain.UserCoupon;
 import org.example.amorosobackend.enums.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +16,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
+@ActiveProfiles("test")
 class UserCouponRepositoryTest {
 
     @Autowired
@@ -33,7 +37,7 @@ class UserCouponRepositoryTest {
                 .email("test@example.com")
                 .password("password")
                 .name("테스트 유저")
-                .role(UserRole.USER.name())
+                .role("USER")
                 .isActive(true)
                 .build();
         userRepository.save(user);

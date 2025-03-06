@@ -43,6 +43,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private UserRole role;  // USER, ADMIN 등
 
     private Boolean isActive;

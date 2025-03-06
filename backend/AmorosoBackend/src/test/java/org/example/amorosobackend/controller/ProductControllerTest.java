@@ -52,7 +52,7 @@ class ProductControllerTest {
         when(categoryService.findByCategoryCode("CHAIR")).thenReturn(category);
 
         ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
-                null, 1, 1, List.of(new ProductDTO.ProductInfoDTO(1L, "빈티지 의자", 10000, "CHAIR", "image_url", "2024-01-31 12:00:00"))
+                1, 1, List.of(new ProductDTO.ProductInfoDTO(1L, "빈티지 의자", 10000, 0, 0, "CHAIR", "image_url", "2024-01-31 12:00:00"))
         );
 
         when(productService.getProducts(category.getCategoryId(), 1,10,"price", "asc")).thenReturn(response);
@@ -78,10 +78,10 @@ class ProductControllerTest {
         // Given
         Long productId = 1L;
         ProductDTO.ProductInfoDetailDTO productDetail = new ProductDTO.ProductInfoDetailDTO(
-                1L, "빈티지 의자", "아름다운 디자인의 빈티지 의자", 10000, 5,
+                1L, "빈티지 의자", "아름다운 디자인의 빈티지 의자", 5,
                 "CHAIR-001", "제조사", "대한민국", "브랜드", true,
                 "브라운", "부품정보", "목재", "중형", 5000,
-                "1234-5678", 8000, 12000, false, 10, 2000,
+                "1234-5678", 8000, 12000, false, 10,
                 List.of("image1.jpg", "image2.jpg"),
                 List.of(new ProductDTO.ProductReviewDTO(1L, "사용자1", 5, "좋아요", "2024-01-31 12:00:00"))
         );
@@ -94,7 +94,7 @@ class ProductControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()) // HTTP 200 응답 확인
                 .andExpect(jsonPath("$.productName").value("빈티지 의자"))
-                .andExpect(jsonPath("$.price").value(10000))
+                .andExpect(jsonPath("$.marketPrice").value(8000))
                 .andExpect(jsonPath("$.stock").value(5))
                 .andExpect(jsonPath("$.reviews[0].content").value("좋아요"));
 

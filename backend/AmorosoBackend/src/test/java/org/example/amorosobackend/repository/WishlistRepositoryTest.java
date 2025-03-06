@@ -9,13 +9,17 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
+@ActiveProfiles("test")
 class WishlistRepositoryTest {
 
     @Autowired
@@ -47,7 +51,7 @@ class WishlistRepositoryTest {
                 .name("testUser")
                 .email("testEmail@example.com")
                 .password("1234")
-                .role(UserRole.USER.name())
+                .role("USER")
                 .build());
 
         testSeller = sellerRepository.save(Seller.builder()
@@ -63,10 +67,10 @@ class WishlistRepositoryTest {
         testProduct = productRepository.save(Product.builder()
                 .productName("testProduct")
                 .stock(10)
-                .price(1000)
+                .marketPrice(1000)
                 .seller(testSeller)
                 .category(testCategory)
-                .discountRate(new BigDecimal("0.00"))
+                .discountRate(0)
                 .build());
 
         testWishlist = wishlistRepository.save(Wishlist.builder()

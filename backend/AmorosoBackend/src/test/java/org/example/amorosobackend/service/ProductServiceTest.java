@@ -54,7 +54,7 @@ class ProductServiceTest {
                         .category(categoryTest)
                         .productName("Table")
                         .description("Wooden Table")
-                        .price(100000)
+                        .marketPrice(100000)
                         .stock(5)
                         .createdAt(LocalDateTime.now())
                         .build(),
@@ -63,7 +63,7 @@ class ProductServiceTest {
                         .category(categoryTest)
                         .productName("Chair")
                         .description("Comfortable Chair")
-                        .price(50000)
+                        .marketPrice(50000)
                         .stock(5)
                         .createdAt(LocalDateTime.now())
                         .build()
@@ -106,7 +106,7 @@ class ProductServiceTest {
                 .category(categoryTest)
                 .productName("Table")
                 .description("Wooden Table")
-                .price(100000)
+                .marketPrice(100000)
                 .stock(5)
                 .createdAt(LocalDateTime.now())
                 .build();
