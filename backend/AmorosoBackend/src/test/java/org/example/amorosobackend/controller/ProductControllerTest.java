@@ -79,6 +79,9 @@ class ProductControllerTest {
         Long productId = 1L;
         ProductDTO.ProductInfoDetailDTO productDetail = new ProductDTO.ProductInfoDetailDTO(
                 1L, "빈티지 의자", "아름다운 디자인의 빈티지 의자", 10000, 5,
+                "CHAIR-001", "제조사", "대한민국", "브랜드", true,
+                "브라운", "부품정보", "목재", "중형", 5000,
+                "1234-5678", 8000, 12000, false, 10, 2000,
                 List.of("image1.jpg", "image2.jpg"),
                 List.of(new ProductDTO.ProductReviewDTO(1L, "사용자1", 5, "좋아요", "2024-01-31 12:00:00"))
         );

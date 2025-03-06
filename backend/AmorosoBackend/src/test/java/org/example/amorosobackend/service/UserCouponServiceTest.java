@@ -13,17 +13,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 class UserCouponServiceTest {
@@ -71,17 +72,25 @@ class UserCouponServiceTest {
                 .coupon(coupon)
                 .isUsed(false)
                 .build();
+                
+        // Mock the SecurityContext for authenticated user tests
+        Authentication authentication = new UsernamePasswordAuthenticationToken("test@example.com", null);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        
+        // Set up repository mocks for authenticated user
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
     }
 
     @Test
     void issueCouponToUser() {
         // given
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(couponRepository.findById(1L)).thenReturn(Optional.of(coupon));
         when(userCouponRepository.save(any(UserCoupon.class))).thenReturn(userCoupon);
 
         // when
-        UserCouponDTO issuedCoupon = userCouponService.issueCouponToUser( 1L);
+        UserCouponDTO issuedCoupon = userCouponService.issueCouponToUser(1L);
 
         // then
         assertThat(issuedCoupon.getCouponName()).isEqualTo("1000원 할인 쿠폰");
@@ -92,8 +101,7 @@ class UserCouponServiceTest {
     @Test
     void getUserCoupons() {
         // given
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userCouponRepository.findByUser(user)).thenReturn(List.of(userCoupon));
+        when(userCouponRepository.findAvailableCoupons(user)).thenReturn(List.of(userCoupon));
 
         // when
         List<UserCouponDTO> userCoupons = userCouponService.getUserCoupons();
@@ -101,7 +109,7 @@ class UserCouponServiceTest {
         // then
         assertThat(userCoupons).hasSize(1);
         assertThat(userCoupons.get(0).getCouponName()).isEqualTo("1000원 할인 쿠폰");
-        verify(userCouponRepository, times(1)).findByUser(user);
+        verify(userCouponRepository, times(1)).findAvailableCoupons(user);
     }
 
     @Test

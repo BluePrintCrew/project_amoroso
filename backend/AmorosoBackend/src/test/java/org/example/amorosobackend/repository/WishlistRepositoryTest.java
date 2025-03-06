@@ -4,6 +4,7 @@ import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.enums.*;
 import org.example.amorosobackend.repository.product.ProductRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ class WishlistRepositoryTest {
                 .name("testUser")
                 .email("testEmail@example.com")
                 .password("1234")
-                .role("USER")
+                .role(UserRole.USER.name())
                 .build());
 
         testSeller = sellerRepository.save(Seller.builder()
@@ -64,6 +65,7 @@ class WishlistRepositoryTest {
                 .price(1000)
                 .seller(testSeller)
                 .category(testCategory)
+                .discountRate(new BigDecimal("0.00"))
                 .build());
 
         testWishlist = wishlistRepository.save(Wishlist.builder()

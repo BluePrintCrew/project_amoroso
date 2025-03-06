@@ -36,10 +36,12 @@ public class UserCoupon {
     }
 
     public void useCoupon() {
-        this.isUsed = false;
+        this.isUsed = true;
     }
     public void updateAvailability() {
-        // 만료되었거나 사용된 경우 false, 그렇지 않으면 true
-        this.isUsed = expiredAt == null || expiredAt.isAfter(LocalDateTime.now());
+        // 만료된 경우 사용됨으로 표시
+        if (expiredAt != null && expiredAt.isBefore(LocalDateTime.now())) {
+            this.isUsed = true;
+        }
     }
 }
