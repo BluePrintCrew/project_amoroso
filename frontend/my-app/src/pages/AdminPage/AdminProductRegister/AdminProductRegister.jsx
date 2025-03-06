@@ -1,20 +1,53 @@
 import React, { useState } from "react";
 import styles from "./AdminProductRegister.module.css";
 
+// --- (수정) 카테고리 매핑 테이블
+const categoryMap = {
+  LIVING: [
+    { label: "소파", value: "LIV_SOFA" },
+    { label: "장식장", value: "LIV_DISPLAY" },
+    { label: "탁자", value: "LIV_TABLE" },
+  ],
+  BEDROOM: [
+    { label: "침대", value: "BED_BED" },
+    { label: "침대 깔판", value: "BED_BASE" },
+    { label: "협탁", value: "BED_NIGHTSTAND" },
+  ],
+  KITCHEN: [
+    { label: "식탁 & 의자", value: "KIT_DINING" },
+  ],
+  OFFICE: [
+    { label: "책상", value: "OFF_DESK" },
+    { label: "의자", value: "OFF_CHAIR" },
+    { label: "책장", value: "OFF_BOOKSHELF" },
+  ],
+  DRESSING: [
+    { label: "장롱", value: "DRESS_WARDROBE" },
+    { label: "화장대", value: "DRESS_TABLE" },
+    { label: "드레스", value: "DRESS_DRESSER" },
+    { label: "서랍장", value: "DRESS_DRAWER" },
+  ],
+  ETC: [
+    { label: "소품", value: "ETC_DECOR" },
+    { label: "벽걸이 거울", value: "ETC_WALL_MIRROR" },
+    { label: "액세서리", value: "ETC_ACCESSORY" },
+    { label: "거울", value: "ETC_GENERAL_MIRROR" },
+  ],
+};
+
 function AdminProductRegister() {
-  // (1) 카테고리 설정
+  // --- (수정) 1차/2차 카테고리 상태
   const [category1, setCategory1] = useState("");
   const [category2, setCategory2] = useState("");
 
   // (2) 기본 정보
   const [productCode, setProductCode] = useState("");
   const [brand, setBrand] = useState("");
-  const [modelName, setModelName] =useState("");
+  const [modelName, setModelName] = useState("");
   const [price, setPrice] = useState("");
   const [cost, setCost] = useState("");
   const [discount, setDiscount] = useState("");
 
-  // 새로 추가된 필드
   const [maker, setMaker] = useState("");
   const [origin, setOrigin] = useState("");
   const [basicDesc, setBasicDesc] = useState("");
@@ -24,10 +57,8 @@ function AdminProductRegister() {
   const [manufactureCountry, setManufactureCountry] = useState("");
   const [asTel, setAsTel] = useState("");
 
-  // 상품 품절 여부 (라디오: "selling" 또는 "soldOut")
   const [productStatus, setProductStatus] = useState("selling");
 
-  // 재고 관련
   const [stock, setStock] = useState("");
   const [stockNotify, setStockNotify] = useState("");
   const [minPurchase, setMinPurchase] = useState("");
@@ -49,18 +80,16 @@ function AdminProductRegister() {
   // (7) 추가 항목 (쿠폰)
   const [coupon, setCoupon] = useState("");
 
-  // 임시저장 버튼
   const handleTempSave = () => {
     alert("임시 저장되었습니다!");
   };
 
-  // 로컬 스토리지에서 JWT 토큰 가져오기
   const getToken = () => localStorage.getItem("token");
 
-  // 폼 데이터 → 백엔드 API에 맞는 payload로 변환
+  // --- (수정) 2차 카테고리를 최종 코드로 사용 (category2)
   const transformPayload = () => {
     return {
-      categoryCode: `${category1}-${category2}`,
+      categoryCode: category2,
       productCode,
       brand,
       productName: modelName,
@@ -73,7 +102,7 @@ function AdminProductRegister() {
       color,
       components,
       material,
-      size: "", // 필요시 추가
+      size: "",
       shippingInstallationFee: Number(shippingFee),
       asPhoneNumber: asTel,
       marketPrice: Number(cost) * (discount ? (100 - Number(discount)) / 100 : 1),
@@ -91,17 +120,18 @@ function AdminProductRegister() {
     };
   };
 
-  // 이미지 업로드 함수 (메인/서브 이미지 모두 처리)
+  // --- (수정) 이미지 업로드 함수
   const uploadImage = async (imageFile, productId, isMainImage) => {
     const formData = new FormData();
     formData.append("image", imageFile);
     formData.append("metadata", JSON.stringify({ productId, isMainImage }));
 
     try {
+      console.log("이미지 업로드 시도:", imageFile.name, "메인 여부:", isMainImage);
       const response = await fetch("http://localhost:8080/api/v1/images/upload", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${getToken()}`, // JWT 토큰을 헤더에 추가
+          Authorization: `Bearer ${getToken()}`,
         },
         body: formData,
       });
@@ -116,15 +146,15 @@ function AdminProductRegister() {
     }
   };
 
-  // 폼 제출 (등록하기)
+  // --- (수정) 상품 등록 -> 응답 -> 응답받은 productId로 이미지 업로드 -> 알림
   const handleRegister = async (e) => {
     e.preventDefault();
     const payload = transformPayload();
-    console.log("전송할 payload:", payload);
+    console.log("(디버그) 전송할 payload:", payload);
 
     try {
-      // 제품 등록 API 호출
-      const productResponse = await fetch("http://localhost:8080/api/v1/products", {
+      // 1) 상품 등록
+      const productResponse = await fetch("http://localhost:8080/api/v1/products/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,21 +166,25 @@ function AdminProductRegister() {
       if (!productResponse.ok) {
         throw new Error("제품 등록에 실패했습니다.");
       }
-      // API 응답에 따라 productId를 추출 (응답 구조에 따라 조정 필요)
-      const productData = await productResponse.json();
-      console.log("등록된 제품 정보:", productData);
-      const productId = productData; // 예시: 실제 응답에서 productId 필드를 사용
 
-      // 이미지 업로드: 메인 이미지가 있으면 업로드
+      // 2) 등록 완료 후 productId 반환
+      const productData = await productResponse.json();
+      console.log("(디버그) 등록된 제품 정보:", productData);
+      const productId = productData; // 실제 백엔드 응답 스펙에 맞게 수정 필요 (예: productData.productId)
+
+      // 3) 이미지 업로드
+      // 메인 이미지 등록
       if (mainImage) {
         await uploadImage(mainImage, productId, true);
       }
-      // 추가 이미지가 있으면 각각 업로드
+      // 서브 이미지 등록
       if (subImages.length > 0) {
         for (let file of subImages) {
           await uploadImage(file, productId, false);
         }
       }
+
+      // 4) 모든 등록 과정 완료
       alert("제품 등록 완료!");
     } catch (error) {
       console.error("제품 등록 중 에러:", error);
@@ -158,25 +192,26 @@ function AdminProductRegister() {
     }
   };
 
-  // 옵션 추가 로직
+  // 옵션 추가
   const addOption = () => {
     setOptions([...options, { optionName: "", optionValue: "" }]);
   };
 
-  // 옵션 수정 로직
+  // 옵션 변경
   const updateOption = (idx, field, value) => {
     const newOpts = [...options];
     newOpts[idx][field] = value;
     setOptions(newOpts);
   };
 
-  // 파일 선택 핸들러
+  // 메인 이미지 선택
   const handleMainImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setMainImage(e.target.files[0]);
     }
   };
 
+  // 서브 이미지 선택
   const handleSubImagesChange = (e) => {
     if (e.target.files) {
       setSubImages([...e.target.files]);
@@ -185,7 +220,6 @@ function AdminProductRegister() {
 
   return (
       <div className={styles.adminProductRegister}>
-        {/* 상단 바 */}
         <div className={styles.topBar}>
           <h2 className={styles.pageTitle}>상품 입력</h2>
           <div className={styles.topBarButtons}>
@@ -198,7 +232,6 @@ function AdminProductRegister() {
           </div>
         </div>
 
-        {/* 구분선 */}
         <div className={styles.topBarDivider} />
 
         <form id="productForm" onSubmit={handleRegister} className={styles.registerForm}>
@@ -206,27 +239,41 @@ function AdminProductRegister() {
           <section className={styles.formSection}>
             <h3 className={styles.sectionTitle}>상품카테고리 설정</h3>
             <div className={styles.formGrid}>
-              <div className={styles.formLabel}>카테고리 설정</div>
+              <div className={styles.formLabel}>1차 카테고리</div>
               <div className={styles.formInput}>
                 <select
                     value={category1}
-                    onChange={(e) => setCategory1(e.target.value)}
-                    style={{ marginRight: "8px" }}
+                    onChange={(e) => {
+                      setCategory1(e.target.value);
+                      setCategory2("");
+                    }}
                 >
-                  <option value="">1차 카테고리</option>
-                  <option value="top">상의</option>
-                  <option value="bottom">하의</option>
-                  <option value="outer">아우터</option>
+                  <option value="">-- 선택 --</option>
+                  <option value="LIVING">거실</option>
+                  <option value="BEDROOM">침실</option>
+                  <option value="KITCHEN">주방</option>
+                  <option value="OFFICE">홈오피스</option>
+                  <option value="DRESSING">드레스룸</option>
+                  <option value="ETC">기타</option>
                 </select>
-                <select
-                    value={category2}
-                    onChange={(e) => setCategory2(e.target.value)}
-                >
-                  <option value="">2차 카테고리</option>
-                  <option value="short-sleeve">반팔</option>
-                  <option value="long-sleeve">긴팔</option>
-                  <option value="hoodie">후드</option>
-                </select>
+              </div>
+
+              <div className={styles.formLabel}>2차 카테고리</div>
+              <div className={styles.formInput}>
+                {category1 ? (
+                    <select value={category2} onChange={(e) => setCategory2(e.target.value)}>
+                      <option value="">-- 선택 --</option>
+                      {categoryMap[category1].map((sub) => (
+                          <option key={sub.value} value={sub.value}>
+                            {sub.label}
+                          </option>
+                      ))}
+                    </select>
+                ) : (
+                    <select disabled>
+                      <option value="">1차 카테고리를 먼저 선택하세요</option>
+                    </select>
+                )}
               </div>
             </div>
           </section>
