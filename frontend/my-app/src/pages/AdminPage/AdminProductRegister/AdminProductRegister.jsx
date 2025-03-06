@@ -120,11 +120,20 @@ function AdminProductRegister() {
     };
   };
 
-  // --- (수정) 이미지 업로드 함수
+  // (수정된 코드 전체 예시)
   const uploadImage = async (imageFile, productId, isMainImage) => {
+    // 기존처럼 FormData 생성
     const formData = new FormData();
     formData.append("image", imageFile);
-    formData.append("metadata", JSON.stringify({ productId, isMainImage }));
+
+    /* 수정: JSON 문자열을 Blob으로 감싸면서 type을 "application/json"으로 지정 */
+    const metadataBlob = new Blob(
+        [JSON.stringify({ productId, isMainImage })],
+        { type: "application/json" }
+    );
+
+    /* 수정: 이 때 파일명(여기서는 "metadata.json")은 임의로 줄 수 있고, Content-Type은 위에서 지정됨 */
+    formData.append("metadata", metadataBlob, "metadata.json");
 
     try {
       console.log("이미지 업로드 시도:", imageFile.name, "메인 여부:", isMainImage);
@@ -132,6 +141,7 @@ function AdminProductRegister() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
+          // 주의: multipart/form-data는 자동으로 헤더에 boundary까지 설정되므로 직접 설정하지 않는 것이 좋습니다.
         },
         body: formData,
       });
@@ -145,6 +155,7 @@ function AdminProductRegister() {
       console.error("이미지 업로드 에러:", error);
     }
   };
+
 
   // --- (수정) 상품 등록 -> 응답 -> 응답받은 productId로 이미지 업로드 -> 알림
   const handleRegister = async (e) => {
