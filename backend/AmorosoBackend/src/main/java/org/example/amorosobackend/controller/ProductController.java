@@ -29,7 +29,7 @@ public class ProductController {
     @GetMapping("/")
     @Operation(description = "제품 목록 API")
     public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
-            @RequestParam(required = false) String categoryCode,
+            @RequestParam String categoryCode,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) Integer size,

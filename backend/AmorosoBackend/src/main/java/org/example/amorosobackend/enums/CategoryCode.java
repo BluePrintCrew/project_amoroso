@@ -3,7 +3,7 @@ package org.example.amorosobackend.enums;
 public enum CategoryCode {
 
     // 0. 전체보기
-    ALL("전체보기"),
+    ALL("ALL"),
 
     // 1. 리빙 (Living) - 거실 가구
     LIVING_SOFA("LIV_SOFA"),                 // 소파
