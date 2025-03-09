@@ -1,53 +1,75 @@
+// src/components/ProductCard/ProductCard.jsx
 import React from 'react';
 import './ProductCard.css';
 
 function ProductCard({ product }) {
-  // ✅ product가 undefined인 경우 기본값 설정
   if (!product) {
     return <div className="product-card">상품 정보가 없습니다.</div>;
   }
-// basic setting parameter..
+
   const {
-    name = '이름 없음',
-    price = 0,
-    discount = 0,
-    originalPrice = 0,
-    shipping = '',
-    coupon = false,
-    rating = 0,
-    reviewCount = 0,
-    imageUrl = 'https://via.placeholder.com/150' // 기본 이미지 설정
+    productId,
+    productName,
+    marketPrice,
+    discountPrice,
+    discountRate,
+    primaryImageURL,
+    category = '카테고리 없음',
+    createdAt = '' // 등록일 표시를 원한다면 UI에 추가
   } = product;
+
+  // 할인 중이라면 discountPrice 사용, 아니면 marketPrice
+  const displayPrice = discountPrice && discountPrice > 0
+    ? discountPrice
+    : marketPrice;
+
+  // 이미지 URL이 없으면 기본 이미지 사용
+  const imageUrl = primaryImageURL || 'https://via.placeholder.com/150';
+
+  // 할인율이 0보다 크면 할인율, 원가 표시
+  const hasDiscount = discountRate && discountRate > 0;
 
   return (
     <div className="product-card">
-      {/* 썸네일 */}
+      {/* 썸네일 영역 */}
       <div className="thumbnail">
-        <img src={imageUrl} alt={name} onError={(e) => e.target.src = 'https://via.placeholder.com/150'} />
+        <img
+          src={imageUrl}
+          alt={productName}
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/150';
+          }}
+        />
         <button className="wishlist-btn" title="찜하기" />
       </div>
 
-      {/* 상품 정보 */}
+      {/* 상품 정보 영역 */}
       <div className="card-info">
-        <p className="product-name">{name}</p>
+        {/* 카테고리 (필요하다면 위치/스타일 조정) */}
+        <p className="product-category">[{category}]</p>
 
-        {/* 가격 & 할인 */}
+        {/* 상품명 */}
+        <p className="product-name">{productName}</p>
+
+        {/* 가격 & 할인 표시 */}
         <div className="price-area">
-          {discount > 0 && <span className="discount">{discount}%</span>}
-          <span className="price">{price.toLocaleString()}원</span>
-          {originalPrice > price && (
-            <span className="original-price">{originalPrice.toLocaleString()}원</span>
+          {hasDiscount && (
+            <span className="discount">
+              {discountRate}%
+            </span>
+          )}
+          <span className="price">
+            {displayPrice.toLocaleString()}원
+          </span>
+          {hasDiscount && (
+            <span className="original-price">
+              {marketPrice.toLocaleString()}원
+            </span>
           )}
         </div>
 
-        {/* 혜택 & 별점 */}
-        <div className="benefit-area">
-          {shipping && <span className="badge">{shipping}</span>}
-          {coupon && <span className="badge">할인쿠폰</span>}
-          {rating > 0 && (
-            <span className="rating">★ {rating} ({reviewCount.toLocaleString()})</span>
-          )}
-        </div>
+        {/* 등록일 표시 (필요 시) */}
+        {/* <p className="created-at">등록일: {createdAt}</p> */}
       </div>
     </div>
   );
