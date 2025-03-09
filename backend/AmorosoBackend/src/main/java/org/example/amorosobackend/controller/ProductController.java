@@ -29,11 +29,11 @@ public class ProductController {
     @GetMapping("/")
     @Operation(description = "제품 목록 API")
     public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
-            @RequestParam String categoryCode,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String order) {
+            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "desc") String order) {
 
         // Category 조회
         Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);

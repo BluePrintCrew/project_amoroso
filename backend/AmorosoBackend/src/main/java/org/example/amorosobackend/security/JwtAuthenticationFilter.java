@@ -28,8 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
 
-        if (requestURI.startsWith("/api/v1/products/") ||
-                requestURI.startsWith("/swagger-ui/")) {
+        if (request.getMethod().equals("GET") && requestURI.equals("/api/v1/products/")) {
             log.info("[JWT 필터] {} 경로는 인증 없이 접근 가능", requestURI);
             filterChain.doFilter(request, response);
             return;

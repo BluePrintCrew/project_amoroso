@@ -7,6 +7,7 @@ import org.example.amorosobackend.security.JwtProvider;
 import org.example.amorosobackend.security.CustomAuthenticationEntryPoint; // 추가
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -49,10 +50,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/v3/api-docs/**","/swagger-ui/**",
-                                "/api/v1/auth/**", "/oauth2/**", "/api/v1/Test-User/**","/api/v1/products/**",
-                                "/api/v1/images/**").permitAll()
+                                "/api/v1/auth/**", "/oauth2/**", "/api/v1/Test-User/**",
+                                "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/images/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyRole("ADMIN", "SELLER")
                         .anyRequest().authenticated()
+
                 )
+
+
 
                 // 변경된 부분: 예외 처리(인증 실패 시 401 반환)
                 .exceptionHandling(exception -> exception
