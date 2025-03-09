@@ -1,15 +1,14 @@
 // src/pages/ProductListPage/ProductListPage.jsx
-
 import './ProductListPage.css';
-
 import React, { useEffect, useState } from 'react';
-
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import ProductCard from '../../components/ProductCard/ProductCard';
 
 function ProductListPage() {
   const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,27 +16,32 @@ function ProductListPage() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/products');
+        
+        const response = await fetch('http://localhost:8080/api/v1/products/');
         if (!response.ok) {
           throw new Error('상품 데이터를 불러오는데 실패했습니다.');
         }
         const data = await response.json();
+
+        // data 구조: { totalPages, totalItems, products: [...] }
         setProducts(data.products || []);
-      } catch (error) {
-        setError(error.message);
+        setTotalPages(data.totalPages || 0);
+        setTotalItems(data.totalItems || 0);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     fetchProducts();
   }, []);
 
   return (
     <div className="product-list-page">
-      {/* ✅ 헤더 추가 */}
       <Header />
 
       <div className="content-wrapper">
-        {/* ✅ 네비게이션 추가 */}
         <nav className="breadcrumb">
           <span className="home-icon">🏠</span> &gt;
           <span className="category"> 다이닝 </span> &gt;
@@ -49,12 +53,11 @@ function ProductListPage() {
         {loading ? (
           <p className="loading-text">상품을 불러오는 중...</p>
         ) : error ? (
-          <p className="error-text>">❌ {error}</p>
+          <p className="error-text">❌ {error}</p>
         ) : (
           <>
-            {/* 상품 개수 & 정렬 버튼 */}
             <div className="product-count-sort">
-              <span className="total-count">전체 {products.length}건</span>
+              <span className="total-count">전체 {totalItems}건</span>
               <div className="sort-menu">
                 <button>인기순</button>
                 <button>최신순</button>
@@ -63,17 +66,20 @@ function ProductListPage() {
               </div>
             </div>
 
-            {/* 상품 리스트 */}
             <div className="product-grid">
               {products.map((prod) => (
-                <ProductCard key={prod.id} product={prod} />
+                <ProductCard key={prod.productId} product={prod} />
               ))}
+            </div>
+
+            <div className="pagination">
+              <p>전체 페이지: {totalPages}페이지</p>
+              {/* 페이지네이션 로직 추가 가능 */}
             </div>
           </>
         )}
       </div>
 
-      {/* ✅ 푸터 추가 */}
       <Footer />
     </div>
   );
