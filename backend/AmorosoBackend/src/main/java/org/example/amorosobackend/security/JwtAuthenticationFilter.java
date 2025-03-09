@@ -25,6 +25,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String requestURI = request.getRequestURI();
+
+
+        if (requestURI.startsWith("/api/v1/products/") ||
+                requestURI.startsWith("/swagger-ui/")) {
+            log.info("[JWT 필터] {} 경로는 인증 없이 접근 가능", requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
         String token = resolveToken(header);
 
