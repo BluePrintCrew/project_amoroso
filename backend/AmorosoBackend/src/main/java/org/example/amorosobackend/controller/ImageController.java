@@ -48,20 +48,24 @@ public class ImageController {
     ) throws IOException {
 
         // (수정) 로그 추가
-        log.debug("[uploadSingleImage] Start uploading image: {}, size: {} bytes, productId: {}, isMainImage: {}",
+        log.debug("[uploadSingleImage] Start uploading image: {}, size: {} bytes, productId: {}, " +
+                        "ImageType: {}, imageOrder: {} ",
                 image.getOriginalFilename(),
                 image.getSize(),
                 requestDTO.getProductId(),
-                requestDTO.getIsMainImage()
+                requestDTO.getImageType(),
+                requestDTO.getImageOrder()
         );
 
         ImageControllerDTO.ImageResponseDTO response = imageService.saveImage(image, requestDTO);
 
         // (수정) 업로드 완료 로그
-        log.debug("[uploadSingleImage] Upload finished. imageUri={}, productId={}, isMainImage={}",
+        log.debug("[uploadSingleImage] Upload finished. imageUri={}, productId={}," +
+                        " isMainImage={}, ImageOrder= {}",
                 response.getImageUri(),
                 response.getProductId(),
-                response.isMainImage()
+                response.getImageType(),
+                response.getImageOrder()
         );
 
         return ResponseEntity.ok(response);

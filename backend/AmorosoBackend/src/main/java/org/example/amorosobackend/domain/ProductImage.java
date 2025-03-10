@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.product.Product;
+import org.example.amorosobackend.enums.ImageType;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,10 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productImageId;
 
+    @Enumerated(EnumType.STRING)
+    ImageType imageType;
+    Integer imageOrder;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -31,9 +36,12 @@ public class ProductImage {
     private LocalDateTime createdAt;
 
     @Builder
-    private ProductImage(Product product, String imageUrl) {
+    private ProductImage(Product product, String imageUrl,
+                         Integer imageOrder,ImageType imageType ) {
         this.product = product;
         this.imageUrl = imageUrl;
+        this.imageType = imageType;
+        this.imageOrder = imageOrder;
     }
 
     @PrePersist

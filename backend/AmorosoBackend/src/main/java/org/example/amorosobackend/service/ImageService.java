@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.ProductImage;
 import org.example.amorosobackend.dto.ImageControllerDTO;
+import org.example.amorosobackend.enums.ImageType;
 import org.example.amorosobackend.repository.ProductImageRepository;
 import org.example.amorosobackend.repository.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +51,7 @@ public class ImageService {
         // (수정) 로그 추가
         log.debug("[saveImage] Saving image for productId={}, isMainImage={}",
                 requestDTO.getProductId(),
-                requestDTO.getIsMainImage()
+                requestDTO.getImageType()
         );
 
         // 1) 파일 시스템에 저장
@@ -64,7 +65,7 @@ public class ImageService {
                 });
 
         // 3) 메인 이미지 설정 (isMainImage==true)
-        if(requestDTO.getIsMainImage()) {
+        if(ImageType.valueOf(requestDTO.getImageType())==ImageType.MAIN ) {
             // (수정) 메인 이미지 설정 로직
             log.debug("[saveImage] Setting main image to productId={}", product.getProductId());
             product.setMainImageUri(imageUri);
@@ -74,6 +75,8 @@ public class ImageService {
         ProductImage productImage = ProductImage.builder()
                 .imageUrl(imageUri)
                 .product(product)
+                .imageOrder(requestDTO.getImageOrder())
+                .imageType(ImageType.valueOf(requestDTO.getImageType()))
                 .build();
         productImageRepository.save(productImage);
 
@@ -83,8 +86,9 @@ public class ImageService {
 
         return new ImageControllerDTO.ImageResponseDTO(
                 imageUri,
-                requestDTO.getIsMainImage(),
-                requestDTO.getProductId()
+                requestDTO.getProductId(),
+                requestDTO.getImageType(),
+                requestDTO.getImageOrder()
         );
     }
 
