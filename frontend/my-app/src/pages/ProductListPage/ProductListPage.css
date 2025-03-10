@@ -60,7 +60,7 @@
   width: 50%;
   height: 327px;
   /*object-fit: cover;*/
-  border: 1px solide #E2E2E2;
+  border: 1px solid #E2E2E2;
   border-radius: 10px;
 }
 
@@ -110,23 +110,71 @@
   margin-right: 5px;
 }
 
+/* 빵 부스러기(브레드크럼) */
 .breadcrumb {
   width: 1200px; /* 중앙정렬 예시 */
   margin: 0 auto;
   padding: 16px 0;
   font-size: 14px;
 }
+
 .breadcrumb ul {
   display: flex;
   gap: 5px;
 }
+
 .breadcrumb li::after {
   content: ">";
   margin: 0 5px;
   color: #999;
 }
+
 .breadcrumb li:last-child::after {
   content: "";
   margin: 0;
 }
 
+/* ----------------------------------------- */
+/* 카테고리 선택 영역 추가 (상위/하위 카테고리) */
+/* ----------------------------------------- */
+
+.top-category-selector,
+.sub-category-selector {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center; /* 라벨과 셀렉트박스 수직 정렬 */
+}
+
+.top-category-selector label,
+.sub-category-selector label {
+  margin-right: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.top-category-selector select,
+.sub-category-selector select {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.top-category-selector select:hover,
+.sub-category-selector select:hover {
+  border-color: #999;
+}
+
+.top-category-selector select:focus,
+.sub-category-selector select:focus {
+  outline: none;
+  border-color: #666;
+}
+.category-selector{
+  display: flex;
+  gap: 40px;
+}
