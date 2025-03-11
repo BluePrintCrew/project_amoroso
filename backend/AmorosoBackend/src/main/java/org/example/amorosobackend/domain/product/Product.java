@@ -49,6 +49,7 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // 사용되지 않는 컬럼 - 검증 후 삭제 필요
     @OneToOne
     @JoinColumn(name = "product_image_Id")
     private ProductImage primaryImage;

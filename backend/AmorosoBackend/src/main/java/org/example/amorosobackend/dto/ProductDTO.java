@@ -69,9 +69,19 @@ public class ProductDTO {
         private Integer discountPrice;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
-
-        private List<String> imagesURL;
+        private String mainImageURL;
+        private List<ImageSequenceInfoDTO> subImagesURL;
+        private List<ImageSequenceInfoDTO> detailDescriptionImageURL;
         private List<ProductReviewDTO> reviews;
+
+
+    }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageSequenceInfoDTO {
+        private String imageURL;
+        private Integer imageNum;
     }
 
     @Data

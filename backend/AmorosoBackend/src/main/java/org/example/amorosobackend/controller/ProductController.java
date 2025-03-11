@@ -50,7 +50,9 @@ public class ProductController {
      * 단일 상품 상세 API
      */
     @GetMapping("/{productId}")
-    @Operation(summary = "제품 상세 조회", description = "productId로 특정 제품 상세 정보를 반환합니다.")
+    @Operation(summary = "제품 상세 조회", description = "productId로 특정 제품 상세 정보를 반환합니다." +
+            "subImagesURL : 서브 이미지와, 서브이미지가 나와야할 순서 저장" +
+            "detailDescriptionImagesURL: 제품 상세설명 이미지와, 제품 설명 이미지가 나와야할 순서 저장")
     public ResponseEntity<ProductDTO.ProductInfoDetailDTO> getProductDetail(@PathVariable Long productId) {
         ProductDTO.ProductInfoDetailDTO productDetail = productService.getProductDetail(productId);
         return ResponseEntity.ok(productDetail);

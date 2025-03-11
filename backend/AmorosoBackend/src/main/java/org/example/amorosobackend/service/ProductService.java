@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -280,33 +281,56 @@ public class ProductService {
     public ProductDTO.ProductInfoDetailDTO getProductDetail(Long productId) {
         log.info("[getProductDetail] Start - Product ID: {}", productId);
 
+        // 1) 상품 조회
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> {
                     log.warn("[getProductDetail] Product Not Found - Product ID: {}", productId);
                     return new IllegalArgumentException("상품이 존재하지 않습니다.");
                 });
 
-        // 리뷰 목록
+        // 2) 리뷰 목록 조회
         List<Review> reviews = reviewRepository.findByProduct(product);
         log.debug("[getProductDetail] Review Count: {}", reviews.size());
 
-        // 상품 이미지 목록
-        List<String> imageUrls = product.getProductImages().stream()
-                .map(ProductImage::getImageUrl)
-                .collect(Collectors.toList());
-        log.debug("[getProductDetail] Image Count: {}", imageUrls.size());
+        // 3) 이미지 목록 분류
+        //    - MAIN: 단일 mainImageURL
+        //    - SUB: subImagesURL (List<ImageSequenceInfoDTO>)
+        //    - DETAIL: detailDescriptionImageURL (List<ImageSequenceInfoDTO>)
+        String mainImageURL = null;
+        List<ProductDTO.ImageSequenceInfoDTO> subImageList = new ArrayList<>();
+        List<ProductDTO.ImageSequenceInfoDTO> detailImageList = new ArrayList<>();
 
-        // 리뷰 DTO 변환
+        for (ProductImage pi : product.getProductImages()) {
+            switch (pi.getImageType()) {
+                case MAIN:
+                    // 메인 이미지는 1개만 있다고 가정
+                    mainImageURL = pi.getImageUrl();
+                    break;
+                case SUB:
+                    subImageList.add(
+                            new ProductDTO.ImageSequenceInfoDTO(pi.getImageUrl(), pi.getImageOrder())
+                    );
+                    break;
+                case DETAIL:
+                    detailImageList.add(
+                            new ProductDTO.ImageSequenceInfoDTO(pi.getImageUrl(), pi.getImageOrder())
+                    );
+                    break;
+            }
+        }
+
+        // 4) 리뷰 DTO 변환
         List<ProductDTO.ProductReviewDTO> reviewDTOs = reviews.stream()
                 .map(r -> new ProductDTO.ProductReviewDTO(
                         r.getReviewId(),
                         r.getUser().getName(),
                         r.getRating(),
                         r.getContent(),
-                        r.getCreatedAt() == null ? null : r.getCreatedAt().toString()
+                        (r.getCreatedAt() != null) ? r.getCreatedAt().toString() : null
                 ))
                 .collect(Collectors.toList());
 
+        // 5) DTO 구성
         ProductDTO.ProductInfoDetailDTO detailDTO = new ProductDTO.ProductInfoDetailDTO(
                 product.getProductId(),
                 product.getProductName(),
@@ -327,14 +351,19 @@ public class ProductService {
                 product.getDiscountPrice(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
-                imageUrls,
+                // MAIN
+                mainImageURL,
+                // SUB
+                subImageList,
+                // DETAIL
+                detailImageList,
+                // 리뷰 목록
                 reviewDTOs
         );
 
         log.info("[getProductDetail] End - Product ID: {}", productId);
         return detailDTO;
     }
-
     // 내부 헬퍼 메서드
     private User getCurrentUser() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

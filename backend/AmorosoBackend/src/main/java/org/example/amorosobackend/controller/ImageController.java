@@ -40,7 +40,8 @@ public class ImageController {
     @Operation(description = "이미지 등록(비동기). 'metadata' 형식 예:\n" +
             "  {\n" +
             "    \"productId\": 123,\n" +
-            "    \"isMainImage\": true\n" +
+            "    \"ImageType\": MAIN or DETAIL OR SUB\n" +
+            "    \"ImageOrder\": if Type is SUB or DETAIL, it has Sequence \n "      +
             "  }")
     public ResponseEntity<ImageControllerDTO.ImageResponseDTO> uploadSingleImage(
             @RequestPart("image") MultipartFile image,
