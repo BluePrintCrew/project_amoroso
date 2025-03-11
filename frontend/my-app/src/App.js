@@ -10,7 +10,6 @@ import Login from './pages/Login/LoginForm';
 import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';
 import Order from './pages/OrderPage/OrderForm';
-import ProductList from './pages/ProductListPage/ProductListPage';
 import Products from './pages/ProductListPage/ProductListPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
@@ -24,10 +23,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/detail" element={<Detail />} />
+          <Route path="/product/:id" element={<Detail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/list" element={<ProductList />} />
           <Route path="/order" element={<Order />} />
           <Route path="/products" element={<Products />} />
           <Route path="/mypage/*" element={<MyPage />} />
