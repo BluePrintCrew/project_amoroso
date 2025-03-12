@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import CartTable from "./CartTable";
 import CartSummary from "../../components/CartSummary/CartSummary";
 import CartFooter from "./CartFooter";
@@ -6,36 +7,31 @@ import "./CartPage.css";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
-const cartItems = [
-  {
-    id: 1,
-    name: "식탁의자 1",
-    description: "한샘 설치기사",
-    price: 3306000,
-    originalPrice: 4272000,
-    quantity: 1,
-    shipping: "무료배송",
-    imageUrl: "https://via.placeholder.com/80",
-  },
-  {
-    id: 2,
-    name: "식탁의자 2",
-    description: "다이닝 의자",
-    price: 520000,
-    originalPrice: 580000,
-    quantity: 1,
-    shipping: "유료배송",
-    imageUrl: "https://via.placeholder.com/80",
-  },
-];
-
 function CartPage() {
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/v1/cart")
+      .then((response) => {
+        setCartItems(response.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div>데이터를 불러오는 중 오류 발생</div>;
+
   return (
-    
     <div className="cart-page">
-       <Header />
+      <Header />
       <h2 className="cart-title">장바구니 ({cartItems.length})</h2>
-      <CartTable cartItems={cartItems} />
+      <CartTable cartItems={cartItems} setCartItems={setCartItems} />
       <div className="cart-information-text">
         <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>
         <p>• 주문서 안내 내용입니다. 주문서 안내 내용입니다. 주문서 안내 내용입니다.</p>

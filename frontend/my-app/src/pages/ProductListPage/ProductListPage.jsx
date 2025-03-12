@@ -152,7 +152,7 @@ const currentSubCategory = subCategoryList.find(
     {currentSubCategory ? currentSubCategory.label : ''}
   </span>
 </nav>
-     {/*   <h2 className="page-title">상품 목록</h2> */}
+     {/*   <h2 className="page-title">상품 목록</h2>*/}
 
 <div className="category-selector">
        {/* 상위 카테고리 선택 */}
