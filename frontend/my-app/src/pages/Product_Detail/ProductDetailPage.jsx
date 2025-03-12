@@ -25,7 +25,7 @@ const ProductDetailPage = () => {
         const token = localStorage.getItem('token');
 
         const response = await fetch(
-          `http://localhost:8080/api/v1/products/2`,
+          `http://localhost:8080/api/v1/products/1`,
           {
             method: 'GET',
             headers: {
