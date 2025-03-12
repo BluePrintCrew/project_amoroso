@@ -74,6 +74,9 @@ public class ProductDTO {
         private List<ImageSequenceInfoDTO> detailDescriptionImageURL;
         private List<ProductReviewDTO> reviews;
 
+        private List<AdditionalOptionResponse> additionalOptionResponses;
+        private List<ProductOptionResponse> productOptionResponses;
+
 
     }
     @Data
@@ -95,6 +98,23 @@ public class ProductDTO {
         private String createdAt;
     }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProductOptionResponse {
+        private Long ProductOptionId;
+        private String optionName;
+        private List<String> optionValues;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AdditionalOptionResponse{
+        private Long AdditionalOptionId;
+        private String optionName;
+        private Integer additionalPrice;
+    }
     // 필요하다면 유틸 메서드 (dateTime -> String 변환 등)도 여기에 넣을 수 있음.
     private static String dateToString(LocalDateTime dateTime) {
         if (dateTime == null) return null;
@@ -133,8 +153,8 @@ public class ProductDTO {
         private Integer discountRate;           // 할인율 (상품의 할인 비율)
 
         // 옵션들
-        private List<ProductOptionDto> productOptions;    // 상품 기본 옵션 목록 (색상, 크기 등의 기본적인 옵션)
-        private List<AdditionalOptionDto> additionalOptions; // 추가 옵션 목록 (추가 선택 가능한 부가 옵션)
+        private List<ProductOptionRequest> productOptions;    // 상품 기본 옵션 목록 (색상, 크기 등의 기본적인 옵션)
+        private List<AdditionalOptionRequest> additionalOptions; // 추가 옵션 목록 (추가 선택 가능한 부가 옵션)
 
     }
 
@@ -166,14 +186,14 @@ public class ProductDTO {
         private Integer discountRate;
 
         // 옵션들
-        private List<ProductOptionDto> productOptions;
-        private List<AdditionalOptionDto> additionalOptions;
+        private List<ProductOptionRequest> productOptions;
+        private List<AdditionalOptionRequest> additionalOptions;
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductOptionDto {
+    public static class ProductOptionRequest {
         private String optionName;
         private List<String> optionValues;
     }
@@ -181,7 +201,7 @@ public class ProductDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AdditionalOptionDto {
+    public static class AdditionalOptionRequest{
         private String optionName;
         private Integer additionalPrice;
     }

@@ -1,6 +1,6 @@
 package org.example.amorosobackend.repository;
 
-import org.example.amorosobackend.domain.CartItem;
+import org.example.amorosobackend.domain.Cart.CartItem;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

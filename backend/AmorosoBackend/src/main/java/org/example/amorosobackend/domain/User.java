@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.example.amorosobackend.domain.Cart.CartItem;
 import org.example.amorosobackend.enums.UserRole;
 
 @Entity

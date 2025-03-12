@@ -1,10 +1,11 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.Cart;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.product.Product;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private Product product; // 즉시로딩으로 가져옴
 
     @Column(nullable = false)
     private Integer quantity = 1;
@@ -35,6 +36,15 @@ public class CartItem {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private String mainImageURL; // 해당 카트아이템에서 확인 할 수 있어야함
+
+    @OneToOne(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CartAdditionalOption cartAdditionalOption;
+
+    @OneToOne(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CartProductOption cartProductOption;
+
 
     public void updateQuantity(Integer quantity) {
         if (quantity == null || quantity < 1) {

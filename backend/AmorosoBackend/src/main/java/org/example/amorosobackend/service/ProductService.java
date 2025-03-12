@@ -107,7 +107,7 @@ public class ProductService {
 
         // ProductOption 저장
         if (dto.getProductOptions() != null) {
-            for (ProductDTO.ProductOptionDto optionDto : dto.getProductOptions()) {
+            for (ProductDTO.ProductOptionRequest optionDto : dto.getProductOptions()) {
                 ProductOption option = ProductOption.builder()
                         .product(product)
                         .optionName(optionDto.getOptionName())
@@ -120,7 +120,7 @@ public class ProductService {
 
         // AdditionalOption 저장
         if (dto.getAdditionalOptions() != null) {
-            for (ProductDTO.AdditionalOptionDto addOptionDto : dto.getAdditionalOptions()) {
+            for (ProductDTO.AdditionalOptionRequest addOptionDto : dto.getAdditionalOptions()) {
                 AdditionalOption addOption = AdditionalOption.builder()
                         .product(product)
                         .optionName(addOptionDto.getOptionName())
@@ -236,7 +236,7 @@ public class ProductService {
         // 기존 옵션 삭제 -> 새로 저장
         if (dto.getProductOptions() != null) {
             productOptionRepository.deleteAllByProduct(product);
-            for (ProductDTO.ProductOptionDto optionDto : dto.getProductOptions()) {
+            for (ProductDTO.ProductOptionRequest optionDto : dto.getProductOptions()) {
                 ProductOption option = ProductOption.builder()
                         .product(product)
                         .optionName(optionDto.getOptionName())
@@ -249,7 +249,7 @@ public class ProductService {
 
         if (dto.getAdditionalOptions() != null) {
             additionalOptionRepository.deleteAllByProduct(product);
-            for (ProductDTO.AdditionalOptionDto addOptionDto : dto.getAdditionalOptions()) {
+            for (ProductDTO.AdditionalOptionRequest addOptionDto : dto.getAdditionalOptions()) {
                 AdditionalOption addOption = AdditionalOption.builder()
                         .product(product)
                         .optionName(addOptionDto.getOptionName())
@@ -330,6 +330,21 @@ public class ProductService {
                 ))
                 .collect(Collectors.toList());
 
+        List<ProductDTO.ProductOptionResponse> productOptionDTOs = product.getProductOptions().stream()
+                .map(p -> new ProductDTO.ProductOptionResponse(
+                        p.getId(),
+                        p.getOptionName(),
+                        p.getOptionValues()
+                ))
+                .collect(Collectors.toList());
+
+        List<ProductDTO.AdditionalOptionResponse> additionalOptionDTOs = product.getAdditionalOptions().stream()
+                .map(a -> new ProductDTO.AdditionalOptionResponse(
+                        a.getId(),
+                        a.getOptionName(),
+                        a.getAdditionalPrice()
+                ))
+                .toList();
         // 5) DTO 구성
         ProductDTO.ProductInfoDetailDTO detailDTO = new ProductDTO.ProductInfoDetailDTO(
                 product.getProductId(),
@@ -358,7 +373,9 @@ public class ProductService {
                 // DETAIL
                 detailImageList,
                 // 리뷰 목록
-                reviewDTOs
+                reviewDTOs,
+                additionalOptionDTOs,
+                productOptionDTOs
         );
 
         log.info("[getProductDetail] End - Product ID: {}", productId);
