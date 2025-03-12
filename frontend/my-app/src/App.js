@@ -9,6 +9,7 @@ import Home from './pages/MainPage/MainPage';
 import Login from './pages/Login/LoginForm';
 import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';
+import OAuth2CallbackPage from './pages/Auth/OAuth2CallbackPage';
 import Order from './pages/OrderPage/OrderForm';
 import Products from './pages/ProductListPage/ProductListPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
@@ -31,7 +32,10 @@ function App() {
           <Route path="/mypage/*" element={<MyPage />} />
           <Route path="/mypageinfo" element={<MyInfo />} />
 
-          {/* 테스트 시  사용되는 페이지*/}
+          {/* OAuth2 콜백 라우트 */}
+          <Route path="/oauth2/callback/:provider" element={<OAuth2CallbackPage />} />
+
+          {/* 테스트 시 사용되는 페이지*/}
           <Route path="/testJWTProvider" element={<TestJWTProviderPage />} />
 
           <Route path="/admin" element={<AdminLayout />}>

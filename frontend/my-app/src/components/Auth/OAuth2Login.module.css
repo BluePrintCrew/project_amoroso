@@ -1,0 +1,52 @@
+.socialLoginContainer {
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.socialButton {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.socialButton:hover {
+    opacity: 0.9;
+}
+
+.google {
+    background-color: #ffffff;
+    color: #757575;
+    border: 1px solid #dadce0;
+}
+
+.kakao {
+    background-color: #FEE500;
+    color: #000000;
+}
+
+.naver {
+    background-color: #03C75A;
+    color: #ffffff;
+} 

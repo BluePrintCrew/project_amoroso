@@ -1,8 +1,6 @@
 import PageLayout from '../../components/PageLayout/PageLayout';
 import React from 'react';
-import google from '../../assets/google_login.png';
-import kakao from '../../assets/kakao_login.png';
-import naver from '../../assets/naver_login.png';
+import OAuth2Login from '../../components/Auth/OAuth2Login';
 import styles from './LoginForm.module.css';
 
 const LoginForm = () => {
@@ -55,41 +53,7 @@ const LoginForm = () => {
             로그인
           </button>
 
-          <div className={styles.socialLogin}>
-            <p className={styles.socialLoginTitle}>간편 로그인</p>
-            <div className={styles.socialLoginButtons}>
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/kakao`)
-                }
-                className={`${styles.socialButton} ${styles.kakao}`}
-              >
-                <img src={kakao} alt="카카오 로그인" />
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/naver`)
-                }
-                className={`${styles.socialButton} ${styles.naver}`}
-              >
-                <img src={naver} alt="네이버 로그인" />
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/google`)
-                }
-                className={`${styles.socialButton} ${styles.google}`}
-              >
-                <img src={google} alt="구글 로그인" />
-              </button>
-            </div>
-          </div>
+          <OAuth2Login />
 
           <div className={styles.loginLinks}>
             <button className={styles.linkButton}>아이디/비밀번호 찾기</button>

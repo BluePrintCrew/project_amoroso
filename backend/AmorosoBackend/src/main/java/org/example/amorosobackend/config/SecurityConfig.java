@@ -50,8 +50,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/","/v3/api-docs/**","/swagger-ui/**",
-                                "/api/v1/auth/**", "/oauth2/**", "/api/v1/Test-User/**",
-                                "/error").permitAll()
+                                "/api/v1/auth/**", "/oauth2/**", "/api/v1/Test-User/**", 
+                                "/api/v1/oauth2/authorize/**", "/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/images/**").permitAll()
 
@@ -72,6 +72,12 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("http://localhost:3000/loginSuccess")
                         .failureUrl("http://localhost:3000/loginFailure")
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorize")
+                        )
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/oauth2/callback/*")
+                        )
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
