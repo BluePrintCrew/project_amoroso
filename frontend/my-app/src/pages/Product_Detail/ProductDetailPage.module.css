@@ -260,24 +260,24 @@
     margin-bottom: 30px;
 }
 
+.productBottom{
+
+}
+
 .tabNavigation{
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     justify-content: space-around;
-    padding: 10px;
-    position: relative;
-    border-bottom: 1px solid #efefef;
+    gap: 20px;
     background: white;
+    position: relative;
+    width: 100%;
 }
 
 .tabNavigation.fixedTab{
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: inherit;
     z-index: 100;
 }
 
