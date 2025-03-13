@@ -23,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -98,7 +97,16 @@ public class ProductService {
                 .discountRate(dto.getDiscountRate())
                 .build();
 
-        product.setDiscountPrice(dto.getDiscountRate());
+        int marketPrice = dto.getMarketPrice();
+        int discountRate = dto.getDiscountRate(); // 예: 15면 15% 할인
+
+        // 할인율만큼 marketPrice에서 차감 (즉, 100% - discountRate 만큼 남김)
+        int priceAfterDiscount = marketPrice * (100 - discountRate) / 100;
+
+        // 십의 자리, 일의 자리를 0으로 만들기 위해 100원 단위로 반내림 처리
+        int finalDiscountPrice = (priceAfterDiscount / 100) * 100;
+
+        product.setDiscountPrice(finalDiscountPrice);
         log.debug("[createProduct] Product Built - Name: {}, DiscountRate: {}", product.getProductName(), product.getDiscountRate());
 
         // DB 저장
@@ -153,13 +161,40 @@ public class ProductService {
 
         log.debug("[getProducts] Retrieved Products Count: {}", productList.getTotalElements());
 
-        Page<ProductDTO.ProductInfoDTO> productInfoDTOs = productList
-                .map(ProductService::toProductInfoDTO);
+        Set<Long> wishlistProductIds = new HashSet<>();
+        try {
+            // SecurityContextHolder에서 현재 사용자의 이메일을 가져옴
+            String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            userRepository.findByEmail(email).ifPresent(user -> {
+                wishlistProductIds.addAll(
+                        user.getWishlists().stream()
+                                .map(wishlist -> wishlist.getProduct().getProductId())
+                                .collect(Collectors.toSet())
+                );
+            });
+        } catch(Exception e) {
+            // 로그인되어 있지 않거나 에러 발생 시, wishlistProductIds는 빈 set 그대로 사용
+        }
 
+        // 상품 목록을 DTO로 매핑하면서, 각 상품이 위시리스트에 존재하는지 확인
+        Page<ProductDTO.ProductInfoDTO> dtoPage = productList.map(product -> {
+            boolean isInWishlist = wishlistProductIds.contains(product.getProductId());
+            return new ProductDTO.ProductInfoDTO(
+                    product.getProductId(),
+                    product.getProductName(),
+                    product.getMarketPrice(),
+                    product.getDiscountPrice(),
+                    product.getDiscountRate(),
+                    product.getCategory().getCategoryName(),
+                    product.getPrimaryImage().getImageUrl(),
+                    dateToString(product.getCreatedAt()),
+                    isInWishlist
+            );
+        });
         ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
-                productInfoDTOs.getTotalPages(),
-                (int) productInfoDTOs.getTotalElements(),
-                productInfoDTOs.getContent()
+                dtoPage.getTotalPages(),
+                (int) dtoPage.getTotalElements(),
+                dtoPage.getContent()
         );
 
         log.info("[getProducts] End - Total Pages: {}, Total Elements: {}",
@@ -364,6 +399,7 @@ public class ProductService {
                 product.getAsPhoneNumber(),
                 product.getMarketPrice(),
                 product.getDiscountPrice(),
+                product.getDiscountRate(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
                 // MAIN
@@ -401,24 +437,20 @@ public class ProductService {
         }
     }
 
-    public static ProductDTO.ProductInfoDTO toProductInfoDTO(Product product) {
-        // DateTimeFormatter 정의 (원하는 포맷으로 설정)
-        String formattedCreatedAt = dateToString(product.getCreatedAt());
 
-        return new ProductDTO.ProductInfoDTO(
-                product.getProductId(),
-                product.getProductName(),
-                product.getMarketPrice(),
-                product.getDiscountPrice(),
-                product.getDiscountRate(),
-                product.getCategory().getCategoryCode().getCode(),
-                product.getPrimaryImage() != null ? product.getPrimaryImage().getImageUrl() : null,
-                formattedCreatedAt
-        );
-    }
 
     public static String dateToString(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return dateTime.format(formatter);
+    }
+
+    public ProductOption getProductOptionById(Long productOptionId) {
+        return productOptionRepository.findById(productOptionId)
+                .orElseThrow(() -> new NoSuchElementException("해당 ID의 ProductOption을 찾을 수 없습니다: " + productOptionId));
+    }
+
+    public AdditionalOption getAdditionalOptionById(Long additionalOptionId) {
+        return additionalOptionRepository.findById(additionalOptionId)
+                .orElseThrow(() -> new NoSuchElementException("해당 ID의 ProductOption을 찾을 수 없습니다: " + additionalOptionId));
     }
 }

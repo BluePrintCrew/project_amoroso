@@ -1,8 +1,12 @@
 package org.example.amorosobackend.service;
 
+import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
 import org.example.amorosobackend.domain.Cart.CartItem;
+import org.example.amorosobackend.domain.Cart.CartProductOption;
+import org.example.amorosobackend.domain.product.AdditionalOption;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.User;
+import org.example.amorosobackend.domain.product.ProductOption;
 import org.example.amorosobackend.dto.CartItemControllerDTO;
 import org.example.amorosobackend.repository.CartItemRepository;
 import org.example.amorosobackend.repository.UserRepository;
@@ -31,19 +35,34 @@ public class CartItemService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Product product = productService.getProductById(request.getProductId());
 
-        CartItem cartItem = cartItemRepository.findByUserAndProduct(user, product)
-                .orElse(CartItem.builder()
-                        .user(user)
-                        .product(product)
-                        .quantity(0)
-                        .build());
+        CartItem cartItem = CartItem.builder()
+                .user(user)
+                .product(product)
+                .quantity(request.getQuantity())
+                .build();
 
-        cartItem.updateQuantity(cartItem.getQuantity() + request.getQuantity()); //이미 장바구니에 있을때 추가
+        if (request.getAdditionalOptionId() != null) {
+            AdditionalOption additionalOption = productService.getAdditionalOptionById(request.getAdditionalOptionId());
+            CartAdditionalOption cartAdditionalOption = CartAdditionalOption.builder()
+                    .cartItem(cartItem)
+                    .additionalOption(additionalOption)
+                    .build();
+            cartItem.setCartAdditionalOption(cartAdditionalOption);
+        }
+
+        if (request.getProductOptionId() != null && request.getSelectedOptionValue() != null) {
+            ProductOption productOption = productService.getProductOptionById(request.getProductOptionId());
+            CartProductOption cartProductOption = CartProductOption.builder()
+                    .cartItem(cartItem)
+                    .productOption(productOption)
+                    .selectedValue(request.getSelectedOptionValue())
+                    .build();
+            cartItem.setCartProductOption(cartProductOption);
+        }
+
         cartItemRepository.save(cartItem);
-
         return new CartItemControllerDTO.CartItemResponseDTO(cartItem);
     }
-
     public List<CartItemControllerDTO.CartItemResponseDTO> getCartItems(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return cartItemRepository.findByUser(user).stream()

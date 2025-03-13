@@ -1,9 +1,6 @@
 package org.example.amorosobackend.domain.Cart;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.product.Product;
@@ -39,9 +36,11 @@ public class CartItem {
 
     private String mainImageURL; // 해당 카트아이템에서 확인 할 수 있어야함
 
+    @Setter
     @OneToOne(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private CartAdditionalOption cartAdditionalOption;
 
+    @Setter
     @OneToOne(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private CartProductOption cartProductOption;
 
@@ -88,4 +87,5 @@ public class CartItem {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }
