@@ -98,14 +98,14 @@ public class ProductService {
                 .build();
 
         int marketPrice = dto.getMarketPrice();
-        int discountRate = dto.getDiscountRate(); // 예: 15면 15% 할인
-
+        Integer discountRate = dto.getDiscountRate(); // 예: 15면 15% 할인
+        if (discountRate == null) {
+            discountRate = 0;
+        }
         // 할인율만큼 marketPrice에서 차감 (즉, 100% - discountRate 만큼 남김)
         int priceAfterDiscount = marketPrice * (100 - discountRate) / 100;
-
         // 십의 자리, 일의 자리를 0으로 만들기 위해 100원 단위로 반내림 처리
         int finalDiscountPrice = (priceAfterDiscount / 100) * 100;
-
         product.setDiscountPrice(finalDiscountPrice);
         log.debug("[createProduct] Product Built - Name: {}, DiscountRate: {}", product.getProductName(), product.getDiscountRate());
 
