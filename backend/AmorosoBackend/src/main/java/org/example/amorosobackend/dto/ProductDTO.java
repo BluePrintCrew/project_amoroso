@@ -39,6 +39,8 @@ public class ProductDTO {
         private String category;
         private String primaryImageURL;
         private String createdAt;
+        private boolean isInWishlist;
+        // -> 이부분을 추가해야함
     }
 
     /**
@@ -67,6 +69,7 @@ public class ProductDTO {
         private String asPhoneNumber;
         private Integer marketPrice;
         private Integer discountPrice;
+        private Integer discountRate;
         private Boolean outOfStock;
         private Integer stockNotificationThreshold;
         private String mainImageURL;

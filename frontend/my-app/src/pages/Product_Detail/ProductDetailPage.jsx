@@ -25,7 +25,7 @@ const ProductDetailPage = () => {
         const token = localStorage.getItem('token');
 
         const response = await fetch(
-          `http://localhost:8080/api/v1/products/1`,
+          `http://localhost:8080/api/v1/products/${id}`,
           {
             method: 'GET',
             headers: {
@@ -55,10 +55,19 @@ const ProductDetailPage = () => {
   const handleScroll = () => {
     if (!tabRef.current) return;
     const offsetTop = tabRef.current.parentElement.offsetTop;
+    const productBottom = document.querySelector(`.${styles.productBottom}`);
+
     if (window.scrollY >= offsetTop) {
       tabRef.current.classList.add(styles.fixedTab);
+      if (productBottom) {
+        const rect = productBottom.getBoundingClientRect();
+        tabRef.current.style.width = `${rect.width}px`;
+        tabRef.current.style.left = `${rect.left}px`;
+      }
     } else {
       tabRef.current.classList.remove(styles.fixedTab);
+      tabRef.current.style.width = '100%';
+      tabRef.current.style.left = '0';
     }
   };
 
@@ -95,7 +104,14 @@ const ProductDetailPage = () => {
         <div className={styles.productMain}>
           <div className={styles.productTop}>
             <div className={styles.productImage}>
-              <div className={styles.mainImage}>제품상세페이지 대표이미지</div>
+              <img
+                src={
+                  product.mainImageURL
+                    ? product.mainImageURL
+                    : 'https://placehold.co/500x500'
+                }
+                className={styles.mainImage}
+              />
               <div className={styles.thumbnailContainer}>
                 <button
                   className={styles.arrow}
@@ -211,8 +227,8 @@ const ProductDetailPage = () => {
             </div>
 
             <div id="info" className={styles.section}>
-              {product.imagesURL.length > 0 ? (
-                product.imagesURL.map((img, index) => (
+              {product.detailDescriptionImageURL.length > 0 ? (
+                product.detailDescriptionImageURL.map((img, index) => (
                   <img
                     key={index}
                     src={img}
