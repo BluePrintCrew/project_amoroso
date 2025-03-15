@@ -17,6 +17,7 @@ function MainPage() {
       <div className={styles.content}>
         <CategoryMenu />
         <BestProducts />
+        <BenefitsSection />
       </div>
     </div>
   );

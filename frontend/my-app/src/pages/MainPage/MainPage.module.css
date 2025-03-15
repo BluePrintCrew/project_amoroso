@@ -9,5 +9,8 @@
     margin: 0 auto;
     position: relative;
     z-index: 2;
-    margin-top: 600px;
+    margin-top: 550px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
