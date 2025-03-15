@@ -186,7 +186,7 @@ public class ProductService {
                     product.getDiscountPrice(),
                     product.getDiscountRate(),
                     product.getCategory().getCategoryName(),
-                    product.getPrimaryImage().getImageUrl(),
+                    product.getMainImageUri(),
                     dateToString(product.getCreatedAt()),
                     isInWishlist
             );

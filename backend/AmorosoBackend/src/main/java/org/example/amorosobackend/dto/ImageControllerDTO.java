@@ -12,7 +12,6 @@ public class ImageControllerDTO {
     @NoArgsConstructor
     public static class ImageRequestDTO {
         private Long productId;
-        // private Boolean isMainImage;
         private Integer imageOrder;
         private String imageType;
 
