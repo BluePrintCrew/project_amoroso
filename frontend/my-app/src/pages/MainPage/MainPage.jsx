@@ -10,8 +10,10 @@ import styles from './MainPage.module.css';
 function MainPage() {
   return (
     <div className={styles.mainPage}>
-      <Banner />
-      <Header />
+      <div className={styles.bannerWrapper}>
+        <Banner />
+        <Header />
+      </div>
       <div className={styles.content}>
         <CategoryMenu />
         <BestProducts />
