@@ -58,13 +58,14 @@ const BestProducts = () => {
       </div>
 
       <div className={styles.slider}>
+        <button
+          className={`${styles.arrowButton} ${styles.left}`}
+          onClick={handlePrev}
+        >
+          <img src={leftArrow} alt="Previous" />
+        </button>
+
         <div className={styles.productList}>
-          <button
-            className={`${styles.arrowButton} ${styles.left}`}
-            onClick={handlePrev}
-          >
-            <img src={leftArrow} alt="Previous" />
-          </button>
           {products.map((product, index) => (
             <div
               key={product.id}
@@ -85,13 +86,13 @@ const BestProducts = () => {
               </div>
             </div>
           ))}
-          <button
-            className={`${styles.arrowButton} ${styles.right}`}
-            onClick={handleNext}
-          >
-            <img src={rightArrow} alt="Next" />
-          </button>
         </div>
+        <button
+          className={`${styles.arrowButton} ${styles.right}`}
+          onClick={handleNext}
+        >
+          <img src={rightArrow} alt="Next" />
+        </button>
       </div>
     </div>
   );

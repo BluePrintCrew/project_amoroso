@@ -1,0 +1,47 @@
+.title{
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.benefitsContainer{
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.benefitCard{
+  position: relative;
+  width: 685px;
+  height: 685px;
+  border-radius: 15px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  padding: 60px;
+}
+
+.overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+}
+
+.text{
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  color: white;
+}
+
+.text h3{
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.text p{
+  font: 14px;
+}
