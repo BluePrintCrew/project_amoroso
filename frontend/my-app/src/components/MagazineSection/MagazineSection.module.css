@@ -1,0 +1,76 @@
+.magazineSection{
+  text-align: center;
+}
+
+.title{
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.magazineContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.magazineSlide{
+  display: flex;
+  width: 100%;
+  height: 200px;
+  border-radius: 15px;
+  position: relative;
+}
+
+.textContent{
+  background: #766e68;
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.textContent h3{
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.imageContent{
+  width: 50%;
+  background-size: cover;
+  background-position: center;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.arrowButton{
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+}
+
+.arrowButton.left{
+  left: -50px;
+}
+
+.arrowButton.right{
+  right: -50px;
+}
+
+.pagination{
+  position: absolute;
+  margin-top: 10px;
+  bottom: 10px;
+  right: 10px;
+  font-size: 14px;
+  color: white;
+  background: rgba(0,0,0,0.4);
+  padding: 5px 10px;
+  border-radius: 15px;
+}

@@ -18,6 +18,7 @@ function MainPage() {
         <CategoryMenu />
         <BestProducts />
         <BenefitsSection />
+        <MagazineSection />
       </div>
     </div>
   );
