@@ -1,106 +1,135 @@
 .product-inquiry-container {
-    margin-top: 24px;
-    font-family: "Pretendard", sans-serif;
-  }
-  
-  /* The two columns side by side */
-  .inquiry-columns {
-    display: flex;
-    gap: 40px; /* space between left and right columns */
-  }
-  
-  /* Each column: title + list */
-  .inquiry-column {
-    flex: 1;
-  }
-  
-  .inquiry-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0 12px 0;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #666;
-  }
-  
-  .inquiry-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  /* Each inquiry item in the list */
-  .inquiry-item {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* space between badge, content, date */
-    border-bottom: 1px solid #eee;
-    padding: 12px 0;
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
-  /* The status badge: “답변대기” or “답변완료” */
-  .badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #fff;
-    /* either .complete or .pending changes background color */
-  }
-  
-  .pending {
-    background-color: #555;  /* e.g., gray for “답변대기” */
-  }
-  
-  .complete {
-    background-color: #24a148; /* e.g., green for “답변완료” */
-  }
-  
-  /* Content snippet of the inquiry */
-  .inquiry-content {
-    flex: 1; /* fill remaining space, pushing date to the right */
-    white-space: nowrap; 
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Date shown at the end */
-  .inquiry-date {
-    min-width: 80px; /* ensure date doesn’t get truncated */
-    text-align: right;
-    color: #333;
-  }
-  
-  /* Footer with note and 카톡상담하기 button */
-  .inquiry-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 16px;
-  }
-  
-  .inquiry-note {
-    font-size: 0.85rem;
-    color: #666;
-    margin: 0;
-  }
-  
-  .kakao-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px; /* space between icon and text */
-    padding: 8px 16px;
-    border: none;
-    background-color: #ffe812; /* Example kakao yellow */
-    color: #333;
-    font-weight: 500;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-  
-  /* Optional icon styling (if you want a custom icon instead of an emoji) */
-  .kakao-icon {
-    font-size: 1.2rem;
-  }
-  
+  margin-top: 24px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* The two columns side by side */
+.inquiry-columns {
+  display: flex;
+  gap: 40px; /* space between left and right columns */
+}
+
+/* Each column: title + list */
+.inquiry-column {
+  flex: 1;
+}
+
+.inquiry-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #666;
+}
+
+.inquiry-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each inquiry item in the list */
+.inquiry-item {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* space between badge, content, date */
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer; /* 클릭 가능함을 표시 */
+  transition: background-color 0.2s;
+}
+
+.inquiry-item:hover {
+  background-color: #f9f9f9; /* 호버 효과 */
+}
+
+/* The status badge: "답변대기" or "답변완료" */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #fff;
+  /* either .complete or .pending changes background color */
+}
+
+.pending {
+  background-color: #555;  /* e.g., gray for "답변대기" */
+}
+
+.complete {
+  background-color: #24a148; /* e.g., green for "답변완료" */
+}
+
+/* Content snippet of the inquiry */
+.inquiry-content {
+  flex: 1; /* fill remaining space, pushing date to the right */
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Date shown at the end */
+.inquiry-date {
+  min-width: 80px; /* ensure date doesn't get truncated */
+  text-align: right;
+  color: #333;
+}
+
+/* Footer with note and 카톡상담하기 button */
+.inquiry-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.inquiry-note {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.kakao-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* space between icon and text */
+  padding: 8px 16px;
+  border: none;
+  background-color: #ffe812; /* Example kakao yellow */
+  color: #333;
+  font-weight: 500;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.kakao-button:hover {
+  background-color: #f7e10d; /* 살짝 더 진한 노란색으로 호버 효과 */
+}
+
+/* Optional icon styling (if you want a custom icon instead of an emoji) */
+.kakao-icon {
+  font-size: 1.2rem;
+}
+
+/* 추가: 로딩, 에러, 빈 상태 스타일 */
+.inquiry-column.loading,
+.inquiry-column.error {
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+}
+
+.inquiry-column.loading p,
+.inquiry-column.error p,
+.empty-message {
+  margin-top: 20px;
+  color: #666;
+  text-align: center;
+}
+
+.error-message {
+  color: #e74c3c;
+}
