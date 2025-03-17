@@ -1,13 +1,14 @@
-.pageWrapper{
+.pageWrapper {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     position: relative;
 }
 
-.content{
+.content {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
     flex: 1;
+    padding-bottom: 40px; /* 푸터와 겹치지 않도록 여백 추가 */
 }
