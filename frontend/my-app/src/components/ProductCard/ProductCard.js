@@ -70,26 +70,36 @@ function ProductCard({ product }) {
   // 할인율이 0보다 크면 할인율, 원가 표시
   const hasDiscount = discountRate && discountRate > 0;
   
-  // 위시리스트 추가 핸들러
   const handleWishlistAdd = (e) => {
-    // 카드 클릭 시 상세 이동 방지
     e.stopPropagation();
     e.preventDefault();
-    const token = localStorage.getItem('accessToken');
+    
+    // 토큰 확인 (로그인 체크)
+    const token = localStorage.getItem('token'); // 또는 'accessToken' 중 실제 사용 중인 키
+    if (!token) {
+      // 로그인 필요 메시지 표시 또는 로그인 페이지로 리디렉션
+      alert("로그인 후 이용 가능합니다.");
+      // 또는 navigate('/login');
+      return;
+    }
+    
     axios
       .post(`${API_BASE_URL}/api/v1/wishlist/add/${productId}`, null, {
         headers: {
-          Authorization: token ? `Bearer ${token}` : undefined,
+          Authorization: `Bearer ${token}`
         },
       })
       .then((response) => {
         console.log('위시리스트에 추가됨:', response.data);
-        // 성공 후 UI 업데이트나 토스트 메시지 표시 가능
+        // 성공 알림 표시
+        alert("상품이 위시리스트에 추가되었습니다.");
+        // 또는 toast 메시지 사용
       })
       .catch((error) => {
         console.error('위시리스트 추가 실패:', error);
+        alert("위시리스트 추가에 실패했습니다.");
       });
-  };
+  }; 
   
   const handleImageLoad = () => {
     setImageLoaded(true);
