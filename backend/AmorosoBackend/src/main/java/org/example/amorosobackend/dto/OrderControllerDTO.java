@@ -4,10 +4,10 @@ package org.example.amorosobackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.amorosobackend.domain.order.Order;
-import org.example.amorosobackend.domain.order.OrderItem;
-import org.example.amorosobackend.domain.order.OrderItemAdditionalOption;
-import org.example.amorosobackend.domain.order.OrderItemProductOption;
+import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.OrderItem;
+import org.example.amorosobackend.domain.OrderItemAdditionalOption;
+import org.example.amorosobackend.domain.OrderItemProductOption;
 
 import java.time.LocalDateTime;
 import java.util.List;

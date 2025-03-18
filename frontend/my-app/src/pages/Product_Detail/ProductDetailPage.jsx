@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
-import PageLayout from '../../components/PageLayout/PageLayout';
 import CartPopup from '../Product_Detail/CartPopup';
+import PageLayout from '../../components/PageLayout/PageLayout';
+import ReviewSection from './ReviewSection';
 import couponPack from '../../assets/coupon_pack.png';
 import getCoupon from '../../assets/get_coupon.png';
 import likeButton from '../../assets/like.png';
@@ -18,7 +19,7 @@ const ProductDetailPage = () => {
   const [activeTab, setActiveTab] = useState('info');
   const [showMore, setShowMore] = useState(false);
   const tabRef = useRef(null);
-  
+
   // 장바구니 팝업 상태 관리
   const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState('cart'); // 'cart' 또는 'login'
@@ -103,41 +104,40 @@ const ProductDetailPage = () => {
   const handleAddToCart = async () => {
     // 이미 처리 중이면 중복 요청 방지
     if (isAddingToCart) return;
-    
+
     const token = localStorage.getItem('token');
-    
+
     // 로그인 여부 확인
     if (!token) {
       setPopupType('login');
       setIsCartPopupOpen(true);
       return;
     }
-    
+
     try {
       setIsAddingToCart(true);
-      
+
       // 장바구니 API 호출
       const response = await fetch('http://localhost:8080/api/v1/cart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           productId: product.productId,
-          quantity: 1
+          quantity: 1,
           // 추가 옵션이 있다면 여기에 포함
-        })
+        }),
       });
-      
+
       if (!response.ok) {
         throw new Error('장바구니 추가에 실패했습니다.');
       }
-      
+
       // 장바구니 추가 성공 시 팝업 표시
       setPopupType('cart');
       setIsCartPopupOpen(true);
-      
     } catch (error) {
       console.error('장바구니 추가 오류:', error);
       alert('장바구니 추가 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -145,13 +145,13 @@ const ProductDetailPage = () => {
       setIsAddingToCart(false);
     }
   };
-  
+
   // 장바구니 이동 확인 핸들러
   const handleCartConfirm = () => {
     setIsCartPopupOpen(false);
     navigate('/cart');
   };
-  
+
   // 팝업 닫기 핸들러
   const handlePopupClose = () => {
     setIsCartPopupOpen(false);
@@ -168,13 +168,18 @@ const ProductDetailPage = () => {
               <img
                 src={
                   product.mainImageURL
-                    ? `http://localhost:8080/api/v1/images/${product.mainImageURL.split('/').pop()}`
+                    ? `http://localhost:8080/api/v1/images/${product.mainImageURL
+                        .split('/')
+                        .pop()}`
                     : 'https://placehold.co/500x500'
                 }
                 alt={product.productName}
                 className={styles.mainImage}
               />
-              <div className={styles.thumbnailContainer} ref={thumbnailContainerRef}>
+              <div
+                className={styles.thumbnailContainer}
+                ref={thumbnailContainerRef}
+              >
                 <button
                   className={styles.arrow}
                   onClick={() => scrollThumbnails('left')}
@@ -182,22 +187,22 @@ const ProductDetailPage = () => {
                   ◀
                 </button>
                 <div className={styles.thumbnailImages}>
-                  {product.subImagesURL && product.subImagesURL.length > 0 ? (
-                    product.subImagesURL.map((img, index) => (
-                      <div key={index} className={styles.thumbnail}>
-                        <img 
-                          src={`http://localhost:8080/api/v1/images/${img.imageURL.split('/').pop()}`} 
-                          alt={`${product.productName} 썸네일 ${index + 1}`} 
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    [...Array(5)].map((_, index) => (
-                      <div key={index} className={styles.thumbnail}>
-                        썸네일 {index + 1}
-                      </div>
-                    ))
-                  )}
+                  {product.subImagesURL && product.subImagesURL.length > 0
+                    ? product.subImagesURL.map((img, index) => (
+                        <div key={index} className={styles.thumbnail}>
+                          <img
+                            src={`http://localhost:8080/api/v1/images/${img.imageURL
+                              .split('/')
+                              .pop()}`}
+                            alt={`${product.productName} 썸네일 ${index + 1}`}
+                          />
+                        </div>
+                      ))
+                    : [...Array(5)].map((_, index) => (
+                        <div key={index} className={styles.thumbnail}>
+                          썸네일 {index + 1}
+                        </div>
+                      ))}
                 </div>
                 <button
                   className={styles.arrow}
@@ -248,10 +253,11 @@ const ProductDetailPage = () => {
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>포인트</span>
                   <span className={styles.infoValue}>
-                    구매 시 <span className={styles.highlight}>
+                    구매 시{' '}
+                    <span className={styles.highlight}>
                       {Math.floor(product.discountPrice * 0.003)}P
-                    </span> 예상
-                    적립 (회원 0.3%)
+                    </span>{' '}
+                    예상 적립 (회원 0.3%)
                   </span>
                 </div>
                 <div className={styles.infoRow}>
@@ -278,48 +284,56 @@ const ProductDetailPage = () => {
           <div className={styles.productBottom}>
             <div ref={tabRef} className={styles.tabNavigation}>
               <button
-                onClick={() => scrollToSection('info')}
+                onClick={() => setActiveTab('info')}
                 className={activeTab === 'info' ? styles.active : ''}
               >
                 상품정보
               </button>
               <button
-                onClick={() => scrollToSection('review')}
+                onClick={() => setActiveTab('review')}
                 className={activeTab === 'review' ? styles.active : ''}
               >
                 후기
               </button>
               <button
-                onClick={() => scrollToSection('inquiry')}
+                onClick={() => setActiveTab('inquiry')}
                 className={activeTab === 'inquiry' ? styles.active : ''}
               >
                 문의
               </button>
               <button
-                onClick={() => scrollToSection('delivery')}
+                onClick={() => setActiveTab('delivery')}
                 className={activeTab === 'delivery' ? styles.active : ''}
               >
                 배송
               </button>
             </div>
 
-            <div id="info" className={styles.section}>
-              {product.detailDescriptionImageURL && product.detailDescriptionImageURL.length > 0 ? (
-                product.detailDescriptionImageURL.map((img, index) => (
-                  <img
-                    key={index}
-                    src={`http://localhost:8080/api/v1/images/${img.imageURL.split('/').pop()}`}
-                    alt={`상세 이미지 ${index}`}
-                    className={styles.detailImage}
-                  />
-                ))
-              ) : (
-                <img
-                  src="https://placehold.co/800x500"
-                  alt="상품 상세 이미지 없음"
-                  className={styles.detailImage}
-                />
+            <div className={styles.tabContent}>
+              {activeTab === 'info' && (
+                <div className={styles.infoTab}>
+                  {product.detailDescriptionImageURL &&
+                  product.detailDescriptionImageURL.length > 0 ? (
+                    product.detailDescriptionImageURL.map((img, index) => (
+                      <img
+                        key={index}
+                        src={`http://localhost:8080/api/v1/images/${img.imageURL
+                          .split('/')
+                          .pop()}`}
+                        alt={`상세 이미지 ${index}`}
+                        className={styles.detailImage}
+                      />
+                    ))
+                  ) : (
+                    <img
+                      src="https://placehold.co/800x500"
+                      alt="상품 상세 이미지 없음"
+                      className={styles.detailImage}
+                    />
+                  )}
+                </div>
               )}
+              {activeTab === 'review' && <ReviewSection />}
             </div>
 
             <div className={styles.moreInfo}>
@@ -356,7 +370,9 @@ const ProductDetailPage = () => {
           <div className={styles.totalPrice}>
             <div className={styles.priceInfo}>
               <span className={styles.priceTitle}>총 구매가</span>
-              <span className={styles.priceValue}>{product.discountPrice.toLocaleString()}원</span>
+              <span className={styles.priceValue}>
+                {product.discountPrice.toLocaleString()}원
+              </span>
             </div>
             <p className={styles.priceNote}>
               쿠폰적용 및 패키지할인 적용금액은
@@ -366,8 +382,8 @@ const ProductDetailPage = () => {
           </div>
           <div className={styles.buttonGroup}>
             {/* 장바구니 버튼에 핸들러 추가 */}
-            <button 
-              className={styles.cartButton} 
+            <button
+              className={styles.cartButton}
               onClick={handleAddToCart}
               disabled={isAddingToCart}
             >
@@ -382,7 +398,7 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* 장바구니/로그인 팝업 */}
       <CartPopup
         isOpen={isCartPopupOpen}

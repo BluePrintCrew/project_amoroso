@@ -2,12 +2,13 @@ package org.example.amorosobackend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.domain.*;
-import org.example.amorosobackend.domain.order.Order;
-import org.example.amorosobackend.domain.order.OrderItem;
-import org.example.amorosobackend.domain.order.OrderItemAdditionalOption;
-import org.example.amorosobackend.domain.order.OrderItemProductOption;
+
 import org.example.amorosobackend.domain.coupon.Coupon;
 import org.example.amorosobackend.domain.coupon.UserCoupon;
+import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.OrderItem;
+import org.example.amorosobackend.domain.OrderItemAdditionalOption;
+import org.example.amorosobackend.domain.OrderItemProductOption;
 import org.example.amorosobackend.domain.product.AdditionalOption;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.product.ProductOption;

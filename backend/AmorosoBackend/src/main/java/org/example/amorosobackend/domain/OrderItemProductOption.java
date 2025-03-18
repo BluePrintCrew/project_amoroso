@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.order;
+package org.example.amorosobackend.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

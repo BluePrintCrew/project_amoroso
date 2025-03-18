@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.domain.cart.CartItem;
-import org.example.amorosobackend.domain.order.OrderItem;
+import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.review.Review;
 

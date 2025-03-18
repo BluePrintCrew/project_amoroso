@@ -1,6 +1,6 @@
 package org.example.amorosobackend.repository;
 
-import org.example.amorosobackend.domain.order.OrderItem;
+import org.example.amorosobackend.domain.OrderItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
