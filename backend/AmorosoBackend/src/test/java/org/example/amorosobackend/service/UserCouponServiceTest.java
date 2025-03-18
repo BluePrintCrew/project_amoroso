@@ -1,8 +1,8 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Coupon;
+import org.example.amorosobackend.domain.coupon.Coupon;
 import org.example.amorosobackend.domain.User;
-import org.example.amorosobackend.domain.UserCoupon;
+import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.example.amorosobackend.dto.UserCouponDTO;
 import org.example.amorosobackend.enums.UserRole;
 import org.example.amorosobackend.repository.CouponRepository;

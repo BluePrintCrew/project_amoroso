@@ -4,8 +4,12 @@ package org.example.amorosobackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.amorosobackend.domain.Order;
-import org.example.amorosobackend.domain.OrderItem;
+import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
+import org.example.amorosobackend.domain.Cart.CartProductOption;
+import org.example.amorosobackend.domain.Order.Order;
+import org.example.amorosobackend.domain.Order.OrderItem;
+import org.example.amorosobackend.domain.Order.OrderItemAdditionalOption;
+import org.example.amorosobackend.domain.Order.OrderItemProductOption;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,13 +22,13 @@ public class OrderControllerDTO {
     @AllArgsConstructor
     public static class OrderResponseDTO {
         private Long orderId;
-      //  private Long UserCouponId; 주문 처리해야함
+        private Long UserCouponId;
         private String userEmail;
         private Integer totalPrice;
         private String orderStatus;
         private String paymentStatus;
         private LocalDateTime createdAt;
-        private List<OrderItemDTO> orderItems;
+        private List<OrderItemResponseDTO> orderItems;
 
         public OrderResponseDTO(Order order) {
             this.orderId = order.getOrderId();
@@ -34,8 +38,51 @@ public class OrderControllerDTO {
             this.paymentStatus = order.getPaymentStatus().name();
             this.createdAt = order.getCreatedAt();
             this.orderItems = order.getOrderItems().stream()
-                    .map(OrderItemDTO::new)
+                    .map(OrderItemResponseDTO::new)
                     .collect(Collectors.toList());
+        }
+    }
+
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderItemResponseDTO {
+        private Long productId;
+        private String productName;
+        private String mainImageUri;
+        private Integer quantity;
+        private Integer finalPrice;
+
+        private Long additionalOptionId;
+        private String additionalOptionName;
+        private Integer additionalPrice;
+
+        private Long productOptionId;
+        private String productOptionName;
+        private String selectedOptionValue;
+
+        public OrderItemResponseDTO(OrderItem orderItem) {
+            this.productId = orderItem.getProduct().getProductId();
+            this.productName = orderItem.getProduct().getProductName();
+            this.mainImageUri = orderItem.getMainImageUri();
+            this.quantity = orderItem.getQuantity();
+            this.finalPrice = orderItem.getFinalPrice();
+
+            if (orderItem.getOrderItemAdditionalOption() != null) {
+                OrderItemAdditionalOption additionalOption = orderItem.getOrderItemAdditionalOption();
+                this.additionalOptionId = additionalOption.getAdditionalOption().getId();
+                this.additionalOptionName = additionalOption.getAdditionalOption().getOptionName();
+                this.additionalPrice = additionalOption.getAdditionalPrice();
+                this.finalPrice += this.quantity * this.additionalPrice; // 추가 옵션 가격 포함
+            }
+
+            if (orderItem.getOrderItemProductOption() != null) {
+                OrderItemProductOption productOption = orderItem.getOrderItemProductOption();
+                this.productOptionId = productOption.getProductOption().getId();
+                this.productOptionName = productOption.getProductOption().getOptionName();
+                this.selectedOptionValue = productOption.getSelectedValue();
+            }
         }
     }
 
@@ -45,27 +92,8 @@ public class OrderControllerDTO {
     public static class OrderRequestDTO {
         private Integer totalPrice;
         private List<OrderItemRequestDTO> orderItems;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OrderItemDTO {
-        private Long productId;
-        private String productName;
-        private String mainImageUri;
-        private Integer quantity;
-        private Integer marketPrice;
-        private Integer unitPrice; //
-
-
-        public OrderItemDTO(OrderItem orderItem) {
-            this.productId = orderItem.getProduct().getProductId();
-            this.productName = orderItem.getProduct().getProductName();
-            this.mainImageUri = orderItem.getMainImageUri();
-            this.quantity = orderItem.getQuantity();
-            this.unitPrice = orderItem.getUnitPrice();
-        }
+        private Long userAddressId;  // 추가: 배송지 ID
+        private String deliveryRequest; // 추가: 배송 요청사항
     }
 
     @Data
@@ -74,6 +102,10 @@ public class OrderControllerDTO {
     public static class OrderItemRequestDTO {
         private Long productId;
         private Integer quantity;
+        private Long userCouponId;
+        private Long additionalOptionId; // 선택 가능 (없으면 null)
+        private Long productOptionId; // 선택 가능 (없으면 null)
+        private String selectedOptionValue; // 옵션이 있다면 값 전달 (예: "빨강", "대형")
     }
 
 

@@ -1,6 +1,6 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Coupon;
+import org.example.amorosobackend.domain.coupon.Coupon;
 import org.example.amorosobackend.dto.CouponDTO;
 import org.example.amorosobackend.repository.CouponRepository;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class CouponServiceTest {

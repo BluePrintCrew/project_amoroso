@@ -1,6 +1,6 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Coupon;
+import org.example.amorosobackend.domain.coupon.Coupon;
 import org.example.amorosobackend.dto.CouponDTO;
 import org.example.amorosobackend.repository.CouponRepository;
 import org.springframework.stereotype.Service;

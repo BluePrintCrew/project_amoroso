@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.domain.Cart.CartItem;
+import org.example.amorosobackend.domain.Order.OrderItem;
 import org.example.amorosobackend.domain.category.Category;
 
 import java.time.LocalDateTime;

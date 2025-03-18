@@ -3,7 +3,7 @@ package org.example.amorosobackend.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.amorosobackend.domain.UserCoupon;
+import org.example.amorosobackend.domain.coupon.UserCoupon;
 
 import java.time.LocalDateTime;
 

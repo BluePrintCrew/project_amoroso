@@ -43,6 +43,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test' // 시큐리티 적용 시 필요
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // 포트원 결제 api
+    implementation 'io.portone:server-sdk:0.16.0'
     runtimeOnly 'com.h2database:h2'
 }
 

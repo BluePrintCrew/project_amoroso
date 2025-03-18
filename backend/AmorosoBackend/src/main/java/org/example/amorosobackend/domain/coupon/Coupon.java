@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.coupon;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
