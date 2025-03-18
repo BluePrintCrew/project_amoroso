@@ -1,8 +1,8 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
-import org.example.amorosobackend.domain.Cart.CartItem;
-import org.example.amorosobackend.domain.Cart.CartProductOption;
+import org.example.amorosobackend.domain.cart.CartAdditionalOption;
+import org.example.amorosobackend.domain.cart.CartItem;
+import org.example.amorosobackend.domain.cart.CartProductOption;
 import org.example.amorosobackend.domain.product.AdditionalOption;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.User;

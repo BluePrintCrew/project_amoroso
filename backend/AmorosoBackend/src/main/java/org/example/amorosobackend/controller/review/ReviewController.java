@@ -1,4 +1,4 @@
-package org.example.amorosobackend.controller;
+package org.example.amorosobackend.controller.review;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,9 +7,6 @@ import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.service.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +48,7 @@ public class ReviewController {
     public void deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
     }
+
 
 
 }

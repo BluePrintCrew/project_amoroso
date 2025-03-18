@@ -29,7 +29,13 @@ public class OrderController {
 
     // (현재 로그인한 사용자 기준)
     @PostMapping
-    @Operation(description = "현재 로그인한 사용자의 주문 생성")
+    @Operation(description = "현재 로그인한 사용자의 주문 생성" +
+            "ElevatorType은 무조건" +
+            "ONE_TO_SEVEN,\n" +
+            "EIGHT_TO_TEN,\n" +
+            "ELEVEN_OR_MORE,\n" +
+            "NONE" +
+            "이중 하나로 설정하여 전달한다.")
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderControllerDTO.OrderRequestDTO requestDTO) {
         String email = getCurrentUserEmail();
         OrderResponseDTO createdOrder = orderService.createOrder(email, requestDTO);
@@ -60,13 +66,13 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    // 주문 상태 변경 (관리자만 가능하도록 설정 가능)
-    @PatchMapping("/{orderId}/status")
-    public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long orderId,
-                                                              @RequestParam String status) {
-        OrderResponseDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
-        return ResponseEntity.ok(updatedOrder);
-    }
+//    // 주문 상태 변경 (관리자만 가능하도록 설정 가능)
+//    @PatchMapping("/{orderId}/status")
+//    public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long orderId,
+//                                                              @RequestParam String status) {
+//        OrderResponseDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
+//        return ResponseEntity.ok(updatedOrder);
+//    }
 
     //현재 로그인한 사용자 이메일 가져오기
     // JwtAuthenticationFilter.class 에서 SecurityContext에 저장하는 과정에 왜 Email이 나오는지 로직이 나와있음
@@ -78,10 +84,10 @@ public class OrderController {
     @GetMapping("/reviewable-items")
     @Operation(description = "사용자가 주문한 모든 아이템 중 리뷰를 작성할 수 있는 상품 조회 (최신순 페이징)")
     public ResponseEntity<Page<ReviewDTO.ReviewableProduct>> getAllReviewableProducts(
-            @RequestParam Long userId,
             @PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<ReviewDTO.ReviewableProduct> reviewableProducts = orderService.getAllReviewableProducts(userId, pageable);
+        String email = getCurrentUserEmail();
+        Page<ReviewDTO.ReviewableProduct> reviewableProducts = orderService.getAllReviewableProducts(email, pageable);
         return ResponseEntity.ok(reviewableProducts);
     }
 

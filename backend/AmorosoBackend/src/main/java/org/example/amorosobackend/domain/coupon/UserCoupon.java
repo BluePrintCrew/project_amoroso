@@ -1,7 +1,9 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.coupon;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.amorosobackend.domain.OrderItem;
+import org.example.amorosobackend.domain.User;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,10 @@ public class UserCoupon {
     @ManyToOne
     @JoinColumn(name = "coupon_id", nullable = false)
     private Coupon coupon;
+
+    @OneToOne
+    @JoinColumn(name = "order_item_id")
+    private OrderItem orderItem;
 
     private boolean isUsed; // 쿠폰 사용 여부
 

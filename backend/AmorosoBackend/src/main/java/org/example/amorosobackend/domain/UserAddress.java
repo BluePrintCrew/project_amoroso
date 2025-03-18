@@ -30,10 +30,11 @@ public class UserAddress {
 
     @Column(nullable = false)
     private String address; // 기본 주소 (도로명 주소 또는 지번 주소)
-
+    @Column(nullable = false)
     private String detailAddress; // 상세 주소 (건물명, 동호수 등)
 
     private Boolean isDefault;
+
     private Boolean freeLoweringService;
     private Boolean productInstallationAgreement;
     private Boolean vehicleEntryPossible;

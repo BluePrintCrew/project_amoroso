@@ -16,7 +16,7 @@ public class ReviewDTO {
         private Long productId;
         private int rating;
         private String content;
-        private List<String> imageUrls;  // 리뷰 이미지 리스트
+      //  private List<String> imageUrls;  // 리뷰 이미지 리스트
     }
 
     @Getter
@@ -26,7 +26,7 @@ public class ReviewDTO {
     public static class UpdateRequest {
         private int rating;
         private String content;
-        private List<String> imageUrls;  // 리뷰 이미지 리스트
+     //   private List<String> imageUrls;  // 리뷰 이미지 리스트
     }
 
     @Getter

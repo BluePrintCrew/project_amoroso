@@ -1,8 +1,7 @@
 package org.example.amorosobackend.repository;
 
 
-import org.example.amorosobackend.domain.Coupon;
-import org.example.amorosobackend.domain.User;
+import org.example.amorosobackend.domain.coupon.Coupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package org.example.amorosobackend.repository;
 
-import org.example.amorosobackend.domain.ProductImage;
+import org.example.amorosobackend.domain.product.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

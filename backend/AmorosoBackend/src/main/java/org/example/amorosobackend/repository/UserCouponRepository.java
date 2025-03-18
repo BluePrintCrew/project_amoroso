@@ -1,7 +1,7 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.User;
-import org.example.amorosobackend.domain.UserCoupon;
+import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

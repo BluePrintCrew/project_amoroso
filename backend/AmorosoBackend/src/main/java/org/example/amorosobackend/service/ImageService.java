@@ -2,7 +2,7 @@ package org.example.amorosobackend.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.product.Product;
-import org.example.amorosobackend.domain.ProductImage;
+import org.example.amorosobackend.domain.product.ProductImage;
 import org.example.amorosobackend.dto.ImageControllerDTO;
 import org.example.amorosobackend.enums.ImageType;
 import org.example.amorosobackend.repository.ProductImageRepository;

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.example.amorosobackend.domain.coupon.UserCoupon;
+import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
 
@@ -36,6 +38,14 @@ public class Order {
 
     private Integer discountPrice; // coupon으로 감소된 가격
 
+    // 해당 내용들 일단 order에 지정
+    private Boolean freeLoweringService;
+    private Boolean productInstallationAgreement;
+    private Boolean vehicleEntryPossible;
+
+    @Enumerated(EnumType.STRING)
+    private ElevatorType elevatorType;
+
     @Column(length = 50)
     private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
 
@@ -57,11 +67,20 @@ public class Order {
     private Order(User user,
                   Integer totalPrice,
                   OrderStatus orderStatus,
-                  PaymentStatus paymentStatus) {
+                  PaymentStatus paymentStatus,
+                  ElevatorType elevatorType,
+                  Boolean freeLoweringService,
+                  Boolean productInstallationAgreement,
+                  Boolean vehicleEntryPossible) {
         this.user = user;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
         this.paymentStatus = paymentStatus;
+        this.freeLoweringService = freeLoweringService;
+        this.productInstallationAgreement = productInstallationAgreement;
+        this.vehicleEntryPossible =vehicleEntryPossible;
+        this.elevatorType = elevatorType;
+
     }
 
     @PrePersist

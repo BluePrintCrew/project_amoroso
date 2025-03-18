@@ -2,11 +2,9 @@ package org.example.amorosobackend.domain;
 
 
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
+import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.example.amorosobackend.domain.product.Product;
 
 import java.time.LocalDateTime;
@@ -30,21 +28,31 @@ public class OrderItem {
     private Product product;
 
     private Integer quantity;
-    private Integer unitPrice;  // 원래 가격
-    private Integer discountPrice;  // 할인된 금액 (쿠폰 적용)
-    private Integer finalPrice;  // 최종 결제 금액
+    private Integer finalPrice;      // 최종 결제 금액
     private String mainImageUri; // 대표 이미지
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserCoupon userCoupon;
+
+    @Setter
+    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OrderItemAdditionalOption orderItemAdditionalOption;
+
+    @Setter
+    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private OrderItemProductOption orderItemProductOption;
+
+
     @Builder
-    private OrderItem(Order order, Product product, Integer quantity, Integer unitPrice, String mainImageUri) {
+    private OrderItem(Order order, Product product, Integer quantity, String mainImageUri, Integer finalPrice) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.unitPrice = unitPrice;
         this.mainImageUri = mainImageUri;
+        this.finalPrice = finalPrice;
     }
 
     @PrePersist

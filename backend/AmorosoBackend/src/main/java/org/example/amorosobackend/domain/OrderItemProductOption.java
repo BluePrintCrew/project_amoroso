@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.Cart;
+package org.example.amorosobackend.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 import org.example.amorosobackend.domain.product.ProductOption;
 
 @Entity
-@Table(name = "cart_product_options")
+@Table(name = "orderitem_product_options")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CartProductOption {
+public class OrderItemProductOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "cart_item_id", nullable = false)
-    private CartItem cartItem;
+    @JoinColumn(name = "order_item_id", nullable = false)
+    private OrderItem orderItem;
 
     @ManyToOne
     @JoinColumn(name = "product_option_id", nullable = false)
@@ -29,8 +29,8 @@ public class CartProductOption {
     private String selectedValue; // 선택된 옵션 값 (예: "빨강", "대형")
 
     @Builder
-    public CartProductOption(CartItem cartItem, ProductOption productOption, String selectedValue) {
-        this.cartItem = cartItem;
+    public OrderItemProductOption(OrderItem orderItem, ProductOption productOption, String selectedValue) {
+        this.orderItem = orderItem;
         this.productOption = productOption;
         this.selectedValue = selectedValue;
     }

@@ -35,6 +35,7 @@ public class UserAddressController {
 
     /**
      *  배송지 업데이트 API
+     *  마이페이지 내부 User 정보 조회에서 진행.
      */
 
 

@@ -3,9 +3,9 @@ package org.example.amorosobackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
-import org.example.amorosobackend.domain.Cart.CartItem;
-import org.example.amorosobackend.domain.Cart.CartProductOption;
+import org.example.amorosobackend.domain.cart.CartAdditionalOption;
+import org.example.amorosobackend.domain.cart.CartItem;
+import org.example.amorosobackend.domain.cart.CartProductOption;
 
 
 public class CartItemControllerDTO {
