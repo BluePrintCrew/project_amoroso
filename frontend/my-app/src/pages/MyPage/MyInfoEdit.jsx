@@ -63,7 +63,7 @@ function MyInfoEdit() {
         return;
       }
       
-      // 전체 URL 사용
+      // 사용자 기본 정보 요청
       const response = await axios.get("http://localhost:8080/api/v1/auth/users/me", {
         headers: {
           Authorization: `Bearer ${token}`
@@ -78,42 +78,77 @@ function MyInfoEdit() {
         smsConsent, dmConsent, locationConsent 
       } = response.data;
       
-      // 주소 정보 가져오기 - 기본 배송지로 설정
-      const addressResponse = await axios.get("http://localhost:8080/api/v1/UserAddress/default", {
-        headers: {
-          Authorization: `Bearer ${token}`
+      try {
+        // 주소 정보 가져오기 - 기본 배송지로 설정
+        const addressResponse = await axios.get("http://localhost:8080/api/v1/UserAddress/default", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        console.log("주소 정보 응답:", addressResponse.data);
+        
+        // 주소와 엘리베이터 정보 추출
+        const { 
+          postalCode, 
+          address, 
+          detailAddress, 
+          elevatorType = "NONE" 
+        } = addressResponse.data || {};
+        
+        // 상태 업데이트
+        setUserInfo({
+          email: email || "",
+          name: name || "",
+          birthDate: "", // API에서 받아오지 않는 정보는 빈 값으로
+          phoneNumber: phoneNumber || "",
+          nickname: nickname || "",
+          postalCode: postalCode || "",
+          address: address || "",
+          detailAddress: detailAddress || "",
+          gender: "", // API에서 받아오지 않는 정보는 빈 값으로
+          emailConsent: emailConsent || false,
+          smsConsent: smsConsent || false,
+          dmConsent: dmConsent || false,
+          locationConsent: locationConsent || false,
+          elevatorType: elevatorType || "NONE"
+        });
+        
+        setIsLoading(false);
+      } catch (addressErr) {
+        console.error("주소 정보를 가져오는데 실패했습니다:", addressErr);
+        console.error("주소 오류 상세:", addressErr.response?.data || addressErr.message);
+        
+        // 500 에러인 경우 주소 정보가 없다고 판단하고 signup 페이지로 리다이렉트
+        if (addressErr.response && addressErr.response.status === 500) {
+          console.log("초기 주소 정보가 없습니다. 회원가입 페이지로 리다이렉트합니다.");
+          // 잠시 딜레이 후 리다이렉트 (사용자가 무슨 일이 일어나는지 볼 수 있도록)
+          setTimeout(() => {
+            window.location.href = "/signup";
+          }, 1000);
+          return;
         }
-      });
-      
-      console.log("주소 정보 응답:", addressResponse.data);
-      
-      // 주소와 엘리베이터 정보 추출
-      const { 
-        postalCode, 
-        address, 
-        detailAddress, 
-        elevatorType = "NONE" 
-      } = addressResponse.data || {};
-      
-      // 상태 업데이트
-      setUserInfo({
-        email: email || "",
-        name: name || "",
-        birthDate: "", // API에서 받아오지 않는 정보는 빈 값으로
-        phoneNumber: phoneNumber || "",
-        nickname: nickname || "",
-        postalCode: postalCode || "",
-        address: address || "",
-        detailAddress: detailAddress || "",
-        gender: "", // API에서 받아오지 않는 정보는 빈 값으로
-        emailConsent: emailConsent || false,
-        smsConsent: smsConsent || false,
-        dmConsent: dmConsent || false,
-        locationConsent: locationConsent || false,
-        elevatorType: elevatorType || "NONE"
-      });
-      
-      setIsLoading(false);
+        
+        // 다른 에러인 경우, 기본 정보만 표시하고 계속 진행
+        setUserInfo({
+          email: email || "",
+          name: name || "",
+          birthDate: "", 
+          phoneNumber: phoneNumber || "",
+          nickname: nickname || "",
+          postalCode: "",
+          address: "",
+          detailAddress: "",
+          gender: "",
+          emailConsent: emailConsent || false,
+          smsConsent: smsConsent || false,
+          dmConsent: dmConsent || false,
+          locationConsent: locationConsent || false,
+          elevatorType: "NONE"
+        });
+        
+        setIsLoading(false);
+      }
     } catch (err) {
       console.error("사용자 정보를 가져오는데 실패했습니다:", err);
       console.error("에러 상세:", err.response?.data || err.message);
@@ -262,7 +297,11 @@ function MyInfoEdit() {
   };
 
   if (isLoading) {
-    return <div className="loading">로딩 중...</div>;
+    return (
+      <div className="loading">
+        <p>사용자 정보를 불러오는 중...</p>
+      </div>
+    );
   }
 
   if (error) {
