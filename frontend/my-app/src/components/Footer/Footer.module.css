@@ -11,6 +11,8 @@ body{
   display: flex;
   flex-direction: column;
   position: relative;
+  margin-top: 60px;
+  margin-bottom: 30px;
 }
 
 @media (max-height: 800px){

@@ -6,6 +6,7 @@ import CartSummary from '../../components/CartSummary/CartSummary';
 import DatePicker from 'react-datepicker';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
+import PageLayout from '../../components/PageLayout/PageLayout';
 import styles from './OrderForm.module.css';
 
 const paymentMethods = [
@@ -47,8 +48,7 @@ const OrderForm = () => {
     setSelectedMethod(method);
   };
   return (
-    <div className={styles.orderForm}>
-      <Header />
+    <PageLayout>
       <h1 className={styles.orderTitle}>주문서 작성</h1>
       <div className={styles.infoTable}>
         <div className={styles.infoHeader1}>
@@ -393,8 +393,7 @@ const OrderForm = () => {
           </div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 
