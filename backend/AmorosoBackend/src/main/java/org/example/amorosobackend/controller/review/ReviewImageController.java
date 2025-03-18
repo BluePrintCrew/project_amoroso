@@ -50,7 +50,11 @@ public class ReviewImageController {
      * 리뷰 이미지 업로드 API (비동기 업로드)
      */
     @PostMapping(value = "/{reviewId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(description = "리뷰 이미지 업로드 API")
+    @Operation(description = "리뷰 이미지 업로드 API" +
+            "   Integer reviewImageOrderNum\n" +
+            "   Long reviewImageId" +
+            "위 목록이 메타데이터에 들어갈 정보입니다." +
+            "reviewImageOrderNum에는 사용자가 리뷰 이미지 넣은 순서를 의미합니다")
     public ResponseEntity<ReviewImageDTO.Response> uploadReviewImage(
             @RequestPart("image") MultipartFile image,
             @RequestPart("metadata") ReviewImageDTO.Request requestDTO
