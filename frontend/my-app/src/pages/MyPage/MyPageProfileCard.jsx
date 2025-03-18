@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./MyPageProfileCard.css";
-
+import axios from "axios";
 // Import your images
 import pointIcon from "../../assets/point_img.png";
 import couponIcon from "../../assets/coupon_img.png";
@@ -8,14 +8,77 @@ import reviewIcon from "../../assets/review_img.png";
 import zzimIcon from "../../assets/zzim_img.png";
 
 function MyPageProfileCard() {
-  const userInfo = {
-    name: "홍길동님",
+  const [userInfo, setUserInfo] = useState({
+    name: "",
     greeting: "안녕하세요!",
-    points: 9118,
-    coupons: 4,
-    reviewCount: 11,
-    wishlistCount: 3
-  };
+    points: 0,
+    coupons: 0,
+    reviewCount: 0,
+    wishlistCount: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // 로컬 스토리지에서 토큰 가져오기
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          // 토큰이 없으면 오류 처리
+          setError("로그인이 필요합니다");
+          setLoading(false);
+          return;
+        }
+
+        // API 호출
+        const response = await axios.get('http://localhost:8080/api/v1/auth/users/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        console.log("프로필 API 응답:", response.data);
+
+        // API 응답 데이터를 사용자 정보 객체로 매핑
+        setUserInfo({
+          name: response.data.name ? `${response.data.name}님` : "고객님",
+          greeting: "안녕하세요!",
+          points: response.data.points || 0, // API에서 제공하는 포인트 정보
+          coupons: response.data.availableCoupons || 0,
+          reviewCount: response.data.pendingReviews || 0,
+          wishlistCount: response.data.wishlistCount || 0
+        });
+      } catch (error) {
+        console.error("프로필 정보 로딩 오류:", error);
+        setError("프로필 정보를 불러오는데 실패했습니다");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []); // 컴포넌트 마운트 시 한 번만 실행
+
+  // 로딩 중일 때 표시할 내용
+  if (loading) {
+    return (
+      <div className="my-page-profile-wrapper loading">
+        <p>사용자 정보를 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  // 오류가 있을 때 표시할 내용
+  if (error) {
+    return (
+      <div className="my-page-profile-wrapper error">
+        <p>{error}</p>
+        <button onClick={() => window.location.href = '/login'}>로그인하기</button>
+      </div>
+    );
+  }
 
   return (
     <div className="my-page-profile-wrapper">
@@ -26,7 +89,6 @@ function MyPageProfileCard() {
         </h2>
         <p className="greeting">{userInfo.greeting}</p>
       </div>
-
       {/* Right side: 4 stats in a row */}
       <div className="profile-right">
         <div className="stat-box">
@@ -35,21 +97,18 @@ function MyPageProfileCard() {
           <p className="stat-title">보유 포인트</p>
           <p className="stat-value">{userInfo.points.toLocaleString()} P</p>
         </div>
-
         <div className="stat-box">
           {/* Icon for coupons */}
           <img src={couponIcon} alt="쿠폰 아이콘" className="stat-icon" />
           <p className="stat-title">사용 가능 쿠폰</p>
           <p className="stat-value">{userInfo.coupons}</p>
         </div>
-
         <div className="stat-box">
           {/* Icon for reviews */}
           <img src={reviewIcon} alt="후기 아이콘" className="stat-icon" />
           <p className="stat-title">작성 가능 후기</p>
           <p className="stat-value">{userInfo.reviewCount}</p>
         </div>
-
         <div className="stat-box">
           {/* Icon for wishlist */}
           <img src={zzimIcon} alt="찜 아이콘" className="stat-icon" />

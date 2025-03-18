@@ -1,91 +1,167 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './ProductCard.css';
-
-// 기본 이미지 import
 import no_image from '../../assets/noproduct.webp';
 
+const API_BASE_URL = "http://localhost:8080";
+
 function ProductCard({ product }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageUrl, setImageUrl] = useState(no_image);
+  
+  // 모든 Hook들은 조건문 앞에 위치해야 함
+  useEffect(() => {
+    if (!product) return;
+    
+    const { productId, primaryImageURL } = product;
+    
+    // 이미지 URL 처리 로직
+    let newImageUrl = no_image;
+    
+    if (primaryImageURL) {
+      if (primaryImageURL.startsWith('http')) {
+        // 이미 완전한 URL인 경우
+        newImageUrl = primaryImageURL;
+      } else if (primaryImageURL.startsWith('/images/')) {
+        // /images/로 시작하는 경우 - API 경로로 변환
+        // 파일명만 추출하여 API 엔드포인트에 추가
+        const filename = primaryImageURL.split('/').pop();
+        newImageUrl = `${API_BASE_URL}/api/v1/images/${filename}`;
+      } else if (primaryImageURL.startsWith('/api/v1/images/')) {
+        // 이미 올바른 API 경로인 경우
+        newImageUrl = `${API_BASE_URL}${primaryImageURL}`;
+      } else if (primaryImageURL.startsWith('/')) {
+        // 다른 슬래시로 시작하는 경로인 경우
+        newImageUrl = `${API_BASE_URL}${primaryImageURL}`;
+      } else {
+        // 단순 파일명으로 가정
+        newImageUrl = `${API_BASE_URL}/api/v1/images/${primaryImageURL}`;
+      }
+    }
+    
+    setImageUrl(newImageUrl);
+    
+    // 이미지 URL 디버깅
+    console.log(`상품(${productId}) 원본 이미지 경로:`, primaryImageURL);
+    console.log(`상품(${productId}) 변환된 이미지 URL:`, newImageUrl);
+  }, [product]);
+
   if (!product) {
     return <div className="product-card">상품 정보가 없습니다.</div>;
   }
-
+  
   const {
     productId,
     productName,
     marketPrice,
     discountPrice,
     discountRate,
-    primaryImageURL,
     category = '카테고리 없음',
-    createdAt = ''
+    // 아래는 추가 정보가 있을 경우 표시하기 위함 (없으면 기본값)
+    rating = 0,          // 평점
+    reviewCount = 0,     // 리뷰 개수
+    couponApplicable = false,  // 쿠폰 적용 가능 여부
   } = product;
-
+  
   // 할인 중이라면 discountPrice 사용, 아니면 marketPrice
   const displayPrice = discountPrice && discountPrice > 0 ? discountPrice : marketPrice;
-  // 이미지가 없으면 no_image 사용
-  const imageUrl = primaryImageURL || no_image;
+  
   // 할인율이 0보다 크면 할인율, 원가 표시
   const hasDiscount = discountRate && discountRate > 0;
-
-  // 위시리스트 추가 핸들러
+  
   const handleWishlistAdd = (e) => {
-    // 상세 페이지 이동 방지
     e.stopPropagation();
     e.preventDefault();
-
-    const token = localStorage.getItem('accessToken');
-    axios.post(`http://localhost:8080/api/v1/wishlist/add/${productId}`, null, {
-      headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
-      },
-    })
-    .then((response) => {
-      console.log("위시리스트에 추가됨:", response.data);
-      // 추가 UI 업데이트 (예: 토스트 메시지) 구현 가능
-    })
-    .catch((error) => {
-      console.error("위시리스트 추가 실패:", error);
-    });
+    
+    // 토큰 확인 (로그인 체크)
+    const token = localStorage.getItem('token'); // 또는 'accessToken' 중 실제 사용 중인 키
+    if (!token) {
+      // 로그인 필요 메시지 표시 또는 로그인 페이지로 리디렉션
+      alert("로그인 후 이용 가능합니다.");
+      // 또는 navigate('/login');
+      return;
+    }
+    
+    axios
+      .post(`${API_BASE_URL}/api/v1/wishlist/add/${productId}`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      })
+      .then((response) => {
+        console.log('위시리스트에 추가됨:', response.data);
+        // 성공 알림 표시
+        alert("상품이 위시리스트에 추가되었습니다.");
+        // 또는 toast 메시지 사용
+      })
+      .catch((error) => {
+        console.error('위시리스트 추가 실패:', error);
+        alert("위시리스트 추가에 실패했습니다.");
+      });
+  }; 
+  
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
-
+  
+  const handleImageError = (e) => {
+    console.error(`이미지 로드 실패 - 상품 ID: ${productId}, URL: ${imageUrl}`);
+    e.target.src = no_image;
+    setImageLoaded(true);
+  };
+  
   return (
     <div className="product-card">
+      {/* 썸네일 영역 */}
       <div className="thumbnail">
-        {/* 이미지 클릭 시 상세 페이지로 이동 */}
+        {/* 이미지를 클릭하면 상세 페이지로 이동 */}
         <Link to={`/product/${productId}`} className="product-link">
+          {!imageLoaded && <div className="image-loading">로딩중...</div>}
           <img
             src={imageUrl}
             alt={productName}
-            onError={(e) => {
-              e.target.src = no_image;
-            }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            style={{ display: imageLoaded ? 'block' : 'none' }}
           />
         </Link>
-        <button 
-          className="wishlist-btn" 
+        {/* 찜 버튼 */}
+        <button
+          className="wishlist-btn"
           title="찜하기"
           onClick={handleWishlistAdd}
-        >
-          {/* 아이콘이나 텍스트 추가 가능 */}
-        </button>
+        />
       </div>
-      {/* 카드 정보 클릭 시 상세 페이지로 이동 */}
+      {/* 카드 정보 영역 (클릭 시 상세 페이지로 이동) */}
       <Link to={`/product/${productId}`} className="product-link">
         <div className="card-info">
-          <p className="product-category">[{category}]</p>
+          {/* 상품명 */}
           <p className="product-name">{productName}</p>
-          <div className="price-area">
+          {/* 가격 & 할인 */}
+          <div className="price-row">
             {hasDiscount && (
-              <span className="discount">{discountRate}%</span>
+              <span className="discount-rate">{discountRate}%</span>
             )}
-            <span className="price">{displayPrice.toLocaleString()}원</span>
+            <span className="sale-price">
+              {displayPrice?.toLocaleString()}원
+            </span>
             {hasDiscount && (
-              <span className="original-price">{marketPrice.toLocaleString()}원</span>
+              <span className="original-price">
+                {marketPrice?.toLocaleString()}원
+              </span>
             )}
           </div>
-          {/* 추가 정보(등록일 등)도 여기에 표시 가능 */}
+          {/* 평점 & 리뷰수 */}
+          <div className="rating-row">
+            <span className="star-icon">★</span>
+            <span className="rating">{rating.toFixed(1)}</span>
+            <span className="review-count">({reviewCount.toLocaleString()})</span>
+          </div>
+          {/* 쿠폰 표시 */}
+          {couponApplicable && (
+            <div className="coupon-badge">쿠폰</div>
+          )}
         </div>
       </Link>
     </div>

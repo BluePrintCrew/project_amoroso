@@ -1,0 +1,127 @@
+/* 팝업 배경 오버레이 */
+.cartPopupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: 'Pretendard', sans-serif;
+  }
+  
+  /* 팝업 컨테이너 */
+  .cartPopup {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: popupFadeIn 0.3s ease-out;
+  }
+  
+  @keyframes popupFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* 팝업 헤더 */
+  .cartPopupHeader {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .cartPopupTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .cartPopupClose {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  
+  .cartPopupClose:hover {
+    background-color: #f5f5f5;
+    color: #666;
+  }
+  
+  /* 팝업 내용 */
+  .cartPopupContent {
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .cartPopupMessage {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  
+  /* 팝업 푸터 (버튼 영역) */
+  .cartPopupFooter {
+    padding: 16px 24px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  /* 팝업 버튼 */
+  .cartPopupButton {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    max-width: 150px;
+  }
+  
+  /* 취소 버튼 */
+  .cartPopupCancelButton {
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+  }
+  
+  .cartPopupCancelButton:hover {
+    background-color: #eee;
+  }
+  
+  /* 확인 버튼 */
+  .cartPopupConfirmButton {
+    background-color: #766e68;
+    color: #fff;
+    border: none;
+  }
+  
+  .cartPopupConfirmButton:hover {
+    background-color: #655e58;
+  }

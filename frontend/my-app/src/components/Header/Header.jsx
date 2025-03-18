@@ -19,12 +19,12 @@ const Header = () => {
           <Link to="/">
             <img src={logo} alt="Logo" className={styles.headerLogo} />
           </Link>
-          <Link to="/furnishing" className={styles.headerLink}>
+          {/*<Link to="/furnishing" className={styles.headerLink}>
             홈퍼니싱
           </Link>
           <Link to="/interior" className={styles.headerLink}>
             인테리어
-          </Link>
+          </Link> */}
         </div>
 
         <div className={styles.searchBar}>

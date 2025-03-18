@@ -1,9 +1,14 @@
-/* 전체 컨테이너 스타일 */
-.product-list-page {
+/* 이 클래스는 이제 PageLayout의 content 클래스로 대체됩니다 */
+/* .product-list-page {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+} */
+
+.content-wrapper {
+  width: 100%;
+  padding: 0 20px;
 }
 
 /* 제목 스타일 */
@@ -45,99 +50,41 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-}
-
-/* 상품 카드 스타일 */
-.product-card {
-  background: #fff;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.product-card img {
-  width: 50%;
-  height: 327px;
-  /*object-fit: cover;*/
-  border: 1px solid #E2E2E2;
-  border-radius: 10px;
-}
-
-.product-name {
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-.price-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.price {
-  font-size: 18px;
-  font-weight: bold;
-  color: black;
-}
-
-.discount {
-  font-size: 14px;
-  font-weight: bold;
-  color: red;
-  margin-right: 5px;
-}
-
-.original-price {
-  font-size: 14px;
-  text-decoration: line-through;
-  color: #888;
-}
-
-/* 혜택 영역 */
-.benefit-area {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #555;
-}
-
-.badge {
-  background: #f8f8f8;
-  padding: 4px 6px;
-  border-radius: 4px;
-  margin-right: 5px;
+  margin-bottom: 30px;
 }
 
 /* 빵 부스러기(브레드크럼) */
 .breadcrumb {
-  width: 1200px; /* 중앙정렬 예시 */
-  margin: 0 auto;
+  width: 100%;
+  margin: 20px 0;
   padding: 16px 0;
   font-size: 14px;
-}
-
-.breadcrumb ul {
   display: flex;
-  gap: 5px;
+  align-items: center;
 }
 
-.breadcrumb li::after {
-  content: ">";
-  margin: 0 5px;
+.separator {
+  margin: 0 8px;
   color: #999;
 }
 
-.breadcrumb li:last-child::after {
-  content: "";
-  margin: 0;
+.home-icon {
+  height: 18px;
+  vertical-align: middle;
+}
+
+.category {
+  color: #666;
+}
+
+.current {
+  font-weight: bold;
+  color: #333;
 }
 
 /* ----------------------------------------- */
 /* 카테고리 선택 영역 추가 (상위/하위 카테고리) */
 /* ----------------------------------------- */
-
 .top-category-selector,
 .sub-category-selector {
   margin-bottom: 20px;
@@ -174,7 +121,28 @@
   outline: none;
   border-color: #666;
 }
-.category-selector{
+
+.category-selector {
   display: flex;
   gap: 40px;
+  margin-bottom: 20px;
+}
+
+/* 로딩 및 에러 텍스트 */
+.loading-text,
+.error-text {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+}
+
+.error-text {
+  color: #e74c3c;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
 }
