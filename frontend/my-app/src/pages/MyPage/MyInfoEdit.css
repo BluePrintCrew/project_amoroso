@@ -112,13 +112,9 @@
   background-color: #fff;
 }
 
-/* Birth date + 남/여 squares in one group
-   Label above them, so keep .form-group. 
-   Then we place input + squares side by side.
-*/
+/* Birth date + 남/여 squares in one group */
 .birth-gender-row {
-  /* keep the default flex-direction: column for label above
-     or if you want label + input in a single row, do display: flex here. */
+  /* keep the default flex-direction: column for label above */
 }
 .birth-gender-row .birth-gender-container {
   display: flex;
@@ -158,15 +154,14 @@
   border-color: #999;
 }
 
-/* Optionally, a 'selected' style if you track state:
+/* Selected style for gender squares */
 .gender-square.selected {
   background: #766e68;
   color: #fff;
   border-color: #766e68;
-} */
+}
 
 /* Address row (우편번호 + button) */
-/* The row for postal code + button */
 .address-row {
   display: flex;
   align-items: center;   /* keep them aligned on one line */
@@ -182,7 +177,7 @@
 
 /* The other address lines below the postal row */
 .address-line {
-  margin-bottom: 8px;   /* spacing so they don’t overlap each other */
+  margin-bottom: 8px;   /* spacing so they don't overlap each other */
   /* inherits pill shape & bottom line from your existing .form-group input rules */
 }
 
@@ -213,6 +208,42 @@
   height: 16px;
 }
 
+/* 엘리베이터 옵션 스타일 */
+.elevator-form-group {
+  margin-top: 16px;
+}
+
+.elevator-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.elevator-option {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.elevator-option:hover {
+  background-color: #f2f2f2;
+  border-color: #999;
+}
+
+.elevator-option.selected {
+  background-color: #766e68;
+  color: #fff;
+  border-color: #766e68;
+}
 
 /* Linked accounts + "연동 해지" button */
 .linked-account-row {
@@ -252,6 +283,19 @@
   color: #333;
 }
 
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
 /* Bottom buttons */
 .bottom-buttons {
   display: flex;
@@ -274,7 +318,14 @@
   background: #f8f8f8;
   border-color: #999;
 }
-.leave-btn,
+.leave-btn {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+.leave-btn:hover {
+  background: #fff0f0;
+  border-color: #e74c3c;
+}
 .cancel-btn {
   /* custom styles if needed */
 }
@@ -295,9 +346,63 @@
   margin-left: 4px;
 }
 
-/* Optional: divider line between fields */
-.field-divider {
-  border: none;
-  border-bottom: 1px solid #ddd;
-  margin: 16px 0;
+/* Loading and error states */
+.loading, .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .my-page-lower {
+    flex-direction: column;
+  }
+
+  .birth-gender-row .birth-gender-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .birth-input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .gender-squares {
+    width: 100%;
+  }
+
+  .gender-square {
+    flex: 1;
+    width: auto;
+  }
+
+  .elevator-options {
+    flex-direction: column;
+  }
+
+  .elevator-option {
+    width: 100%;
+  }
+
+  .checkbox-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .bottom-buttons {
+    flex-direction: column;
+  }
+
+  .bottom-buttons button {
+    width: 100%;
+  }
 }
