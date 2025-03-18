@@ -20,7 +20,7 @@ public class UserAddressService {
     UserAddressRepository userAddressRepository;
     UserRepository userRepository;
 
-    public void registerAddress(UserControllerDTO.UserUpdateRequest request){
+    public UserAddressDto.GetAddress registerAddress(UserControllerDTO.UserUpdateRequest request){
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -38,8 +38,10 @@ public class UserAddressService {
         user.addAddress(address);
         userRepository.save(user);
 
+        return toDto(address);
     }
 
+    // 기본 배송지
     public UserAddressDto.GetAddress getDefaultAddress() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email)

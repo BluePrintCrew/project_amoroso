@@ -13,6 +13,7 @@ import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.product.ProductOption;
 import org.example.amorosobackend.dto.OrderControllerDTO.*;
 import org.example.amorosobackend.dto.ReviewDTO;
+import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
 import org.example.amorosobackend.repository.*;
@@ -54,6 +55,10 @@ public class OrderService {
                 .user(user)
                 .orderStatus(OrderStatus.PAYMENT_PENDING)
                 .paymentStatus(PaymentStatus.WAITING)
+                .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
+                .freeLoweringService(requestDTO.getFreeLoweringService())
+                .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())
+                .productInstallationAgreement(requestDTO.getProductInstallationAgreement())
                 .build();
 
         Order savedOrder = orderRepository.save(order);

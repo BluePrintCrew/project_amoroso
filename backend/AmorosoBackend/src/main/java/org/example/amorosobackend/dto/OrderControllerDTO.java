@@ -1,6 +1,8 @@
 package org.example.amorosobackend.dto;
 
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import org.example.amorosobackend.domain.Order.Order;
 import org.example.amorosobackend.domain.Order.OrderItem;
 import org.example.amorosobackend.domain.Order.OrderItemAdditionalOption;
 import org.example.amorosobackend.domain.Order.OrderItemProductOption;
+import org.example.amorosobackend.enums.ElevatorType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +32,10 @@ public class OrderControllerDTO {
         private String paymentStatus;
         private LocalDateTime createdAt;
         private List<OrderItemResponseDTO> orderItems;
+        private Boolean freeLoweringService;
+        private Boolean productInstallationAgreement;
+        private Boolean vehicleEntryPossible;
+        private String elevatorType;
 
         public OrderResponseDTO(Order order) {
             this.orderId = order.getOrderId();
@@ -40,6 +47,10 @@ public class OrderControllerDTO {
             this.orderItems = order.getOrderItems().stream()
                     .map(OrderItemResponseDTO::new)
                     .collect(Collectors.toList());
+            this.productInstallationAgreement = order.getProductInstallationAgreement();
+            this.vehicleEntryPossible = order.getVehicleEntryPossible();
+            this.elevatorType = order.getElevatorType().name();
+            this.freeLoweringService = order.getFreeLoweringService();
         }
     }
 
@@ -94,6 +105,11 @@ public class OrderControllerDTO {
         private List<OrderItemRequestDTO> orderItems;
         private Long userAddressId;  // 추가: 배송지 ID
         private String deliveryRequest; // 추가: 배송 요청사항
+
+        private Boolean freeLoweringService;
+        private Boolean productInstallationAgreement;
+        private Boolean vehicleEntryPossible;
+        private String elevatorType;
     }
 
     @Data

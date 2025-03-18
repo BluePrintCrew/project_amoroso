@@ -29,7 +29,13 @@ public class OrderController {
 
     // (현재 로그인한 사용자 기준)
     @PostMapping
-    @Operation(description = "현재 로그인한 사용자의 주문 생성")
+    @Operation(description = "현재 로그인한 사용자의 주문 생성" +
+            "ElevatorType은 무조건" +
+            "ONE_TO_SEVEN,\n" +
+            "EIGHT_TO_TEN,\n" +
+            "ELEVEN_OR_MORE,\n" +
+            "NONE" +
+            "이중 하나로 설정하여 전달한다.")
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderControllerDTO.OrderRequestDTO requestDTO) {
         String email = getCurrentUserEmail();
         OrderResponseDTO createdOrder = orderService.createOrder(email, requestDTO);
