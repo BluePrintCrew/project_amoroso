@@ -2,7 +2,7 @@ package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.product.Product;
-import org.example.amorosobackend.domain.Review;
+import org.example.amorosobackend.domain.review.Review;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.enums.CategoryCode;

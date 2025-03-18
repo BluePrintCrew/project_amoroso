@@ -1,4 +1,4 @@
-package org.example.amorosobackend.controller;
+package org.example.amorosobackend.controller.product;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -57,6 +57,7 @@ spring:
 # 사용자 정의 설정은 (spring 바깥에서 관리할 수 있다)
 app:
   image-directory: "./images"
+  review-image-directory: "./review-images"
 
 logging:
   level:

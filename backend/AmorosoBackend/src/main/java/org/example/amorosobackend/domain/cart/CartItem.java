@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.Cart;
+package org.example.amorosobackend.domain.cart;
 
 import lombok.*;
 import jakarta.persistence.*;

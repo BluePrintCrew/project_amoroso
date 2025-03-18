@@ -1,10 +1,11 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.review;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.product.Product;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.product.Product;
-import org.example.amorosobackend.domain.Review;
+import org.example.amorosobackend.domain.review.Review;
 import org.example.amorosobackend.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

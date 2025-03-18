@@ -1,18 +1,13 @@
 package org.example.amorosobackend.dto;
 
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
-import org.example.amorosobackend.domain.Cart.CartProductOption;
-import org.example.amorosobackend.domain.Order.Order;
-import org.example.amorosobackend.domain.Order.OrderItem;
-import org.example.amorosobackend.domain.Order.OrderItemAdditionalOption;
-import org.example.amorosobackend.domain.Order.OrderItemProductOption;
-import org.example.amorosobackend.enums.ElevatorType;
+import org.example.amorosobackend.domain.order.Order;
+import org.example.amorosobackend.domain.order.OrderItem;
+import org.example.amorosobackend.domain.order.OrderItemAdditionalOption;
+import org.example.amorosobackend.domain.order.OrderItemProductOption;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.example.amorosobackend.controller;
+package org.example.amorosobackend.controller.product;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Tag(name = "이미지 조회 API",description = "uri를 통한 이미지 조회")
 @Slf4j // (수정) 로그 사용
-public class ImageController {
+public class ProductImageController {
 
     private final ImageService imageService;
 

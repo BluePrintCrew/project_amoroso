@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.Order;
+package org.example.amorosobackend.domain.order;
 
 
 import jakarta.persistence.*;
@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.amorosobackend.domain.Cart.CartItem;
 import org.example.amorosobackend.domain.product.AdditionalOption;
 
 @Entity

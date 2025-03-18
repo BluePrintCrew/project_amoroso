@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain;
+package org.example.amorosobackend.domain.review;
 
 
 import lombok.AccessLevel;
@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,13 +25,14 @@ public class ReviewImage {
 
     @Column(nullable = false, length = 255)
     private String imageUrl;
-
+    private Integer imageOrderNum;
     private LocalDateTime createdAt;
 
     @Builder
-    private ReviewImage(Review review, String imageUrl) {
+    private ReviewImage(Review review, String imageUrl, Integer imageOrderNum) {
         this.review = review;
         this.imageUrl = imageUrl;
+        this.imageOrderNum = imageOrderNum;
     }
 
     @PrePersist

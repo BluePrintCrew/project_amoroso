@@ -46,3 +46,4 @@ images/*
 build/
 out/
 logs/
+review-images/*

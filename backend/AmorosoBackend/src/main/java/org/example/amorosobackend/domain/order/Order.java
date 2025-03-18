@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.Order;
+package org.example.amorosobackend.domain.order;
 
 
 

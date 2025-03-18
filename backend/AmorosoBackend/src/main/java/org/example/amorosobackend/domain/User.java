@@ -13,8 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.amorosobackend.domain.Cart.CartItem;
-import org.example.amorosobackend.domain.Order.Order;
+import org.example.amorosobackend.domain.cart.CartItem;
+import org.example.amorosobackend.domain.order.Order;
+import org.example.amorosobackend.domain.review.Review;
 import org.example.amorosobackend.enums.UserRole;
 
 @Entity

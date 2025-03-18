@@ -1,11 +1,9 @@
-package org.example.amorosobackend.domain.Order;
+package org.example.amorosobackend.domain.order;
 
 
 
 import lombok.*;
 import jakarta.persistence.*;
-import org.example.amorosobackend.domain.Cart.CartAdditionalOption;
-import org.example.amorosobackend.domain.Cart.CartProductOption;
 import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.example.amorosobackend.domain.product.Product;
 

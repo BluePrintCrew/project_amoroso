@@ -2,7 +2,7 @@ package org.example.amorosobackend.domain.coupon;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.amorosobackend.domain.Order.OrderItem;
+import org.example.amorosobackend.domain.order.OrderItem;
 import org.example.amorosobackend.domain.User;
 
 import java.time.LocalDateTime;
