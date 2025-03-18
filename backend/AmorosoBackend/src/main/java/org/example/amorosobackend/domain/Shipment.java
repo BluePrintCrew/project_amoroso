@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
-import org.example.amorosobackend.domain.order.Order;
 
 import java.time.LocalDateTime;
 

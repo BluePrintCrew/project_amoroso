@@ -1,4 +1,4 @@
-package org.example.amorosobackend.domain.order;
+package org.example.amorosobackend.domain;
 
 
 
@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
-import org.example.amorosobackend.domain.Shipment;
-import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.OrderStatus;
