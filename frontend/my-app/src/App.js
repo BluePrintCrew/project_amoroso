@@ -7,6 +7,7 @@ import Cart from './pages/CartPage/CartPage';
 import Detail from './pages/Product_Detail/ProductDetailPage';
 import Home from './pages/MainPage/MainPage';
 import Login from './pages/Login/LoginForm';
+import LoginSuccess from './pages/Login/LoginSuccess';
 import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';
 import Order from './pages/OrderPage/OrderForm';
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/loginSuccess" element={<LoginSuccess />} />
           <Route path="/product/:id" element={<Detail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/signup" element={<SignUp />} />
