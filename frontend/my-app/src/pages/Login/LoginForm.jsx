@@ -62,7 +62,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/kakao`)
+                    `${API_BASE_URL}/oauth2/authorization/kakao`)
                 }
                 className={`${styles.socialButton} ${styles.kakao}`}
               >
@@ -72,7 +72,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/naver`)
+                    `${API_BASE_URL}/oauth2/authorization/naver`)
                 }
                 className={`${styles.socialButton} ${styles.naver}`}
               >
@@ -82,7 +82,7 @@ const LoginForm = () => {
                 type="button"
                 onClick={() =>
                   (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorize/google`)
+                    `${API_BASE_URL}/oauth2/authorization/google`)
                 }
                 className={`${styles.socialButton} ${styles.google}`}
               >

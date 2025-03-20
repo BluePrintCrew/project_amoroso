@@ -1,10 +1,7 @@
 package org.example.amorosobackend.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.security.CustomOAuth2UserService;
-import org.example.amorosobackend.security.JwtAuthenticationFilter;
-import org.example.amorosobackend.security.JwtProvider;
-import org.example.amorosobackend.security.CustomAuthenticationEntryPoint; // 추가
+import org.example.amorosobackend.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +28,7 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint; // 추가
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -70,11 +68,13 @@ public class SecurityConfig {
                 )
 
                 .oauth2Login(oauth2 -> oauth2
+                        .redirectionEndpoint(redirection->redirection.baseUri("/oauth2/callback/*"))
                         .defaultSuccessUrl("http://localhost:3000/loginSuccess")
                         .failureUrl("http://localhost:3000/loginFailure")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
+                        .successHandler(oAuth2SuccessHandler)
                 )
 
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
