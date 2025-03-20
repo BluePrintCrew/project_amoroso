@@ -14,16 +14,23 @@ const reviews = [
   {
     id: 2,
     user: 'ba*******',
-    rating: 5,
+    rating: 3,
     date: '2025.01.22',
     text: '방이 작아서 서랍장을 놓을 공간이 없어서 수납침대로 구입했습니다. 생각보다 너무 만족합니다.',
     images: ['https://placehold.co/150'],
   },
 ];
 
+const averageRating = (
+  reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+).toFixed(1);
+
 const ReviewSection = () => {
   const [filter, setFilter] = useState('전체');
+  const [selectedFilter, setSelectedFilter] = useState('베스트순');
+  const [isDropdownOpen, SetIsDropdownOpen] = useState(false);
 
+  const filterOptions = ['베스트순', '최신순', '평점 높은순', '평점 낮은순'];
   const allImages = reviews.flatMap((review) => review.images);
 
   return (
@@ -43,40 +50,62 @@ const ReviewSection = () => {
             사진 ({allImages.length}건)
           </button>
         </div>
-        <div className={styles.ratingBox}>
-          <span className={styles.rating}>4.8</span>
-          <div className={styles.stars}>★★★★★</div>
+      </div>
+      <div className={styles.topBox}>
+        <div className={styles.reviewSummary}>
+          <div className={styles.ratingBox}>
+            <span className={styles.rating}>{averageRating}</span>
+            <div className={styles.stars}>
+              {'★'.repeat(Math.floor(averageRating))}
+              {averageRating % 1 !== 0 && '⭑'}
+              {'☆'.repeat(5 - Math.ceil(averageRating))}
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.imageGallery}>
+          {allImages.slice(0, 5).map((img, index) => (
+            <div key={index} className={styles.imageWrapper}>
+              <img
+                src={img}
+                alt={`리뷰 이미지 ${index}`}
+                className={styles.galleryImage}
+              />
+            </div>
+          ))}
+          <div className={styles.imageWrapper}>
+            <div className={styles.moreImage}>
+              +<br />
+              사진 전체보기
+            </div>
+            <span className={styles.imageCount}>{allImages.length}</span>
+          </div>
         </div>
       </div>
 
-      <div className={styles.imageGallery}>
-        {reviews
-          .flatMap((r) => r.images)
-          .slice(0, 6)
-          .map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`리뷰 이미지 ${index}`}
-              className={styles.galleryImage}
-            />
-          ))}
-        <div className={styles.moreImages}>사진 전체보기</div>
-      </div>
-
-      <div className={styles.filterBox}>
+      <div className={styles.dropdown}>
         <button
-          onClick={() => setFilter('사진 모아보기')}
-          className={filter === '사진 모아보기' ? styles.active : ''}
+          className={styles.dropdownButton}
+          onClick={() => SetIsDropdownOpen(!isDropdownOpen)}
         >
-          사진 모아보기
+          {selectedFilter} ▼
         </button>
-        <button
-          onClick={() => setFilter('베스트순')}
-          className={filter === '베스트순' ? styles.active : ''}
-        >
-          베스트순
-        </button>
+        {isDropdownOpen && (
+          <ul className={styles.dropdownMenu}>
+            {filterOptions.map((option) => (
+              <li
+                key={option}
+                className={styles.dropdownItem}
+                onClick={() => {
+                  setSelectedFilter(option);
+                  SetIsDropdownOpen(false);
+                }}
+              >
+                {option}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className={styles.reviewList}>

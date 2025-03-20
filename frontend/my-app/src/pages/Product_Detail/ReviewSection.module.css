@@ -1,6 +1,17 @@
 .reviewSection{
+    display: flex;
+    flex-direction: column;
     padding: 20px;
 }
+
+.topBox{
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 24px 8px;
+    justify-items: center;
+}
+
 
 .reviewHeader{
     display: flex;
@@ -30,6 +41,7 @@
 
 .ratingBox{
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 10px;
 }
@@ -45,10 +57,19 @@
 }
 
 .imageGallery{
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
     margin-top: 20px;
+}
+
+.imageWrapper{
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .galleryImage{
@@ -56,6 +77,39 @@
     height: 150px;
     object-fit: cover;
     border-radius: 5px;
+}
+
+.dropdown{
+    position: relative;
+    margin-left: auto;
+}
+
+.dropdownButton{
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.dropdownMenu{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 150px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    list-style: none;
+    padding: 5px 0;
+    margin-top: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownItem{
+    padding: 8px 12px;
+    cursor: pointer;
 }
 
 .reviewList{
