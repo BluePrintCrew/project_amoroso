@@ -11,6 +11,7 @@ import LoginSuccess from './pages/Login/LoginSuccess';
 import MyInfo from './pages/MyPage/MyInfoEdit';
 import MyPage from './pages/MyPage/MyPage';
 import Order from './pages/OrderPage/OrderForm';
+import OrderTest from './pages/OrderPage/OrderFormTest';
 import Products from './pages/ProductListPage/ProductListPage';
 import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
@@ -35,7 +36,7 @@ function App() {
 
           {/* 테스트 시  사용되는 페이지*/}
           <Route path="/testJWTProvider" element={<TestJWTProviderPage />} />
-
+          <Route path="/orderTest" element={<OrderTest/>} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Admin />} />
             <Route path="products" element={<ProductsPage />} />
