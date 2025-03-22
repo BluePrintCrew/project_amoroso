@@ -29,6 +29,10 @@ const ReviewSection = () => {
   const [filter, setFilter] = useState('전체');
   const [selectedFilter, setSelectedFilter] = useState('베스트순');
   const [isDropdownOpen, SetIsDropdownOpen] = useState(false);
+  const filteredReviews =
+    filter === '사진'
+      ? reviews.filter((review) => review.images && review.images.length > 0)
+      : reviews;
 
   const filterOptions = ['베스트순', '최신순', '평점 높은순', '평점 낮은순'];
   const allImages = reviews.flatMap((review) => review.images);
@@ -51,9 +55,98 @@ const ReviewSection = () => {
           </button>
         </div>
       </div>
-      <div className={styles.topBox}>
-        <div className={styles.reviewSummary}>
-          <div className={styles.ratingBox}>
+
+      {filter === '전체' ? (
+        <>
+          <div className={styles.topBox}>
+            <div className={styles.reviewSummary}>
+              <div className={styles.ratingBox}>
+                <span className={styles.rating}>{averageRating}</span>
+                <div className={styles.stars}>
+                  {'★'.repeat(Math.floor(averageRating))}
+                  {averageRating % 1 !== 0 && '⭑'}
+                  {'☆'.repeat(5 - Math.ceil(averageRating))}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.imageGallery}>
+              {reviews.slice(0, 5).map((review, index) => (
+                <div key={index} className={styles.imageWrapper}>
+                  <img
+                    src={review.images[0]}
+                    alt={`리뷰 ${index + 1} 첫 번째 이미지`}
+                    className={styles.galleryImage}
+                  />
+                  {review.images.length > 1 && (
+                    <span className={styles.imageCountBadge}>
+                      +{review.images.length - 1}
+                    </span>
+                  )}
+                </div>
+              ))}
+              <div className={styles.imageWrapper}>
+                <div className={styles.moreImage}>
+                  +<br />
+                  사진 전체보기
+                </div>
+                <span className={styles.imageCount}>{reviews.length}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.dropdown}>
+            <button
+              className={styles.dropdownButton}
+              onClick={() => SetIsDropdownOpen(!isDropdownOpen)}
+            >
+              {selectedFilter} ▼
+            </button>
+            {isDropdownOpen && (
+              <ul className={styles.dropdownMenu}>
+                {filterOptions.map((option) => (
+                  <li
+                    key={option}
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setSelectedFilter(option);
+                      SetIsDropdownOpen(false);
+                    }}
+                  >
+                    {option}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className={styles.reviewList}>
+            {reviews.map((review) => (
+              <div key={review.id} className={styles.reviewItem}>
+                {review.images.length > 0 && (
+                  <img
+                    src={review.images[0]}
+                    alt="리뷰 이미지"
+                    className={styles.reviewImage}
+                  />
+                )}
+                <div className={styles.reviewContent}>
+                  <div className={styles.userInfo}>
+                    <span className={styles.stars}>★★★★★</span>
+                    <span className={styles.user}>{review.user}</span>
+                    <span className={styles.date}>{review.date}</span>
+                  </div>
+                  <p className={styles.text}>{review.text}</p>
+                  <button className={styles.helpfulButton}>도움돼요</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* 사진 탭 전용 UI */}
+          <div className={styles.ratingTopBox}>
             <span className={styles.rating}>{averageRating}</span>
             <div className={styles.stars}>
               {'★'.repeat(Math.floor(averageRating))}
@@ -61,75 +154,27 @@ const ReviewSection = () => {
               {'☆'.repeat(5 - Math.ceil(averageRating))}
             </div>
           </div>
-        </div>
 
-        <div className={styles.imageGallery}>
-          {allImages.slice(0, 5).map((img, index) => (
-            <div key={index} className={styles.imageWrapper}>
-              <img
-                src={img}
-                alt={`리뷰 이미지 ${index}`}
-                className={styles.galleryImage}
-              />
-            </div>
-          ))}
-          <div className={styles.imageWrapper}>
-            <div className={styles.moreImage}>
-              +<br />
-              사진 전체보기
-            </div>
-            <span className={styles.imageCount}>{allImages.length}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.dropdown}>
-        <button
-          className={styles.dropdownButton}
-          onClick={() => SetIsDropdownOpen(!isDropdownOpen)}
-        >
-          {selectedFilter} ▼
-        </button>
-        {isDropdownOpen && (
-          <ul className={styles.dropdownMenu}>
-            {filterOptions.map((option) => (
-              <li
-                key={option}
-                className={styles.dropdownItem}
-                onClick={() => {
-                  setSelectedFilter(option);
-                  SetIsDropdownOpen(false);
-                }}
-              >
-                {option}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className={styles.reviewList}>
-        {reviews.map((review) => (
-          <div key={review.id} className={styles.reviewItem}>
-            {review.images.length > 0 && (
-              <img
-                src={review.images[0]}
-                alt="리뷰 이미지"
-                className={styles.reviewImage}
-              />
-            )}
-            <div className={styles.reviewContent}>
-              <div className={styles.userInfo}>
-                <span className={styles.stars}>★★★★★</span>
-                <span className={styles.user}>{review.user}</span>
-                <span className={styles.date}>{review.date}</span>
+          <div className={styles.photoGrid}>
+            {filteredReviews.map((review) => (
+              <div key={review.id} className={styles.photoCard}>
+                <div className={styles.photoWrapper}>
+                  <img
+                    src={review.images[0]}
+                    alt="리뷰 이미지"
+                    className={styles.galleryImage}
+                  />
+                  {review.images.length > 1 && (
+                    <span className={styles.imageCountBadge}>
+                      {review.images.length}
+                    </span>
+                  )}
+                </div>
               </div>
-              <p className={styles.text}>{review.text}</p>
-              <button className={styles.helpfulButton}>도움돼요</button>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 };

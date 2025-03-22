@@ -331,32 +331,33 @@ const ProductDetailPage = () => {
                       className={styles.detailImage}
                     />
                   )}
+
+                  <div className={styles.moreInfo}>
+                    {showMore && (
+                      <>
+                        <img
+                          src="https://placehold.co/800x300"
+                          alt="상품 공지사항"
+                          className={styles.noticeImage}
+                        />
+                        <img
+                          src="https://placehold.co/800x500"
+                          alt="상품 설명"
+                          className={styles.detailImage}
+                        />
+                      </>
+                    )}
+                    <button
+                      onClick={() => setShowMore(!showMore)}
+                      className={styles.toggleButton}
+                    >
+                      {showMore ? '상세정보 접기 ▲' : '상세정보 펼치기 ▼'}
+                    </button>
+                  </div>
                 </div>
               )}
-              {activeTab === 'review' && <ReviewSection />}
-            </div>
 
-            <div className={styles.moreInfo}>
-              {showMore && (
-                <>
-                  <img
-                    src="https://placehold.co/800x300"
-                    alt="상품 공지사항"
-                    className={styles.noticeImage}
-                  />
-                  <img
-                    src="https://placehold.co/800x500"
-                    alt="상품 설명"
-                    className={styles.detailImage}
-                  />
-                </>
-              )}
-              <button
-                onClick={() => setShowMore(!showMore)}
-                className={styles.toggleButton}
-              >
-                {showMore ? '상세정보 접기 ▲' : '상세정보 펼치기 ▼'}
-              </button>
+              {activeTab === 'review' && <ReviewSection />}
             </div>
           </div>
         </div>
