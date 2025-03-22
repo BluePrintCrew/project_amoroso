@@ -8,6 +8,7 @@ import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import PageLayout from '../../components/PageLayout/PageLayout';
 import styles from './OrderForm.module.css';
+import { useLocation } from 'react-router-dom';
 
 const paymentMethods = [
   '퀵 계좌이체',
@@ -27,6 +28,10 @@ const OrderForm = () => {
     setSelectedDate(date);
   };
 
+  const handleMethodClick = (method) => {
+    setSelectedMethod(method);
+  };
+
   const formatDate = (date) => {
     if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
 
@@ -44,9 +49,13 @@ const OrderForm = () => {
 
   const [selectedMethod, setSelectedMethod] = useState(null);
 
-  const handleMethodClick = (method) => {
-    setSelectedMethod(method);
-  };
+  const location = useLocation();
+  const product = location.state;
+
+  if (!product) {
+    return <p>잘못된 접근입니다. 상품 정보가 없습니다.</p>;
+  }
+
   return (
     <PageLayout>
       <h1 className={styles.orderTitle}>주문서 작성</h1>
@@ -72,15 +81,15 @@ const OrderForm = () => {
             <div className={`${styles.column} ${styles.leftAlign}`}>
               <div className={styles.productInfo}>
                 <img
-                  src="https://placehold.co/120"
+                  src={`http://localhost:8080/api/v1/images/${product.mainImageURL
+                    .split('/')
+                    .pop()}`}
                   alt="상품 이미지"
                   className={styles.productImage}
                 />
                 <div>
                   <p>Amoroso</p>
-                  <p className={styles.productName}>
-                    제품명 1 제품명 1 제품명 1 제품명 1
-                  </p>
+                  <p className={styles.productName}>{product.productName}</p>
                 </div>
               </div>
             </div>
@@ -90,8 +99,12 @@ const OrderForm = () => {
             </div>
 
             <div className={`${styles.column} ${styles.centerAlign}`}>
-              <p className={styles.price}>3,306,000원</p>
-              <p className={styles.originalPrice}>4,272,000원</p>
+              <p className={styles.price}>
+                {product.discountPrice.toLocaleString()}원
+              </p>
+              <p className={styles.originalPrice}>
+                {product.marketPrice.toLocaleString()}원
+              </p>
               <button className={styles.discountInfo}>할인내역</button>
             </div>
 
