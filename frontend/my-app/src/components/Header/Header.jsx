@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import cart from '../../assets/cart_button.png';
 import login from '../../assets/login_button.png';
 import logo from '../../assets/logo.png';
@@ -8,6 +8,27 @@ import search from '../../assets/search.png';
 import styles from './Header.module.css';
 
 const Header = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    // Check if accessToken exists on component mount
+    const checkAuth = () => {
+      const token = localStorage.getItem('accessToken');
+      setIsAuthenticated(!!token);
+    };
+    
+    // Initial check
+    checkAuth();
+    
+    // Listen for storage events to handle token changes
+    window.addEventListener('storage', checkAuth);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+    };
+  }, []);
+
   const handleSearchClick = () => {
     alert('검색버튼 클릭.');
   };
@@ -42,15 +63,20 @@ const Header = () => {
         </div>
 
         <div className={styles.headerIcons}>
-          <Link to="/login">
-            <img src={login} alt="Login" className={styles.loginIcon} />
-          </Link>
-          <Link to="/cart">
-            <img src={cart} alt="Cart" className={styles.cartIcon} />
-          </Link>
-          <Link to="/mypage">
-            <img src={mypage} alt="Mypage" className={styles.mypageIcon} />
-          </Link>
+          {!isAuthenticated ? (
+            <Link to="/login">
+              <img src={login} alt="Login" className={styles.loginIcon} />
+            </Link>
+          ) : (
+            <>
+              <Link to="/cart">
+                <img src={cart} alt="Cart" className={styles.cartIcon} />
+              </Link>
+              <Link to="/mypage">
+                <img src={mypage} alt="Mypage" className={styles.mypageIcon} />
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
