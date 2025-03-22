@@ -1,29 +1,27 @@
 package org.example.amorosobackend.security;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Collections;
+import java.util.Map;
+
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor; // @RequiredArgsConstructor
-import org.springframework.security.core.authority.SimpleGrantedAuthority; // SimpleGrantedAuthority
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService; // DefaultOAuth2UserService
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest; // OAuth2UserRequest
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService; // OAuth2UserService 인터페이스
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException; // OAuth2AuthenticationException
-import org.springframework.security.oauth2.core.user.OAuth2User; // OAuth2User
-import org.springframework.stereotype.Service; // @Service
 
-import java.util.Collections; // Collections.singleton
-import java.util.Map; // Map 인터페이스
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository; // 사용자 데이터베이스
-    private final JwtProvider jwtProvider; // JWT 생성
-
+    
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // 기본 OAuth2UserService를 사용해 사용자 정보 로드
@@ -51,8 +49,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                                 .build()
                 ));
 
-        // JWT 생성 및 반환
-        String token = jwtProvider.createToken(user.getEmail(), user.getRole().toString());
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString())),
                 attributes,
