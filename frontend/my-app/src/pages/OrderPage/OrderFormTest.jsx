@@ -10,7 +10,8 @@ import PageLayout from '../../components/PageLayout/PageLayout';
 import styles from './OrderForm.module.css';
 
 const storeId = process.env.REACT_APP_PORTONE_STORE_ID;
-const channelKey = process.env.REACT_APP_PORTONE_CLIENT_KEY;
+const clientKey = process.env.REACT_APP_PORTONE_CLIENT_KEY;
+const channelKey = process.env.REACT_APP_PORTONE_CHANNEL_KEY
 
 const paymentMethods = [
     '퀵 계좌이체',
@@ -55,7 +56,7 @@ const OrderForm = () => {
             const orderResponse = await axios.post(
                 'http://localhost:8080/api/v1/orders',
                 {
-                    totalPrice: 3306000,
+                    totalPrice: 100,
                     orderItems: [
                         {
                             productId: 1,
@@ -87,7 +88,7 @@ const OrderForm = () => {
                 channelKey: channelKey,
                 paymentId: paymentId,
                 orderName: `주문번호 ${orderId}`,
-                totalAmount: 3306000,
+                totalAmount: 100,
                 currency: 'KRW',
                 payMethod: 'CARD',
                 customData: {
