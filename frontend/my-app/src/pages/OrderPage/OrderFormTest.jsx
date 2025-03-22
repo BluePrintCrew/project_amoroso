@@ -3,10 +3,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CartSummary from '../../components/CartSummary/CartSummary';
 import DatePicker from 'react-datepicker';
+import PortOne from '@portone/browser-sdk/v2';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import PageLayout from '../../components/PageLayout/PageLayout';
 import styles from './OrderForm.module.css';
+
+const storeId = process.env.REACT_APP_PORTONE_STORE_ID;
+const channelKey = process.env.REACT_APP_PORTONE_CLIENT_KEY;
 
 const paymentMethods = [
     '퀵 계좌이체',
@@ -42,31 +46,29 @@ const OrderForm = () => {
         setSelectedMethod(method);
     };
 
-    // 주문 API 호출 함수
+
     const handleOrderSubmit = async () => {
         try {
-            // localStorage에 저장된 JWT 토큰 (로그인 후 저장되어 있어야 함)
             const token = localStorage.getItem('token');
-            // API에 전달할 주문 요청 객체 (실제 값은 상황에 맞게 수정 필요)
-            const orderRequest = {
-                totalPrice: 3306000,
-                orderItems: [
-                    {
-                        productId: 1,  // 테스트 상품 ID (DB 확인 필요)
-                        quantity: 1
-                    }
-                ],
-                userAddressId: 1,  // 테스트 주소 ID (DB에 등록된 값 사용)
-                deliveryRequest: "문 앞에 놓아주세요",
-                freeLoweringService: true,
-                productInstallationAgreement: true,
-                vehicleEntryPossible: true,
-                elevatorType: "ONE_TO_SEVEN"
-            };
 
-            const response = await axios.post(
+            // 1. 주문 생성 API 호출
+            const orderResponse = await axios.post(
                 'http://localhost:8080/api/v1/orders',
-                orderRequest,
+                {
+                    totalPrice: 3306000,
+                    orderItems: [
+                        {
+                            productId: 1,
+                            quantity: 1
+                        }
+                    ],
+                    userAddressId: 1,
+                    deliveryRequest: "문 앞에 놓아주세요",
+                    freeLoweringService: true,
+                    productInstallationAgreement: true,
+                    vehicleEntryPossible: true,
+                    elevatorType: "ONE_TO_SEVEN"
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -75,12 +77,38 @@ const OrderForm = () => {
                 }
             );
 
-            alert(`주문이 완료되었습니다! 주문번호: ${response.data.orderId}`);
+            const orderId = orderResponse.data.orderId;
+
+            // 2. 결제 요청
+            const paymentId = crypto.randomUUID(); // 랜덤 결제 식별자
+
+            const payment = await PortOne.requestPayment({
+                storeId: storeId,
+                channelKey: channelKey,
+                paymentId: paymentId,
+                orderName: `주문번호 ${orderId}`,
+                totalAmount: 3306000,
+                currency: 'KRW',
+                payMethod: 'CARD',
+                customData: {
+                    orderId: orderId
+                }
+            });
+
+            // 3. PortOne 결제 성공
+            if (payment.code === undefined) {
+                alert(`결제 성공! paymentId: ${payment.paymentId}`);
+                // 👉 다음 단계에서 이 정보를 백엔드로 전달할 예정
+            } else {
+                alert(`결제 실패: ${payment.message}`);
+            }
+
         } catch (error) {
             console.error(error);
-            alert("주문 생성에 실패하였습니다.");
+            alert("주문 생성 또는 결제 요청 중 오류가 발생했습니다.");
         }
     };
+
 
     return (
         <PageLayout>
