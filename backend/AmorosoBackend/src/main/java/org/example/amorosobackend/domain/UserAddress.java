@@ -1,9 +1,6 @@
 package org.example.amorosobackend.domain;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.amorosobackend.enums.ElevatorType;
 
 import java.time.LocalDateTime;
@@ -35,10 +32,14 @@ public class UserAddress {
 
     private Boolean isDefault;
 
+    @Setter
     private Boolean freeLoweringService;
+    @Setter
     private Boolean productInstallationAgreement;
+    @Setter
     private Boolean vehicleEntryPossible;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private ElevatorType elevatorType;
 

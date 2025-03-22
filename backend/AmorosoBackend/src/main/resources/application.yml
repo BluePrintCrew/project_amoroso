@@ -66,3 +66,6 @@ logging:
     org.springframework.security: DEBUG
     org.example.amorosobackend: DEBUG
     org.springframework.web: DEBUG
+
+portone:
+  key:

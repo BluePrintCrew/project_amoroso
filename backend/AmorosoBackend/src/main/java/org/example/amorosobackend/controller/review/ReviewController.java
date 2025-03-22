@@ -7,6 +7,8 @@ import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.service.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +29,8 @@ public class ReviewController {
 
     @GetMapping("/product/{productId}")
     @Operation(description = "상품에 대한 리뷰 조회 API")
-    public Page<ReviewDTO.Response> getReviewsByProduct(@PathVariable Long productId, Pageable pageable) {
+    public Page<ReviewDTO.Response> getReviewsByProduct(@PathVariable Long productId,
+                                                        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
         return reviewService.getReviewsByProduct(productId, pageable);
     }
 

@@ -1,44 +1,136 @@
 package org.example.amorosobackend.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.domain.Seller;
-import org.example.amorosobackend.domain.User;
+import org.example.amorosobackend.domain.*;
+import org.example.amorosobackend.domain.category.Category;
+import org.example.amorosobackend.domain.product.Product;
+import org.example.amorosobackend.enums.CategoryCode;
+import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.UserRole;
-import org.example.amorosobackend.repository.SellerRepository;
-import org.example.amorosobackend.repository.UserRepository;
+import org.example.amorosobackend.repository.*;
+import org.example.amorosobackend.repository.product.ProductRepository;
 import org.example.amorosobackend.security.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/Test-User")  //
+@RequestMapping("/api/v1/Test-User")
 @Tag(name = "test 계정을 생성 및 JWT를 발급받기 위한 테스트용 API")
 @RequiredArgsConstructor
 public class TestUserController {
-
-
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final SellerRepository sellerRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
+    private final UserAddressRepository userAddressRepository;
 
     private static final String TEST_EMAIL = "test@testEmail.com";
     private static final String TEST_PASSWORD = "test1234";
 
-    //테스트 계정을 자동 생성하고 JWT 발급
+    @PostMapping("/setup/SELLER")
+    @Operation(description = "SELLER 등급의 테스트 계정 생성 및 토큰 발급")
+    public ResponseEntity<?> setupTestSeller() {
+        // 1. User 생성
+        User testUser = userRepository.findByEmail(TEST_EMAIL).orElseGet(() -> {
+            User newUser = User.builder()
+                    .email(TEST_EMAIL)
+                    .password(passwordEncoder.encode(TEST_PASSWORD))
+                    .name("Test Seller")
+                    .phoneNumber("010-1234-5678")
+                    .role(UserRole.ROLE_SELLER.name())
+                    .isActive(true)
+                    .build();
+            return userRepository.save(newUser);
+        });
+
+        // 2. Seller 생성
+        Seller testSeller = sellerRepository.findByUser(testUser).orElseGet(() -> {
+            Seller newSeller = Seller.builder()
+                    .user(testUser)
+                    .brandName("Test Brand")
+                    .businessRegistrationNumber(UUID.randomUUID().toString().substring(0, 12))
+                    .build();
+            return sellerRepository.save(newSeller);
+        });
+
+        // 3. Category 생성
+        Category category = categoryRepository.findByCategoryCode(CategoryCode.LIVING_SOFA)
+                .orElseGet(() -> {
+                    Category newCategory = Category.builder()
+                            .categoryCode(CategoryCode.LIVING_SOFA)
+                            .build();
+                    return categoryRepository.save(newCategory);
+                });
+
+        // 4. Product 생성
+        Optional<Product> existingProduct = productRepository.findByProductCode("TEST123");
+        if (existingProduct.isEmpty()) {
+            Product product = Product.builder()
+                    .category(category)
+                    .productName("테스트 소파")
+                    .productCode("TEST123")
+                    .description("테스트용 소파 설명입니다.")
+                    .seller(testSeller)
+                    .mainImageUri("https://placehold.co/120")
+                    .stock(5)
+                    .manufacturer("Amoroso")
+                    .origin("대한민국")
+                    .brand("Amoroso")
+                    .couponApplicable(true)
+                    .color("베이지")
+                    .components("소파 1개, 쿠션 2개")
+                    .material("패브릭")
+                    .size("W200 x D90 x H80")
+                    .shippingInstallationFee(0)
+                    .asPhoneNumber("1234-5678")
+                    .costPrice(3000000)
+                    .marketPrice(4272000)
+                    .discountRate(22)
+                    .discountPrice(3306000)
+                    .build();
+            productRepository.save(product);
+        }
+
+        // 5. 기본 배송지 저장 (없을 경우)
+        if (testUser.getAddresses().isEmpty()) {
+            UserAddress address = UserAddress.builder()
+                    .user(testUser)
+                    .recipientName("홍길동")
+                    .phoneNumber("010-1234-5678")
+                    .postalCode("12345")
+                    .address("서울특별시 강남구 테헤란로 123")
+                    .detailAddress("101동 1001호")
+                    .isDefault(true)
+                    .build();
+
+            // 필수 배송 정보 추가
+            address.setFreeLoweringService(true);
+            address.setProductInstallationAgreement(true);
+            address.setVehicleEntryPossible(true);
+            address.setElevatorType(ElevatorType.ONE_TO_SEVEN);
+
+            userAddressRepository.save(address);
+        }
+
+        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_SELLER");
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
     @PostMapping("/setup/USER")
     @Operation(description = "User 등급의 계정 생성 및 토큰 발급")
     public ResponseEntity<?> setupTestUser() {
-        if (!userRepository.existsByEmail(TEST_EMAIL)) {
-            User testUser = User.builder()
+        User testUser = userRepository.findByEmail(TEST_EMAIL).orElseGet(() -> {
+            User newUser = User.builder()
                     .email(TEST_EMAIL)
                     .password(passwordEncoder.encode(TEST_PASSWORD))
                     .name("Test User")
@@ -46,7 +138,27 @@ public class TestUserController {
                     .role(UserRole.ROLE_USER.name())
                     .isActive(true)
                     .build();
-            userRepository.save(testUser);
+            return userRepository.save(newUser);
+        });
+
+        // 기본 배송지 저장
+        if (testUser.getAddresses().isEmpty()) {
+            UserAddress address = UserAddress.builder()
+                    .user(testUser)
+                    .recipientName("홍길동")
+                    .phoneNumber("010-1234-5678")
+                    .postalCode("12345")
+                    .address("서울특별시 강남구 테헤란로 123")
+                    .detailAddress("101동 1001호")
+                    .isDefault(true)
+                    .build();
+
+            address.setFreeLoweringService(true);
+            address.setProductInstallationAgreement(true);
+            address.setVehicleEntryPossible(true);
+            address.setElevatorType(ElevatorType.ONE_TO_SEVEN);
+
+            userAddressRepository.save(address);
         }
 
         String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_USER");
@@ -60,7 +172,7 @@ public class TestUserController {
             User testUser = User.builder()
                     .email(TEST_EMAIL)
                     .password(passwordEncoder.encode(TEST_PASSWORD))
-                    .name("Test User")
+                    .name("Test Admin")
                     .phoneNumber("010-1234-5678")
                     .role(UserRole.ROLE_ADMIN.name())
                     .isActive(true)
@@ -68,44 +180,15 @@ public class TestUserController {
             userRepository.save(testUser);
         }
 
-        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_USER");
+        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_ADMIN");
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @PostMapping("/setup/SELLER")
-    @Operation(description = "SELLER 등급의 테스트 계정 생성 및 토큰 발급")
-    public ResponseEntity<?> setupTestSeller() {
-        if (!userRepository.existsByEmail(TEST_EMAIL)) {
-            // 1. User 생성 및 저장
-            User testUser = User.builder()
-                    .email(TEST_EMAIL)
-                    .password(passwordEncoder.encode(TEST_PASSWORD))
-                    .name("Test Seller")
-                    .phoneNumber("010-1234-5678")
-                    .role(UserRole.ROLE_SELLER.name())
-                    .isActive(true)
-                    .build();
-            userRepository.save(testUser);
-
-            // 2. Seller 생성 및 저장 (User와 연결)
-            Seller testSeller = Seller.builder()
-                    .user(testUser)
-                    .brandName("Test Brand")
-                    .businessRegistrationNumber(UUID.randomUUID().toString().substring(0, 12)) // 랜덤 사업자번호 생성
-                    .build();
-            sellerRepository.save(testSeller);
-        }
-
-        // 3. JWT 발급
-        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_SELLER");
-        return ResponseEntity.ok(Map.of("token", token));
-    }
-    // 테스트 계정 삭제 (SELLER 포함)
     @DeleteMapping("/reset")
     public ResponseEntity<?> resetTestUser() {
         userRepository.findByEmail(TEST_EMAIL).ifPresent(user -> {
-            sellerRepository.findByUser(user).ifPresent(sellerRepository::delete); // Seller 삭제
-            userRepository.delete(user); // User 삭제
+            sellerRepository.findByUser(user).ifPresent(sellerRepository::delete);
+            userRepository.delete(user);
         });
         return ResponseEntity.ok("Test user deleted");
     }
