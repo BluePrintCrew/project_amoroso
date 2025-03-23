@@ -75,7 +75,7 @@ function ProductCard({ product }) {
     e.preventDefault();
     
     // 토큰 확인 (로그인 체크)
-    const token = localStorage.getItem('token'); // 또는 'accessToken' 중 실제 사용 중인 키
+    const token = localStorage.getItem('access_token');
     if (!token) {
       // 로그인 필요 메시지 표시 또는 로그인 페이지로 리디렉션
       alert("로그인 후 이용 가능합니다.");

@@ -23,7 +23,7 @@ function MyPageProfileCard() {
     const fetchUserProfile = async () => {
       try {
         // 로컬 스토리지에서 토큰 가져오기
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         
         if (!token) {
           // 토큰이 없으면 오류 처리

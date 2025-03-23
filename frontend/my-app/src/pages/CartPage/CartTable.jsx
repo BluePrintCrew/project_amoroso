@@ -13,7 +13,7 @@ function CartTable({ cartItems, setCartItems }) {
 
   // 토큰 가져오기
   const getToken = () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem('access_token');
   };
 
   // 이미지 URL 처리 함수
