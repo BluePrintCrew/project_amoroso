@@ -5,9 +5,7 @@ import './SignUpPage.css';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import PageLayout from '../../components/PageLayout/PageLayout';
-
-// API 기본 URL 설정
-const API_BASE_URL = 'http://localhost:8080';
+import { API_BASE_URL } from '../MyPage/api';
 
 const SignUpPage = () => {
   const navigate = useNavigate();

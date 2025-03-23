@@ -4,9 +4,9 @@ import google from '../../assets/google_login.png';
 import kakao from '../../assets/kakao_login.png';
 import naver from '../../assets/naver_login.png';
 import styles from './LoginForm.module.css';
+import { API_BASE_URL } from '../MyPage/api';
 
 const LoginForm = () => {
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   return (
     <PageLayout>

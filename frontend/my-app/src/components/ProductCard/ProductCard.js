@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './ProductCard.css';
 import no_image from '../../assets/noproduct.webp';
-
-const API_BASE_URL = "http://localhost:8080";
+import { API_BASE_URL } from '../../pages/MyPage/api';
 
 function ProductCard({ product }) {
   const [imageLoaded, setImageLoaded] = useState(false);
