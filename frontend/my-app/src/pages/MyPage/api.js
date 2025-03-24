@@ -15,7 +15,7 @@ const api = axios.create({
 // 요청 인터셉터 - 모든 요청에 토큰 추가
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -36,7 +36,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.error('인증 만료 또는 유효하지 않은 토큰');
       // 개발 중에는 주석 처리하고, 프로덕션에서 활성화
-      // localStorage.removeItem('accessToken');
+      // localStorage.removeItem('access_token');
       // window.location.href = '/login';
     }
     return Promise.reject(error);

@@ -14,7 +14,7 @@ function CartPage() {
 
   useEffect(() => {
     // 로컬 스토리지에서 토큰 가져오기
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     
     // 토큰이 없으면 에러 표시
     if (!token) {

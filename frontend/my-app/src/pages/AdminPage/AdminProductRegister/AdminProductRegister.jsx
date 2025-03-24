@@ -88,7 +88,7 @@ function AdminProductRegister() {
     alert("임시 저장되었습니다!");
   };
 
-  const getToken = () => localStorage.getItem("token");
+  const getToken = () => localStorage.getItem("access_token");
 
   // Payload 변환
   const transformPayload = () => {

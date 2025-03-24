@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 
 import CartSummary from '../../components/CartSummary/CartSummary';
 import DatePicker from 'react-datepicker';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import PageLayout from '../../components/PageLayout/PageLayout';
 import styles from './OrderForm.module.css';
 import { useLocation } from 'react-router-dom';
@@ -50,11 +48,14 @@ const OrderForm = () => {
   const [selectedMethod, setSelectedMethod] = useState(null);
 
   const location = useLocation();
-  const product = location.state;
+  const passedData = location.state;
 
-  if (!product) {
-    return <p>잘못된 접근입니다. 상품 정보가 없습니다.</p>;
-  }
+  const products = !Array.isArray(passedData) ? [passedData] : passedData;
+  const cartItems = products.map((item) => ({
+    price: item.discountPrice,
+    originalPrice: item.marketPrice,
+    quantity: item.quantity || 1,
+  }));
 
   return (
     <PageLayout>
@@ -72,49 +73,51 @@ const OrderForm = () => {
         </div>
         <div className={styles.infoHeader2}>
           <div className={`${styles.column} ${styles.leftAlign}`}>
-            <span className={styles.mainText}>로젠택배(1)</span>
+            <span className={styles.mainText}>로젠택배</span>
             <span className={styles.subText}>배송/설치일 직접 지정 가능</span>
           </div>
         </div>
-        <div className={styles.infoBody}>
-          <div className={styles.row}>
-            <div className={`${styles.column} ${styles.leftAlign}`}>
-              <div className={styles.productInfo}>
-                <img
-                  src={`http://localhost:8080/api/v1/images/${product.mainImageURL
-                    .split('/')
-                    .pop()}`}
-                  alt="상품 이미지"
-                  className={styles.productImage}
-                />
-                <div>
-                  <p>Amoroso</p>
-                  <p className={styles.productName}>{product.productName}</p>
+        {products.map((product, index) => (
+          <div key={index} className={styles.infoBody}>
+            <div className={styles.row}>
+              <div className={`${styles.column} ${styles.leftAlign}`}>
+                <div className={styles.productInfo}>
+                  <img
+                    src={`http://localhost:8080/api/v1/images/${product.mainImageURL
+                      .split('/')
+                      .pop()}`}
+                    alt="상품 이미지"
+                    className={styles.productImage}
+                  />
+                  <div>
+                    <p>Amoroso</p>
+                    <p className={styles.productName}>{product.productName}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className={`${styles.column} ${styles.centerAlign}`}>
-              <p>1</p>
-            </div>
+              <div className={`${styles.column} ${styles.centerAlign}`}>
+                <p>1</p>
+              </div>
 
-            <div className={`${styles.column} ${styles.centerAlign}`}>
-              <p className={styles.price}>
-                {product.discountPrice.toLocaleString()}원
-              </p>
-              <p className={styles.originalPrice}>
-                {product.marketPrice.toLocaleString()}원
-              </p>
-              <button className={styles.discountInfo}>할인내역</button>
-            </div>
+              <div className={`${styles.column} ${styles.centerAlign}`}>
+                <p className={styles.price}>
+                  {product.discountPrice.toLocaleString()}원
+                </p>
+                <p className={styles.originalPrice}>
+                  {product.marketPrice.toLocaleString()}원
+                </p>
+                <button className={styles.discountInfo}>할인내역</button>
+              </div>
 
-            <div className={`${styles.column} ${styles.centerAlign}`}>
-              <p className={styles.shipping1}>무료배송</p>
-              <p className={styles.shipping2}>지역별/옵션별 배송비 추가</p>
-              <p className={styles.shipping3}>지역별 배송비</p>
+              <div className={`${styles.column} ${styles.centerAlign}`}>
+                <p className={styles.shipping1}>무료배송</p>
+                <p className={styles.shipping2}>지역별/옵션별 배송비 추가</p>
+                <p className={styles.shipping3}>지역별 배송비</p>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
 
         <div className={styles.infoBottom}>
           <p>
@@ -123,7 +126,7 @@ const OrderForm = () => {
           </p>
         </div>
       </div>
-      <CartSummary />
+      <CartSummary cartItems={cartItems} />
 
       <div className={styles.delivery}>
         <div className={styles.sectionHeader}>

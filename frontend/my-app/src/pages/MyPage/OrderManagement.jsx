@@ -19,7 +19,7 @@ function OrderManagement() {
   useEffect(() => {
     const fetchOrderStatusSummary = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('access_token');
         
         if (!token) {
           setError("로그인이 필요합니다");

@@ -9,8 +9,8 @@ const LoginSuccess = () => {
   useEffect(() => {
     try {
       // 이미 localStorage에 토큰이 있으면 대시보드로 이동
-      if (localStorage.getItem("accessToken")) {
-        const token = localStorage.getItem("accessToken");
+      if (localStorage.getItem('access_token')) {
+        const token = localStorage.getItem('access_token');
         const decoded = jwtDecode(token);
         console.log(decoded);
         navigateBasedOnRole(decoded.role);
@@ -18,14 +18,15 @@ const LoginSuccess = () => {
       }
 
       const urlParams = new URLSearchParams(window.location.search);
-      const accessToken = urlParams.get("accessToken");
+      const accessToken = urlParams.get('access_token');
       
       if (accessToken) {
-        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem('access_token', accessToken);
         navigate("/dashboard");
       } else {
         // 액세스 토큰이 없는 경우 로그인 실패 페이지로 이동
-        navigate("/loginFailure");
+        // navigate("/loginFailure");
+        alert('엑세스 토큰 없음');
       }
     } catch (err) {
       setError("로그인 처리 중 오류가 발생했습니다.");
