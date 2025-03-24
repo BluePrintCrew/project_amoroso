@@ -50,7 +50,7 @@ const OrderForm = () => {
 
     const handleOrderSubmit = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('access_token');
 
             // 1. 주문 생성 API 호출
             const orderResponse = await axios.post(

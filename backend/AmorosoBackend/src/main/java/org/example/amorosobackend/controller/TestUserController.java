@@ -1,24 +1,33 @@
 package org.example.amorosobackend.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.domain.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.example.amorosobackend.domain.Seller;
+import org.example.amorosobackend.domain.User;
+import org.example.amorosobackend.domain.UserAddress;
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.enums.CategoryCode;
 import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.UserRole;
-import org.example.amorosobackend.repository.*;
+import org.example.amorosobackend.repository.CategoryRepository;
+import org.example.amorosobackend.repository.SellerRepository;
+import org.example.amorosobackend.repository.UserAddressRepository;
+import org.example.amorosobackend.repository.UserRepository;
 import org.example.amorosobackend.repository.product.ProductRepository;
 import org.example.amorosobackend.security.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/Test-User")
@@ -123,7 +132,7 @@ public class TestUserController {
         }
 
         String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_SELLER");
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("access_token", token));
     }
 
     @PostMapping("/setup/USER")
@@ -162,7 +171,7 @@ public class TestUserController {
         }
 
         String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_USER");
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("access_token", token));
     }
 
     @PostMapping("/setup/ADMIN")
@@ -181,7 +190,7 @@ public class TestUserController {
         }
 
         String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_ADMIN");
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("access_token", token));
     }
 
     @DeleteMapping("/reset")

@@ -34,6 +34,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         .orElseThrow(() -> new IllegalStateException("OAuth2 인증은 성공했으나 사용자에게 할당된 권한이 없음: " + email));
         
         String jwt = jwtProvider.createToken(email, role);
-        response.sendRedirect(frontendBaseUrl + "/loginSuccess?accessToken=" + jwt);
+        response.sendRedirect(frontendBaseUrl + "/loginSuccess?access_token=" + jwt);
     }
 }

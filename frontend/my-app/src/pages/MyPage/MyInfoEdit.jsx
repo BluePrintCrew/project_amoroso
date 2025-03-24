@@ -52,7 +52,7 @@ function MyInfoEdit() {
     setIsLoading(true);
     try {
       // 로컬 스토리지에서 토큰 가져오기 - token 키 사용
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       
       console.log("사용 중인 토큰:", token); // 토큰 확인을 위한 로그
       
@@ -200,7 +200,7 @@ function MyInfoEdit() {
     e.preventDefault();
     
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       
       if (!token) {
         alert("로그인이 필요합니다");
@@ -267,7 +267,7 @@ function MyInfoEdit() {
     }
     
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       
       if (!token) {
         alert("로그인이 필요합니다");
@@ -282,7 +282,7 @@ function MyInfoEdit() {
       
       alert("회원탈퇴가 완료되었습니다.");
       // 로그아웃 및 홈으로 리다이렉트 로직 추가
-      localStorage.removeItem("token");
+      localStorage.removeItem("access_token");
       window.location.href = "/";
     } catch (err) {
       console.error("회원탈퇴 실패:", err);

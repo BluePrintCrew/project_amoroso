@@ -13,7 +13,7 @@ const Header = () => {
   useEffect(() => {
     // Check if accessToken exists on component mount
     const checkAuth = () => {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem('access_token');
       setIsAuthenticated(!!token);
     };
     

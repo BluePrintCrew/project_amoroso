@@ -105,7 +105,7 @@ const ProductDetailPage = () => {
     // 이미 처리 중이면 중복 요청 방지
     if (isAddingToCart) return;
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
 
     // 로그인 여부 확인
     if (!token) {

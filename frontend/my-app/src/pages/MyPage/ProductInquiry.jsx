@@ -21,7 +21,7 @@ function ProductInquiry() {
   useEffect(() => {
     // 상품 문의 및 1:1 문의 데이터 가져오기
     const fetchInquiries = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       
       if (!token) {
         setError({

@@ -44,7 +44,7 @@ const SignUpPage = () => {
   // 컴포넌트 마운트 시 소셜 로그인 토큰 확인
   useEffect(() => {
     // URL에서 토큰 파라미터 확인 또는 localStorage에서 확인
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     
     if (token) {
       // 소셜 로그인 후 추가 정보 입력을 위해 리다이렉트된 경우
@@ -158,7 +158,7 @@ const SignUpPage = () => {
       
       // 발급된 토큰 저장
       if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('access_token', response.data.token);
         return response.data.token;
       }
       return null;
@@ -214,7 +214,7 @@ const SignUpPage = () => {
           );
           
           token = loginResponse.data.accessToken;
-          localStorage.setItem('token', token);
+          localStorage.setItem('access_token', token);
         } catch (regErr) {
           console.error('회원가입/로그인 실패:', regErr);
           // 개발 테스트 목적으로 테스트 계정 생성
