@@ -79,10 +79,9 @@ const OrderForm = () => {
             );
 
             const orderId = orderResponse.data.orderId;
-
-            // 2. 결제 요청
             const paymentId = crypto.randomUUID(); // 랜덤 결제 식별자
 
+            // 2. PortOne 결제 요청
             const payment = await PortOne.requestPayment({
                 storeId: storeId,
                 channelKey: channelKey,
@@ -96,17 +95,31 @@ const OrderForm = () => {
                 }
             });
 
-            // 3. PortOne 결제 성공
+            // 3. 결제 성공 시 imp_uid와 orderId로 백엔드 검증 요청
             if (payment.code === undefined) {
-                alert(`결제 성공! paymentId: ${payment.paymentId}`);
-                // 👉 다음 단계에서 이 정보를 백엔드로 전달할 예정
+                alert(`결제 성공! paymentId: ${payment.imp_uid}`);
+
+                await axios.post(
+                    'http://localhost:8080/api/v1/payments/verify',
+                    {
+                        impUid: payment.imp_uid,
+                        orderId: orderId
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                alert('결제가 서버에 성공적으로 반영되었습니다!');
             } else {
                 alert(`결제 실패: ${payment.message}`);
             }
-
         } catch (error) {
             console.error(error);
-            alert("주문 생성 또는 결제 요청 중 오류가 발생했습니다.");
+            alert("주문 생성 또는 결제 처리 중 오류가 발생했습니다.");
         }
     };
 
