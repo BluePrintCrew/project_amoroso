@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import CartSummary from '../../components/CartSummary/CartSummary';
 import DatePicker from 'react-datepicker';
-import PortOne from '@portone/browser-sdk/v2';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import PageLayout from '../../components/PageLayout/PageLayout';
@@ -48,20 +47,117 @@ const OrderForm = () => {
     };
 
 
+    // const handleOrderSubmit = async () => {
+    //     try {
+    //         const token = localStorage.getItem('access_token');
+    //
+    //         // 1. 주문 생성
+    //         const orderResponse = await axios.post(
+    //             'http://localhost:8080/api/v1/orders',
+    //             {
+    //                 totalPrice: 100,
+    //                 orderItems: [
+    //                     {
+    //                         productId: 1,
+    //                         quantity: 1
+    //                     }
+    //                 ],
+    //                 userAddressId: 1,
+    //                 deliveryRequest: "문 앞에 놓아주세요",
+    //                 freeLoweringService: true,
+    //                 productInstallationAgreement: true,
+    //                 vehicleEntryPossible: true,
+    //                 elevatorType: "ONE_TO_SEVEN"
+    //             },
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             }
+    //         );
+    //
+    //         const orderId = orderResponse.data.orderId;
+    //
+    //         // 2. Iamport 결제 요청
+    //         const { IMP } = window;
+    //         IMP.init(process.env.REACT_APP_IAMPORT_MERCHANT_CODE); // ex) imp12345678
+    //
+    //         /*
+    //          pay_method: 설정
+    //          카드 :card
+    //          가상 계좌: vbank
+    //          카카오페이: kakaopay
+    //          네이버페이 naverpay
+    //          삼성페이: samsung
+    //          토스간편결제: tosspay
+    //          */
+    //
+    //         const channelKey = process.env.REACT_APP_PORTONE_CHANNEL_KEY;
+    //         if (!channelKey) {
+    //             console.error('채널 키가 설정되지 않았습니다.');
+    //         }
+    //         IMP.request_pay(
+    //             {
+    //                 channelKey: channelKey,
+    //                 pg: 'tosspayments',
+    //                 pay_method: 'card',
+    //                 merchant_uid: `order_${orderId}`, // 주문 고유번호
+    //                 name: `주문번호 ${orderId}`,
+    //                 amount: 100, // 결제 금액
+    //                 buyer_email: 'test@example.com',
+    //                 buyer_name: '홍길동',
+    //                 buyer_tel: '010-1234-5678',
+    //                 buyer_addr: '서울특별시 강남구 삼성동',
+    //                 buyer_postcode: '123-456',
+    //                 currency: 'KRW',
+    //                 useCardPoint: false
+    //             },
+    //             async (rsp) => {
+    //                 if (rsp.success) {
+    //                     // 3. 결제 성공 시 imp_uid와 orderId 백엔드 전달
+    //                     const response = await axios.post(
+    //                         'http://localhost:8080/api/v1/payments/verify',
+    //                         {
+    //                             impUid: rsp.imp_uid,
+    //                             orderId: orderId
+    //                         },
+    //                         {
+    //                             headers: {
+    //                                 Authorization: `Bearer ${token}`,
+    //                                 'Content-Type': 'application/json'
+    //                             }
+    //                         }
+    //                     );
+    //
+    //                     if (response.data.success) {
+    //                         alert("✅ 결제가 성공적으로 처리되었습니다!");
+    //                     } else {
+    //                         alert("❌ 결제 검증 실패: " + response.data.message);
+    //                     }
+    //                 } else {
+    //                     console.error(`결제 실패: ${rsp.error_msg} (코드: ${rsp.error_code})`);
+    //                     alert(`결제 실패: ${rsp.error_msg}`);
+    //                 }
+    //             }
+    //         );
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert("❌ 주문 생성 또는 결제 처리 중 오류가 발생했습니다.");
+    //     }
+    // };
+
     const handleOrderSubmit = async () => {
         try {
             const token = localStorage.getItem('access_token');
 
-            // 1. 주문 생성 API 호출
+            // 1. 주문 생성
             const orderResponse = await axios.post(
                 'http://localhost:8080/api/v1/orders',
                 {
                     totalPrice: 100,
                     orderItems: [
-                        {
-                            productId: 1,
-                            quantity: 1
-                        }
+                        { productId: 1, quantity: 1 }
                     ],
                     userAddressId: 1,
                     deliveryRequest: "문 앞에 놓아주세요",
@@ -79,51 +175,70 @@ const OrderForm = () => {
             );
 
             const orderId = orderResponse.data.orderId;
-            const paymentId = crypto.randomUUID(); // 랜덤 결제 식별자
 
-            // 2. PortOne 결제 요청
-            const payment = await PortOne.requestPayment({
-                storeId: storeId,
-                channelKey: channelKey,
-                paymentId: paymentId,
-                orderName: `주문번호 ${orderId}`,
-                totalAmount: 100,
-                currency: 'KRW',
-                payMethod: 'CARD',
-                customData: {
-                    orderId: orderId
-                }
-            });
-
-            // 3. 결제 성공 시 imp_uid와 orderId로 백엔드 검증 요청
-            if (payment.code === undefined) {
-                alert(`결제 성공! paymentId: ${payment.imp_uid}`);
-
-                await axios.post(
-                    'http://localhost:8080/api/v1/payments/verify',
-                    {
-                        impUid: payment.imp_uid,
-                        orderId: orderId
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                alert('결제가 서버에 성공적으로 반영되었습니다!');
-            } else {
-                alert(`결제 실패: ${payment.message}`);
+            // 2. 결제 요청
+            const { IMP } = window;
+            if (!IMP) {
+                alert("결제 모듈이 로드되지 않았습니다.");
+                return;
             }
+
+            IMP.init(process.env.REACT_APP_IAMPORT_MERCHANT_CODE);
+            const merchant_uid = `order_${orderId}_${Date.now()}`;
+
+            IMP.request_pay(
+                {
+                    channelKey: process.env.REACT_APP_PORTONE_CHANNEL_KEY,
+                    pg: 'html5_inicis',
+                    pay_method: 'card',
+                    merchant_uid,
+                    name: `주문번호 ${orderId}`,
+                    amount: 100,
+                    buyer_email: 'test@example.com',
+                    buyer_name: '홍길동',
+                    buyer_tel: '010-1234-5678',
+                    buyer_addr: '서울특별시 강남구 삼성동',
+                    buyer_postcode: '123-456',
+                    currency: 'KRW',
+                    useCardPoint: false
+                },
+                async function (rsp) {
+                    if (rsp.success) {
+                        try {
+                            const verifyRes = await axios.post(
+                                'http://localhost:8080/api/v1/payments/verify',
+                                {
+                                    impUid: rsp.imp_uid,
+                                    orderId: orderId
+                                },
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                        'Content-Type': 'application/json'
+                                    }
+                                }
+                            );
+
+                            if (verifyRes.data.success) {
+                                alert("결제가 성공적으로 처리되었습니다.");
+                            } else {
+                                alert("결제 검증 실패: " + verifyRes.data.message);
+                            }
+                        } catch (err) {
+                            console.error("결제 검증 오류:", err);
+                            alert("결제 검증 중 오류가 발생했습니다.");
+                        }
+                    } else {
+                        console.error(`결제 실패: ${rsp.error_msg} (코드: ${rsp.error_code})`);
+                        alert(`결제 실패: ${rsp.error_msg}`);
+                    }
+                }
+            );
         } catch (error) {
-            console.error(error);
+            console.error("주문 또는 결제 처리 중 오류:", error);
             alert("주문 생성 또는 결제 처리 중 오류가 발생했습니다.");
         }
     };
-
-
     return (
         <PageLayout>
             <h1 className={styles.orderTitle}>주문서 작성</h1>
