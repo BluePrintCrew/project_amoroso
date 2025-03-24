@@ -1,12 +1,25 @@
 package org.example.amorosobackend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class PaymentDTO {
 
     @Data
-    public class PaymentCompleteRequest {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PaymentVerifyRequest {
         private Long orderId;
-        private String payment_imp_uid; // PortOne에서 반환받은 결제 고유 ID (예: imp_uid와 유사한 값)
+        private String impUid; // PortOne에서 반환받은 결제 고유 ID (예: imp_uid와 유사한 값)
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PaymentVerifyResponse {
+        private boolean success;
+        private String message;
+        //private T data;
     }
 }

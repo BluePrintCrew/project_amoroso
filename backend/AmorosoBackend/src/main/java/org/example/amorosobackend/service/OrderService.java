@@ -70,9 +70,10 @@ public class OrderService {
 
         orderItemRepository.saveAll(orderItems);
 
-        Integer totalPrice = orderItems.stream()
-                .mapToInt(item -> item.getQuantity() * item.getFinalPrice()).sum();
+//        Integer totalPrice = orderItems.stream()
+//                .mapToInt(item -> item.getQuantity() * item.getFinalPrice()).sum();
 
+        Integer totalPrice = requestDTO.getTotalPrice();
 
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
@@ -166,6 +167,12 @@ public class OrderService {
                 .build();
         shipmentRepository.save(shipment);
     }
+    public Order getOrderById(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+
+        return order;
+    }
 
     /**
      * 특정 주문 조회 (사용자 기준)
@@ -223,5 +230,14 @@ public class OrderService {
                 true, // 여기서는 이미 리뷰 없는 항목만 조회했으므로 항상 true
                 orderItem.getMainImageUri() // 상품 이미지 URI
         ));
+    }
+
+
+    public void updateOrderStatus(Order order, OrderStatus orderStatus) {
+        order.setOrderStatus(orderStatus);
+    }
+
+    public void updatePaymentStatus(Order order, PaymentStatus paymentStatus) {
+        order.setPaymentStatus(paymentStatus);
     }
 }
