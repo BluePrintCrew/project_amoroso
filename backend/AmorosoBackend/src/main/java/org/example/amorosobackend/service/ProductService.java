@@ -146,6 +146,67 @@ public class ProductService {
     }
 
     /**
+     * 상품 검색 조회 메서드.
+     */
+    public ProductDTO.ProductListResponse getProductsBySearch(String keyword,Long categoryId, int page, int size, String sortBy, String order) {
+        log.info("[getProductsBySearch] Start - keyword: {} categoryId: {}, page: {}, size: {}, sortBy: {}, order: {}",
+                keyword,categoryId, page, size, sortBy, order);
+
+        //pagable 생성
+        Sort.Direction direction = Sort.Direction.fromString(order);
+        Sort sort = Sort.by(direction, sortBy);
+
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        Page<Product> productList = categoryId != null
+                ? productRepository.findAllByCategory_CategoryIdAndProductNameContaining(categoryId,keyword, pageable)
+                : productRepository.findAllByProductNameContaining(keyword,pageable);
+
+        log.debug("[getProducts] Retrieved Products Count: {}", productList.getTotalElements());
+
+        Set<Long> wishlistProductIds = new HashSet<>();
+        try {
+            // SecurityContextHolder에서 현재 사용자의 이메일을 가져옴
+            String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            userRepository.findByEmail(email).ifPresent(user -> {
+                wishlistProductIds.addAll(
+                        user.getWishlists().stream()
+                                .map(wishlist -> wishlist.getProduct().getProductId())
+                                .collect(Collectors.toSet())
+                );
+            });
+        } catch(Exception e) {
+            // 로그인되어 있지 않거나 에러 발생 시, wishlistProductIds는 빈 set 그대로 사용
+        }
+
+        // 상품 목록을 DTO로 매핑하면서, 각 상품이 위시리스트에 존재하는지 확인
+        Page<ProductDTO.ProductInfoDTO> dtoPage = productList.map(product -> {
+            boolean isInWishlist = wishlistProductIds.contains(product.getProductId());
+            return new ProductDTO.ProductInfoDTO(
+                    product.getProductId(),
+                    product.getProductName(),
+                    product.getMarketPrice(),
+                    product.getDiscountPrice(),
+                    product.getDiscountRate(),
+                    product.getCategory().getCategoryName(),
+                    product.getMainImageUri(),
+                    dateToString(product.getCreatedAt()),
+                    isInWishlist
+            );
+        });
+        ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
+                dtoPage.getTotalPages(),
+                (int) dtoPage.getTotalElements(),
+                dtoPage.getContent()
+        );
+
+        log.info("[getProducts] End - Total Pages: {}, Total Elements: {}",
+                response.getTotalPages(), response.getTotalItems());
+        return response;
+    }
+
+
+    /**
      * 상품 목록 조회 메서드.
      */
     public ProductDTO.ProductListResponse getProducts(Long categoryId, int page, int size, String sortBy, String order) {
@@ -419,6 +480,8 @@ public class ProductService {
         log.info("[getProductDetail] End - Product ID: {}", productId);
         return detailDTO;
     }
+
+
     // 내부 헬퍼 메서드
     private User getCurrentUser() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

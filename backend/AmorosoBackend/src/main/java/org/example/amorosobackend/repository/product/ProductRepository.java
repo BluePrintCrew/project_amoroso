@@ -20,4 +20,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findBySeller(Seller seller);
 
     Optional<Product> findByProductCode(String test123);
+
+    Page<Product> findAllByCategory_CategoryIdAndProductNameContaining(Long categoryId, String keyword, Pageable pageable);
+
+    Page<Product> findAllByProductNameContaining(String keyword, Pageable pageable);
 }

@@ -27,7 +27,10 @@ public class ProductController {
     */
 
     @GetMapping("/")
-    @Operation(description = "제품 목록 API")
+    @Operation(description = "제품 목록 API" +
+            "keyword: 클라이언트가 검색한 검색 키워드" +
+            "sortBy - createdAt: 최신순 , marketPrice: 판매 가격순" +
+            "order - desc or asc")
     public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
             @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
             @RequestParam(required = false, defaultValue = "1") Integer page,
@@ -41,6 +44,30 @@ public class ProductController {
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
                 productService.getProducts(byCategoryCode.getCategoryId(), page, size, sortBy, order);
+
+        // ResponseEntity로 반환
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/search/{keyword}")
+    @Operation(description = "제품 검색 조회 API" +
+            "keyword: 클라이언트가 검색한 검색 키워드" +
+            "sortBy - createdAt: 최신순 , marketPrice: 판매 가격순" +
+            "order - desc or asc")
+    public ResponseEntity<ProductDTO.ProductListResponse> getProductsBySearch(
+            @PathVariable String keyword,
+            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "desc") String order) {
+
+        // Category 조회
+        Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+
+        // Product 리스트 조회
+        ProductDTO.ProductListResponse products =
+                productService.getProductsBySearch(keyword,byCategoryCode.getCategoryId(), page, size, sortBy, order);
 
         // ResponseEntity로 반환
         return ResponseEntity.ok(products);
