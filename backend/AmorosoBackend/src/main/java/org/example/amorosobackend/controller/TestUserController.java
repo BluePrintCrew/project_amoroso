@@ -76,6 +76,7 @@ public class TestUserController {
         Category category = categoryRepository.findByCategoryCode(CategoryCode.LIVING_SOFA)
                 .orElseGet(() -> {
                     Category newCategory = Category.builder()
+                            .categoryName("소파")
                             .categoryCode(CategoryCode.LIVING_SOFA)
                             .build();
                     return categoryRepository.save(newCategory);
