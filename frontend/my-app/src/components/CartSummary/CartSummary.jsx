@@ -1,5 +1,5 @@
-import React from "react";
-import "./CartSummary.css";
+import React from 'react';
+import styles from './CartSummary.module.css';
 
 function CartSummary({ cartItems = [] }) {
   // 주어진 로직 - 총 상품금액, 총 결제금액, 할인액 계산
@@ -13,14 +13,13 @@ function CartSummary({ cartItems = [] }) {
   );
   const totalDiscount = totalOriginalPrice - totalPrice;
 
-
-  const shippingPrice = 0;       // 예시로 고정 0원
-  const point = 9918;           // 예시로 고정
+  const shippingPrice = 0; // 예시로 고정 0원
+  const point = 9918; // 예시로 고정
 
   return (
-    <div className="order-summary">
+    <div className={styles.orderSummary}>
       {/* 상단 헤더 */}
-      <div className="summary-header">
+      <div className={styles.summaryHeader}>
         <div>총 상품금액</div>
         <div>총 할인금액</div>
         <div>총 배송비</div>
@@ -28,56 +27,65 @@ function CartSummary({ cartItems = [] }) {
       </div>
 
       {/* 중간 금액 (상품 - 할인 + 배송 = 결제) */}
-      <div className="summary-body">
-        <span className="price">{totalOriginalPrice.toLocaleString()}원</span>
-        <span className="operator">-</span>
-        <span className="discount">{totalDiscount.toLocaleString()}원</span>
-        <span className="operator">+</span>
-        <span className="price">{shippingPrice.toLocaleString()}원</span>
-        <span className="operator">=</span>
-        <span className="total">{totalPrice.toLocaleString()}원</span>
+      <div className={styles.summaryBody}>
+        <span className={styles.price}>
+          {totalOriginalPrice.toLocaleString()}원
+        </span>
+        <span className={styles.operator}>-</span>
+        <span className={styles.discount}>
+          {totalDiscount.toLocaleString()}원
+        </span>
+        <span className={styles.operator}>+</span>
+        <span className={styles.price}>{shippingPrice.toLocaleString()}원</span>
+        <span className={styles.operator}>=</span>
+        <span className={styles.total}>{totalPrice.toLocaleString()}원</span>
       </div>
 
-     {/* 하단 상세 영역 */}
-<div className="summary-detail">
-  <div className="detail-row">
-    {/* (1) 상품금액 */}
-    <div className="item">
-      <span className="label">상품금액</span>
-      <span className="value">
-        {totalOriginalPrice.toLocaleString()}원
-      </span>
-    </div>
+      {/* 하단 상세 영역 */}
+      <div className={styles.summaryDetail}>
+        <div className={styles.detailRow}>
+          {/* (1) 상품금액 */}
+          <div className={styles.item}>
+            <span className={styles.label}>상품금액</span>
+            <span className={styles.value}>
+              {totalOriginalPrice.toLocaleString()}원
+            </span>
+          </div>
 
-    {/* (2) 쿠폰할인 + 쿠폰적용 버튼 */}
-    <div className="item">
-      <div className="coupon-box">
-        <span className="label">쿠폰할인</span>
-        <button className="coupon-btn">쿠폰적용</button>
+          {/* (2) 쿠폰할인 + 쿠폰적용 버튼 */}
+          <div className={styles.item}>
+            <div className={styles.couponBox}>
+              <span className={styles.label}>쿠폰할인</span>
+              <button className={styles.couponBtn}>쿠폰적용</button>
+            </div>
+            <span className={`${styles.value} ${styles.discount}`}>
+              {totalDiscount.toLocaleString()}원
+            </span>
+          </div>
+
+          {/* (3) 배송비 */}
+          <div className={styles.item}>
+            <span className={styles.label}>배송비</span>
+            <span className={styles.value}>
+              {shippingPrice.toLocaleString()}원
+            </span>
+          </div>
+
+          {/* (4) 적립 예정 포인트 */}
+          <div className={styles.item}>
+            <span className={styles.label}>적립 예정 포인트</span>
+            <span className={styles.value}>{point.toLocaleString()}원</span>
+          </div>
+        </div>
       </div>
-      <span className="value discount">
-        {totalDiscount.toLocaleString()}원
-      </span>
-    </div>
 
-    {/* (3) 배송비 */}
-    <div className="item">
-      <span className="label">배송비</span>
-      <span className="value">{shippingPrice.toLocaleString()}원</span>
-    </div>
-
-    {/* (4) 적립 예정 포인트 */}
-    <div className="item">
-      <span className="label">적립 예정 포인트</span>
-      <span className="value">{point.toLocaleString()}원</span>
-    </div>
-  </div>
-</div>
- 
       {/* 안내 문구 */}
-      <div className="summary-notice">
+      <div className={styles.summaryNotice}>
         <p>• 배송비가 안내 내용입니다. 배송비가 안내 내용입니다.</p>
-        <p>• 배송비가 안내 내용입니다. 배송비가 안내 내용입니다. 배송비가 안내 내용입니다.</p>
+        <p>
+          • 배송비가 안내 내용입니다. 배송비가 안내 내용입니다. 배송비가 안내
+          내용입니다.
+        </p>
       </div>
     </div>
   );

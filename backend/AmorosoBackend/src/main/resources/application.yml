@@ -9,7 +9,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
 
     show-sql: true
     properties:
@@ -69,5 +69,11 @@ logging:
     org.example.amorosobackend: DEBUG
     org.springframework.web: DEBUG
 
+
+iamport:
+  api_key: 7614753647502602
+  api_secret: VdmdKXmTMjY49rf5ajnXSNBSHAZjZusdOpiScN40sGOsNdtTpbc1Kaxe1E90T7rgvEcWNYBDKqJVSFcr
 portone:
-  key:
+  store_id: iamporttest_3
+  secret_key: test_sk_d26DlbXAaV0xQbpa7y1VqY50Q9RB
+  client_key: test_ck_lpP2YxJ4K877JAdv7KX8RGZwXLOb

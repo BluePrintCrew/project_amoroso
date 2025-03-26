@@ -392,7 +392,7 @@ const ProductDetailPage = () => {
             </button>
             <button
               className={styles.buyButton}
-              onClick={() => navigate('/order')}
+              onClick={() => navigate('/order', { state: product })}
             >
               구매하기
             </button>

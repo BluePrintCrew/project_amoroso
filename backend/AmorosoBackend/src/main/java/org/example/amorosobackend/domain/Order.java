@@ -2,10 +2,7 @@ package org.example.amorosobackend.domain;
 
 
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import jakarta.persistence.*;
 import org.example.amorosobackend.domain.coupon.UserCoupon;
 import org.example.amorosobackend.enums.ElevatorType;
@@ -50,6 +47,7 @@ public class Order {
     private OrderStatus orderStatus;   // PENDING, PAID, SHIPPED, COMPLETED 등
 
     @Column(length = 50)
+    @Setter
     private PaymentStatus paymentStatus; // WAITING, COMPLETED, CANCELED 등
 
     private LocalDateTime createdAt;
