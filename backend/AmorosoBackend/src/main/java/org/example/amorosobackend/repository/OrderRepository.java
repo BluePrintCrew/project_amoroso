@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -40,4 +41,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     int countByUser(User user);
 
     int countByUserAndOrderStatus(User user, OrderStatus paymentPending);
-}
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.createdAt BETWEEN :start AND :end AND o.paymentStatus = :status")
+    int sumTotalPriceByCreatedAtBetweenAndPaymentStatus(@Param("start") LocalDateTime start,
+                                                        @Param("end") LocalDateTime end,
+                                                        @Param("status") PaymentStatus status);}
