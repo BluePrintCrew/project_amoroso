@@ -1,12 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../pages/MyPage/api";
 
 const TestJWTProviderPage = () => {
     const navigate = useNavigate();
 
     const handleTokenRequest = async (role) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/Test-User/setup/${role}`, {
+            const response = await fetch(`${API_BASE_URL}/api/v1/Test-User/setup/${role}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,7 +30,7 @@ const TestJWTProviderPage = () => {
 
     const handleResetUser = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/v1/Test-User/reset", {
+            const response = await fetch(`${API_BASE_URL}/api/v1/Test-User/reset`, {
                 method: "DELETE",
             });
 

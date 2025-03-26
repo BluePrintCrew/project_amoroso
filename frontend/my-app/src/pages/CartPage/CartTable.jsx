@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CartTable.css";
 import axios from "axios";
+import { API_BASE_URL } from "../MyPage/api";
 
 function CartTable({ cartItems, setCartItems }) {
   // 선택된 상품 ID들을 관리 (체크박스용)
@@ -39,16 +40,16 @@ function CartTable({ cartItems, setCartItems }) {
     } else if (possibleImageUrl.startsWith('/images/')) {
       // 파일명만 추출하여 API 엔드포인트에 추가
       const filename = possibleImageUrl.split('/').pop();
-      return `http://localhost:8080/api/v1/images/${filename}`;
+      return `${API_BASE_URL}/api/v1/images/${filename}`;
     } else if (possibleImageUrl.startsWith('/api/')) {
       // 이미 API 경로인 경우
-      return `http://localhost:8080${possibleImageUrl}`;
+      return `${API_BASE_URL}${possibleImageUrl}`;
     } else if (possibleImageUrl.startsWith('/')) {
       // 다른 형식의 절대 경로
-      return `http://localhost:8080${possibleImageUrl}`;
+      return `${API_BASE_URL}${possibleImageUrl}`;
     } else {
       // 파일명만 있는 경우
-      return `http://localhost:8080/api/v1/images/${possibleImageUrl}`;
+      return `${API_BASE_URL}/api/v1/images/${possibleImageUrl}`;
     }
   };
 
@@ -81,7 +82,7 @@ function CartTable({ cartItems, setCartItems }) {
     }
 
     axios
-      .put(`http://localhost:8080/api/v1/cart/${itemId}`, 
+      .put(`${API_BASE_URL}/api/v1/cart/${itemId}`, 
         { quantity: newQuantity },
         {
           headers: {
@@ -113,7 +114,7 @@ function CartTable({ cartItems, setCartItems }) {
     }
 
     axios
-      .delete(`http://localhost:8080/api/v1/cart/${itemId}`, {
+      .delete(`${API_BASE_URL}/api/v1/cart/${itemId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -142,7 +143,7 @@ function CartTable({ cartItems, setCartItems }) {
     }
 
     const deleteRequests = selectedItems.map(itemId =>
-      axios.delete(`http://localhost:8080/api/v1/cart/${itemId}`, {
+      axios.delete(`${API_BASE_URL}/api/v1/cart/${itemId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

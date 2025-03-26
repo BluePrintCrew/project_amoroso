@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ProductInquiry.css";
 import kakaoIcon from "../../assets/kakao_icon.png"; // 필요한 경우 kakao 아이콘 이미지 임포트
+import { API_BASE_URL } from "./api";
 
 function ProductInquiry() {
   const [productInquiries, setProductInquiries] = useState([]);
@@ -38,7 +39,7 @@ function ProductInquiry() {
       // 상품 문의 가져오기
       try {
         // API 경로는 백엔드에 맞게 조정 필요
-        const productResponse = await axios.get('http://localhost:8080/api/v1/inquiries/product', {
+        const productResponse = await axios.get(`${API_BASE_URL}/api/v1/inquiries/product`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -70,7 +71,7 @@ function ProductInquiry() {
       // 1:1 문의 가져오기
       try {
         // API 경로는 백엔드에 맞게 조정 필요
-        const oneToOneResponse = await axios.get('http://localhost:8080/api/v1/inquiries/personal', {
+        const oneToOneResponse = await axios.get(`${API_BASE_URL}/api/v1/inquiries/personal`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

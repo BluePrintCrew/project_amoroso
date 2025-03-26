@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./OrderManagement.css";
+import { API_BASE_URL } from "./api";
 
 function OrderManagement() {
   const [statusData, setStatusData] = useState({
@@ -29,7 +30,7 @@ function OrderManagement() {
 
         // 두 가지 API 호출 방법이 있습니다.
         // 방법 1: 사용자 프로필 API에서 주문 요약 정보를 가져오기
-        const userProfileResponse = await axios.get('http://localhost:8080/api/v1/auth/users/me', {
+        const userProfileResponse = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -58,7 +59,7 @@ function OrderManagement() {
         }
 
         // 방법 2: 주문 목록 API를 호출하여 상태별로 집계
-        const ordersResponse = await axios.get('http://localhost:8080/api/v1/orders/my-orders', {
+        const ordersResponse = await axios.get(`${API_BASE_URL}/api/v1/orders/my-orders`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

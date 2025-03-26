@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./MyPageProfileCard.css";
 import axios from "axios";
+import { API_BASE_URL } from "./api";
 // Import your images
 import pointIcon from "../../assets/point_img.png";
 import couponIcon from "../../assets/coupon_img.png";
@@ -33,7 +34,7 @@ function MyPageProfileCard() {
         }
 
         // API 호출
-        const response = await axios.get('http://localhost:8080/api/v1/auth/users/me', {
+        const response = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

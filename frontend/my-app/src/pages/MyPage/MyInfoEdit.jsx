@@ -4,6 +4,7 @@ import magnifierIcon from "../../assets/magnifier.png";
 import "./MyInfoEdit.css";
 import PageLayout from "../../components/PageLayout/PageLayout";
 import axios from "axios";
+import { API_BASE_URL } from "./api";
 
 function MyInfoEdit() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -64,7 +65,7 @@ function MyInfoEdit() {
       }
       
       // 사용자 기본 정보 요청
-      const response = await axios.get("http://localhost:8080/api/v1/auth/users/me", {
+      const response = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -80,7 +81,7 @@ function MyInfoEdit() {
       
       try {
         // 주소 정보 가져오기 - 기본 배송지로 설정
-        const addressResponse = await axios.get("http://localhost:8080/api/v1/UserAddress/default", {
+        const addressResponse = await axios.get(`${API_BASE_URL}/api/v1/UserAddress/default`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -208,7 +209,7 @@ function MyInfoEdit() {
       }
       
       // 개인정보 업데이트 요청
-      const response = await axios.put("http://localhost:8080/api/v1/auth/users/me", {
+      const response = await axios.put(`${API_BASE_URL}/api/v1/auth/users/me`, {
         name: userInfo.name,
         email: userInfo.email,
         phoneNumber: userInfo.phoneNumber,
@@ -274,7 +275,7 @@ function MyInfoEdit() {
         return;
       }
       
-      const response = await axios.delete("http://localhost:8080/api/v1/auth/users/me", {
+      const response = await axios.delete(`${API_BASE_URL}/api/v1/auth/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -380,10 +381,10 @@ function MyInfoEdit() {
                 </div>
 
                 {/* 생년월일 + 성별 (남/여) */}
-                <div className="form-group birth-gender-row">
-                  <label className="required-label">생년월일/성별</label>
+                <div class="form-group birth-gender-row">
+                  <label class="required-label">생년월일/성별</label>
 
-                  <div className="birth-gender-container">
+                  <div class="birth-gender-container">
                     {/* Birth date input */}
                     <input
                       type="text"
@@ -391,19 +392,19 @@ function MyInfoEdit() {
                       value={userInfo.birthDate}
                       onChange={handleInputChange}
                       placeholder="생년월일 입력 (YYYY-MM-DD)"
-                      className="birth-input"
+                      class="birth-input"
                     />
 
                     {/* Two squares for 남/여 */}
-                    <div className="gender-squares">
+                    <div class="gender-squares">
                       <div 
-                        className={`gender-square male-square ${userInfo.gender === 'male' ? 'selected' : ''}`}
+                        class={`gender-square male-square ${userInfo.gender === 'male' ? 'selected' : ''}`}
                         onClick={() => handleInputChange({target: {name: 'gender', value: 'male'}})}
                       >
                         남
                       </div>
                       <div 
-                        className={`gender-square female-square ${userInfo.gender === 'female' ? 'selected' : ''}`}
+                        class={`gender-square female-square ${userInfo.gender === 'female' ? 'selected' : ''}`}
                         onClick={() => handleInputChange({target: {name: 'gender', value: 'female'}})}
                       >
                         여
