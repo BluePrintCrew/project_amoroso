@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import cart from '../../assets/cart_button.png';
 import login from '../../assets/login_button.png';
@@ -9,21 +9,22 @@ import styles from './Header.module.css';
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
-    // Check if accessToken exists on component mount
+    // 컴포넌트 마운트 시 access_token 존재 여부 확인
     const checkAuth = () => {
       const token = localStorage.getItem('access_token');
       setIsAuthenticated(!!token);
     };
     
-    // Initial check
+    // 초기 확인
     checkAuth();
     
-    // Listen for storage events to handle token changes
+    // 토큰 변경을 처리하기 위한 스토리지 이벤트 리스너 등록
     window.addEventListener('storage', checkAuth);
     
-    // Cleanup
+    // 클린업
     return () => {
       window.removeEventListener('storage', checkAuth);
     };
@@ -31,6 +32,12 @@ const Header = () => {
 
   const handleSearchClick = () => {
     alert('검색버튼 클릭.');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    setIsAuthenticated(false);
+    navigate('/');
   };
 
   return (
@@ -75,6 +82,13 @@ const Header = () => {
               <Link to="/mypage">
                 <img src={mypage} alt="Mypage" className={styles.mypageIcon} />
               </Link>
+              <div 
+                onClick={handleLogout} 
+                className={styles.logoutButton}
+                style={{ cursor: 'pointer' }}
+              >
+                로그아웃
+              </div>
             </>
           )}
         </div>
