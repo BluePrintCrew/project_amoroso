@@ -114,6 +114,8 @@ public class OrderService {
                 .mainImageUri(product.getMainImageUri())
                 .build();
 
+        increaseProductSales(orderItem);
+
         if (itemDTO.getAdditionalOptionId() != null) {
             AdditionalOption additionalOption = product.getAdditionalOptions().stream()
                     .filter(opt -> opt.getId().equals(itemDTO.getAdditionalOptionId()))
@@ -232,6 +234,12 @@ public class OrderService {
         ));
     }
 
+    // 상품 판매량 증가
+    public void increaseProductSales(OrderItem item) {
+        Product product = item.getProduct();
+        product.increaseSales(item.getQuantity()); // 또는 1
+        productRepository.save(product);
+    }
 
     public void updateOrderStatus(Order order, OrderStatus orderStatus) {
         order.setOrderStatus(orderStatus);

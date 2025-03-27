@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByCategory_CategoryIdAndProductNameContaining(Long categoryId, String keyword, Pageable pageable);
 
     Page<Product> findAllByProductNameContaining(String keyword, Pageable pageable);
+
+    int countBySeller(Seller seller);
+
+    int countBySellerAndCreatedAtAfter(Seller seller, LocalDateTime startOfYear);
+
+    List<Product> findTop5BySellerOrderBySalesCountDesc(Seller seller);
 }
