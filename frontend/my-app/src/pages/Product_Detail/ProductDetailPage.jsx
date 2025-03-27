@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { API_BASE_URL } from '../MyPage/api';
 
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import CartPopup from '../Product_Detail/CartPopup';
@@ -29,7 +30,7 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/v1/products/${id}`,
+          `${API_BASE_URL}/api/v1/products/${id}`,
           {
             method: 'GET',
             headers: {
@@ -118,7 +119,7 @@ const ProductDetailPage = () => {
       setIsAddingToCart(true);
 
       // 장바구니 API 호출
-      const response = await fetch('http://localhost:8080/api/v1/cart', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/cart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +169,7 @@ const ProductDetailPage = () => {
               <img
                 src={
                   product.mainImageURL
-                    ? `http://localhost:8080/api/v1/images/${product.mainImageURL
+                    ? `${API_BASE_URL}/api/v1/images/${product.mainImageURL
                         .split('/')
                         .pop()}`
                     : 'https://placehold.co/500x500'
@@ -191,7 +192,7 @@ const ProductDetailPage = () => {
                     ? product.subImagesURL.map((img, index) => (
                         <div key={index} className={styles.thumbnail}>
                           <img
-                            src={`http://localhost:8080/api/v1/images/${img.imageURL
+                            src={`${API_BASE_URL}/api/v1/images/${img.imageURL
                               .split('/')
                               .pop()}`}
                             alt={`${product.productName} 썸네일 ${index + 1}`}
@@ -317,7 +318,7 @@ const ProductDetailPage = () => {
                     product.detailDescriptionImageURL.map((img, index) => (
                       <img
                         key={index}
-                        src={`http://localhost:8080/api/v1/images/${img.imageURL
+                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
                           .split('/')
                           .pop()}`}
                         alt={`상세 이미지 ${index}`}
@@ -392,7 +393,7 @@ const ProductDetailPage = () => {
             </button>
             <button
               className={styles.buyButton}
-              onClick={() => navigate('/order', { state: product })}
+              onClick={() => navigate('/order')}
             >
               구매하기
             </button>
