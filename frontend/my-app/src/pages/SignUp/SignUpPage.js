@@ -1,67 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './SignUpPage.css';
 import PageLayout from '../../components/PageLayout/PageLayout';
 
 // API 기본 URL 설정
 const API_BASE_URL = 'http://localhost:8080';
 
-const MyInfoEdit = () => {
+const SignUpPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 상태 변수 선언
-  const [activeTab, setActiveTab] = useState('personal');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [zipcode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   
   // 엘리베이터 정보
   const [elevatorType, setElevatorType] = useState('NONE');
   
   // 약관 동의 상태
+  const [allAgree, setAllAgree] = useState(false);
+  const [termsAgree, setTermsAgree] = useState(false);
+  const [privacyAgree, setPrivacyAgree] = useState(false);
+  const [ageAgree, setAgeAgree] = useState(false);
+  const [marketingAgree, setMarketingAgree] = useState(false);
   const [emailConsent, setEmailConsent] = useState(false);
   const [smsConsent, setSmsConsent] = useState(false);
   const [dmConsent, setDmConsent] = useState(false);
   
-  // 소셜 로그인 상태
-  const [isSocialLogin, setIsSocialLogin] = useState(true);
-  const [socialProvider, setSocialProvider] = useState('');
+  // 소셜 로그인 관련 정보
+  const [socialToken, setSocialToken] = useState('');
+  const [isNewUser, setIsNewUser] = useState(true);
+  const [socialProvider, setSocialProvider] = useState(''); // 'kakao', 'naver', 'google' 등
+  const [pageTitle, setPageTitle] = useState('회원정보 입력');
 
-  // 컴포넌트 마운트 시 사용자 정보 불러오기
+  // 컴포넌트 마운트 시 소셜 로그인 토큰 확인
   useEffect(() => {
-    fetchUserInfo();
-  }, []);
+    // URL 파라미터 또는 로컬 스토리지에서 토큰 확인
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get('token') || localStorage.getItem('access_token');
+    const provider = queryParams.get('provider') || localStorage.getItem('social_provider');
+    
+    if (token) {
+      setSocialToken(token);
+      localStorage.setItem('access_token', token);
+      
+      if (provider) {
+        setSocialProvider(provider);
+        localStorage.setItem('social_provider', provider);
+      }
+      
+      // 토큰으로 사용자 정보 확인
+      fetchUserInfo(token);
+    } else {
+      // 개발 중인 경우 테스트 모드로 진행 (추후 배포 시 아래 주석 해제)
+       navigate('/login', { replace: true });
+      console.log('개발 테스트 모드로 진행');
+    }
+  }, [location, navigate]);
   
-  // 사용자 정보 불러오기
-  const fetchUserInfo = async () => {
+  // 토큰으로 사용자 정보 조회
+  const fetchUserInfo = async (token) => {
     try {
       setLoading(true);
       
-      // 토큰 가져오기
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        navigate('/login', { replace: true });
-        return;
-      }
-      
-      // 소셜 로그인 정보 가져오기
-      const provider = localStorage.getItem('social_provider');
-      if (provider) {
-        setSocialProvider(provider);
-        setIsSocialLogin(true);
-      }
-      
+      // API 요청 전 테스트: 현재는 개발 중이므로 API 요청을 시도하지만
+      // 실패할 경우 기본값으로 처리합니다
       try {
-        // 사용자 프로필 정보 가져오기
         const response = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -70,42 +81,47 @@ const MyInfoEdit = () => {
         
         const userData = response.data;
         
-        // 기본 정보 설정
+        // 사용자 기본 정보 설정
         if (userData.email) setEmail(userData.email);
         if (userData.name) setName(userData.name);
         if (userData.phoneNumber) setPhoneNumber(userData.phoneNumber);
-        if (userData.birthDate) setBirthDate(userData.birthDate);
-        if (userData.postalCode) setZipcode(userData.postalCode);
-        if (userData.address) setAddress(userData.address);
-        if (userData.detailAddress) setDetailAddress(userData.detailAddress);
         
-        // 마케팅 정보 설정
-        if (userData.emailConsent !== undefined) setEmailConsent(userData.emailConsent);
-        if (userData.smsConsent !== undefined) setSmsConsent(userData.smsConsent);
-        if (userData.dmConsent !== undefined) setDmConsent(userData.dmConsent);
-        
-      } catch (apiError) {
-        console.warn('사용자 정보 불러오기 실패:', apiError);
-        // 개발 중에는 에러가 발생해도 계속 진행
-        
-        // 캐시된 사용자 정보가 있으면 로드
-        const cachedProfile = localStorage.getItem('user_profile');
-        if (cachedProfile) {
-          try {
-            const profileData = JSON.parse(cachedProfile);
-            if (profileData.email) setEmail(profileData.email);
-            if (profileData.name) setName(profileData.name);
-            if (profileData.phoneNumber) setPhoneNumber(profileData.phoneNumber);
-            if (profileData.postalCode) setZipcode(profileData.postalCode);
-            if (profileData.address) setAddress(profileData.address);
-            if (profileData.detailAddress) setDetailAddress(profileData.detailAddress);
-            if (profileData.emailConsent !== undefined) setEmailConsent(profileData.emailConsent);
-            if (profileData.smsConsent !== undefined) setSmsConsent(profileData.smsConsent);
-            if (profileData.dmConsent !== undefined) setDmConsent(profileData.dmConsent);
-          } catch (e) {
-            console.error('캐시된 프로필 파싱 오류:', e);
-          }
+        // 추가 정보가 이미 있는지 확인하여 신규/기존 사용자 구분
+        if (userData.postalCode && userData.address) {
+          setIsNewUser(false);
+          setPageTitle('회원정보 수정');
+          
+          // 기존 사용자의 경우 저장된 정보 불러오기
+          setZipcode(userData.postalCode || '');
+          setAddress(userData.address || '');
+          setDetailAddress(userData.detailAddress || '');
+          
+          // 동의 정보 불러오기
+          setEmailConsent(userData.emailConsent || false);
+          setSmsConsent(userData.smsConsent || false);
+          setDmConsent(userData.dmConsent || false);
+          
+          // 마케팅 동의 여부는 하위 동의 중 하나라도 있으면 true
+          setMarketingAgree(userData.emailConsent || userData.smsConsent || userData.dmConsent || false);
+          
+          // 주소 정보가 있으면 필수 동의는 이미 한 것으로 간주
+          setTermsAgree(true);
+          setPrivacyAgree(true);
+          setAgeAgree(true);
+        } else {
+          setIsNewUser(true);
+          setPageTitle('회원정보 입력');
         }
+      } catch (apiError) {
+        console.warn('API 호출 오류, 개발 모드로 진행:', apiError);
+        // 개발 중일 때는 API 호출이 실패해도 계속 진행
+        setIsNewUser(true);
+        setPageTitle('회원정보 입력');
+        
+        // URL 또는 쿼리 파라미터에서 기본 정보 가져오기 시도
+        const queryParams = new URLSearchParams(location.search);
+        const emailParam = queryParams.get('email');
+        if (emailParam) setEmail(emailParam);
       }
     } catch (err) {
       console.error('사용자 정보 조회 오류:', err);
@@ -114,8 +130,47 @@ const MyInfoEdit = () => {
       setLoading(false);
     }
   };
+
+  // 전체 동의 핸들러
+  const handleAllAgree = (e) => {
+    const checked = e.target.checked;
+    setAllAgree(checked);
+    setTermsAgree(checked);
+    setPrivacyAgree(checked);
+    setAgeAgree(checked);
+    setMarketingAgree(checked);
+    setEmailConsent(checked);
+    setSmsConsent(checked);
+    setDmConsent(checked);
+  };
   
-  // 우편번호 찾기 핸들러
+  // 마케팅 동의 핸들러
+  const handleMarketingAgree = (e) => {
+    const checked = e.target.checked;
+    setMarketingAgree(checked);
+    if (!checked) {
+      setEmailConsent(false);
+      setSmsConsent(false);
+      setDmConsent(false);
+    }
+  };
+  
+  // 개별 약관 동의 변경 시 전체 동의 상태 업데이트
+  useEffect(() => {
+    if (termsAgree && privacyAgree && ageAgree && marketingAgree && 
+        emailConsent && smsConsent && dmConsent) {
+      setAllAgree(true);
+    } else {
+      setAllAgree(false);
+    }
+  }, [termsAgree, privacyAgree, ageAgree, marketingAgree, emailConsent, smsConsent, dmConsent]);
+  
+  // 엘리베이터 타입 변경 핸들러
+  const handleElevatorChange = (type) => {
+    setElevatorType(type);
+  };
+
+  // 우편번호 찾기 핸들러 (카카오 주소 API 활용)
   const handleFindZipcode = () => {
     // 카카오 주소 검색 API가 로드되어 있는지 확인
     if (!window.daum || !window.daum.Postcode) {
@@ -141,356 +196,335 @@ const MyInfoEdit = () => {
       }
     }).open();
   };
-  
-  // 엘리베이터 타입 변경 핸들러
-  const handleElevatorChange = (type) => {
-    setElevatorType(type);
-  };
-  
-  // 마케팅 동의 변경 핸들러
-  const handleMarketingChange = (type, checked) => {
-    switch (type) {
-      case 'email':
-        setEmailConsent(checked);
-        break;
-      case 'sms':
-        setSmsConsent(checked);
-        break;
-      case 'dm':
-        setDmConsent(checked);
-        break;
-      default:
-        break;
-    }
-  };
-  
-  // 탭 변경 핸들러
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-  
-  // 폼 제출 핸들러
+
+  // 폼 제출 핸들러 (API 연동)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
+    // 신규 사용자인 경우 필수 약관 동의 확인
+    if (isNewUser && (!termsAgree || !privacyAgree || !ageAgree)) {
+      setError('필수 약관에 동의해주세요.');
+      return;
+    }
+  
     setLoading(true);
     setError('');
-    setSuccess(false);
-    
+  
     try {
-      // 사용자 프로필 업데이트 데이터
+      // 사용자 프로필 업데이트 데이터 - 백엔드 UserUpdateRequest 형식에 맞춤
       const updateData = {
         name: name,
         email: email,
-        birthDate: birthDate,
         phoneNumber: phoneNumber,
+        nickname: name,
         postalCode: zipcode,
         address: address,
         detailAddress: detailAddress,
-        emailConsent: emailConsent,
-        smsConsent: smsConsent,
-        dmConsent: dmConsent
+        emailConsent: true,
+        smsConsent: true,
+        dmConsent: true,
+        locationConsent: false,
+        // 중요: elevatorType 추가
+        elevatorType: elevatorType
       };
       
-      const token = localStorage.getItem('access_token');
+      console.log('전송할 데이터:', updateData);
       
-      try {
-        // 프로필 업데이트 API 호출
-        const response = await axios.put(
-          `${API_BASE_URL}/api/v1/auth/users/me`,
-          updateData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+      // API 호출 시도
+      const updateResponse = await axios.put(
+        `${API_BASE_URL}/api/v1/auth/users/me`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${socialToken}`,
+            'Content-Type': 'application/json'
           }
-        );
-        
-        console.log('프로필 업데이트 성공:', response.data);
-        setSuccess(true);
-        
-        // 성공 메시지 표시 후 잠시 후 삭제
-        setTimeout(() => {
-          setSuccess(false);
-        }, 3000);
-        
-      } catch (apiError) {
-        console.warn('API 호출 실패, 개발 모드로 진행:', apiError);
-        
-        // 개발 목적으로 로컬 스토리지에 저장
-        localStorage.setItem('user_profile', JSON.stringify(updateData));
-        
-        // 개발 모드에서는 성공으로 간주
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(false);
-        }, 3000);
-      }
+        }
+      );
+      
+      console.log('프로필 업데이트 성공:', updateResponse.data);
+      
+      // 가입/수정 성공 메시지와 함께 홈 페이지로 리다이렉트
+      alert(isNewUser ? '회원가입이 완료되었습니다.' : '회원정보가 수정되었습니다.');
+      navigate('/');
       
     } catch (err) {
-      console.error('정보 수정 실패:', err);
-      setError('정보 수정에 실패했습니다. 다시 시도해 주세요.');
+      // 자세한 에러 로깅
+      console.error('에러 상세 정보:', err.response?.data || '응답 데이터 없음');
+      console.error('에러 상태 코드:', err.response?.status);
+      
+      setError('정보 저장에 실패했습니다. 입력 정보를 확인해주세요.');
     } finally {
       setLoading(false);
     }
   };
-  
-  // 로그아웃 핸들러
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('social_provider');
-    navigate('/login');
+  // 취소 버튼 핸들러
+  const handleCancel = () => {
+    // 신규 사용자인 경우 로그인 페이지로, 기존 사용자인 경우 마이페이지로 이동
+    if (isNewUser) {
+      // 토큰 삭제 후 로그인 페이지로
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('social_provider');
+      navigate('/login');
+    } else {
+      navigate('/mypage');
+    }
   };
 
   return (
-    <PageLayout>
-    <div className="my-info-container">
-      <h1 className="page-title">내 정보 수정</h1>
-      
-      {/* 개발 모드 알림 */}
-      <div className="dev-mode-banner">
-        <p>개발 모드: API 연동 전 프론트엔드 기능 테스트 중입니다.</p>
-      </div>
-      
-      {/* 탭 네비게이션 - 소셜 로그인만 사용하므로 개인정보 변경 탭만 표시 */}
-      <div className="tabs-container">
-        <div 
-          className="tab active"
-        >
-          개인정보 변경
+    <div>
+      <PageLayout>
+        {/* 네비게이션 */}
+        <div className="navigation-container">
+          <div className="navigation-item">
+            <img src="/path/to/home-icon.png" alt="홈 아이콘" />
+            홈
+          </div>
+          <span className="navigation-separator">/</span>
+          <div className="navigation-item navigation-active">
+            {pageTitle}
+          </div>
         </div>
-      </div>
-        
-        {/* 성공/에러 메시지 */}
-        {success && (
-          <div className="success-message">
-            정보가 성공적으로 수정되었습니다.
+
+        {/* 개발 모드 알림 */}
+        <div className="dev-mode-banner">
+          <p>개발 모드: API 연동 전 프론트엔드 기능 테스트 중입니다.</p>
+        </div>
+
+        {/* 회원가입/정보수정 메인 컨테이너 */}
+        <div className="signup-container">
+          <h1 className="signup-title">{pageTitle}</h1>
+          <p className="signup-subtitle">
+            {isNewUser 
+              ? '서비스 이용에 필요한 정보를 입력해주세요.' 
+              : '회원정보를 수정할 수 있습니다.'}
+          </p>
+          {error && <div className="error-message">{error}</div>}
+          
+          {/* 소셜 로그인 정보 표시 */}
+          <div className="social-login-info">
+            <div className="social-icon">
+              {socialProvider === 'kakao' && <img src="/path/to/kakao-icon.png" alt="카카오 로그인" />}
+              {socialProvider === 'naver' && <img src="/path/to/naver-icon.png" alt="네이버 로그인" />}
+              {socialProvider === 'google' && <img src="/path/to/google-icon.png" alt="구글 로그인" />}
+              {!socialProvider && <span className="dev-badge">개발 테스트</span>}
+            </div>
+            <div className="social-text">
+              {socialProvider === 'kakao' && '카카오 계정으로 로그인'}
+              {socialProvider === 'naver' && '네이버 계정으로 로그인'}
+              {socialProvider === 'google' && '구글 계정으로 로그인'}
+              {!socialProvider && '소셜 로그인 계정으로 진행'}
+            </div>
           </div>
-        )}
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-        
-        {/* 개인정보 변경 탭 */}
-        {activeTab === 'personal' && (
-          <form onSubmit={handleSubmit} className="info-form">
-            {/* 소셜 로그인 정보 */}
-            {isSocialLogin && (
-              <div className="social-login-info">
-                <div className="social-icon">
-                  {socialProvider === 'kakao' && <img src="/path/to/kakao-icon.png" alt="카카오 로그인" />}
-                  {socialProvider === 'naver' && <img src="/path/to/naver-icon.png" alt="네이버 로그인" />}
-                  {socialProvider === 'google' && <img src="/path/to/google-icon.png" alt="구글 로그인" />}
-                  {!socialProvider && <span className="dev-badge">개발 테스트</span>}
+          
+          <form onSubmit={handleSubmit}>
+            {/* 이메일 (소셜 로그인에서 가져온 값) */}
+            <div className="input-group">
+              <label htmlFor="email">이메일</label>
+              <input 
+                type="email" 
+                id="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={true} // 소셜 로그인에서 받아온 이메일은 수정 불가
+                required
+              />
+            </div>
+
+            {/* 이름 입력 */}
+            <div className="input-group">
+              <label htmlFor="name">이름</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="이름 입력"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* 전화번호 입력 */}
+            <div className="input-group">
+              <label htmlFor="phoneNumber">전화번호</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                placeholder="전화번호 입력 (-없이 숫자만 입력)"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* 주소 입력 */}
+            <div className="address-group">
+              <input 
+                type="text" 
+                className="zipcode" 
+                placeholder="우편번호" 
+                value={zipcode}
+                onChange={(e) => setZipcode(e.target.value)}
+                readOnly
+                required
+              />
+              <button 
+                type="button" 
+                className="search-button"
+                onClick={handleFindZipcode}
+              >
+                우편번호 찾기
+              </button>
+            </div>
+            <div className="input-group">
+              <input 
+                type="text" 
+                placeholder="주소" 
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                readOnly
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input 
+                type="text" 
+                id="detailAddress"
+                placeholder="상세주소" 
+                value={detailAddress}
+                onChange={(e) => setDetailAddress(e.target.value)}
+                required
+              />
+            </div>
+            
+            {/* 엘리베이터 정보 */}
+            <div className="elevator-section">
+              <label>엘리베이터 정보</label>
+              <div className="elevator-options">
+                <div 
+                  className={`elevator-option ${elevatorType === 'ONE_TO_SEVEN' ? 'selected' : ''}`}
+                  onClick={() => handleElevatorChange('ONE_TO_SEVEN')}
+                >
+                  1층-7층
                 </div>
-                <div className="social-text">
-                  {socialProvider === 'kakao' && '카카오 계정으로 로그인'}
-                  {socialProvider === 'naver' && '네이버 계정으로 로그인'}
-                  {socialProvider === 'google' && '구글 계정으로 로그인'}
-                  {!socialProvider && '소셜 로그인 계정으로 진행'}
+                <div 
+                  className={`elevator-option ${elevatorType === 'EIGHT_TO_TEN' ? 'selected' : ''}`}
+                  onClick={() => handleElevatorChange('EIGHT_TO_TEN')}
+                >
+                  8층-10층
+                </div>
+                <div 
+                  className={`elevator-option ${elevatorType === 'ELEVEN_OR_MORE' ? 'selected' : ''}`}
+                  onClick={() => handleElevatorChange('ELEVEN_OR_MORE')}
+                >
+                  11층 이상
+                </div>
+                <div 
+                  className={`elevator-option ${elevatorType === 'NONE' ? 'selected' : ''}`}
+                  onClick={() => handleElevatorChange('NONE')}
+                >
+                  없음
+                </div>
+              </div>
+            </div>
+
+            {/* 약관 동의 (신규 사용자인 경우에만 표시) */}
+            {isNewUser && (
+              <div className="agreement-section">
+                <h3>Amoroso 서비스 이용약관에 동의해주세요.</h3>
+                <div className="agreement-item">
+                  <input 
+                    type="checkbox" 
+                    id="all-agree" 
+                    checked={allAgree}
+                    onChange={handleAllAgree}
+                  />
+                  <label htmlFor="all-agree">전체 동의</label>
+                </div>
+                <div className="agreement-introduction">
+                  Amoroso 서비스 통합이용약관, 개인정보 수집 및 이용, 위치정보 이용약관(선택), 마케팅 수신(선택)에 모두 동의합니다.
+                  선택항목 동의를 거부하셔도 서비스 이용이 가능합니다.
+                </div>
+                <div className="agreement-item">
+                  <input 
+                    type="checkbox" 
+                    id="terms-agree" 
+                    checked={termsAgree}
+                    onChange={(e) => setTermsAgree(e.target.checked)}
+                    required
+                  />
+                  <label htmlFor="terms-agree">Amoroso (회원) 서비스 통합이용약관 동의</label>
+                  <span className="required">(필수)</span>
+                </div>
+                <div className="agreement-item">
+                  <input 
+                    type="checkbox" 
+                    id="privacy-agree" 
+                    checked={privacyAgree}
+                    onChange={(e) => setPrivacyAgree(e.target.checked)}
+                    required
+                  />
+                  <label htmlFor="privacy-agree">개인정보 수집 및 이용 동의</label>
+                  <span className="required">(필수)</span>
+                </div>
+                <div className="agreement-item">
+                  <input 
+                    type="checkbox" 
+                    id="age-agree" 
+                    checked={ageAgree}
+                    onChange={(e) => setAgeAgree(e.target.checked)}
+                    required
+                  />
+                  <label htmlFor="age-agree">만 14세 이상입니다.</label>
+                  <span className="required">(필수)</span>
                 </div>
               </div>
             )}
             
-            <div className="form-section">
-              <h3>개인회원정보</h3>
-              
-              {/* 아이디/이메일 */}
-              <div className="input-group">
-                <label htmlFor="email">아이디(이메일)</label>
+            {/* 마케팅 수신 동의 (신규/기존 사용자 모두 표시) */}
+            <div className="agreement-item-marketing">
+              <div className="marketing-header">
                 <input 
-                  type="email" 
-                  id="email" 
-                  value={email}
-                  disabled={true}
-                  readOnly
+                  type="checkbox" 
+                  id="marketing-agree" 
+                  checked={marketingAgree}
+                  onChange={handleMarketingAgree}
                 />
+                <label htmlFor="marketing-agree">
+                  마케팅 수신 동의 <span className="optional">(선택)</span>
+                </label>
+                {isNewUser && <div className="coupon-info">5% 쿠폰(최대 10,000원)</div>}
               </div>
-              
-              {/* 이메일 */}
-              <div className="input-group">
-                <label htmlFor="displayEmail">이메일</label>
-                <input 
-                  type="email" 
-                  id="displayEmail" 
-                  value={email}
-                  disabled={true}
-                  readOnly
-                />
-              </div>
-            </div>
-            
-            <div className="form-section">
-              <h3>본인인증정보</h3>
-              
-              {/* 이름 */}
-              <div className="input-group">
-                <label htmlFor="name">이름</label>
-                <input 
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              
-              {/* 생년월일/성별 */}
-              <div className="input-group">
-                <label htmlFor="birthDate">생년월일/성별</label>
-                <div className="birth-gender-container">
-                  <input 
-                    type="text"
-                    id="birthDate"
-                    value={birthDate}
-                    onChange={(e) => setBirthDate(e.target.value)}
-                    placeholder="생년월일 입력 (YYYY-MM-DD)"
-                    className="birth-input"
-                  />
-                  <div className="gender-buttons">
-                    <button 
-                      type="button" 
-                      className={`gender-button ${gender === 'male' ? 'selected' : ''}`}
-                      onClick={() => setGender('male')}
-                    >
-                      남
-                    </button>
-                    <button 
-                      type="button" 
-                      className={`gender-button ${gender === 'female' ? 'selected' : ''}`}
-                      onClick={() => setGender('female')}
-                    >
-                      여
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* 휴대폰번호 */}
-              <div className="input-group">
-                <label htmlFor="phoneNumber">휴대폰번호</label>
-                <input 
-                  type="text"
-                  id="phoneNumber"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="휴대폰번호 입력 (-없이 숫자만 입력)"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="form-section">
-              <h3>주소정보 입력</h3>
-              
-              {/* 우편번호 */}
-              <div className="address-group">
-                <input 
-                  type="text" 
-                  className="zipcode" 
-                  placeholder="우편번호" 
-                  value={zipcode}
-                  onChange={(e) => setZipcode(e.target.value)}
-                  readOnly
-                  required
-                />
-                <button 
-                  type="button" 
-                  className="search-button"
-                  onClick={handleFindZipcode}
-                >
-                  우편번호 찾기
-                </button>
-              </div>
-              
-              {/* 주소 */}
-              <div className="input-group">
-                <input 
-                  type="text" 
-                  placeholder="주소" 
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  readOnly
-                  required
-                />
-              </div>
-              
-              {/* 상세주소 */}
-              <div className="input-group">
-                <input 
-                  type="text" 
-                  id="detailAddress"
-                  placeholder="상세주소" 
-                  value={detailAddress}
-                  onChange={(e) => setDetailAddress(e.target.value)}
-                  required
-                />
-              </div>
-              
-              {/* 엘리베이터 정보 */}
-              <div className="elevator-section">
-                <label>엘리베이터 정보</label>
-                <div className="elevator-options">
-                  <div 
-                    className={`elevator-option ${elevatorType === 'ONE_TO_SEVEN' ? 'selected' : ''}`}
-                    onClick={() => handleElevatorChange('ONE_TO_SEVEN')}
-                  >
-                    1층-7층
-                  </div>
-                  <div 
-                    className={`elevator-option ${elevatorType === 'EIGHT_TO_TEN' ? 'selected' : ''}`}
-                    onClick={() => handleElevatorChange('EIGHT_TO_TEN')}
-                  >
-                    8층-10층
-                  </div>
-                  <div 
-                    className={`elevator-option ${elevatorType === 'ELEVEN_OR_MORE' ? 'selected' : ''}`}
-                    onClick={() => handleElevatorChange('ELEVEN_OR_MORE')}
-                  >
-                    11층 이상
-                  </div>
-                  <div 
-                    className={`elevator-option ${elevatorType === 'NONE' ? 'selected' : ''}`}
-                    onClick={() => handleElevatorChange('NONE')}
-                  >
-                    없음
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* 마케팅 수신 동의 */}
-            <div className="form-section">
-              <h3>마케팅 수신 동의</h3>
               <div className="marketing-options">
-                <div className="marketing-option">
+                <div className="option-item">
                   <input 
                     type="checkbox" 
-                    id="email-consent" 
+                    id="email-agree" 
                     checked={emailConsent}
-                    onChange={(e) => handleMarketingChange('email', e.target.checked)}
+                    onChange={(e) => setEmailConsent(e.target.checked)}
+                    disabled={!marketingAgree}
                   />
-                  <label htmlFor="email-consent">이메일</label>
+                  <label htmlFor="email-agree">이메일</label>
                 </div>
-                <div className="marketing-option">
+                <div className="option-item">
                   <input 
                     type="checkbox" 
-                    id="sms-consent" 
+                    id="sms-agree" 
                     checked={smsConsent}
-                    onChange={(e) => handleMarketingChange('sms', e.target.checked)}
+                    onChange={(e) => setSmsConsent(e.target.checked)}
+                    disabled={!marketingAgree}
                   />
-                  <label htmlFor="sms-consent">SMS</label>
+                  <label htmlFor="sms-agree">SMS</label>
                 </div>
-                <div className="marketing-option">
+                <div className="option-item">
                   <input 
                     type="checkbox" 
-                    id="dm-consent" 
+                    id="dm-agree" 
                     checked={dmConsent}
-                    onChange={(e) => handleMarketingChange('dm', e.target.checked)}
+                    onChange={(e) => setDmConsent(e.target.checked)}
+                    disabled={!marketingAgree}
                   />
-                  <label htmlFor="dm-consent">DM</label>
+                  <label htmlFor="dm-agree">DM</label>
                 </div>
               </div>
               <p className="marketing-description">
@@ -498,70 +532,31 @@ const MyInfoEdit = () => {
                 수신동의 여부에 관계없이 발송됩니다.
               </p>
             </div>
-            
+
             {/* 버튼 영역 */}
             <div className="button-group">
               <button 
                 type="button" 
-                className="logout-button" 
-                onClick={handleLogout}
+                className="cancel-button" 
+                onClick={handleCancel}
               >
-                로그아웃
+                취소
               </button>
               <button 
                 className="submit-button" 
                 type="submit" 
                 disabled={loading}
               >
-                {loading ? '처리 중...' : '정보 수정'}
+                {loading 
+                  ? '처리 중...' 
+                  : (isNewUser ? '가입완료' : '정보수정')}
               </button>
             </div>
           </form>
-        )}
-        
-        {/* 비밀번호 변경 탭 (소셜 로그인이 아닌 경우에만 표시) */}
-        {activeTab === 'password' && !isSocialLogin && (
-          <div className="password-tab">
-            <p className="tab-description">
-              비밀번호를 변경하실 수 있습니다. 주기적인 비밀번호 변경을 통해 개인정보를 안전하게 보호하세요.
-            </p>
-            <form className="password-form">
-              <div className="input-group">
-                <label htmlFor="current-password">현재 비밀번호</label>
-                <input 
-                  type="password" 
-                  id="current-password" 
-                  placeholder="현재 비밀번호 입력"
-                  required
-                />
-              </div>
-              <div className="input-group">
-                <label htmlFor="new-password">새 비밀번호</label>
-                <input 
-                  type="password" 
-                  id="new-password" 
-                  placeholder="8~15자 이내의 영문,숫자,특수문자 조합"
-                  required
-                />
-              </div>
-              <div className="input-group">
-                <label htmlFor="confirm-password">새 비밀번호 확인</label>
-                <input 
-                  type="password" 
-                  id="confirm-password" 
-                  placeholder="새 비밀번호 확인"
-                  required
-                />
-              </div>
-              <button className="submit-button" type="submit">
-                비밀번호 변경
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
-    </PageLayout>
+        </div>
+      </PageLayout>
+    </div>
   );
 };
 
-export default MyInfoEdit;
+export default SignUpPage;

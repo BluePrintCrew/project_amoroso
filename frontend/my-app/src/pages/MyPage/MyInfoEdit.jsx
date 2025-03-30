@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import MyPageSidebar from "../../components/MyPageSidebar/MyPageSidebar";
 import magnifierIcon from "../../assets/magnifier.png";
 import "./MyInfoEdit.css";
 import PageLayout from "../../components/PageLayout/PageLayout";
@@ -16,16 +15,14 @@ function MyInfoEdit() {
     name: "",
     birthDate: "",
     phoneNumber: "",
-    nickname: "",
+    nickname: "hs",
     postalCode: "",
     address: "",
     detailAddress: "",
-    gender: "",
     emailConsent: false,
     smsConsent: false,
     dmConsent: false,
-    locationConsent: false,
-    elevatorType: "NONE" // 엘리베이터 사이즈 기본값
+    locationConsent: false
   });
   
   // 비밀번호 변경 상태 관리
@@ -51,10 +48,10 @@ function MyInfoEdit() {
   const fetchUserProfile = async () => {
     setIsLoading(true);
     try {
-      // 로컬 스토리지에서 토큰 가져오기 - token 키 사용
+      // 로컬 스토리지에서 토큰 가져오기
       const token = localStorage.getItem("access_token");
       
-      console.log("사용 중인 토큰:", token); // 토큰 확인을 위한 로그
+      console.log("사용 중인 토큰:", token);
       
       if (!token) {
         console.log("토큰이 없습니다.");
@@ -75,7 +72,7 @@ function MyInfoEdit() {
       // 응답에서 사용자 정보 추출
       const { 
         email, name, phoneNumber, nickname, emailConsent, 
-        smsConsent, dmConsent, locationConsent 
+        smsConsent, dmConsent, locationConsent, birthDate = ""
       } = response.data;
       
       try {
@@ -88,70 +85,53 @@ function MyInfoEdit() {
         
         console.log("주소 정보 응답:", addressResponse.data);
         
-        // 주소와 엘리베이터 정보 추출
+        // 주소 정보 추출
         const { 
           postalCode, 
           address, 
-          detailAddress, 
-          elevatorType = "NONE" 
+          detailAddress
         } = addressResponse.data || {};
         
         // 상태 업데이트
         setUserInfo({
           email: email || "",
           name: name || "",
-          birthDate: "", // API에서 받아오지 않는 정보는 빈 값으로
+          birthDate: birthDate || "", 
           phoneNumber: phoneNumber || "",
           nickname: nickname || "",
           postalCode: postalCode || "",
           address: address || "",
           detailAddress: detailAddress || "",
-          gender: "", // API에서 받아오지 않는 정보는 빈 값으로
           emailConsent: emailConsent || false,
           smsConsent: smsConsent || false,
           dmConsent: dmConsent || false,
-          locationConsent: locationConsent || false,
-          elevatorType: elevatorType || "NONE"
+          locationConsent: locationConsent || false
         });
         
         setIsLoading(false);
       } catch (addressErr) {
         console.error("주소 정보를 가져오는데 실패했습니다:", addressErr);
-        console.error("주소 오류 상세:", addressErr.response?.data || addressErr.message);
         
-        // 500 에러인 경우 주소 정보가 없다고 판단하고 signup 페이지로 리다이렉트
-        if (addressErr.response && addressErr.response.status === 500) {
-          console.log("초기 주소 정보가 없습니다. 회원가입 페이지로 리다이렉트합니다.");
-          // 잠시 딜레이 후 리다이렉트 (사용자가 무슨 일이 일어나는지 볼 수 있도록)
-          setTimeout(() => {
-            window.location.href = "/signup";
-          }, 1000);
-          return;
-        }
-        
-        // 다른 에러인 경우, 기본 정보만 표시하고 계속 진행
+        // 주소 정보 없이 기본 정보만 표시
         setUserInfo({
           email: email || "",
           name: name || "",
-          birthDate: "", 
+          birthDate: birthDate || "", 
           phoneNumber: phoneNumber || "",
           nickname: nickname || "",
           postalCode: "",
           address: "",
           detailAddress: "",
-          gender: "",
           emailConsent: emailConsent || false,
           smsConsent: smsConsent || false,
           dmConsent: dmConsent || false,
-          locationConsent: locationConsent || false,
-          elevatorType: "NONE"
+          locationConsent: locationConsent || false
         });
         
         setIsLoading(false);
       }
     } catch (err) {
       console.error("사용자 정보를 가져오는데 실패했습니다:", err);
-      console.error("에러 상세:", err.response?.data || err.message);
       
       // 401 Unauthorized 오류인 경우 토큰 문제일 가능성이 높음
       if (err.response?.status === 401) {
@@ -181,14 +161,6 @@ function MyInfoEdit() {
       [name]: value
     });
   };
-  
-  // 엘리베이터 타입 변경 핸들러
-  const handleElevatorChange = (value) => {
-    setUserInfo({
-      ...userInfo,
-      elevatorType: value
-    });
-  };
 
   // 탭 전환 처리
   const handleTabClick = (tabName) => {
@@ -207,29 +179,49 @@ function MyInfoEdit() {
         return;
       }
       
-      // 개인정보 업데이트 요청
-      const response = await axios.put("http://localhost:8080/api/v1/auth/users/me", {
+      // API 명세서에 맞게 정확히 필드를 구성
+      const updateData = {
         name: userInfo.name,
         email: userInfo.email,
+        birthDate: userInfo.birthDate,
         phoneNumber: userInfo.phoneNumber,
         nickname: userInfo.nickname,
+        postalCode: userInfo.postalCode,
+        address: userInfo.address,
+        detailAddress: userInfo.detailAddress,
         emailConsent: userInfo.emailConsent,
         smsConsent: userInfo.smsConsent,
         dmConsent: userInfo.dmConsent,
         locationConsent: userInfo.locationConsent
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      };
+      
+      console.log("전송 데이터:", JSON.stringify(updateData, null, 2));
+      
+      // 개인정보 업데이트 요청
+      const response = await axios.put(
+        "http://localhost:8080/api/v1/auth/users/me", 
+        updateData, 
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
         }
-      });
+      );
       
-      // 주소 정보 업데이트는 별도 엔드포인트로 처리해야 하지만 API가 명확하지 않아
-      // 여기서는 생략하겠습니다.
-      
+      console.log("응답 데이터:", response.data);
       alert("개인정보가 성공적으로 업데이트되었습니다!");
     } catch (err) {
       console.error("개인정보 업데이트 실패:", err);
-      alert("개인정보 업데이트에 실패했습니다.");
+      
+      // 자세한 오류 정보 출력
+      if (err.response) {
+        console.error("에러 상태:", err.response.status);
+        console.error("에러 데이터:", err.response.data);
+      }
+      
+      alert("개인정보 업데이트에 실패했습니다: " + 
+            (err.response?.data?.message || err.message || "알 수 없는 오류"));
     }
   };
 
@@ -243,21 +235,12 @@ function MyInfoEdit() {
       return;
     }
     
-    try {
-      // 백엔드 API에 비밀번호 변경 요청을 보내야 하나, 
-      // API 명세에 비밀번호 변경 엔드포인트가 명확하지 않습니다.
-      // 아래는 가상의 구현입니다.
-      
-      alert("비밀번호가 성공적으로 변경되었습니다!");
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      });
-    } catch (err) {
-      console.error("비밀번호 변경 실패:", err);
-      alert("비밀번호 변경에 실패했습니다.");
-    }
+    alert("비밀번호 변경 기능은 API에서 제공하지 않습니다.");
+    setPasswordData({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    });
   };
 
   // 회원 탈퇴 처리
@@ -274,14 +257,14 @@ function MyInfoEdit() {
         return;
       }
       
-      const response = await axios.delete("http://localhost:8080/api/v1/auth/users/me", {
+      await axios.delete("http://localhost:8080/api/v1/auth/users/me", {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       
       alert("회원탈퇴가 완료되었습니다.");
-      // 로그아웃 및 홈으로 리다이렉트 로직 추가
+      // 로그아웃 및 홈으로 리다이렉트
       localStorage.removeItem("access_token");
       window.location.href = "/";
     } catch (err) {
@@ -292,8 +275,32 @@ function MyInfoEdit() {
 
   // 우편번호 찾기 기능
   const handleFindPostalCode = () => {
-    // 다음(카카오) 우편번호 API 연동 - 이 부분은 실제 구현 필요
-    alert("우편번호 API 연동이 필요합니다.");
+    // 카카오 주소 검색 API가 로드되어 있는지 확인
+    if (!window.daum || !window.daum.Postcode) {
+      // 카카오 주소 검색 API 스크립트 로드
+      const script = document.createElement('script');
+      script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+      script.onload = () => openPostcode();
+      document.head.appendChild(script);
+    } else {
+      openPostcode();
+    }
+  };
+  
+  // 카카오 우편번호 검색 창 열기
+  const openPostcode = () => {
+    new window.daum.Postcode({
+      oncomplete: function(data) {
+        // 선택한 주소 정보를 폼에 반영
+        setUserInfo({
+          ...userInfo,
+          postalCode: data.zonecode,
+          address: data.address
+        });
+        // 상세주소 입력란에 포커스
+        document.getElementById('detailAddress')?.focus();
+      }
+    }).open();
   };
 
   if (isLoading) {
@@ -379,37 +386,17 @@ function MyInfoEdit() {
                   />
                 </div>
 
-                {/* 생년월일 + 성별 (남/여) */}
-                <div className="form-group birth-gender-row">
-                  <label className="required-label">생년월일/성별</label>
-
-                  <div className="birth-gender-container">
-                    {/* Birth date input */}
-                    <input
-                      type="text"
-                      name="birthDate"
-                      value={userInfo.birthDate}
-                      onChange={handleInputChange}
-                      placeholder="생년월일 입력 (YYYY-MM-DD)"
-                      className="birth-input"
-                    />
-
-                    {/* Two squares for 남/여 */}
-                    <div className="gender-squares">
-                      <div 
-                        className={`gender-square male-square ${userInfo.gender === 'male' ? 'selected' : ''}`}
-                        onClick={() => handleInputChange({target: {name: 'gender', value: 'male'}})}
-                      >
-                        남
-                      </div>
-                      <div 
-                        className={`gender-square female-square ${userInfo.gender === 'female' ? 'selected' : ''}`}
-                        onClick={() => handleInputChange({target: {name: 'gender', value: 'female'}})}
-                      >
-                        여
-                      </div>
-                    </div>
-                  </div>
+                {/* 생년월일 */}
+                <div className="form-group">
+                  <label>생년월일</label>
+                  <input
+                    type="text"
+                    name="birthDate"
+                    value={userInfo.birthDate}
+                    onChange={handleInputChange}
+                    placeholder="생년월일 입력 (YYYY-MM-DD)"
+                    className="birth-input"
+                  />
                 </div>
 
                 {/* 휴대폰번호 */}
@@ -464,43 +451,13 @@ function MyInfoEdit() {
                   />
                   <input 
                     type="text" 
+                    id="detailAddress"
                     name="detailAddress"
                     value={userInfo.detailAddress} 
                     onChange={handleInputChange}
                     placeholder="상세 주소" 
                     className="address-line" 
                   />
-                </div>
-
-                {/* 엘리베이터 정보 추가 */}
-                <div className="form-group elevator-form-group">
-                  <label>엘리베이터 정보</label>
-                  <div className="elevator-options">
-                    <div 
-                      className={`elevator-option ${userInfo.elevatorType === 'ONE_TO_SEVEN' ? 'selected' : ''}`}
-                      onClick={() => handleElevatorChange('ONE_TO_SEVEN')}
-                    >
-                      1층-7층
-                    </div>
-                    <div 
-                      className={`elevator-option ${userInfo.elevatorType === 'EIGHT_TO_TEN' ? 'selected' : ''}`}
-                      onClick={() => handleElevatorChange('EIGHT_TO_TEN')}
-                    >
-                      8층-10층
-                    </div>
-                    <div 
-                      className={`elevator-option ${userInfo.elevatorType === 'ELEVEN_OR_MORE' ? 'selected' : ''}`}
-                      onClick={() => handleElevatorChange('ELEVEN_OR_MORE')}
-                    >
-                      11층 이상
-                    </div>
-                    <div 
-                      className={`elevator-option ${userInfo.elevatorType === 'NONE' ? 'selected' : ''}`}
-                      onClick={() => handleElevatorChange('NONE')}
-                    >
-                      없음
-                    </div>
-                  </div>
                 </div>
               </section>
 
@@ -510,29 +467,14 @@ function MyInfoEdit() {
                 <div className="linked-account-row">
                   <label>네이버</label>
                   <p>{linkedAccounts.naver ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                  {linkedAccounts.naver && (
-                    <button type="button" className="unlink-btn">
-                      연동 해지
-                    </button>
-                  )}
                 </div>
                 <div className="linked-account-row">
                   <label>카카오</label>
                   <p>{linkedAccounts.kakao ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                  {linkedAccounts.kakao && (
-                    <button type="button" className="unlink-btn">
-                      연동 해지
-                    </button>
-                  )}
                 </div>
                 <div className="linked-account-row">
                   <label>구글</label>
                   <p>{linkedAccounts.google ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                  {linkedAccounts.google && (
-                    <button type="button" className="unlink-btn">
-                      연동 해지
-                    </button>
-                  )}
                 </div>
               </section>
 
