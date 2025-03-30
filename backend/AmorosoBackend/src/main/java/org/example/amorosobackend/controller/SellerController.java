@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.SellerDTO;
 import org.example.amorosobackend.service.SellerService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,6 +51,14 @@ public class SellerController {
     public List<SellerDTO.PopularProductDto> getPopularProducts() {
         return sellerService.getTop5PopularProducts();
     }
+    @GetMapping("/order-summary")
+    public Page<SellerDTO.SellerOrderSummaryDto> getSellerOrderSummary(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return sellerService.getSellerOrderSummaries(page, size);
+    }
+
 
 
     @GetMapping("/stats")

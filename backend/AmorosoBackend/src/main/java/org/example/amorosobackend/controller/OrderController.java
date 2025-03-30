@@ -36,9 +36,9 @@ public class OrderController {
             "ELEVEN_OR_MORE,\n" +
             "NONE" +
             "이중 하나로 설정하여 전달한다.")
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderControllerDTO.OrderRequestDTO requestDTO) {
+    public ResponseEntity<List<OrderResponseDTO>> createOrder(@RequestBody OrderControllerDTO.OrderRequestDTO requestDTO) {
         String email = getCurrentUserEmail();
-        OrderResponseDTO createdOrder = orderService.createOrder(email, requestDTO);
+        List<OrderResponseDTO> createdOrder = orderService.createOrder(email, requestDTO);
         return ResponseEntity.ok(createdOrder);
     }
 

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -72,4 +73,18 @@ public class SellerDTO {
         private String categoryName;
 
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class SellerOrderSummaryDto {
+        private Long orderId;
+        private String orderCode;
+        private LocalDateTime orderDate;
+        private String customerName;
+        private String fullAddress; // ex) 서울시 강남구 xxx로 12, 102호
+        private String orderStatus;
+        private String paymentStatus;
+        private int totalPrice;
+    }
+
 }

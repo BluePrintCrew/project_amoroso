@@ -1,6 +1,7 @@
 package org.example.amorosobackend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.amorosobackend.domain.Order;
 import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
@@ -13,6 +14,7 @@ import org.example.amorosobackend.repository.OrderRepository;
 import org.example.amorosobackend.repository.SellerRepository;
 import org.example.amorosobackend.repository.UserRepository;
 import org.example.amorosobackend.repository.product.ProductRepository;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,6 +217,7 @@ public class SellerService {
 
         return new SellerDTO.MonthlySalesResponse(monthlySales);
     }
+    
 
     public List<SellerDTO.PopularProductDto> getTop5PopularProducts() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -244,5 +247,43 @@ public class SellerService {
                 ))
                 .toList();
     }
+
+    public Page<SellerDTO.SellerOrderSummaryDto> getSellerOrderSummaries(int page, int size) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isSeller()) {
+            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
+        }
+
+        Seller seller = sellerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "order.createdAt"));
+
+        // OrderItem 기준 페이징 불가 → Order 기준으로 가져와야 함
+        Page<Order> orderPage = orderRepository.findDistinctByOrderItemsProductSeller(seller, pageable);
+
+        List<SellerDTO.SellerOrderSummaryDto> dtoList = orderPage.getContent().stream()
+                .map(order -> {
+                    // 이 주문에 포함된 판매자의 상품만 필터링
+
+                    return new SellerDTO.SellerOrderSummaryDto(
+                            order.getOrderId(),
+                            order.getOrderCode(),
+                            order.getCreatedAt(),
+                            order.getUser().getName(),
+                            order.getUserAddress().getAddress() +" "+ order.getUserAddress().getDetailAddress(),
+                            order.getOrderStatus().name(),
+                            order.getPaymentStatus().name(),
+                            order.getTotalPrice()
+                    );
+                })
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, orderPage.getTotalElements());
+    }
+
 
 }

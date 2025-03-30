@@ -24,7 +24,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,43 +49,64 @@ public class OrderService {
     /**
      * 주문 생성 - 결제 전에 미리 생성 (PAYMENT_PENDING 상태)
      */
-    public OrderResponseDTO createOrder(String email, OrderRequestDTO requestDTO) {
+    public List<OrderResponseDTO> createOrder(String email, OrderRequestDTO requestDTO) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         UserAddress address = userAddressRepository.findById(requestDTO.getUserAddressId())
-                .orElseThrow(() -> new IllegalArgumentException("배송지를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("배송지를 찾을 수 없습니다"));
 
+        // 판매자별 아이템 찾기
+        Map<Seller, List<OrderItemRequestDTO>> sellerItemMap = new HashMap<>();
 
-        Order order = Order.builder()
-                .user(user)
-                .orderStatus(OrderStatus.PAYMENT_PENDING)
-                .paymentStatus(PaymentStatus.WAITING)
-                .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
-                .freeLoweringService(requestDTO.getFreeLoweringService())
-                .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())
-                .productInstallationAgreement(requestDTO.getProductInstallationAgreement())
-                .build();
+        for( OrderItemRequestDTO itemRequestDTO : requestDTO.getOrderItems() ) {
+            Product product = productRepository.findById(itemRequestDTO.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 id의 상품을 찾을 수 없습니다."));
 
-        Order savedOrder = orderRepository.save(order);
+            Seller seller = product.getSeller();
 
-        List<OrderItem> orderItems = requestDTO.getOrderItems().stream()
-                .map(itemDTO -> createOrderItem(savedOrder, itemDTO))
-                .collect(Collectors.toList());
+            sellerItemMap.computeIfAbsent(seller, k-> new ArrayList<>()).add(itemRequestDTO);
+        }
 
-        orderItemRepository.saveAll(orderItems);
+        List<OrderResponseDTO> resultOrders = new ArrayList<>();
 
-//        Integer totalPrice = orderItems.stream()
-//                .mapToInt(item -> item.getQuantity() * item.getFinalPrice()).sum();
+        for(Map.Entry<Seller, List<OrderItemRequestDTO>> entry : sellerItemMap.entrySet()) {
+            Seller seller = entry.getKey();
+            List<OrderItemRequestDTO> sellerOrderItems  = entry.getValue();
 
-        Integer totalPrice = requestDTO.getTotalPrice();
+            // 주문 생성
+            Order order = Order.builder()
+                    .user(user)
+                    .seller(seller)
+                    .orderCode(generateOrderCode())
+                    .orderStatus(OrderStatus.PAYMENT_PENDING)
+                    .paymentStatus(PaymentStatus.WAITING)
+                    .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
+                    .freeLoweringService(requestDTO.getFreeLoweringService())
+                    .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())
+                    .deliveryRequest(requestDTO.getDeliveryRequest())
+                    .productInstallationAgreement(requestDTO.getProductInstallationAgreement())
+                    .deliveryRequest(requestDTO.getDeliveryRequest())
+                    .build();
 
-        order.setTotalPrice(totalPrice);
-        orderRepository.save(order);
+            orderRepository.save(order);
 
-        createShipment(order, address, requestDTO.getDeliveryRequest());
+            int totalPrice = 0;
+            List<OrderItem> orderitems = new ArrayList<>();
+            for(OrderItemRequestDTO itemRequestDTO : sellerOrderItems ) {
+                OrderItem orderItem = createOrderItem(order, itemRequestDTO);
+                totalPrice += orderItem.getFinalPrice() * orderItem.getQuantity();
+                orderitems.add(orderItem);
+            }
 
-        return new OrderResponseDTO(order);
+            order.setTotalPrice(totalPrice);
+            orderRepository.save(order);
+
+            createShipment(order,address,requestDTO.getDeliveryRequest());
+
+            resultOrders.add(new OrderResponseDTO(order));
+        }
+        return resultOrders;
     }
 
     private OrderItem createOrderItem(Order order, OrderItemRequestDTO itemDTO) {
@@ -240,6 +266,17 @@ public class OrderService {
         product.increaseSales(item.getQuantity()); // 또는 1
         productRepository.save(product);
     }
+
+    private String generateOrderCode() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String timestamp = LocalDateTime.now().format(formatter);
+
+        int randomNum = (int) (Math.random() * 10000); // 0 ~ 9999
+        String randomPart = String.format("%04d", randomNum); // 항상 4자리 유지
+
+        return "ORD" + timestamp  + randomPart;
+    }
+
 
     public void updateOrderStatus(Order order, OrderStatus orderStatus) {
         order.setOrderStatus(orderStatus);

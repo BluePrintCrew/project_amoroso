@@ -1,9 +1,12 @@
 package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +48,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.createdAt BETWEEN :start AND :end AND o.paymentStatus = :status")
     int sumTotalPriceByCreatedAtBetweenAndPaymentStatus(@Param("start") LocalDateTime start,
                                                         @Param("end") LocalDateTime end,
-                                                        @Param("status") PaymentStatus status);}
+                                                        @Param("status") PaymentStatus status);
+
+    Page<Order> findDistinctByOrderItemsProductSeller(Seller seller, Pageable pageable);
+}
