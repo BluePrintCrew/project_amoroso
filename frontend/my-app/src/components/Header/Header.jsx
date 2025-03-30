@@ -1,14 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import cart from '../../assets/cart_button.png';
-import login from '../../assets/login_button.png';
-import logo from '../../assets/logo.png';
-import mypage from '../../assets/mypage_button.png';
-import search from '../../assets/search.png';
+import cart from '../../assets/svg/cart_button.svg';
+import login from '../../assets/svg/login_button.svg';
+import logo from '../../assets/svg/logo.svg';
+import mypage from '../../assets/svg/mypage_button.svg';
+import search from '../../assets/svg/search.svg';
+import logout from '../../assets/svg/logout.svg';
 import styles from './Header.module.css';
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -31,15 +33,24 @@ const Header = () => {
   }, []);
 
   const handleSearchClick = () => {
-    alert('검색버튼 클릭.');
+    if (searchQuery.trim()) {
+      // 검색어를 /products 경로로 리디렉션
+      navigate(`/products?keyword=${encodeURIComponent(searchQuery)}`);
+    }
   };
-
+  
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
+  };
+  
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     setIsAuthenticated(false);
     navigate('/');
   };
-
+  
   return (
     <header className={`${styles.header} ${styles.fullWidth}`}>
       <div className={styles.headerContent}>
@@ -54,12 +65,14 @@ const Header = () => {
             인테리어
           </Link> */}
         </div>
-
         <div className={styles.searchBar}>
           <input
             type="text"
             placeholder="검색어를 입력해 주세요."
             className={styles.searchInput}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <img
             src={search}
@@ -68,32 +81,33 @@ const Header = () => {
             onClick={handleSearchClick}
           />
         </div>
-
         <div className={styles.headerIcons}>
           {!isAuthenticated ? (
-            <Link to="/login">
-              <img src={login} alt="Login" className={styles.loginIcon} />
+            <Link to="/login" className={styles.iconWithLabel}>
+              <img src={login} alt="Login" className={styles.navIcon} />
+              <span className={styles.iconLabel}>로그인</span>
             </Link>
           ) : (
             <>
-              <Link to="/cart">
-                <img src={cart} alt="Cart" className={styles.cartIcon} />
+              <Link to="/cart" className={styles.iconWithLabel}>
+                <img src={cart} alt="Cart" className={styles.navIcon} />
+                <span className={styles.iconLabel}>장바구니</span>
               </Link>
-              <Link to="/mypage">
-                <img src={mypage} alt="Mypage" className={styles.mypageIcon} />
+              <Link to="/mypage" className={styles.iconWithLabel}>
+                <img src={mypage} alt="Mypage" className={styles.navIcon} />
+                <span className={styles.iconLabel}>마이페이지</span>
               </Link>
               <div 
                 onClick={handleLogout} 
-                className={styles.logoutButton}
-                style={{ cursor: 'pointer' }}
+                className={styles.iconWithLabel}
               >
-                로그아웃
+                <img src={logout} alt="Logout" className={styles.navIcon} />
+                <span className={styles.iconLabel}>로그아웃</span>
               </div>
             </>
           )}
         </div>
       </div>
-
       <div className={styles.headerBorder}></div>
     </header>
   );

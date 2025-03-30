@@ -58,12 +58,17 @@ function ProductListPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [order, setOrder] = useState('desc');
+  const [size] = useState(12); // 페이지당 상품 수
 
   const subCategoryList = categoryMap[selectedTop] || [];
 
   useEffect(() => {
     const firstSub = categoryMap[selectedTop]?.[0]?.value || "";
     setSelectedSub(firstSub);
+    setCurrentPage(1); // 카테고리 변경 시 페이지 초기화
   }, [selectedTop]);
 
   useEffect(() => {
@@ -73,8 +78,12 @@ function ProductListPage() {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_ENDPOINT}/products/?categoryCode=${selectedSub}`);
+        const response = await fetch(
+          `${API_ENDPOINT}/products/?categoryCode=${selectedSub}&page=${currentPage}&sortBy=${sortBy}&order=${order}&size=${size}`
+        );
+        
         if (!response.ok) throw new Error("상품 데이터를 불러오는데 실패했습니다.");
+        
         const data = await response.json();
         setProducts(data.products || []);
         setTotalPages(data.totalPages || 0);
@@ -88,17 +97,117 @@ function ProductListPage() {
     };
 
     fetchProducts().finally(() => setLoading(false));
-  }, [selectedSub]);
+  }, [selectedSub, currentPage, sortBy, order, size]);
 
-  const handleTopCategoryChange = (e) => {
-    const newTop = e.target.value;
-    setSelectedTop(newTop);
-    const firstSub = categoryMap[newTop]?.[0]?.value || "";
-    setSelectedSub(firstSub);
+  const handleTopCategoryChange = (topCategory) => {
+    setSelectedTop(topCategory);
   };
 
-  const handleSubCategoryChange = (e) => {
-    setSelectedSub(e.target.value);
+  const handleSubCategoryChange = (subCategoryValue) => {
+    setSelectedSub(subCategoryValue);
+    setCurrentPage(1); // 하위 카테고리 변경 시 페이지 초기화
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // 페이지 상단으로 스크롤
+    window.scrollTo(0, 0);
+  };
+
+  const handleSortChange = (newSortBy, newOrder) => {
+    setSortBy(newSortBy);
+    setOrder(newOrder);
+    setCurrentPage(1); // 정렬 변경 시 페이지 초기화
+  };
+
+  // 페이지네이션 렌더링 함수
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // 이전 버튼
+    if (currentPage > 1) {
+      pages.push(
+        <button 
+          key="prev" 
+          onClick={() => handlePageChange(currentPage - 1)} 
+          className="page-button"
+          aria-label="이전 페이지"
+        >
+          &lt;
+        </button>
+      );
+    }
+
+    // 첫 페이지로 가는 버튼
+    if (startPage > 1) {
+      pages.push(
+        <button 
+          key="first" 
+          onClick={() => handlePageChange(1)} 
+          className="page-button"
+        >
+          1
+        </button>
+      );
+      if (startPage > 2) {
+        pages.push(<span key="ellipsis1" className="ellipsis">...</span>);
+      }
+    }
+
+    // 페이지 번호
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`page-button ${currentPage === i ? 'active' : ''}`}
+          aria-current={currentPage === i ? 'page' : undefined}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    // 마지막 페이지로 가는 버튼
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(<span key="ellipsis2" className="ellipsis">...</span>);
+      }
+      pages.push(
+        <button 
+          key="last" 
+          onClick={() => handlePageChange(totalPages)} 
+          className="page-button"
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    // 다음 버튼
+    if (currentPage < totalPages) {
+      pages.push(
+        <button 
+          key="next" 
+          onClick={() => handlePageChange(currentPage + 1)} 
+          className="page-button"
+          aria-label="다음 페이지"
+        >
+          &gt;
+        </button>
+      );
+    }
+
+    return <div className="pagination-controls">{pages}</div>;
   };
 
   const currentSubCategory = subCategoryList.find((sub) => sub.value === selectedSub);
@@ -115,26 +224,30 @@ function ProductListPage() {
         </nav>
 
         <div className="category-selector">
-          <div className="top-category-selector">
-            <label>상위 카테고리: </label>
-            <select value={selectedTop} onChange={handleTopCategoryChange}>
-              {topCategories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {topCategoryMap[cat]}
-                </option>
-              ))}
-            </select>
+          {/* 상위 카테고리 탭 */}
+          <div className="top-category-tabs">
+            {topCategories.map((category) => (
+              <button
+                key={category}
+                className={`top-category-tab ${selectedTop === category ? 'active' : ''}`}
+                onClick={() => handleTopCategoryChange(category)}
+              >
+                {topCategoryMap[category]}
+              </button>
+            ))}
           </div>
 
-          <div className="sub-category-selector">
-            <label>하위 카테고리: </label>
-            <select value={selectedSub} onChange={handleSubCategoryChange}>
-              {subCategoryList.map((sub) => (
-                <option key={sub.value} value={sub.value}>
-                  {sub.label}
-                </option>
-              ))}
-            </select>
+          {/* 하위 카테고리 버튼 */}
+          <div className="sub-category-buttons">
+            {subCategoryList.map((sub) => (
+              <button
+                key={sub.value}
+                className={`sub-category-button ${selectedSub === sub.value ? 'active' : ''}`}
+                onClick={() => handleSubCategoryChange(sub.value)}
+              >
+                {sub.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -146,22 +259,46 @@ function ProductListPage() {
           <>
             <div className="product-count-sort">
               <span className="total-count">전체 {totalItems}건</span>
+              <div className="sort-menu">
+                <button 
+                  className={sortBy === 'createdAt' && order === 'desc' ? 'active' : ''}
+                  onClick={() => handleSortChange('createdAt', 'desc')}
+                >
+                  최신순
+                </button>
+                <button 
+                  className={sortBy === 'marketPrice' && order === 'asc' ? 'active' : ''}
+                  onClick={() => handleSortChange('marketPrice', 'asc')}
+                >
+                  가격 낮은순
+                </button>
+                <button 
+                  className={sortBy === 'marketPrice' && order === 'desc' ? 'active' : ''}
+                  onClick={() => handleSortChange('marketPrice', 'desc')}
+                >
+                  가격 높은순
+                </button>
+              </div>
             </div>
 
             <div className="product-grid">
-              {products.map((prod) => (
-                <ProductCard
-                  key={prod.productId}
-                  product={{
-                    ...prod,
-                    imageUrl: prod.primaryImageURL || "", // 상품 정보에서 이미지 URL 직접 사용
-                  }}
-                />
-              ))}
+              {products.length === 0 ? (
+                <p className="no-products">상품이 없습니다.</p>
+              ) : (
+                products.map((prod) => (
+                  <ProductCard
+                    key={prod.productId}
+                    product={{
+                      ...prod,
+                      imageUrl: prod.primaryImageURL || "", // 상품 정보에서 이미지 URL 직접 사용
+                    }}
+                  />
+                ))
+              )}
             </div>
 
             <div className="pagination">
-              <p>전체 페이지: {totalPages}페이지</p>
+              {renderPagination()}
             </div>
           </>
         )}

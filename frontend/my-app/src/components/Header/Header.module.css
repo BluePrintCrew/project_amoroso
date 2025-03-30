@@ -3,83 +3,170 @@
   src: url('../../assets/fonts/Pretendard-Regular.ttf');
 }
 
-body{
-  font-family: 'CustomFont',sans-serif;
+body {
+  font-family: 'CustomFont', sans-serif;
 }
 
-.header{
+.header {
   z-index: 10;
-  padding-top: 10px;
+  padding-top: 15px;
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-.headerContent{
+.headerContent {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 
-.headerMenu{
+.headerMenu {
   display: flex;
   gap: 45px;
 }
 
-.headerLogo{
-  width: 200px;
-  height: 41px;
+.headerLogo {
+  width: 220px;
+  height: 45px;
 }
 
-.headerLink{
+.headerLink {
   text-decoration: none;
-  color:inherit;
+  color: inherit;
   display: flex;
   align-items: center;
+  font-size: 18px;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
-.searchBar{
+.headerLink:hover {
+  color: #766e68;
+}
+
+.searchBar {
   display: flex;
   align-items: center;
   margin: auto;
   border: 1px solid #ddd;
-  border-radius: 15px;
-  height: 35px;
-  width: 350px;
+  border-radius: 20px;
+  height: 45px;
+  width: 400px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.searchInput{
+.searchBar:hover, .searchBar:focus-within {
+  border-color: #766e68;
+  box-shadow: 0 0 0 2px rgba(118, 110, 104, 0.1);
+}
+
+.searchInput {
   flex: 1;
   border: none;
-  outline:none;
-  font-size: 14px;
+  outline: none;
+  font-size: 16px;
   cursor: text;
   background-color: transparent;
   margin: 10px;
+  color: #333;
 }
 
-.searchIcon{
-  width: 20px;
-  height: 20px;
+.searchInput::placeholder {
+  color: #999;
+}
+
+.searchIcon {
+  width: 24px;
+  height: 24px;
   margin-bottom: 3px;
-  margin-right: 10px;
+  margin-right: 15px;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.headerIcons{
+.searchIcon:hover {
+  transform: scale(1.1);
+}
+
+.headerIcons {
   display: flex;
-  gap:35px;
+  align-items: center;
+  gap: 40px;
   margin-left: auto;
 }
 
-.headerBorder{
+/* 아이콘과 라벨을 위한 컨테이너 */
+.iconWithLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.iconWithLabel:hover {
+  transform: translateY(-2px);
+}
+
+/* 통일된 아이콘 스타일 */
+.navIcon {
+  width: 28px;
+  height: 28px;
+}
+
+/* 아이콘 아래 라벨 스타일 */
+.iconLabel {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.headerBorder {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 1px;
+  height: 2px;
   background: #eee;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .headerContent {
+    padding: 0 20px;
+  }
+  
+  .searchBar {
+    width: 200px;
+  }
+  
+  .headerIcons {
+    gap: 20px;
+  }
+  
+  .iconLabel {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .searchBar {
+    width: 150px;
+  }
+  
+  .headerIcons {
+    gap: 15px;
+  }
+  
+  .navIcon {
+    width: 24px;
+    height: 24px;
+  }
 }

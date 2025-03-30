@@ -6,7 +6,6 @@ import axios from "axios";
 import { API_BASE_URL } from "./api";
 
 function MyInfoEdit() {
-  const [activeTab, setActiveTab] = useState("personal");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -24,13 +23,6 @@ function MyInfoEdit() {
     smsConsent: false,
     dmConsent: false,
     locationConsent: false
-  });
-  
-  // 비밀번호 변경 상태 관리
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
   });
   
   // 소셜 계정 연동 상태
@@ -148,24 +140,20 @@ function MyInfoEdit() {
   // 입력값 변경 처리
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setUserInfo({
-      ...userInfo,
-      [name]: type === "checkbox" ? checked : value
-    });
-  };
-  
-  // 비밀번호 입력값 변경 처리
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData({
-      ...passwordData,
-      [name]: value
-    });
-  };
-
-  // 탭 전환 처리
-  const handleTabClick = (tabName) => {
-    setActiveTab(tabName);
+    
+    // 날짜 입력의 경우 YYYY-MM-DD 형식으로 저장
+    if (name === "birthDate" && value) {
+      // HTML date input은 이미 YYYY-MM-DD 형식으로 반환하므로 추가 변환 불필요
+      setUserInfo({
+        ...userInfo,
+        [name]: value
+      });
+    } else {
+      setUserInfo({
+        ...userInfo,
+        [name]: type === "checkbox" ? checked : value
+      });
+    }
   };
 
   // 개인정보 수정 폼 제출 처리
@@ -184,7 +172,7 @@ function MyInfoEdit() {
       const updateData = {
         name: userInfo.name,
         email: userInfo.email,
-        birthDate: userInfo.birthDate,
+        birthDate: userInfo.birthDate, // date picker에서 선택한 날짜 추가 (YYYY-MM-DD 형식)
         phoneNumber: userInfo.phoneNumber,
         nickname: userInfo.nickname,
         postalCode: userInfo.postalCode,
@@ -224,24 +212,6 @@ function MyInfoEdit() {
       alert("개인정보 업데이트에 실패했습니다: " + 
             (err.response?.data?.message || err.message || "알 수 없는 오류"));
     }
-  };
-
-  // 비밀번호 변경 폼 제출 처리
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    
-    // 비밀번호와 확인 비밀번호 일치 검사
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
-      return;
-    }
-    
-    alert("비밀번호 변경 기능은 API에서 제공하지 않습니다.");
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    });
   };
 
   // 회원 탈퇴 처리
@@ -327,284 +297,215 @@ function MyInfoEdit() {
         <div className="my-info-content">
           <h2 className="page-title">내 정보 수정</h2>
 
-          {/* 탭 선택 */}
-          <div className="info-tabs">
-            <button
-              className={`info-tab ${activeTab === "personal" ? "active" : ""}`}
-              onClick={() => handleTabClick("personal")}
-            >
-              개인정보 변경
-            </button>
-            <button
-              className={`info-tab ${activeTab === "password" ? "active" : ""}`}
-              onClick={() => handleTabClick("password")}
-            >
-              비밀번호 변경
-            </button>
-          </div>
+          {/* 개인정보 변경 폼 */}
+          <form onSubmit={handlePersonalInfoSubmit} className="info-form">
+            {/* (1) 개인설정정보 */}
+            <section>
+              <h3>개인회원정보</h3>
 
-          {activeTab === "personal" ? (
-            /* 개인정보 변경 폼 */
-            <form onSubmit={handlePersonalInfoSubmit} className="info-form">
-              {/* (1) 개인설정정보 */}
-              <section>
-                <h3>개인회원정보</h3>
-
-                {/* 아이디(이메일) - read-only */}
-                <div className="form-group display-field">
-                  <label className="required-label">아이디(이메일)</label>
-                  <div className="display-value">
-                    {userInfo.email}
-                  </div>
+              {/* 아이디(이메일) - read-only */}
+              <div className="form-group display-field">
+                <label className="required-label">아이디(이메일)</label>
+                <div className="display-value">
+                  {userInfo.email}
                 </div>
+              </div>
 
-                {/* 이메일 - editable */}
-                <div className="form-group">
-                  <label className="required-label">이메일</label>
-                  <input 
-                    type="email" 
-                    name="email"
-                    value={userInfo.email} 
+              {/* 이메일 - editable */}
+              <div className="form-group">
+                <label className="required-label">이메일</label>
+                <input 
+                  type="email" 
+                  name="email"
+                  value={userInfo.email} 
+                  onChange={handleInputChange}
+                  placeholder="아이디(이메일) 입력" 
+                />
+              </div>
+            </section>
+
+            {/* (2) 본인인증정보 */}
+            <section>
+              <h3>본인인증정보</h3>
+
+              {/* 이름 */}
+              <div className="form-group">
+                <label>이름</label>
+                <input 
+                  type="text" 
+                  name="name"
+                  value={userInfo.name} 
+                  onChange={handleInputChange}
+                  placeholder="이름 입력" 
+                />
+              </div>
+
+              {/* 생년월일 + 성별 (남/여) */}
+              <div className="form-group birth-gender-row">
+                <label className="required-label">생년월일/성별</label>
+
+                <div className="birth-gender-container">
+                  {/* Birth date input - changed to date type */}
+                  <input
+                    type="date"
+                    name="birthDate"
+                    value={userInfo.birthDate}
                     onChange={handleInputChange}
-                    placeholder="아이디(이메일) 입력" 
+                    className="birth-input"
                   />
-                </div>
-              </section>
 
-              {/* (2) 본인인증정보 */}
-              <section>
-                <h3>본인인증정보</h3>
-
-                {/* 이름 */}
-                <div className="form-group">
-                  <label>이름</label>
-                  <input 
-                    type="text" 
-                    name="name"
-                    value={userInfo.name} 
-                    onChange={handleInputChange}
-                    placeholder="이름 입력" 
-                  />
-                </div>
-
-                {/* 생년월일 + 성별 (남/여) */}
-                <div className="form-group birth-gender-row">
-                  <label className="required-label">생년월일/성별</label>
-
-                  <div className="birth-gender-container">
-                    {/* Birth date input */}
-                    <input
-                      type="text"
-                      name="birthDate"
-                      value={userInfo.birthDate}
-                      onChange={handleInputChange}
-                      placeholder="생년월일 입력 (YYYY-MM-DD)"
-                      className="birth-input"
-                    />
-
-                    {/* Two squares for 남/여 */}
-                    <div className="gender-squares">
-                      <div 
-                        className={`gender-square male-square ${userInfo.gender === 'male' ? 'selected' : ''}`}
-                        onClick={() => handleInputChange({target: {name: 'gender', value: 'male'}})}
-                      >
-                        남
-                      </div>
-                      <div 
-                        className={`gender-square female-square ${userInfo.gender === 'female' ? 'selected' : ''}`}
-                        onClick={() => handleInputChange({target: {name: 'gender', value: 'female'}})}
-                      >
-                        여
-                      </div>
+                  {/* Two squares for 남/여 */}
+                  <div className="gender-squares">
+                    <div 
+                      className={`gender-square male-square ${userInfo.gender === 'male' ? 'selected' : ''}`}
+                      onClick={() => handleInputChange({target: {name: 'gender', value: 'male'}})}
+                    >
+                      남
+                    </div>
+                    <div 
+                      className={`gender-square female-square ${userInfo.gender === 'female' ? 'selected' : ''}`}
+                      onClick={() => handleInputChange({target: {name: 'gender', value: 'female'}})}
+                    >
+                      여
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* 휴대폰번호 */}
-                <div className="form-group">
-                  <label>휴대폰번호</label>
-                  <input 
-                    type="tel" 
-                    name="phoneNumber"
-                    value={userInfo.phoneNumber} 
+              {/* 휴대폰번호 */}
+              <div className="form-group">
+                <label>휴대폰번호</label>
+                <input 
+                  type="tel" 
+                  name="phoneNumber"
+                  value={userInfo.phoneNumber} 
+                  onChange={handleInputChange}
+                  placeholder="휴대폰번호 입력" 
+                />
+              </div>
+            </section>
+
+            {/* (3) 주소정보 */}
+            <section>
+              <h3>주소정보 입력</h3>
+              <div className="form-group">
+                <label>주소</label>
+
+                {/* 우편번호 + 검색 버튼 */}
+                <div className="address-row">
+                  <input
+                    type="text"
+                    name="postalCode"
+                    value={userInfo.postalCode}
                     onChange={handleInputChange}
-                    placeholder="휴대폰번호 입력" 
-                  />
-                </div>
-              </section>
-
-              {/* (3) 주소정보 */}
-              <section>
-                <h3>주소정보 입력</h3>
-                <div className="form-group">
-                  <label>주소</label>
-
-                  {/* 우편번호 + 검색 버튼 */}
-                  <div className="address-row">
-                    <input
-                      type="text"
-                      name="postalCode"
-                      value={userInfo.postalCode}
-                      onChange={handleInputChange}
-                      className="postal-input"
-                      placeholder="우편번호"
-                      readOnly
-                    />
-                    <button 
-                      type="button" 
-                      className="search-btn"
-                      onClick={handleFindPostalCode}
-                    >
-                      <img src={magnifierIcon} alt="돋보기" className="magnifier-icon" />
-                      우편번호 찾기
-                    </button>
-                  </div>
-
-                  {/* 기본주소 및 상세주소 */}
-                  <input 
-                    type="text" 
-                    name="address"
-                    value={userInfo.address} 
-                    onChange={handleInputChange}
-                    placeholder="주소" 
-                    className="address-line" 
+                    className="postal-input"
+                    placeholder="우편번호"
                     readOnly
                   />
+                  <button 
+                    type="button" 
+                    className="search-btn"
+                    onClick={handleFindPostalCode}
+                  >
+                    <img src={magnifierIcon} alt="돋보기" className="magnifier-icon" />
+                    우편번호 찾기
+                  </button>
+                </div>
+
+                {/* 기본주소 및 상세주소 */}
+                <input 
+                  type="text" 
+                  name="address"
+                  value={userInfo.address} 
+                  onChange={handleInputChange}
+                  placeholder="주소" 
+                  className="address-line" 
+                  readOnly
+                />
+                <input 
+                  type="text" 
+                  id="detailAddress"
+                  name="detailAddress"
+                  value={userInfo.detailAddress} 
+                  onChange={handleInputChange}
+                  placeholder="상세 주소" 
+                  className="address-line" 
+                />
+              </div>
+            </section>
+
+            {/* (4) 계정 인증 여부 */}
+            <section>
+              <h3>계정 인증 여부</h3>
+              <div className="linked-account-row">
+                <label>네이버</label>
+                <p>{linkedAccounts.naver ? "연동됨" : "연동된 계정이 없습니다."}</p>
+              </div>
+              <div className="linked-account-row">
+                <label>카카오</label>
+                <p>{linkedAccounts.kakao ? "연동됨" : "연동된 계정이 없습니다."}</p>
+              </div>
+              <div className="linked-account-row">
+                <label>구글</label>
+                <p>{linkedAccounts.google ? "연동됨" : "연동된 계정이 없습니다."}</p>
+              </div>
+            </section>
+
+            {/* (5) 마케팅 수신 동의 (선택) */}
+            <section>
+              <h3>마케팅 수신동의 (선택)</h3>
+              <div className="checkbox-group">
+                <label>
                   <input 
-                    type="text" 
-                    id="detailAddress"
-                    name="detailAddress"
-                    value={userInfo.detailAddress} 
+                    type="checkbox" 
+                    name="emailConsent"
+                    checked={userInfo.emailConsent} 
                     onChange={handleInputChange}
-                    placeholder="상세 주소" 
-                    className="address-line" 
                   />
-                </div>
-              </section>
-
-              {/* (4) 계정 인증 여부 */}
-              <section>
-                <h3>계정 인증 여부</h3>
-                <div className="linked-account-row">
-                  <label>네이버</label>
-                  <p>{linkedAccounts.naver ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                </div>
-                <div className="linked-account-row">
-                  <label>카카오</label>
-                  <p>{linkedAccounts.kakao ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                </div>
-                <div className="linked-account-row">
-                  <label>구글</label>
-                  <p>{linkedAccounts.google ? "연동됨" : "연동된 계정이 없습니다."}</p>
-                </div>
-              </section>
-
-              {/* (5) 마케팅 수신 동의 (선택) */}
-              <section>
-                <h3>마케팅 수신동의 (선택)</h3>
-                <div className="checkbox-group">
-                  <label>
-                    <input 
-                      type="checkbox" 
-                      name="emailConsent"
-                      checked={userInfo.emailConsent} 
-                      onChange={handleInputChange}
-                    />
-                    이메일
-                  </label>
-                  <label>
-                    <input 
-                      type="checkbox" 
-                      name="smsConsent"
-                      checked={userInfo.smsConsent} 
-                      onChange={handleInputChange}
-                    />
-                    SMS
-                  </label>
-                  <label>
-                    <input 
-                      type="checkbox" 
-                      name="dmConsent"
-                      checked={userInfo.dmConsent} 
-                      onChange={handleInputChange}
-                    />
-                    DM
-                  </label>
-                </div>
-              </section>
-
-              {/* (6) 하단 버튼들 */}
-              <div className="bottom-buttons">
-                <button 
-                  type="button" 
-                  className="leave-btn"
-                  onClick={handleDeleteAccount}
-                >
-                  회원탈퇴
-                </button>
-                <button 
-                  type="button" 
-                  className="cancel-btn"
-                  onClick={() => window.history.back()}
-                >
-                  취소
-                </button>
-                <button type="submit" className="submit-btn">
-                  수정
-                </button>
+                  이메일
+                </label>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    name="smsConsent"
+                    checked={userInfo.smsConsent} 
+                    onChange={handleInputChange}
+                  />
+                  SMS
+                </label>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    name="dmConsent"
+                    checked={userInfo.dmConsent} 
+                    onChange={handleInputChange}
+                  />
+                  DM
+                </label>
               </div>
-            </form>
-          ) : (
-            /* 비밀번호 변경 폼 */
-            <form onSubmit={handlePasswordSubmit} className="info-form">
-              <section>
-                <h3>비밀번호 변경</h3>
-                <div className="form-group">
-                  <label>현재 비밀번호</label>
-                  <input 
-                    type="password" 
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="현재 비밀번호를 입력하세요" 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>새 비밀번호</label>
-                  <input 
-                    type="password" 
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="새 비밀번호" 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>새 비밀번호 확인</label>
-                  <input 
-                    type="password" 
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    placeholder="새 비밀번호 확인" 
-                  />
-                </div>
-              </section>
+            </section>
 
-              <div className="bottom-buttons">
-                <button 
-                  type="button" 
-                  className="cancel-btn"
-                  onClick={() => window.history.back()}
-                >
-                  취소
-                </button>
-                <button type="submit" className="submit-btn">
-                  변경
-                </button>
-              </div>
-            </form>
-          )}
+            {/* (6) 하단 버튼들 */}
+            <div className="bottom-buttons">
+              <button 
+                type="button" 
+                className="leave-btn"
+                onClick={handleDeleteAccount}
+              >
+                회원탈퇴
+              </button>
+              <button 
+                type="button" 
+                className="cancel-btn"
+                onClick={() => window.history.back()}
+              >
+                취소
+              </button>
+              <button type="submit" className="submit-btn">
+                수정
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </PageLayout>

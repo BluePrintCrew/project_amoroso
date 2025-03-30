@@ -112,6 +112,32 @@
   background-color: #fff;
 }
 
+/* Date picker specific styles */
+.form-group input[type="date"] {
+  cursor: pointer;
+  font-family: "Pretendard", sans-serif;
+  color: #333;
+}
+
+/* Date picker calendar icon styling */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(50%); /* Make the calendar icon gray */
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.form-group input[type="date"]:hover::-webkit-calendar-picker-indicator,
+.form-group input[type="date"]:focus::-webkit-calendar-picker-indicator {
+  filter: invert(40%) sepia(8%) saturate(1000%) hue-rotate(344deg) brightness(90%) contrast(88%); /* #766e68 color for icon */
+}
+
+/* Date picker focus styles */
+.form-group input[type="date"]:focus {
+  box-shadow: 0 2px 0 0 #766e68;
+  background-color: #fff;
+  color: #766e68;
+}
+
 /* Birth date + 남/여 squares in one group */
 .birth-gender-row {
   /* keep the default flex-direction: column for label above */
