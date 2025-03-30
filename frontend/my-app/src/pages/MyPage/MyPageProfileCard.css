@@ -1,65 +1,141 @@
 .my-page-profile-wrapper {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 50px;
-    margin-top: 50px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
+
+/* Left side: name + greeting */
+.profile-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.name-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.arrow {
+  margin-left: 4px;
+  font-size: 1.2rem;
+}
+
+.greeting {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 수정 버튼 스타일 */
+.edit-profile-button {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin-left: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #766E68;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.edit-profile-button:hover {
+  color: #555;
+  text-decoration: underline;
+}
+
+.edit-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+}
+
+/* Right side: stats row */
+.profile-right {
+  display: flex;
+  justify-content: space-evenly; 
+  gap: 48px; /* space between stat-boxes */
+}
+
+.stat-box {
+  text-align: center; 
+}
+
+.stat-icon {
+  width: 32px; 
+  height: 32px; 
+  margin-bottom: 6px;
+  object-fit: contain;
+}
+
+.stat-title {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 4px;
+  color: #766E68;
+}
+
+/* 로딩 및 에러 상태 */
+.my-page-profile-wrapper.loading,
+.my-page-profile-wrapper.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.my-page-profile-wrapper.error button {
+  background-color: #766E68;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.my-page-profile-wrapper.error button:hover {
+  background-color: #665e58;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .my-page-profile-wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   
-  /* Left side: name + greeting */
   .profile-left {
-    display: flex;
-    flex-direction: column;
+    align-items: center;
   }
   
-  .user-name {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0;
-  }
-  
-  .arrow {
-    margin-left: 4px;
-    font-size: 1.2rem;
-  }
-  
-  .greeting {
-    margin-top: 8px;
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  /* Right side: stats row */
   .profile-right {
-    display: flex;
-    justify-content: space-evenly; 
-    gap: 48px; /* space between stat-boxes */
+    flex-wrap: wrap;
+    gap: 20px;
   }
   
   .stat-box {
-    text-align: center; 
+    flex: 1 0 40%;
   }
-  
-  .stat-icon {
-    width: 32px; 
-    height: 32px; 
-    margin-bottom: 6px;
-    object-fit: contain;
-  }
-  
-  .stat-title {
-    font-size: 0.9rem;
-    color: #777;
-    margin: 0;
-  }
-  
-  .stat-value {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-top: 4px;
-    color: #766E68;
-  }
-  
+}

@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./MyPageProfileCard.css";
 import axios from "axios";
 import { API_BASE_URL } from "./api";
+import { useNavigate } from "react-router-dom";
+
 // Import your images
 import pointIcon from "../../assets/point_img.png";
 import couponIcon from "../../assets/coupon_img.png";
 import reviewIcon from "../../assets/review_img.png";
 import zzimIcon from "../../assets/zzim_img.png";
+import editIcon from "../../assets/svg/edit.svg"; // 연필 아이콘 추가 필요
 
 function MyPageProfileCard() {
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
     name: "",
     greeting: "안녕하세요!",
@@ -32,16 +36,13 @@ function MyPageProfileCard() {
           setLoading(false);
           return;
         }
-
         // API 호출
         const response = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
         console.log("프로필 API 응답:", response.data);
-
         // API 응답 데이터를 사용자 정보 객체로 매핑
         setUserInfo({
           name: response.data.name ? `${response.data.name}님` : "고객님",
@@ -58,9 +59,13 @@ function MyPageProfileCard() {
         setLoading(false);
       }
     };
-
     fetchUserProfile();
   }, []); // 컴포넌트 마운트 시 한 번만 실행
+
+  // 내 정보 관리 페이지로 이동하는 함수
+  const handleEditProfile = () => {
+    navigate('/mypageinfo');
+  };
 
   // 로딩 중일 때 표시할 내용
   if (loading) {
@@ -85,11 +90,18 @@ function MyPageProfileCard() {
     <div className="my-page-profile-wrapper">
       {/* Left side: name + greeting */}
       <div className="profile-left">
-        <h2 className="user-name">
-          {userInfo.name} <span className="arrow">&gt;</span>
-        </h2>
+        <div className="name-edit-container">
+          <h2 className="user-name">
+            {userInfo.name} <span className="arrow">&gt;</span>
+          </h2>
+          <button className="edit-profile-button" onClick={handleEditProfile}>
+            <img src={editIcon} alt="수정" className="edit-icon" />
+            <span>내 정보 관리</span>
+          </button>
+        </div>
         <p className="greeting">{userInfo.greeting}</p>
       </div>
+      
       {/* Right side: 4 stats in a row */}
       <div className="profile-right">
         <div className="stat-box">

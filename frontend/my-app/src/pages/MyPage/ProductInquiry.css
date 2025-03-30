@@ -1,17 +1,13 @@
 .product-inquiry-container {
   margin-top: 24px;
   font-family: "Pretendard", sans-serif;
+  max-width: 800px;
+  margin: 24px auto;
 }
 
-/* The two columns side by side */
-.inquiry-columns {
-  display: flex;
-  gap: 40px; /* space between left and right columns */
-}
-
-/* Each column: title + list */
-.inquiry-column {
-  flex: 1;
+/* 상품 문의 섹션 */
+.inquiry-section {
+  width: 100%;
 }
 
 .inquiry-title {
@@ -34,7 +30,7 @@
   align-items: center;
   gap: 12px; /* space between badge, content, date */
   border-bottom: 1px solid #eee;
-  padding: 12px 0;
+  padding: 16px 0;
   font-size: 0.9rem;
   color: #555;
   cursor: pointer; /* 클릭 가능함을 표시 */
@@ -48,11 +44,12 @@
 /* The status badge: "답변대기" or "답변완료" */
 .badge {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.8rem;
   color: #fff;
-  /* either .complete or .pending changes background color */
+  min-width: 70px;
+  text-align: center;
 }
 
 .pending {
@@ -83,7 +80,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
 }
 
 .inquiry-note {
@@ -115,21 +114,35 @@
 }
 
 /* 추가: 로딩, 에러, 빈 상태 스타일 */
-.inquiry-column.loading,
-.inquiry-column.error {
+.inquiry-section.loading,
+.inquiry-section.error {
   display: flex;
   flex-direction: column;
   min-height: 150px;
 }
 
-.inquiry-column.loading p,
-.inquiry-column.error p,
+.inquiry-section.loading p,
+.inquiry-section.error p,
 .empty-message {
   margin-top: 20px;
   color: #666;
   text-align: center;
+  padding: 30px 0;
 }
 
 .error-message {
   color: #e74c3c;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .inquiry-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .kakao-button {
+    align-self: flex-end;
+  }
 }

@@ -1,0 +1,368 @@
+.product-qna-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Pretendard", sans-serif;
+  color: #333;
+}
+
+/* 탭 메뉴 스타일 */
+.tab-menu {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 30px;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 15px 0;
+  text-align: center;
+  background-color: #f5f5f5;
+  border: none;
+  border-right: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.tab-button:last-child {
+  border-right: none;
+}
+
+.tab-button.active {
+  background-color: #444;
+  color: white;
+  font-weight: 600;
+}
+
+/* QnA 헤더 스타일 */
+.qna-header {
+  margin-bottom: 20px;
+}
+
+.qna-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.qna-description {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 액션 버튼 스타일 */
+.qna-action-buttons {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.write-qna-button {
+  padding: 12px 20px;
+  background-color: #766e68;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.write-qna-button:hover {
+  background-color: #444;
+}
+
+.view-my-qna-button {
+  padding: 12px 20px;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.view-my-qna-button:hover {
+  background-color: #f5f5f5;
+}
+
+.arrow {
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+/* 옵션 스타일 */
+.qna-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.view-options {
+  display: flex;
+  gap: 20px;
+}
+
+/* 체크박스 커스텀 스타일 */
+.checkbox-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  user-select: none;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  border-color: #aaa;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #333;
+  border-color: #333;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* 셀렉트 박스 스타일 */
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.sort-select:focus {
+  border-color: #aaa;
+}
+
+/* QnA 테이블 스타일 */
+.qna-list-container {
+  margin-bottom: 30px;
+}
+
+.qna-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #666;
+}
+
+.qna-table th {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.qna-table td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.qna-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.qna-item:hover {
+  background-color: #f9f9f9;
+}
+
+.qna-status {
+  font-weight: 500;
+}
+
+.qna-status.completed {
+  color: #24a148; /* 답변완료 상태 녹색 */
+}
+
+.qna-status.pending {
+  color: #777; /* 미답변 상태 회색 */
+}
+
+.qna-title-cell {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lock-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.qna-item-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+}
+
+.new-badge {
+  color: #ff5722;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.qna-author, .qna-date {
+  color: #666;
+}
+
+.no-data {
+  text-align: center;
+  padding: 30px 0;
+  color: #888;
+}
+
+/* 로딩 컨테이너 */
+.loading-container {
+  text-align: center;
+  padding: 50px 0;
+  color: #666;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 30px;
+}
+
+.page-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-button:hover {
+  border-color: #aaa;
+}
+
+.page-button.active {
+  background-color: #333;
+  color: white;
+  border-color: #333;
+  font-weight: 600;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .tab-button {
+    font-size: 14px;
+    padding: 12px 5px;
+  }
+  
+  .qna-action-buttons {
+    flex-direction: column;
+  }
+  
+  .qna-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .qna-table colgroup {
+    display: none;
+  }
+  
+  .qna-table, .qna-table tbody, .qna-table tr, .qna-table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .qna-table thead {
+    display: none;
+  }
+  
+  .qna-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+  
+  .qna-status {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .qna-title-cell {
+    padding-left: 0;
+    padding-top: 25px;
+    padding-bottom: 10px;
+  }
+  
+  .qna-author, .qna-date {
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
