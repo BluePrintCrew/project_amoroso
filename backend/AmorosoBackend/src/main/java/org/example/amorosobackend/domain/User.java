@@ -128,7 +128,8 @@ public class User {
 
         this.name = name;
         this.email = email;
-        this.birthDate = LocalDateTime.parse(brithDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.birthDate = LocalDateTime.parse(brithDate + "T00:00:00");
+
         this.phoneNumber = phoneNumber;
         this.emailConsent = emailConsent;
         this.smsConsent = smsConsent;
