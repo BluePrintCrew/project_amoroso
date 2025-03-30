@@ -3,8 +3,10 @@ import "./ProductListPage.css";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import PageLayout from "../../components/PageLayout/PageLayout";
 import homeicon from "../../assets/nav_home.png";
+import { API_BASE_URL } from "../MyPage/api";
 
-const API_BASE_URL = "http://localhost:8080/api/v1";
+// Replace hardcoded API_BASE_URL with imported constant
+const API_ENDPOINT = `${API_BASE_URL}/api/v1`;
 
 // 카테고리 맵핑
 const topCategoryMap = {
@@ -71,7 +73,7 @@ function ProductListPage() {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/products/?categoryCode=${selectedSub}`);
+        const response = await fetch(`${API_ENDPOINT}/products/?categoryCode=${selectedSub}`);
         if (!response.ok) throw new Error("상품 데이터를 불러오는데 실패했습니다.");
         const data = await response.json();
         setProducts(data.products || []);

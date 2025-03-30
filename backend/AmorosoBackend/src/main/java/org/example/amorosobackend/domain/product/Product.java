@@ -98,6 +98,8 @@ public class Product {
     private Integer stockNotificationThreshold;
     private Integer discountRate; // 0 ~ 9
     private Integer discountPrice; // discountRate에 따라 바뀜.
+    @Column(nullable = false)
+    private Integer salesCount = 0;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
@@ -197,6 +199,10 @@ public class Product {
 
         Integer discountPrice = (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10;
         return discountPrice;
+    }
+
+    public void increaseSales(int amount) {
+        this.salesCount += amount;
     }
 
 

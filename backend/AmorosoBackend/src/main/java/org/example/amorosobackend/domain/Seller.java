@@ -37,7 +37,7 @@ public class Seller {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;  // 판매자 계정
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String brandName; // 브랜드명
 
     @Column(nullable = false, unique = true, length = 50)
@@ -46,6 +46,9 @@ public class Seller {
     // 판매자가 등록한 상품 목록
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

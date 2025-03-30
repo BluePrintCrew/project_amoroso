@@ -191,7 +191,8 @@ public class ProductService {
                     product.getCategory().getCategoryName(),
                     product.getMainImageUri(),
                     dateToString(product.getCreatedAt()),
-                    isInWishlist
+                    isInWishlist,
+                    product.getSalesCount()
             );
         });
         ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
@@ -251,7 +252,8 @@ public class ProductService {
                     product.getCategory().getCategoryName(),
                     product.getMainImageUri(),
                     dateToString(product.getCreatedAt()),
-                    isInWishlist
+                    isInWishlist,
+                    product.getSalesCount()
             );
         });
         ProductDTO.ProductListResponse response = new ProductDTO.ProductListResponse(
@@ -449,6 +451,7 @@ public class ProductService {
                 product.getProductName(),
                 product.getDescription(),
                 product.getStock(),
+                product.getSalesCount(),
                 product.getProductCode(),
                 product.getManufacturer(),
                 product.getOrigin(),

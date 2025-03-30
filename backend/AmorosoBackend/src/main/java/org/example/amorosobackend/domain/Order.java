@@ -27,6 +27,17 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller; // 이제 하나의 seller는 하나의 order를 가지고있따.
+
+    @Column(name = "order_code")
+    private String orderCode; // - orderCode 추가 : 주문번호를 보고 seller가 배송을 보내기 위함
+
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private UserAddress userAddress;
+
     @OneToOne
     @JoinColumn(name ="user_coupon_id")
     private UserCoupon usercoupon;
@@ -39,6 +50,7 @@ public class Order {
     private Boolean freeLoweringService;
     private Boolean productInstallationAgreement;
     private Boolean vehicleEntryPossible;
+    private String deliveryRequest;
 
     @Enumerated(EnumType.STRING)
     private ElevatorType elevatorType;
@@ -64,20 +76,26 @@ public class Order {
     @Builder
     private Order(User user,
                   Integer totalPrice,
+                  Seller seller,
+                  String orderCode,
                   OrderStatus orderStatus,
                   PaymentStatus paymentStatus,
                   ElevatorType elevatorType,
                   Boolean freeLoweringService,
                   Boolean productInstallationAgreement,
-                  Boolean vehicleEntryPossible) {
+                  Boolean vehicleEntryPossible,
+                  String deliveryRequest) {
         this.user = user;
         this.totalPrice = totalPrice;
+        this.seller = seller;
+        this.orderCode = orderCode;
         this.orderStatus = orderStatus;
         this.paymentStatus = paymentStatus;
         this.freeLoweringService = freeLoweringService;
         this.productInstallationAgreement = productInstallationAgreement;
         this.vehicleEntryPossible =vehicleEntryPossible;
         this.elevatorType = elevatorType;
+        this.deliveryRequest = deliveryRequest;
 
     }
 

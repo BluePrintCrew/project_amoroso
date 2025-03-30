@@ -3,9 +3,7 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './SignUpPage.css';
 import PageLayout from '../../components/PageLayout/PageLayout';
-
-// API 기본 URL 설정
-const API_BASE_URL = 'http://localhost:8080';
+import { API_BASE_URL } from '../MyPage/api';
 
 const SignUpPage = () => {
   const navigate = useNavigate();

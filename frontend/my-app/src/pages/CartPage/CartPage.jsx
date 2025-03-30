@@ -6,6 +6,7 @@ import CartFooter from "./CartFooter";
 import "./CartPage.css";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import { API_BASE_URL } from "../MyPage/api";
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -30,7 +31,7 @@ function CartPage() {
   const fetchCartItems = async (token) => {
     try {
       // 장바구니 API 호출
-      const cartResponse = await axios.get("http://localhost:8080/api/v1/cart", {
+      const cartResponse = await axios.get(`${API_BASE_URL}/api/v1/cart`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -76,7 +77,7 @@ function CartPage() {
           
           try {
             // 제품 상세 정보 API 호출
-            const productResponse = await axios.get(`http://localhost:8080/api/v1/products/${cartItem.productId}`, {
+            const productResponse = await axios.get(`${API_BASE_URL}/api/v1/products/${cartItem.productId}`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -94,12 +95,12 @@ function CartPage() {
               const mainImage = productData.mainImageURL;
               imageUrl = mainImage.startsWith('http') 
                 ? mainImage 
-                : `http://localhost:8080/api/v1/images/${mainImage.split('/').pop()}`;
+                : `${API_BASE_URL}/api/v1/images/${mainImage.split('/').pop()}`;
             } else if (productData.primaryImageURL) {
               const primaryImage = productData.primaryImageURL;
               imageUrl = primaryImage.startsWith('http') 
                 ? primaryImage 
-                : `http://localhost:8080/api/v1/images/${primaryImage.split('/').pop()}`;
+                : `${API_BASE_URL}/api/v1/images/${primaryImage.split('/').pop()}`;
             }
             
             // 통합 객체 반환

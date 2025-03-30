@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import styles from "./AdminProductRegister.module.css";
+import { API_BASE_URL } from "../../MyPage/api";
 
 // --- 카테고리 매핑 테이블
 const categoryMap = {
@@ -136,7 +137,7 @@ function AdminProductRegister() {
 
     try {
       console.log("이미지 업로드 시도:", imageFile.name, "유형:", imageType, "순서:", imageOrder);
-      const response = await fetch("http://localhost:8080/api/v1/images/upload", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/images/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -162,7 +163,7 @@ function AdminProductRegister() {
 
     try {
       // 1) 상품 등록
-      const productResponse = await fetch("http://localhost:8080/api/v1/products/", {
+      const productResponse = await fetch(`${API_BASE_URL}/api/v1/products/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

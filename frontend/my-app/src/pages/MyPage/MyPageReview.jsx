@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./MyPageReview.css";
+import { API_BASE_URL } from "./api";
 
 function MyPageReview() {
   const [reviews, setReviews] = useState([]);
@@ -21,7 +22,7 @@ function MyPageReview() {
         }
 
         // 현재 사용자 ID 가져오기
-        const userResponse = await axios.get('http://localhost:8080/api/v1/auth/users/me', {
+        const userResponse = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -39,7 +40,7 @@ function MyPageReview() {
         }
 
         // 리뷰 작성 가능한 상품 목록 가져오기
-        const reviewableResponse = await axios.get(`http://localhost:8080/api/v1/orders/reviewable-items`, {
+        const reviewableResponse = await axios.get(`${API_BASE_URL}/api/v1/orders/reviewable-items`, {
           params: {
             userId: userId,
             pageable: {
@@ -57,7 +58,7 @@ function MyPageReview() {
         console.log("리뷰 작성 가능 상품 응답:", reviewableResponse.data);
 
         // 이미 작성한 리뷰 목록 가져오기
-        const writtenReviewsResponse = await axios.get('http://localhost:8080/api/v1/reviews/my', {
+        const writtenReviewsResponse = await axios.get(`${API_BASE_URL}/api/v1/reviews/my`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -167,7 +168,7 @@ function MyPageReview() {
                     <img 
                       src={item.mainImageUrl.startsWith('http') 
                         ? item.mainImageUrl 
-                        : `http://localhost:8080/api/v1/images/${item.mainImageUrl.split('/').pop()}`} 
+                        : `${API_BASE_URL}/api/v1/images/${item.mainImageUrl.split('/').pop()}`} 
                       alt={item.productName} 
                       className="product-thumbnail"
                       onError={(e) => e.target.src = "https://placehold.co/50x50?text=No+Image"}

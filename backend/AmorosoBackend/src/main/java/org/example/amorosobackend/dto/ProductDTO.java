@@ -40,6 +40,7 @@ public class ProductDTO {
         private String primaryImageURL;
         private String createdAt;
         private boolean isInWishlist;
+        private Integer salesCount;
         // -> 이부분을 추가해야함
     }
 
@@ -55,7 +56,7 @@ public class ProductDTO {
         private String productName;
         private String description;
         private int stock;
-
+        private Integer salesCount;
         private String productCode;
         private String manufacturer;
         private String origin;
