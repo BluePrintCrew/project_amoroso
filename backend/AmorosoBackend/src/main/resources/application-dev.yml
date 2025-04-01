@@ -15,9 +15,9 @@ spring:
 
 app:
   frontend:
-    baseUrl: http://amoroso.blue
+    baseUrl: https://amoroso.blue
   backend:
-    baseUrl: http://amoroso-dev-env-1.eba-2rz3ssm7.ap-northeast-2.elasticbeanstalk.com
+    baseUrl: https://amoroso-dev-env-1.eba-2rz3ssm7.ap-northeast-2.elasticbeanstalk.com
 
 logging:
   level:
