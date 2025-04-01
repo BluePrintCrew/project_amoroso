@@ -72,6 +72,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>(); // 주문 아이템 리스트
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inquiry> inquirys = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "product_tags",
