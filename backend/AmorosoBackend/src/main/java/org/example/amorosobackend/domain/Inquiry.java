@@ -1,15 +1,14 @@
 package org.example.amorosobackend.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.amorosobackend.domain.product.Product;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Table(name = "inquiries")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Inquiry {
 
@@ -24,7 +23,6 @@ public class Inquiry {
 
     private boolean isAnswered;
 
-    @Setter
     private String authorUsername;
 
     private LocalDateTime createdAt;
@@ -41,7 +39,16 @@ public class Inquiry {
     private Inquiry(User user,
                     Product product,
                     String inquiryTitle,
-                    String inquiryDescription) {}
+                    String inquiryDescription,
+                    String authorUsername,
+                    boolean isAnswered) {
+        this.user = user;
+        this.authorUsername = authorUsername;
+        this.inquiryTitle = inquiryTitle;
+        this.inquiryDescription = inquiryDescription;
+        this.product = product;
+        this.isAnswered = isAnswered;
+    }
 
     @PrePersist
     public void prePersist() {
