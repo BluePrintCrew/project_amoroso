@@ -17,7 +17,7 @@ app:
   frontend:
     baseUrl: https://amoroso.blue
   backend:
-    baseUrl: https://amoroso-dev-env-1.eba-2rz3ssm7.ap-northeast-2.elasticbeanstalk.com
+    baseUrl: https://api.amoroso.blue
 
 logging:
   level:
