@@ -1,52 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 
 const LoginSuccess = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     try {
-      // 이미 localStorage에 토큰이 있으면 대시보드로 이동
-      if (localStorage.getItem('access_token')) {
-        const token = localStorage.getItem('access_token');
-        const decoded = jwtDecode(token);
-        console.log(decoded);
-        navigateBasedOnRole(decoded.role);
-        return;
+      // 로컬 스토리지에 토큰이 있는지 확인
+      let token = localStorage.getItem('access_token');
+
+      // 없으면 URL에서 토큰 가져오기
+      if (!token) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessToken = urlParams.get('access_token');
+
+        if (accessToken) {
+          localStorage.setItem('access_token', accessToken);
+          token = accessToken;
+        } else {
+          navigate("/loginFailure");
+          return;
+        }
       }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const accessToken = urlParams.get('access_token');
-      
-      if (accessToken) {
-        localStorage.setItem('access_token', accessToken);
-        navigate("/dashboard");
+      // 토큰 디코드 및 역할 기반 라우팅
+      const decoded = jwtDecode(token);
+      if (decoded.role === "ROLE_SELLER") {
+        navigate("/admin");
       } else {
-        // 액세스 토큰이 없는 경우 로그인 실패 페이지로 이동
-        // navigate("/loginFailure");
-        alert('엑세스 토큰 없음');
+        navigate("/");
       }
     } catch (err) {
-      setError("로그인 처리 중 오류가 발생했습니다.");
       console.error("Login processing error:", err);
+      navigate("/loginFailure");
     }
   }, [navigate]);
-
-  const navigateBasedOnRole = (role) => {
-    switch(role) {
-      case "ROLE_SELLER":
-        navigate("/admin");
-        break;
-      default:
-        navigate("/");
-    }
-  }
-
-  if (error) {
-    return <div>error: {error}</div>;
-  }
 
   return (
     <div>
