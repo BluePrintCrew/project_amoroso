@@ -27,19 +27,19 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID} # 환경 변수에서 Google Client ID 참조
             client-secret: ${GOOGLE_CLIENT_SECRET} # 환경 변수에서 Google Client Secret 참조
-            redirect-uri: "${app.backend.baseUrl}/oauth2/callback/google"
+            redirect-uri: '${app.backend.baseUrl}/oauth2/callback/google'
             scope: email, profile
             authorization-grant-type: authorization_code
           kakao:
             client-id: ${KAKAO_CLIENT_ID} # 환경 변수에서 Kakao Client ID 참조
             client-secret: ${KAKAO_CLIENT_SECRET} # 환경 변수에서 Kakao Client Secret 참조
-            redirect-uri: "${app.backend.baseUrl}/oauth2/callback/kakao"
+            redirect-uri: '${app.backend.baseUrl}/oauth2/callback/kakao'
             scope: profile, account_email
             authorization-grant-type: authorization_code
           naver:
             client-id: ${NAVER_CLIENT_ID} # 환경 변수에서 Naver Client ID 참조
             client-secret: ${NAVER_CLIENT_SECRET} # 환경 변수에서 Naver Client Secret 참조
-            redirect-uri: "${app.backend.baseUrl}/oauth2/callback/naver"
+            redirect-uri: '${app.backend.baseUrl}/oauth2/callback/naver'
             scope: name, email
             authorization-grant-type: authorization_code
         provider:
@@ -56,8 +56,8 @@ spring:
 
   # 사용자 정의 설정은 (spring 바깥에서 관리할 수 있다)
 app:
-  image-directory: "./images"
-  review-image-directory: "./review-images"
+  image-directory: './images'
+  review-image-directory: './review-images'
   backend:
     baseUrl: http://localhost:8080
   frontend:
@@ -68,7 +68,6 @@ logging:
     org.springframework.security: DEBUG
     org.example.amorosobackend: DEBUG
     org.springframework.web: DEBUG
-
 
 iamport:
   api_key: 7614753647502602

@@ -49,6 +49,7 @@ const OrderForm = () => {
 
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [userAddress, setUserAddress] = useState(null);
+  const [user, setUser] = useState(null);
 
   const location = useLocation();
   const passedData = location.state;
@@ -97,6 +98,26 @@ const OrderForm = () => {
     fetchUserAddress();
   }, []);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/auth/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUser(response.data);
+      } catch (err) {
+        console.error('유저 이메일 가져오기 실패:', err);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [freeLoweringService, setFreeLoweringService] = useState(false);
   const [productInstallationAgreement, setProductInstallationAgreement] =
@@ -111,25 +132,9 @@ const OrderForm = () => {
       const orderItems = products.map((item) => ({
         productId: item.productId,
         quantity: item.quantity || 1,
-        userCouponId: item.userCouponId || 0,
-        additionalOptionId: item.addtionalOptionId || 0,
-        productOptionId: item.productOptionId || 0,
-        selectedOptionValue: item.selectedOptionValue || '',
       }));
 
-      console.log('🛒 orderItems:', orderItems);
-      console.log('📦 전체 주문 데이터:', {
-        totalPrice: finalPrice,
-        orderItems,
-        userAddressId: userAddress?.addressId ?? 0,
-        deliveryRequest,
-        freeLoweringService,
-        productInstallationAgreement,
-        vehicleEntryPossible,
-        elevatorType,
-      });
-
-      const response = await axios.post(
+      const orderResponse = await axios.post(
         `${API_BASE_URL}/api/v1/orders`,
         {
           totalPrice: finalPrice,
@@ -149,8 +154,66 @@ const OrderForm = () => {
         }
       );
 
-      console.log('✅ 주문 완료:', response.data);
-      alert('주문이 완료되었습니다!');
+      console.log('✅ 주문 완료:', orderResponse.data);
+
+      const orderId = orderResponse.data.orderId;
+
+      const { IMP } = window;
+      if (!IMP) {
+        alert('결제 모듈이 로드되지 않았습니다.');
+        return;
+      }
+
+      IMP.init(process.env.REACT_APP_IAMPORT_MERCHANT_CODE);
+      const merchant_uid = `order_${orderId}_${Date.now()}`;
+
+      IMP.request_pay(
+        {
+          channelKey: process.env.REACT_APP_PORTONE_CHANNEL_KEY,
+          pg: 'html5_inicis',
+          pay_method: 'card',
+          merchant_uid,
+          name: `주문번호 ${orderId}`,
+          amount: finalPrice,
+          buyer_email: user?.email ?? 'guest@example.com',
+          buyer_name: user?.name ?? '비회원',
+          buyer_tel: user?.phoneNumber ?? '010-0000-0000',
+          buyer_addr: userAddress?.address ?? '',
+          buyer_postcode: userAddress?.postalCode ?? '',
+          currency: 'KRW',
+        },
+        async function (rsp) {
+          if (rsp.success) {
+            try {
+              const verifyRes = await axios.post(
+                `${API_BASE_URL}/api/v1/payments/verify`,
+                {
+                  impUid: rsp.imp_uid,
+                  orderId: orderId,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+
+              if (verifyRes.data.success) {
+                alert('결제가 성공적으로 처리되었습니다.');
+              } else {
+                alert('결제 검증 실패: ' + verifyRes.data.message);
+              }
+            } catch (err) {
+              console.error('결제 검증 오류', err);
+              alert('결제 검증 중 오류가 발생했습니다.');
+            }
+          } else {
+            console.error('결제 실패: ', rsp.error_msg);
+            alert(`결제 실패: ${rsp.error_msg}`);
+          }
+        }
+      );
     } catch (error) {
       console.error('❌ 주문 실패:', error);
       alert('주문에 실패했습니다. 다시 시도해주세요.');
