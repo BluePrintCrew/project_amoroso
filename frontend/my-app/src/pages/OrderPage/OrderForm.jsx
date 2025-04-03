@@ -2,6 +2,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import React, { useEffect, useState } from 'react';
 
+import { API_BASE_URL } from '../MyPage/api';
 import CartSummary from '../../components/CartSummary/CartSummary';
 import DatePicker from 'react-datepicker';
 import PageLayout from '../../components/PageLayout/PageLayout';
@@ -78,7 +79,7 @@ const OrderForm = () => {
       try {
         const token = localStorage.getItem('access_token');
         const response = await axios.get(
-          'http://localhost:8080/api/v1/UserAddress/default',
+          `${API_BASE_URL}/api/v1/UserAddress/default`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -95,6 +96,66 @@ const OrderForm = () => {
 
     fetchUserAddress();
   }, []);
+
+  const [deliveryRequest, setDeliveryRequest] = useState('');
+  const [freeLoweringService, setFreeLoweringService] = useState(false);
+  const [productInstallationAgreement, setProductInstallationAgreement] =
+    useState(false);
+  const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
+  const [elevatorType, setElevatorType] = useState('ONE_TO_SEVEN');
+
+  const handleOrderSubmit = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+
+      const orderItems = products.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity || 1,
+        userCouponId: item.userCouponId || 0,
+        additionalOptionId: item.addtionalOptionId || 0,
+        productOptionId: item.productOptionId || 0,
+        selectedOptionValue: item.selectedOptionValue || '',
+      }));
+
+      console.log('🛒 orderItems:', orderItems);
+      console.log('📦 전체 주문 데이터:', {
+        totalPrice: finalPrice,
+        orderItems,
+        userAddressId: userAddress?.addressId ?? 0,
+        deliveryRequest,
+        freeLoweringService,
+        productInstallationAgreement,
+        vehicleEntryPossible,
+        elevatorType,
+      });
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/orders`,
+        {
+          totalPrice: finalPrice,
+          orderItems,
+          userAddressId: userAddress?.addressId ?? 0,
+          deliveryRequest,
+          freeLoweringService,
+          productInstallationAgreement,
+          vehicleEntryPossible,
+          elevatorType,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log('✅ 주문 완료:', response.data);
+      alert('주문이 완료되었습니다!');
+    } catch (error) {
+      console.error('❌ 주문 실패:', error);
+      alert('주문에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
     <PageLayout>
@@ -124,7 +185,7 @@ const OrderForm = () => {
                   <img
                     src={
                       product.mainImageURL
-                        ? `http://localhost:8080/api/v1/images/${product.mainImageURL
+                        ? `${API_BASE_URL}/api/v1/images/${product.mainImageURL
                             .split('/')
                             .pop()}`
                         : 'https://placehold.co/120x120'
@@ -225,30 +286,66 @@ const OrderForm = () => {
                     <div className={styles.elevatorOptions}>
                       <span>엘리베이터:</span>
                       <label>
-                        <input type="radio" name="elevator" />
+                        <input
+                          type="radio"
+                          name="elevator"
+                          value="ONE_TO_SEVEN"
+                          checked={elevatorType === 'ONE_TO_SEVEN'}
+                          onChange={() => setElevatorType('ONE_TO_SEVEN')}
+                        />
                         1~7인승
                       </label>
                       <label>
-                        <input type="radio" name="elevator" />
+                        <input
+                          type="radio"
+                          name="elevator"
+                          value="EIGHT_TO_TEN"
+                          checked={elevatorType === 'EIGHT_TO_TEN'}
+                          onChange={() => setElevatorType('EIGHT_TO_TEN')}
+                        />
                         8~10인승
                       </label>
                       <label>
-                        <input type="radio" name="elevator" />
+                        <input
+                          type="radio"
+                          name="elevator"
+                          value="ELEVEN_OR_MORE"
+                          checked={elevatorType === 'ELEVEN_OR_MORE'}
+                          onChange={() => setElevatorType('ELEVEN_OR_MORE')}
+                        />
                         11인승 이상
                       </label>
                       <label>
-                        <input type="radio" name="elevator" />
+                        <input
+                          type="radio"
+                          name="elevator"
+                          value="NONE"
+                          checked={elevatorType === 'NONE'}
+                          onChange={() => setElevatorType('NONE')}
+                        />
                         없음
                       </label>
                     </div>
                     <div className={styles.vehicleOptions}>
                       <span>차량현장 진입:</span>
                       <label>
-                        <input type="radio" name="vehicle" />
+                        <input
+                          type="radio"
+                          name="vehicle"
+                          value="true"
+                          checked={vehicleEntryPossible === true}
+                          onChange={() => setVehicleEntryPossible(true)}
+                        />
                         진입가능
                       </label>
                       <label>
-                        <input type="radio" name="vehicle" />
+                        <input
+                          type="radio"
+                          name="vehicle"
+                          value="false"
+                          checked={vehicleEntryPossible === false}
+                          onChange={() => setVehicleEntryPossible(false)}
+                        />
                         진입불가
                       </label>
                     </div>
@@ -260,7 +357,13 @@ const OrderForm = () => {
                 <div className={styles.cell}>
                   <div className={styles.checkboxOptions}>
                     <label>
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={productInstallationAgreement}
+                        onChange={(e) =>
+                          setProductInstallationAgreement(e.target.checked)
+                        }
+                      />
                       (필수) 제품 설치 공간 확보 및 사다리차 추가비용
                       동의합니다.
                     </label>
@@ -269,7 +372,13 @@ const OrderForm = () => {
                       내용입니다.
                     </p>
                     <label>
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={freeLoweringService}
+                        onChange={(e) =>
+                          setFreeLoweringService(e.target.checked)
+                        }
+                      />
                       (선택) 무료내림서비스 신청
                     </label>
                   </div>
@@ -283,6 +392,8 @@ const OrderForm = () => {
                   <textarea
                     className={styles.deliveryRequest}
                     placeholder="배송시 요청사항 내용을 입력하세요."
+                    value={deliveryRequest}
+                    onChange={(e) => setDeliveryRequest(e.target.value)}
                   ></textarea>
                 </div>
               </div>
@@ -467,7 +578,9 @@ const OrderForm = () => {
                 하기 필수약관을 모두 확인하였으며 결제에 동의합니다.
               </label>
             </div>
-            <button className={styles.payButton}>결제하기</button>
+            <button className={styles.payButton} onClick={handleOrderSubmit}>
+              결제하기
+            </button>
           </div>
         </div>
       </div>

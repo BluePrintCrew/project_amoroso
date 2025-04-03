@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { API_BASE_URL } from '../MyPage/api';
 
+import { API_BASE_URL } from '../MyPage/api';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import CartPopup from '../Product_Detail/CartPopup';
 import PageLayout from '../../components/PageLayout/PageLayout';
-import ReviewSection from './ReviewSection';
 import ProductQnA from '../../components/ProductQnA/ProductQnA'; // ProductQnA 컴포넌트 import
+import ReviewSection from './ReviewSection';
 import couponPack from '../../assets/coupon_pack.png';
 import getCoupon from '../../assets/get_coupon.png';
 import likeButton from '../../assets/like.png';
@@ -30,15 +30,12 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/v1/products/${id}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/api/v1/products/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (!response.ok) {
           throw new Error('상품 정보를 불러올 수 없습니다.');
         }
@@ -157,6 +154,10 @@ const ProductDetailPage = () => {
   // 팝업 닫기 핸들러
   const handlePopupClose = () => {
     setIsCartPopupOpen(false);
+  };
+
+  const handleOrderClick = () => {
+    navigate('/order', { state: product });
   };
 
   return (
@@ -361,16 +362,13 @@ const ProductDetailPage = () => {
 
               {activeTab === 'review' && <ReviewSection />}
 
-
               {activeTab === 'inquiry' && (
-  <div className={styles.inquiryTab}>
-    {/* productId를 전달하지 않거나 상수값 전달 */}
-    <ProductQnA productId={123} />
-  </div>
-)}
-              
-              
-              
+                <div className={styles.inquiryTab}>
+                  {/* productId를 전달하지 않거나 상수값 전달 */}
+                  <ProductQnA productId={123} />
+                </div>
+              )}
+
               {/* 배송 탭 */}
               {activeTab === 'delivery' && (
                 <div className={styles.deliveryTab}>
@@ -383,21 +381,34 @@ const ProductDetailPage = () => {
                         <li>배송 지역: 전국(일부 도서 산간 지역 제외)</li>
                         <li>배송 비용: 무료</li>
                         <li>배송 기간: 2~3일(주문일로부터)</li>
-                        <li>배송 안내: 배송 과정에서 상품이 분실되거나 파손된 경우 즉시 고객센터로 연락 바랍니다.</li>
+                        <li>
+                          배송 안내: 배송 과정에서 상품이 분실되거나 파손된 경우
+                          즉시 고객센터로 연락 바랍니다.
+                        </li>
                       </ul>
                     </div>
-                    
+
                     <div className={styles.deliverySection}>
                       <h4>교환/반품 안내</h4>
                       <ul>
                         <li>교환/반품 기간: 상품 수령 후 7일 이내</li>
-                        <li>교환/반품 비용: 고객 변심에 의한 경우 왕복 배송비 고객 부담</li>
-                        <li>교환/반품 불가 사유:
+                        <li>
+                          교환/반품 비용: 고객 변심에 의한 경우 왕복 배송비 고객
+                          부담
+                        </li>
+                        <li>
+                          교환/반품 불가 사유:
                           <ul>
-                            <li>고객 사용 또는 소비로 인해 상품의 가치가 감소한 경우</li>
+                            <li>
+                              고객 사용 또는 소비로 인해 상품의 가치가 감소한
+                              경우
+                            </li>
                             <li>시간 경과로 인해 재판매가 어려운 경우</li>
                             <li>복제가 가능한 상품의 포장을 훼손한 경우</li>
-                            <li>고객의 요청에 따라 개별적으로 주문 제작된 상품인 경우</li>
+                            <li>
+                              고객의 요청에 따라 개별적으로 주문 제작된 상품인
+                              경우
+                            </li>
                           </ul>
                         </li>
                       </ul>
@@ -437,10 +448,7 @@ const ProductDetailPage = () => {
             >
               {isAddingToCart ? '처리 중...' : '장바구니'}
             </button>
-            <button
-              className={styles.buyButton}
-              onClick={() => navigate('/order')}
-            >
+            <button className={styles.buyButton} onClick={handleOrderClick}>
               구매하기
             </button>
           </div>

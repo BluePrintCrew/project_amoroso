@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import axios from 'axios';
 import leftArrow from '../../assets/left_arrow.png';
 import rightArrow from '../../assets/right_arrow.png';
 import styles from './BestProducts.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const products = [
   {
@@ -36,17 +38,25 @@ const products = [
 ];
 
 const BestProducts = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-  };
+  useEffect(() => {
+    const fetchBestProducts = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/v1/products/');
+        const sorted = res.data.products
+          // .sort((a, b) => b.sales_count - a.sales_count)
+          .slice(0, 4);
 
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? products.length - 1 : prevIndex - 1
-    );
-  };
+        setProducts(sorted);
+      } catch (err) {
+        console.error('베스트 상품 불러오기 실패:', err);
+      }
+    };
+
+    fetchBestProducts();
+  }, []);
 
   return (
     <div className={styles.bestProducts}>
@@ -58,41 +68,35 @@ const BestProducts = () => {
       </div>
 
       <div className={styles.slider}>
-        <button
-          className={`${styles.arrowButton} ${styles.left}`}
-          onClick={handlePrev}
-        >
-          <img src={leftArrow} alt="Previous" />
-        </button>
-
         <div className={styles.productList}>
-          {products.map((product, index) => (
+          {products.map((product) => (
             <div
-              key={product.id}
-              className={`${styles.productCard} ${
-                index === currentIndex ? styles.active : ''
-              }`}
+              key={product.productId}
+              className={styles.productCard}
+              onClick={() => navigate(`/product/${product.productId}`)}
             >
-              <div className={styles.imagePlaceholder}></div>
-              <h3 className={styles.productName}>{product.name}</h3>
+              <div className={styles.imageWrapper}>
+                <img
+                  src={
+                    product.primaryImageURL
+                      ? `http://localhost:8080/api/v1/images/${product.primaryImageURL
+                          .split('/')
+                          .pop()}`
+                      : 'https://placehold.co/300x300?text=No+image'
+                  }
+                  alt={product.productName}
+                  className={styles.productImage}
+                />
+              </div>
+              <h3 className={styles.productName}>{product.productName}</h3>
               <div className={styles.priceSection}>
                 <span className={styles.price}>
-                  {product.price.toLocaleString()}원
+                  {product.discountPrice.toLocaleString()}원
                 </span>
-                <span className={styles.originalPrice}>
-                  {product.originalPrice.toLocaleString()}원
-                </span>
-                <span className={styles.discount}>{product.discount}%</span>
               </div>
             </div>
           ))}
         </div>
-        <button
-          className={`${styles.arrowButton} ${styles.right}`}
-          onClick={handleNext}
-        >
-          <img src={rightArrow} alt="Next" />
-        </button>
       </div>
     </div>
   );
