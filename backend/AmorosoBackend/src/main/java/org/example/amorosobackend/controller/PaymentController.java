@@ -56,6 +56,7 @@ public class PaymentController {
     @PostMapping("/verify")
     public ResponseEntity<PaymentDTO.PaymentVerifyResponse> verifyPayment(@RequestBody PaymentDTO.PaymentVerifyRequest request) throws IamportResponseException, IOException {
 
+
         IamportResponse<Payment> response = iamportClient.paymentByImpUid(request.getImpUid());
         Payment paymentData = response.getResponse();
 
@@ -63,6 +64,7 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(new PaymentDTO.PaymentVerifyResponse(false, "유효하지 않은 결제 정보입니다."));
         }
 
+        log.info("getOrderId = {}", request.getOrderId());
         Order order = orderService.getOrderById(request.getOrderId());
         if (order == null) {
             return ResponseEntity.badRequest().body(new PaymentDTO.PaymentVerifyResponse(false, "해당 주문을 찾을 수 없습니다."));
