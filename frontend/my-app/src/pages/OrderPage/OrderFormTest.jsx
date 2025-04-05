@@ -74,7 +74,9 @@ const OrderForm = () => {
                 }
             );
 
-            const orderId = orderResponse.data.orderId;
+            console.log('orderResponse', orderResponse.data);
+
+            const orderId = orderResponse.data[0].orderId;
 
             // 2. 결제 요청
             const { IMP } = window;
@@ -105,6 +107,11 @@ const OrderForm = () => {
                 async function (rsp) {
                     if (rsp.success) {
                         try {
+
+                            console.log(' verify payload', {
+                                impUid: rsp.imp_uid,
+                                orderId: orderId
+                            });
                             const verifyRes = await axios.post(
                                 'http://localhost:8080/api/v1/payments/verify',
                                 {
