@@ -1,6 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import Admin from './pages/AdminPage/AdminPage';
+import AdminTest from './pages/AdminPage/AdminPageTest';
 import AdminLayout from './components/Admin/AdminLayout/AdminLayout';
 import AdminProductRegister from './pages/AdminPage/AdminProductRegister/AdminProductRegister';
 import Cart from './pages/CartPage/CartPage';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/mypageinfo" element={<MyInfo />} />
 
           {/* 테스트 시  사용되는 페이지*/}
+          <Route path="/adminTest" element={<AdminTest />} />
           <Route path="/testJWTProvider" element={<TestJWTProviderPage />} />
           <Route path="/orderTest" element={<OrderTest/>} />
           <Route path="/admin" element={<AdminLayout />}>
