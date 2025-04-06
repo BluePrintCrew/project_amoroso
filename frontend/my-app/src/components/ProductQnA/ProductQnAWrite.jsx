@@ -1,35 +1,81 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './ProductQnAWrite.css';
+import { API_BASE_URL } from '../../pages/MyPage/api';
 
-const ProductQnAWrite = ({ onClose, product }) => {
+const ProductQnAWrite = ({ onClose, product, onSubmitSuccess }) => {
+  const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isSecret, setIsSecret] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [error, setError] = useState('');
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedInquiry, setSelectedInquiry] = useState(null); 
   const charCount = content.length;
   const maxChars = 1000;
-
+  
   const handleSubmit = async () => {
-    if (!content.trim()) {
-      alert('문의 내용을 입력해주세요.');
+    if (!title.trim()) {
+      setError('문의 제목을 입력해주세요.');
       return;
     }
-
+    
+    if (!content.trim()) {
+      setError('문의 내용을 입력해주세요.');
+      return;
+    }
+    
     setIsSubmitting(true);
-
+    setError('');
+    
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setError('로그인이 필요합니다.');
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
-      // 테스트용 지연 효과
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // API 명세서에 맞는 요청 데이터 구성
+      const inquiryData = {
+        inquiryTitle: title,
+        inquiryDescription: content,
+        productId: product.id
+      };
+      
+      // 비밀글 처리에 대한 필드가 백엔드에 있다면 추가
+      // inquiryData.isSecret = isSecret;
+      
+      // 문의 등록 API 호출
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/inquiries`,
+        inquiryData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      console.log('문의 등록 응답:', response.data);
+      
       alert('상품 문의가 등록되었습니다.');
-      onClose();
+      
+      // 성공 콜백 실행
+      if (typeof onSubmitSuccess === 'function') {
+        onSubmitSuccess();
+      } else {
+        onClose();
+      }
     } catch (error) {
       console.error('문의 등록 오류:', error);
-      alert('문의 등록에 실패했습니다. 다시 시도해주세요.');
+      setError(error.response?.data?.message || '문의 등록에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <div className="modal-backdrop">
       <div className="modal-container">
@@ -41,6 +87,18 @@ const ProductQnAWrite = ({ onClose, product }) => {
         
         {/* 본문 */}
         <div className="modal-body">
+          {/* 제목 입력 */}
+          <div className="input-container">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="문의 제목을 입력하세요"
+              maxLength={100}
+              className="title-input"
+            />
+          </div>
+          
           {/* 텍스트 영역 */}
           <div className="textarea-container">
             <textarea
@@ -51,6 +109,9 @@ const ProductQnAWrite = ({ onClose, product }) => {
             ></textarea>
             <div className="char-counter">{charCount} / {maxChars}</div>
           </div>
+          
+          {/* 에러 메시지 */}
+          {error && <div className="error-message">{error}</div>}
           
           {/* 체크박스 */}
           <div className="checkbox-container">

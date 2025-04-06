@@ -1,3 +1,5 @@
+/* ProductQnAWrite.css */
+
 /* 모달 배경 */
 .modal-backdrop {
   position: fixed;
@@ -46,7 +48,26 @@
 
 /* 모달 본문 */
 .modal-body {
-  padding: 20px;
+  padding: 20px 20px 10px;
+}
+
+/* 제목 입력 */
+.input-container {
+  margin-bottom: 15px;
+}
+
+.title-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.title-input:focus {
+  outline: none;
+  border-color: #766e68;
 }
 
 /* 텍스트 영역 */
@@ -57,7 +78,7 @@
 
 .textarea-container textarea {
   width: 100%;
-  height: 200px;
+  height: 180px;
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -79,9 +100,17 @@
   color: #888;
 }
 
+/* 에러 메시지 */
+.error-message {
+  color: #e74c3c;
+  margin: 10px 0;
+  font-size: 13px;
+}
+
 /* 체크박스 */
 .checkbox-container {
-  margin-bottom: 15px;
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .checkbox-container label {
@@ -103,7 +132,7 @@
   line-height: 1.5;
 }
 
-/* 버튼 테이블 - 가장 중요한 변경 */
+/* 버튼 테이블 */
 .button-table {
   width: 100%;
   border-collapse: collapse;
@@ -149,15 +178,26 @@
 
 .submit-btn:disabled {
   opacity: 0.7;
-  
-}@media (max-width: 768px) {
-  .qna-write-container {
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .modal-container {
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
   }
   
-  .qna-write-container .qna-write-form {
-    padding-bottom: 0;
+  .modal-body {
+    padding: 15px 15px 5px;
+  }
+  
+  .textarea-container textarea {
+    height: 150px;
+  }
+  
+  .button-table td button {
+    height: 50px;
+    font-size: 15px;
   }
 }

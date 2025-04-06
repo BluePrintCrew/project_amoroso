@@ -363,12 +363,10 @@ const ProductDetailPage = () => {
               {activeTab === 'review' && <ReviewSection />}
 
               {activeTab === 'inquiry' && (
-                <div className={styles.inquiryTab}>
-                  {/* productId를 전달하지 않거나 상수값 전달 */}
-                  <ProductQnA productId={123} />
-                </div>
-              )}
-
+  <div className={styles.inquiryTab}>
+    <ProductQnA productId={product.productId} />
+  </div>
+)}
               {/* 배송 탭 */}
               {activeTab === 'delivery' && (
                 <div className={styles.deliveryTab}>
