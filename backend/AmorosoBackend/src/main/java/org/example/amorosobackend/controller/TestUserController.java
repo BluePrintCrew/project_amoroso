@@ -103,10 +103,10 @@ public class TestUserController {
                     .size("W200 x D90 x H80")
                     .shippingInstallationFee(0)
                     .asPhoneNumber("1234-5678")
-                    .costPrice(3000000)
-                    .marketPrice(4272000)
-                    .discountRate(22)
-                    .discountPrice(3306000)
+                    .costPrice(100)
+                    .marketPrice(100)
+                    .discountRate(0)
+                    .discountPrice(0)
                     .build();
             productRepository.save(product);
         }

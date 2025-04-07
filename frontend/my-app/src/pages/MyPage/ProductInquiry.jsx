@@ -2,62 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ProductInquiry.css";
-import kakaoIcon from "../../assets/kakao_icon.png"; // 필요한 경우 kakao 아이콘 이미지 임포트
+import kakaoIcon from "../../assets/kakao_icon.png";
+import ProductQnADetail from "../../components/ProductQnA/ProductQnADetail";
 import { API_BASE_URL } from "./api";
 
 function ProductInquiry() {
   const [productInquiries, setProductInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
+  // 모달창 관련 상태 추가
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedInquiry, setSelectedInquiry] = useState(null);
   
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // 상품 문의 데이터 가져오기
-    const fetchInquiries = async () => {
-      const token = localStorage.getItem('access_token');
-      
-      if (!token) {
-        setError("로그인이 필요합니다");
-        setLoading(false);
-        return;
-      }
-
-      // 상품 문의 가져오기
-      try {
-        // API 경로는 백엔드에 맞게 조정 필요
-        const productResponse = await axios.get(`${API_BASE_URL}/api/v1/inquiries/product`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        console.log("상품 문의 응답:", productResponse.data);
-        
-        // 상품 문의 데이터 변환
-        const formattedProductInquiries = Array.isArray(productResponse.data) 
-          ? productResponse.data.map(item => ({
-              id: item.id || item.inquiryId,
-              status: item.answered ? "답변완료" : "답변대기",
-              content: item.content || item.message || "",
-              date: formatDate(item.createdAt || item.createDate),
-              productId: item.productId,
-              productName: item.productName || "",
-              // 기타 필요한 데이터
-            }))
-          : [];
-        
-        setProductInquiries(formattedProductInquiries);
-      } catch (err) {
-        console.error("상품 문의 로딩 오류:", err);
-        setError("상품 문의를 불러오는데 실패했습니다");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInquiries();
-  }, []);
 
   // 날짜 포맷팅 함수
   const formatDate = (dateString) => {
@@ -72,12 +32,86 @@ function ProductInquiry() {
     }
   };
 
-  // 문의 상세 페이지로 이동
-  const handleInquiryClick = (id) => {
-    navigate(`/my-inquiries/product/${id}`);
+  useEffect(() => {
+    // 상품 문의 데이터 가져오기
+    const fetchInquiries = async () => {
+      const token = localStorage.getItem('access_token');
+      
+      if (!token) {
+        setError("로그인이 필요합니다");
+        setLoading(false);
+        return;
+      }
+
+      // 상품 문의 가져오기
+      try {
+        // API 경로 수정
+        const productResponse = await axios.get(`${API_BASE_URL}/api/v1/inquiries`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          params: {
+            page: currentPage,
+            size: 10
+          }
+        });
+        
+        console.log("상품 문의 응답:", productResponse.data);
+        
+        // 페이지 정보 설정
+        setTotalPages(productResponse.data.totalPages || 0);
+        
+        // 응답 형식에 맞게 수정
+      // ProductInquiry.js 파일에서 데이터 매핑 부분 수정
+const formattedProductInquiries = productResponse.data.content 
+? productResponse.data.content.map(item => ({
+    id: item.inquiryId,
+    status: item.answered ? "답변완료" : "답변대기",
+    title: item.inquiryTitle,  // title 속성 추가
+    content: item.inquiryTitle,
+    description: item.inquiryDescription,
+    date: formatDate(item.createdAt),
+    productId: item.productId,
+    author: item.authorUsername,  // author 속성으로 통일
+    authorUsername: item.authorUsername
+  }))
+: []; 
+        setProductInquiries(formattedProductInquiries);
+      } catch (err) {
+        console.error("상품 문의 로딩 오류:", err);
+        setError("상품 문의를 불러오는데 실패했습니다");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInquiries();
+  }, [currentPage]); // currentPage가 변경될 때마다 데이터를 다시 가져옴
+
+  // 문의 클릭 핸들러 수정
+  const handleInquiryClick = (item) => {
+    // 상세 모달 표시
+    setSelectedInquiry(item);
+    setShowDetailModal(true);
+    
+    // 페이지 이동은 주석 처리 또는 제거
+    // navigate(`/my-inquiries/product/${id}`);
   };
 
-  // 카카오 상담 열기
+  // 모달 닫기 핸들러 추가
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedInquiry(null);
+  };
+
+  // 페이지 변경 처리 - 이 함수 정의 추가
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  // 카카오 상담 열기 - 이 함수 정의 추가
   const handleKakaoChat = () => {
     // 실제 카카오 채널 URL로 대체 필요
     window.open('https://pf.kakao.com/_계정이름/chat', '_blank');
@@ -114,32 +148,57 @@ function ProductInquiry() {
         {productInquiries.length === 0 ? (
           <p className="empty-message">문의 내역이 없습니다</p>
         ) : (
-          <ul className="inquiry-list">
-            {productInquiries.map((item, index) => (
-              <li 
-                key={index} 
-                className="inquiry-item"
-                onClick={() => handleInquiryClick(item.id)}
-              >
-                {/* Status badge */}
-                <span
-                  className={
-                    item.status === "답변완료" ? "badge complete" : "badge pending"
-                  }
+          <>
+            <ul className="inquiry-list">
+              {productInquiries.map((item, index) => (
+                <li 
+                  key={index} 
+                  className="inquiry-item"
+                  onClick={() => handleInquiryClick(item)}
                 >
-                  {item.status}
+                  {/* Status badge */}
+                  <span
+                    className={
+                      item.status === "답변완료" ? "badge complete" : "badge pending"
+                    }
+                  >
+                    {item.status}
+                  </span>
+                  {/* Inquiry content */}
+                  <span className="inquiry-content">
+                    {item.content}
+                  </span>
+                  {/* Date */}
+                  <span className="inquiry-date">
+                    {item.date}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            
+            {/* 페이지네이션 컨트롤 */}
+            {totalPages > 1 && (
+              <div className="pagination-controls">
+                <button 
+                  onClick={() => handlePageChange(currentPage - 1)} 
+                  disabled={currentPage === 0}
+                  className="pagination-button"
+                >
+                  이전
+                </button>
+                <span className="pagination-info">
+                  {currentPage + 1} / {totalPages}
                 </span>
-                {/* Inquiry content */}
-                <span className="inquiry-content">
-                  {item.content}
-                </span>
-                {/* Date */}
-                <span className="inquiry-date">
-                  {item.date}
-                </span>
-              </li>
-            ))}
-          </ul>
+                <button 
+                  onClick={() => handlePageChange(currentPage + 1)} 
+                  disabled={currentPage === totalPages - 1}
+                  className="pagination-button"
+                >
+                  다음
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
       
@@ -152,6 +211,14 @@ function ProductInquiry() {
           <span className="kakao-icon">💬</span> 카톡상담하기
         </button>
       </div>
+      
+      {/* 상세 모달창 추가 */}
+      {showDetailModal && selectedInquiry && (
+        <ProductQnADetail 
+          onClose={handleCloseDetailModal} 
+          inquiry={selectedInquiry}
+        />
+      )}
     </div>
   );
 }

@@ -1,93 +1,112 @@
 import React, { useState, useEffect } from 'react';
 import './ProductQnA.css';
-import { useNavigate } from 'react-router-dom';
-import lockIcon from '../../assets/lock-icon.svg';  // 자물쇠 아이콘 (비밀글 표시용)
-import ProductQnAWrite from './ProductQnAWrite';  // QnA 작성 모달 컴포넌트 추가
-
+import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import lockIcon from '../../assets/lock-icon.svg';
+import ProductQnAWrite from './ProductQnAWrite';
+import ProductQnADetail from './ProductQnADetail';
+import { API_BASE_URL } from '../../pages/MyPage/api';
 const ProductQnA = () => {
   const [qnaList, setQnaList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [sortOption, setSortOption] = useState('newest');
   const [viewOption, setViewOption] = useState('all');
-  const [showWriteModal, setShowWriteModal] = useState(false);  // 작성 모달 표시 상태
-  
+  const [showWriteModal, setShowWriteModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [product, setProduct] = useState({});
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedInquiry, setSelectedInquiry] = useState(null); 
   const navigate = useNavigate();
 
-  // 가상 데이터 (실제 구현 시 API로 대체)
-  useEffect(() => {
-    // 임시 데이터 설정 함수
-    const setupMockData = () => {
-      // 임시 데이터
-      const mockData = [
-        { 
-          id: 1, 
-          status: '답변완료', 
-          title: '비밀글입니다.', 
-          isSecret: true, 
-          author: 'kais******', 
-          date: '2025.03.30',
-          isNew: true 
-        },
-        { 
-          id: 2, 
-          status: '미답변', 
-          title: '수요일에 구매했는데 이번주중에 받을 수 있나요?', 
-          isSecret: false, 
-          author: 'rlae****', 
-          date: '2025.03.28',
-          isNew: true 
-        },
-        { 
-          id: 3, 
-          status: '답변완료', 
-          title: '비밀글입니다.', 
-          isSecret: true, 
-          author: 'lson***', 
-          date: '2025.03.25',
-          isNew: false 
-        },
-        { 
-          id: 4, 
-          status: '답변완료', 
-          title: '비밀글입니다.', 
-          isSecret: true, 
-          author: 'lson***', 
-          date: '2025.03.25',
-          isNew: false 
-        },
-        { 
-          id: 5, 
-          status: '답변완료', 
-          title: '비밀글입니다.', 
-          isSecret: true, 
-          author: 'kyup***', 
-          date: '2025.03.24',
-          isNew: false 
-        },
-        { 
-          id: 6, 
-          status: '미답변', 
-          title: '오늘 구매했는데 언제쯤 배송 되나요? 그리고 중국내수용???인가요 아니겠지요?', 
-          isSecret: false, 
-          author: 'ss84****', 
-          date: '2025.03.24',
-          isNew: false 
-        },
-      ];
-      
-      setTimeout(() => {
-        setQnaList(mockData);
-        setLoading(false);
-      }, 500); // 로딩 효과를 위한 지연
-    };
-    
-    // 로그인 상태 확인
+// 수정해야 할 코드
+const { id } = useParams(); // 라우트 파라미터명과 일치하도록 변경
+const productId = id; // productId 변수를 계속 사용하려면 이렇게 할당
+
+  // API에서 상품 Q&A 데이터 가져오기
+// 응답 데이터 변환 부분 수정
+useEffect(() => {
+  const fetchQnAs = async () => {
     const token = localStorage.getItem('access_token');
     setIsLoggedIn(!!token);
     
-    setupMockData();
-  }, []);
+    try {
+      console.log("API 요청 정보:", {
+        url: `${API_BASE_URL}/api/v1/inquiries/product/${productId}`,
+        params: { page: currentPage, size: 5 }
+      });
+
+      const response = await axios.get(`${API_BASE_URL}/api/v1/inquiries/product/${productId}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+        params: {
+          page: currentPage,
+          size: 5
+        }
+      });
+      
+      console.log("상품 Q&A 응답:", response.data);
+      
+      // 상품 정보 설정
+      setProduct({ id: productId, name: '상품명' });
+      
+      // 페이지 정보 설정 - 응답 형식에 맞게 설정
+      setTotalPages(response.data.totalPages || 0);
+      
+      // 응답 데이터 변환 - 응답 형식에 맞게 필드명 매핑
+      const formattedQnAs = response.data.content && response.data.content.length > 0
+        ? response.data.content.map(item => ({
+            id: item.inquiryId,
+            status: item.answered ? '답변완료' : '미답변',
+            title: item.inquiryTitle,
+            content: item.inquiryDescription,
+            isSecret: false, // API에서 비밀글 여부가 제공되지 않으므로 기본값 사용
+            author: item.authorUsername,
+            date: formatDate(item.createdAt),
+            isNew: isNewItem(item.createdAt)
+          }))
+        : [];
+      
+      setQnaList(formattedQnAs);
+      setLoading(false);
+    } catch (err) {
+      console.error("Q&A 로딩 오류:", err);
+      console.error("오류 상세:", err.response?.data || err.message);
+      setQnaList([]);
+      setLoading(false);
+    }
+  };
+  
+  fetchQnAs();
+}, [productId, currentPage, sortOption, viewOption]); 
+  // 날짜 포맷팅 함수
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    
+    try {
+      const date = new Date(dateString);
+      return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+    } catch (e) {
+      console.error("날짜 포맷팅 오류:", e);
+      return dateString;
+    }
+  };
+  
+  // 새 항목인지 확인 (3일 이내 등록된 항목)
+  const isNewItem = (dateString) => {
+    if (!dateString) return false;
+    
+    try {
+      const itemDate = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now - itemDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      return diffDays <= 3;
+    } catch (e) {
+      return false;
+    }
+  };
 
   // QnA 작성 모달 열기
   const handleWriteQnA = () => {
@@ -98,8 +117,17 @@ const ProductQnA = () => {
       return;
     }
     
-    // 모달 열기
     setShowWriteModal(true);
+  };
+  
+  
+  // QnA 작성 완료 후 목록 갱신
+  const handleQnASubmitSuccess = () => {
+    setShowWriteModal(false);
+    // 첫 페이지로 이동하고 목록 갱신
+    setCurrentPage(0);
+    setLoading(true);
+    // useEffect에 의해 목록 다시 로드됨
   };
   
   // QnA 작성 모달 닫기
@@ -115,23 +143,56 @@ const ProductQnA = () => {
       return;
     }
     
-    // 내 상품문의 목록 페이지로 이동 (임시로 #으로 처리)
     navigate('/mypage/inquiries');
   };
   
   const handleQnAClick = (qna) => {
-    // 비밀글인 경우, 작성자 또는 관리자만 볼 수 있도록 처리
+    // 비밀글인 경우 처리 (백엔드에서도 이에 대한 처리 필요)
     if (qna.isSecret) {
       alert('비밀글은 작성자와 관리자만 확인할 수 있습니다.');
       return;
     }
     
-    // 상품문의 상세 페이지로 이동 (임시로 알림만 표시)
-    alert(`상품 문의 ID: ${qna.id}의 상세 내용을 보여줍니다.`);
+    // 상세 모달 표시
+    setSelectedInquiry(qna);
+    setShowDetailModal(true);
   };
-  
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedInquiry(null);
+  };
   const handleSortChange = (e) => {
     setSortOption(e.target.value);
+  };
+  
+  // 페이지 변경 처리
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  // 페이지 번호 생성
+  const renderPageNumbers = () => {
+    const pageButtons = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, Math.min(currentPage - Math.floor(maxVisiblePages / 2), totalPages - maxVisiblePages));
+    
+    if (startPage < 0) startPage = 0;
+    
+    for (let i = startPage; i < startPage + maxVisiblePages && i < totalPages; i++) {
+      pageButtons.push(
+        <button 
+          key={i} 
+          className={`page-button ${currentPage === i ? 'active' : ''}`}
+          onClick={() => handlePageChange(i)}
+        >
+          {i + 1}
+        </button>
+      );
+    }
+    
+    return pageButtons;
   };
 
   return (
@@ -158,8 +219,8 @@ const ProductQnA = () => {
           <label className="checkbox-container">
             <input
               type="checkbox"
-              checked={viewOption === 'my'}
-              onChange={() => setViewOption(viewOption === 'my' ? 'all' : 'my')}
+              checked={viewOption === 'public'}
+              onChange={() => setViewOption(viewOption === 'public' ? 'all' : 'public')}
             />
             <span className="checkmark"></span>
             비밀글 제외
@@ -168,8 +229,8 @@ const ProductQnA = () => {
           <label className="checkbox-container my-qna">
             <input
               type="checkbox"
-              checked={viewOption === 'answered'}
-              onChange={() => setViewOption(viewOption === 'answered' ? 'all' : 'answered')}
+              checked={viewOption === 'my'}
+              onChange={() => setViewOption(viewOption === 'my' ? 'all' : 'my')}
               disabled={!isLoggedIn}
             />
             <span className="checkmark"></span>
@@ -179,9 +240,9 @@ const ProductQnA = () => {
         
         <div className="sort-options">
           <select value={sortOption} onChange={handleSortChange} className="sort-select">
-            <option value="newest">답변상태</option>
+            <option value="newest">최신순</option>
             <option value="oldest">등록일 오래된순</option>
-            <option value="popular">등록일 최신순</option>
+            <option value="status">답변상태</option>
           </select>
         </div>
       </div>
@@ -241,23 +302,44 @@ const ProductQnA = () => {
       )}
       
       {/* 페이지네이션 */}
-      <div className="pagination">
-        <button className="page-button">&lt;</button>
-        <button className="page-button active">1</button>
-        <button className="page-button">2</button>
-        <button className="page-button">3</button>
-        <button className="page-button">4</button>
-        <button className="page-button">5</button>
-        <button className="page-button">&gt;</button>
-      </div>
+      {totalPages > 0 && (
+        <div className="pagination">
+          <button 
+            className="page-button" 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0}
+          >
+            &lt;
+          </button>
+          
+          {renderPageNumbers()}
+          
+          <button 
+            className="page-button" 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages - 1}
+          >
+            &gt;
+          </button>
+        </div>
+      )}
       
       {/* QnA 작성 모달 */}
       {showWriteModal && (
         <ProductQnAWrite 
           onClose={handleCloseModal} 
-          product={{ id: 123, name: '상품명' }} 
+          product={product}
+          onSubmitSuccess={handleQnASubmitSuccess}
         />
+        
       )}
+      {/* QnA 상세 모달 */}
+{showDetailModal && selectedInquiry && (
+  <ProductQnADetail 
+    onClose={handleCloseDetailModal} 
+    inquiry={selectedInquiry}
+  />
+)}
     </div>
   );
 };
