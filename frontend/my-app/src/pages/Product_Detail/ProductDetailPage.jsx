@@ -157,6 +157,14 @@ const ProductDetailPage = () => {
   };
 
   const handleOrderClick = () => {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
     navigate('/order', { state: product });
   };
 

@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
-import "./CartTable.css";
-import axios from "axios";
-import { API_BASE_URL } from "../MyPage/api";
+import './CartTable.css';
 
-function CartTable({ cartItems, setCartItems }) {
+import React, { useEffect, useState } from 'react';
+
+import { API_BASE_URL } from '../MyPage/api';
+import axios from 'axios';
+
+function CartTable({ cartItems, setCartItems, onSelectionChange }) {
   // 선택된 상품 ID들을 관리 (체크박스용)
   const [selectedItems, setSelectedItems] = useState([]);
 
   // 초기 선택 상태: 모든 상품 선택
   useEffect(() => {
-    setSelectedItems(cartItems.map(item => item.id));
+    const allIds = cartItems.map((item) => item.id);
+    setSelectedItems(allIds);
+    onSelectionChange(allIds);
   }, [cartItems]);
 
   // 토큰 가져오기
@@ -25,15 +29,16 @@ function CartTable({ cartItems, setCartItems }) {
       name: item.name,
       imageUrl: item.imageUrl,
       primaryImageURL: item.primaryImageURL,
-      item: item
+      item: item,
     });
 
     // 가능한 모든 이미지 필드 확인
-    const possibleImageUrl = item.imageUrl || item.primaryImageURL || item.mainImageURL || '';
+    const possibleImageUrl =
+      item.imageUrl || item.primaryImageURL || item.mainImageURL || '';
 
     // 이미지 URL이 없는 경우 기본 이미지 반환
-    if (!possibleImageUrl) return "https://placehold.co/100x100";
-    
+    if (!possibleImageUrl) return 'https://placehold.co/100x100';
+
     // URL 형식 처리
     if (possibleImageUrl.startsWith('http')) {
       return possibleImageUrl;
@@ -55,53 +60,62 @@ function CartTable({ cartItems, setCartItems }) {
 
   // 개별 체크박스 변경 핸들러
   const handleCheckboxChange = (itemId, isChecked) => {
-    if (isChecked) {
-      setSelectedItems(prev => [...prev, itemId]);
-    } else {
-      setSelectedItems(prev => prev.filter(id => id !== itemId));
-    }
+    // if (isChecked) {
+    //   setSelectedItems((prev) => [...prev, itemId]);
+    // } else {
+    //   setSelectedItems((prev) => prev.filter((id) => id !== itemId));
+    // }
+    const updated = isChecked
+      ? [...selectedItems, itemId]
+      : selectedItems.filter((id) => id !== itemId);
+    setSelectedItems(updated);
+    onSelectionChange(updated);
   };
 
   // 전체 선택/해제 핸들러
   const handleSelectAll = (isChecked) => {
-    if (isChecked) {
-      setSelectedItems(cartItems.map(item => item.id));
-    } else {
-      setSelectedItems([]);
-    }
+    // if (isChecked) {
+    //   setSelectedItems(cartItems.map((item) => item.id));
+    // } else {
+    //   setSelectedItems([]);
+    // }
+    const updated = isChecked ? cartItems.map((item) => item.id) : [];
+    setSelectedItems(updated);
+    onSelectionChange(updated);
   };
 
   // 수량 업데이트 핸들러
   const handleQuantityChange = (itemId, newQuantity) => {
     if (newQuantity < 1) return;
-    
+
     const token = getToken();
     if (!token) {
-      console.error("로그인이 필요합니다.");
+      console.error('로그인이 필요합니다.');
       return;
     }
 
     axios
-      .put(`${API_BASE_URL}/api/v1/cart/${itemId}`, 
+      .put(
+        `${API_BASE_URL}/api/v1/cart/${itemId}`,
         { quantity: newQuantity },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
       )
-      .then(response => {
-        console.log("수량 업데이트 성공:", response.data);
-        setCartItems(prevItems =>
-          prevItems.map(item =>
+      .then((response) => {
+        console.log('수량 업데이트 성공:', response.data);
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
             item.id === itemId ? { ...item, quantity: newQuantity } : item
           )
         );
       })
-      .catch(error => {
-        console.error("수량 업데이트 오류: ", error);
-        alert("수량 업데이트에 실패했습니다.");
+      .catch((error) => {
+        console.error('수량 업데이트 오류: ', error);
+        alert('수량 업데이트에 실패했습니다.');
       });
   };
 
@@ -109,55 +123,59 @@ function CartTable({ cartItems, setCartItems }) {
   const handleDelete = (itemId) => {
     const token = getToken();
     if (!token) {
-      console.error("로그인이 필요합니다.");
+      console.error('로그인이 필요합니다.');
       return;
     }
 
     axios
       .delete(`${API_BASE_URL}/api/v1/cart/${itemId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then(() => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-        setSelectedItems(prev => prev.filter(id => id !== itemId));
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.id !== itemId)
+        );
+        setSelectedItems((prev) => prev.filter((id) => id !== itemId));
       })
-      .catch(error => {
-        console.error("삭제 오류: ", error);
-        alert("상품 삭제에 실패했습니다.");
+      .catch((error) => {
+        console.error('삭제 오류: ', error);
+        alert('상품 삭제에 실패했습니다.');
       });
   };
 
   // 선택 상품 일괄 삭제 핸들러
   const handleBulkDelete = () => {
     if (selectedItems.length === 0) {
-      alert("삭제할 상품을 선택해주세요.");
+      alert('삭제할 상품을 선택해주세요.');
       return;
     }
 
     const token = getToken();
     if (!token) {
-      console.error("로그인이 필요합니다.");
+      console.error('로그인이 필요합니다.');
       return;
     }
 
-    const deleteRequests = selectedItems.map(itemId =>
+    const deleteRequests = selectedItems.map((itemId) =>
       axios.delete(`${API_BASE_URL}/api/v1/cart/${itemId}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
     );
 
     Promise.all(deleteRequests)
       .then(() => {
-        setCartItems(prevItems => prevItems.filter(item => !selectedItems.includes(item.id)));
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => !selectedItems.includes(item.id))
+        );
         setSelectedItems([]);
       })
-      .catch(error => {
-        console.error("일괄 삭제 오류: ", error);
-        alert("선택한 상품 삭제에 실패했습니다.");
+      .catch((error) => {
+        console.error('일괄 삭제 오류: ', error);
+        alert('선택한 상품 삭제에 실패했습니다.');
       });
   };
 
@@ -172,7 +190,9 @@ function CartTable({ cartItems, setCartItems }) {
           <input
             type="checkbox"
             className="custom-checkbox"
-            checked={selectedItems.length === cartItems.length && cartItems.length > 0}
+            checked={
+              selectedItems.length === cartItems.length && cartItems.length > 0
+            }
             onChange={(e) => handleSelectAll(e.target.checked)}
           />
         </div>
@@ -195,30 +215,38 @@ function CartTable({ cartItems, setCartItems }) {
                 type="checkbox"
                 className="custom-checkbox"
                 checked={selectedItems.includes(item.id)}
-                onChange={(e) => handleCheckboxChange(item.id, e.target.checked)}
+                onChange={(e) =>
+                  handleCheckboxChange(item.id, e.target.checked)
+                }
               />
             </div>
 
             {/* 상품정보 */}
             <div className="cell-product-info">
               <div className="product-thumb">
-                <img 
-                  src={getImageUrl(item)} 
-                  alt={item.name} 
+                <img
+                  src={getImageUrl(item)}
+                  alt={item.name}
                   onError={(e) => {
                     console.error(`이미지 로드 실패: ${getImageUrl(item)}`);
-                    e.target.src = "https://placehold.co/100x100";
+                    e.target.src = 'https://placehold.co/100x100';
                   }}
                 />
               </div>
               <div className="product-details">
                 <div className="product-tags">
-                  {item.additionalOptionName && <span>{item.additionalOptionName}</span>}
-                  {item.productOptionName && <span>{item.productOptionName}</span>}
+                  {item.additionalOptionName && (
+                    <span>{item.additionalOptionName}</span>
+                  )}
+                  {item.productOptionName && (
+                    <span>{item.productOptionName}</span>
+                  )}
                 </div>
                 <div className="product-name">{item.name}</div>
                 {item.selectedOptionValue && (
-                  <div className="product-option">옵션: {item.selectedOptionValue}</div>
+                  <div className="product-option">
+                    옵션: {item.selectedOptionValue}
+                  </div>
                 )}
                 <button className="option-change-btn">옵션변경</button>
               </div>
@@ -227,18 +255,37 @@ function CartTable({ cartItems, setCartItems }) {
             {/* 수량 */}
             <div className="cell-quantity">
               <div className="quantity-box">
-                <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
+                <button
+                  onClick={() =>
+                    handleQuantityChange(item.id, item.quantity - 1)
+                  }
+                >
+                  -
+                </button>
                 <span>{item.quantity}</span>
-                <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+                <button
+                  onClick={() =>
+                    handleQuantityChange(item.id, item.quantity + 1)
+                  }
+                >
+                  +
+                </button>
               </div>
-              <button className="apply-button" onClick={() => handleQuantityChange(item.id, item.quantity)}>변경적용</button>
+              <button
+                className="apply-button"
+                onClick={() => handleQuantityChange(item.id, item.quantity)}
+              >
+                변경적용
+              </button>
             </div>
 
             {/* 상품금액 */}
             <div className="cell-price">
               <div className="sale-price">{item.price.toLocaleString()}원</div>
               {item.originalPrice > item.price && (
-                <div className="original-price">{item.originalPrice.toLocaleString()}원</div>
+                <div className="original-price">
+                  {item.originalPrice.toLocaleString()}원
+                </div>
               )}
             </div>
 
@@ -253,7 +300,12 @@ function CartTable({ cartItems, setCartItems }) {
             <div className="cell-actions">
               <button className="order-now-button">바로주문</button>
               <button className="wishlist-button">찜</button>
-              <button className="delete-button" onClick={() => handleDelete(item.id)}>✕</button>
+              <button
+                className="delete-button"
+                onClick={() => handleDelete(item.id)}
+              >
+                ✕
+              </button>
             </div>
           </div>
         ))

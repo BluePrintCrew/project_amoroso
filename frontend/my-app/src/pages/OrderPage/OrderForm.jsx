@@ -10,16 +10,16 @@ import axios from 'axios';
 import styles from './OrderForm.module.css';
 import { useLocation } from 'react-router-dom';
 
-const paymentMethods = [
-  '퀵 계좌이체',
-  '신용카드(일반)',
-  '신용카드(법인)',
-  '결제수단1',
-  '토스 페이',
-  '카카오 페이',
-  '네이버 페이',
-  '페이코 결제',
-];
+// const paymentMethods = [
+//   '퀵 계좌이체',
+//   '신용카드(일반)',
+//   '신용카드(법인)',
+//   '결제수단1',
+//   '토스 페이',
+//   '카카오 페이',
+//   '네이버 페이',
+//   '페이코 결제',
+// ];
 
 const OrderForm = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -53,8 +53,10 @@ const OrderForm = () => {
 
   const location = useLocation();
   const passedData = location.state;
+  const products = Array.isArray(passedData) ? passedData : [passedData];
 
-  const products = !Array.isArray(passedData) ? [passedData] : passedData;
+  console.log('🧾 products:', products);
+
   const cartItems = products.map((item) => ({
     price: item.discountPrice,
     originalPrice: item.marketPrice,
@@ -268,12 +270,8 @@ const OrderForm = () => {
               </div>
 
               <div className={`${styles.column} ${styles.centerAlign}`}>
-                <p className={styles.price}>
-                  {product.discountPrice.toLocaleString()}원
-                </p>
-                <p className={styles.originalPrice}>
-                  {product.marketPrice.toLocaleString()}원
-                </p>
+                <p className={styles.price}>{product.discountPrice}원</p>
+                <p className={styles.originalPrice}>{product.marketPrice}원</p>
                 <button className={styles.discountInfo}>할인내역</button>
               </div>
 
@@ -574,7 +572,7 @@ const OrderForm = () => {
                 </div>
               </div>
             </div>
-            <div className={styles.paymentMethod}>
+            {/* <div className={styles.paymentMethod}>
               <h3>결제수단 선택</h3>
               <hr className={styles.divider3} />
               <div className={styles.methodOptions}>
@@ -596,7 +594,7 @@ const OrderForm = () => {
                   선택한 결제수단을 다음에도 사용
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className={styles.finalPayment}>
             <h3>최종 결제 금액</h3>
