@@ -167,14 +167,18 @@ public class Product {
     public void onPrePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.discountPrice = calculateDiscountedPrice();
         if (this.outOfStock == null) {
             this.outOfStock = false;
         }
     }
 
+
+
     @PreUpdate
     public void onPreUpdate() {
         this.updatedAt = LocalDateTime.now();
+        this.discountPrice = calculateDiscountedPrice();
     }
 
     // --- Setter 혹은 Update 메서드들 ---
@@ -216,6 +220,14 @@ public class Product {
                 : 0;
 
     }
+    private int calculateDiscountedPrice() {
+        if (this.discountRate == null || this.discountRate == 0) {
+            return 0; // 💡 할인 없음 → discountPrice는 0
+        }
+
+        int result = this.marketPrice * (100 - this.discountRate) / 100;
+        return (result / 100) * 100; // 100원 단위로 반내림
+    }
     public void updateProductCode(String productCode) { this.productCode = productCode; }
     public void updateManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
     public void updateOrigin(String origin) { this.origin = origin; }
@@ -232,4 +244,5 @@ public class Product {
     public void updateOutOfStock(Boolean outOfStock) { this.outOfStock = outOfStock; }
     public void updateStockNotificationThreshold(Integer threshold) { this.stockNotificationThreshold = threshold; }
     public void updateDiscountRate( Integer discountRate) { this.discountRate = discountRate; }
+
 }
