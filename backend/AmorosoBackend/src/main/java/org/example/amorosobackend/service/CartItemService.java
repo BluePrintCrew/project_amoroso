@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,21 @@ public class CartItemService {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Product product = productService.getProductById(request.getProductId());
+
+        // 기존 CartItem 있는지 검사
+        Optional<CartItem> optionalExistingCartItem = cartItemRepository.findDuplicateCartItem(
+                user,
+                product,
+                request.getAdditionalOptionId(),
+                request.getProductOptionId(),
+                request.getSelectedOptionValue()
+        );
+
+        if (optionalExistingCartItem.isPresent()) {
+            CartItem existingCartItem = optionalExistingCartItem.get();
+            existingCartItem.updateQuantity(existingCartItem.getQuantity() + request.getQuantity());
+            return new CartItemControllerDTO.CartItemResponseDTO(existingCartItem);
+        }
 
         CartItem cartItem = CartItem.builder()
                 .user(user)
