@@ -108,7 +108,7 @@ public class ProductService {
         int priceAfterDiscount = marketPrice * (100 - discountRate) / 100;
         // 십의 자리, 일의 자리를 0으로 만들기 위해 100원 단위로 반내림 처리
         int finalDiscountPrice = (priceAfterDiscount / 100) * 100;
-        product.setDiscountPrice(finalDiscountPrice);
+        product.setCalculateDiscountPrice(finalDiscountPrice);
         log.debug("[createProduct] Product Built - Name: {}, DiscountRate: {}", product.getProductName(), product.getDiscountRate());
 
         // DB 저장
@@ -219,6 +219,7 @@ public class ProductService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
 
+        // 카테고리 코드 분석 및, 카테고리 아이템 가져오기, 아니면 전체 아이템가져오기
         Page<Product> productList = categoryId != null
                 ? productRepository.findAllByCategory_CategoryId(categoryId, pageable)
                 : productRepository.findAll(pageable);

@@ -1,10 +1,7 @@
 package org.example.amorosobackend.domain.product;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.domain.cart.CartItem;
 import org.example.amorosobackend.domain.OrderItem;
@@ -99,7 +96,8 @@ public class Product {
     private Boolean outOfStock;
     private Integer stockNotificationThreshold;
     private Integer discountRate; // 0 ~ 9
-    private Integer discountPrice; // discountRate에 따라 바뀜.
+    @Setter
+    private Integer discountPrice = 0; // discountRate에 따라 바뀜.
     @Column(nullable = false)
     private Integer salesCount = 0;
 
@@ -196,12 +194,13 @@ public class Product {
 
     public Integer getDiscountPrice() {
         if (this.marketPrice == null || this.discountRate == null) {
-            return this.marketPrice; // 가격 또는 할인율이 없으면 원래 가격 반환
+            return null;
         }
 
-        Integer discountPrice = (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10;
-        return discountPrice;
+        Integer discounted = (int) Math.floor(this.marketPrice * (1 - (this.discountRate / 100.0)));
+        return (discounted / 10) * 10; // 10원 단위로 내림
     }
+
 
     public void increaseSales(int amount) {
         this.salesCount += amount;
@@ -211,8 +210,7 @@ public class Product {
     public void setMainImageUri(String mainImageUri) {
         this.mainImageUri = mainImageUri;
     }
-    public void setDiscountPrice(Integer discountRate) {
-
+    public void setCalculateDiscountPrice(Integer discountRate) {
         this.discountPrice = this.discountRate != null ?
                 (int) Math.ceil((this.marketPrice * (this.discountRate / 100.0)) / 10.0) * 10
                 : 0;

@@ -1,16 +1,16 @@
-package org.example.amorosobackend.security;
+package org.example.amorosobackend.Service;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JwtProviderTest {
+class ProductServiceTest {
 
     @Test
-    void createToken() {
+    void createProduct() {
     }
 
     @Test
-    void validateToken() {
+    void getProducts() {
     }
 }

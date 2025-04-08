@@ -31,6 +31,7 @@ public class CartItem {
     @Column(nullable = false)
     private Integer priceSnapshot; // 장바구니 추가 당시 가격 저장
 
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

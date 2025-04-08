@@ -41,6 +41,8 @@ public class CartItemService {
                 .quantity(request.getQuantity())
                 .build();
 
+
+
         if (request.getAdditionalOptionId() != null) {
             AdditionalOption additionalOption = productService.getAdditionalOptionById(request.getAdditionalOptionId());
             CartAdditionalOption cartAdditionalOption = CartAdditionalOption.builder()
@@ -60,9 +62,11 @@ public class CartItemService {
             cartItem.setCartProductOption(cartProductOption);
         }
 
-        cartItemRepository.save(cartItem);
+        cartItem = cartItemRepository.save(cartItem);
         return new CartItemControllerDTO.CartItemResponseDTO(cartItem);
     }
+
+
     public List<CartItemControllerDTO.CartItemResponseDTO> getCartItems(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return cartItemRepository.findByUser(user).stream()
@@ -85,4 +89,5 @@ public class CartItemService {
     public void removeCartItem(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
     }
+
 }

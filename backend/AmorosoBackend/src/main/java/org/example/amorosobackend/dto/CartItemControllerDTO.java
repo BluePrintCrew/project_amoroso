@@ -18,8 +18,8 @@ public class CartItemControllerDTO {
         private Long productId;
         private String productName;
         private int quantity;
-        private int discountPrice; // 현재가 (할인 등 적용 가격)
-        private int originalPrice; // 원가
+        private Integer discountPrice; // 현재가 (할인 등 적용 가격)
+        private int MarketPrice; // 원가
         private int totalPrice;
 
         private Long additionalOptionId;
@@ -35,10 +35,12 @@ public class CartItemControllerDTO {
             this.productId = cartItem.getProduct().getProductId();
             this.productName = cartItem.getProduct().getProductName();
             this.quantity = cartItem.getQuantity();
+            this.MarketPrice = cartItem.getProduct().getMarketPrice();
 
             this.discountPrice = cartItem.getProduct().getDiscountPrice();
 
-            this.totalPrice = this.quantity * this.discountPrice;
+            int basePrice = (this.discountPrice > 0 ? this.discountPrice : this.MarketPrice);
+            this.totalPrice = basePrice * this.quantity;
 
             if (cartItem.getCartAdditionalOption() != null) {
                 CartAdditionalOption additionalOption = cartItem.getCartAdditionalOption();
