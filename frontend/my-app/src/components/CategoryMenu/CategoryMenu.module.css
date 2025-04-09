@@ -1,30 +1,45 @@
-.categoryMenu{
+.categoryMenu {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
   gap: 20px;
-  margin-top: 20px;
-}
-  
-.categoryItem{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 110px;
-  transition: all 0.3 ease;
-  cursor: pointer;
+  padding: 20px;
+  margin-top: 200px;
 }
 
-.placeholder{
-  width: 100px;
-  height: 100px;
-  background: #eee;
-  border-radius: 10px;
-  margin-bottom: 7px;
-}
-
-.text{
-  font-size: 16px;
+.categoryItem {
+  width: 150px; /* 예시 고정 폭 */
+  height: 150px; /* 예시 고정 높이 */
+  /* flex로 레이아웃 조정 중이라면, 다른 설정이 있을 수 있으므로 유의 */
   text-align: center;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 크기에 맞춰 이미지가 잘릴 수 있음 */
+  object-position: center; /* 잘리는 영역을 중앙 기준으로 */
+  border-radius: 8px;
+}
+
+
+.placeholder {
+  width: 100%;
+  padding-top: 75%; /* 비율 유지용 */
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+.text {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #333;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700; /* Bold */
+}
+.special {
+  /* 예: 특별한 카테고리에 표시할 스타일 */
+  border: 2px solid #ff6347;
 }
