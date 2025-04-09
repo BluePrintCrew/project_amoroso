@@ -18,8 +18,8 @@ public class CartItemControllerDTO {
         private Long productId;
         private String productName;
         private int quantity;
-        private Integer discountPrice; // 현재가 (할인 등 적용 가격)
-        private int MarketPrice; // 원가
+        private Integer discountPrice;
+        private int MarketPrice;
         private int totalPrice;
 
         private Long additionalOptionId;
