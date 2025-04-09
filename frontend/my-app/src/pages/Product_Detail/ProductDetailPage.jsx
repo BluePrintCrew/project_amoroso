@@ -91,13 +91,13 @@ const ProductDetailPage = () => {
     }
   };
 
-  const scrollToSection = (section) => {
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActiveTab(section);
-    }
-  };
+  // const scrollToSection = (section) => {
+  //   const element = document.getElementById(section);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //     setActiveTab(section);
+  //   }
+  // };
 
   // 장바구니 추가 핸들러
   const handleAddToCart = async () => {
@@ -160,8 +160,8 @@ const ProductDetailPage = () => {
     const token = localStorage.getItem('access_token');
 
     if (!token) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
+      setPopupType('login');
+      setIsCartPopupOpen(true);
       return;
     }
 
@@ -371,10 +371,10 @@ const ProductDetailPage = () => {
               {activeTab === 'review' && <ReviewSection />}
 
               {activeTab === 'inquiry' && (
-  <div className={styles.inquiryTab}>
-    <ProductQnA productId={product.productId} />
-  </div>
-)}
+                <div className={styles.inquiryTab}>
+                  <ProductQnA productId={product.productId} />
+                </div>
+              )}
               {/* 배송 탭 */}
               {activeTab === 'delivery' && (
                 <div className={styles.deliveryTab}>

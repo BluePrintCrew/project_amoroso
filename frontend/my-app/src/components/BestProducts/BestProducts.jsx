@@ -44,12 +44,22 @@ const BestProducts = () => {
   useEffect(() => {
     const fetchBestProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/products/');
+        const res = await axios.get('http://localhost:8080/api/v1/products/', {
+          params: {
+            categoryCode: 'ALL',
+            page: 1,
+            size: 10,
+            sortBy: 'salesCount',
+            order: 'desc',
+          },
+        });
+        console.log('res.data:', res.data);
         const sorted = res.data.products
-          // .sort((a, b) => b.sales_count - a.sales_count)
+          .sort((a, b) => b.salesCount - a.salesCount)
           .slice(0, 4);
 
         setProducts(sorted);
+        console.log('sorted: ', sorted);
       } catch (err) {
         console.error('베스트 상품 불러오기 실패:', err);
       }

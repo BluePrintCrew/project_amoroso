@@ -9,6 +9,7 @@ import PageLayout from '../../components/PageLayout/PageLayout';
 import axios from 'axios';
 import styles from './OrderForm.module.css';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // const paymentMethods = [
 //   '퀵 계좌이체',
@@ -22,6 +23,7 @@ import { useLocation } from 'react-router-dom';
 // ];
 
 const OrderForm = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
 
   const handleDateChange = (date) => {
@@ -317,7 +319,10 @@ const OrderForm = () => {
                 </div>
                 <div className={styles.cell}>
                   {userAddress.recipientName} / {userAddress.phoneNumber}
-                  <button className={styles.editButton}>
+                  <button
+                    className={styles.editButton}
+                    onClick={() => navigate('/mypageinfo')}
+                  >
                     주문자 정보 변경
                   </button>
                 </div>
