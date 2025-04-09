@@ -39,11 +39,12 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "desc") String order) {
 
         // Category 조회
+
         Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
 
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
-                productService.getProducts(byCategoryCode.getCategoryId(), page, size, sortBy, order);
+                productService.getProducts(byCategoryCode, page, size, sortBy, order);
 
         // ResponseEntity로 반환
         return ResponseEntity.ok(products);

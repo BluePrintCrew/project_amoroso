@@ -200,18 +200,19 @@ public class ProductService {
     /**
      * 상품 목록 조회 메서드.
      */
-    public ProductDTO.ProductListResponse getProducts(Long categoryId, int page, int size, String sortBy, String order) {
+    public ProductDTO.ProductListResponse getProducts(Category categoryCode, int page, int size, String sortBy, String order) {
         log.info("[getProducts] Start - categoryId: {}, page: {}, size: {}, sortBy: {}, order: {}",
-                categoryId, page, size, sortBy, order);
+                categoryCode, page, size, sortBy, order);
 
         // 정렬 방향 정의 및 기본값 처리
         Sort.Direction direction = Sort.Direction.fromString(order);
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page - 1, size, sort);
 
+
         // 카테고리 코드 분석 및, 카테고리 아이템 가져오기, 아니면 전체 아이템가져오기
-        Page<Product> productList = categoryId != null
-                ? productRepository.findAllByCategory_CategoryId(categoryId, pageable)
+        Page<Product> productList = categoryCode != null
+                ? productRepository.findAllByCategory_CategoryId(categoryCode.getCategoryId(), pageable)
                 : productRepository.findAll(pageable);
 
         log.debug("[getProducts] Retrieved Products Count: {}", productList.getTotalElements());
