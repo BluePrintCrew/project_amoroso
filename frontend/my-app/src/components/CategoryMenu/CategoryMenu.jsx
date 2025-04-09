@@ -9,8 +9,7 @@ const categories = [
   { id: 4, name: '홈오피스', topCategry: 'OFFICE' },
   { id: 5, name: '옷장&드레스룸', topCategry: 'DRESSING' },
   { id: 6, name: '홈데코', topCategry: 'ETC' },
-  { id: 7, name: 'TODAY DEAL', special: true },
-  { id: 8, name: '이벤트', special: true },
+
 ];
 
 const CategoryMenu = () => {

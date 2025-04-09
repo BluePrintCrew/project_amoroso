@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './CategoryMenu.css';
 
-// 이미 정의된 카테고리 매핑 정보 (필요 시 별도의 파일로 분리 후 import 가능)
 const topCategoryMap = {
   LIVING: '거실',
   BEDROOM: '침실',
