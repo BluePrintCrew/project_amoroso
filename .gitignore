@@ -1,5 +1,6 @@
 .idea
 .vscode
 /package-lock.json
-/.vscode
-CLAUDE.md
+
+.terraform/
+*.tfstate*
