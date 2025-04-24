@@ -76,3 +76,6 @@ portone:
   store_id: iamporttest_3
   secret_key: test_sk_d26DlbXAaV0xQbpa7y1VqY50Q9RB
   client_key: test_ck_lpP2YxJ4K877JAdv7KX8RGZwXLOb
+
+server:
+  forward-headers-strategy: native
