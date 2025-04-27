@@ -38,11 +38,26 @@ module "security" {
   endpoint_security_group_id = module.network.endpoint_security_group_id
 }
 
-data "aws_acm_certificate" "dev" {
+# 기존 ACM 인증서 참조
+data "aws_acm_certificate" "amoroso" {
   domain      = "*.amoroso.blue"
   statuses    = ["ISSUED"]
   types       = ["AMAZON_ISSUED"]
   most_recent = true
+}
+
+# DNS 모듈 추가
+module "dns" {
+  source = "../../modules/dns"
+
+  environment            = "dev"
+  domain_name            = "amoroso.blue"
+  create_wildcard        = true
+  create_root_record     = true
+  alb_dns_name           = module.compute.alb_dns_name
+  alb_zone_id            = module.compute.alb_zone_id
+  create_acm_certificate = false  # 기존 인증서 사용
+  existing_certificate_arn = data.aws_acm_certificate.amoroso.arn
 }
 
 # 컴퓨팅 모듈 추가
@@ -71,7 +86,7 @@ module "compute" {
   use_public_subnet = false
 
   # HTTPS 설정
-  acm_certificate_arn = data.aws_acm_certificate.dev.arn
+  acm_certificate_arn = data.aws_acm_certificate.amoroso.arn
 
   # S3와 IAM 설정 추가
   iam_instance_profile = module.iam.instance_profile_name
@@ -164,4 +179,14 @@ output "s3_bucket_name" {
 output "s3_bucket_domain" {
   description = "S3 버킷 도메인"
   value       = module.storage.bucket_domain_name
+}
+
+output "domain_name" {
+  description = "애플리케이션 도메인 이름"
+  value       = module.dns.fqdn
+}
+
+output "certificate_arn" {
+  description = "ACM 인증서 ARN"
+  value       = data.aws_acm_certificate.amoroso.arn
 }

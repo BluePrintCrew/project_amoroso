@@ -8,6 +8,11 @@ output "alb_arn" {
   value       = aws_lb.backend.arn
 }
 
+output "alb_zone_id" {
+  description = "ALB 호스팅 영역 ID"
+  value       = aws_lb.backend.zone_id
+}
+
 output "target_group_arn" {
   description = "ALB 타겟 그룹 ARN"
   value       = aws_lb_target_group.backend.arn
