@@ -1,0 +1,10 @@
+# 이 파일은 샘플이므로 실제 값으로 변경하여 terraform.tfvars로 저장해 사용하세요
+# 민감한 정보를 포함하는 실제 tfvars 파일은 절대 Git에 커밋하지 마세요!
+
+# 데이터베이스 설정
+database_name     = "devdb"
+database_username = "admin"
+database_password = "your-secure-password"
+
+# SSH 키 페어 설정
+key_name = "your-key-pair-name"

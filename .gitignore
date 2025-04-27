@@ -2,5 +2,60 @@
 .vscode
 /package-lock.json
 
+# Terraform 관련 파일
 .terraform/
 *.tfstate*
+terraform.tfvars
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# 환경 변수 파일 - 민감한 정보가 있는 파일만 제외
+*.env
+.env
+.env.local
+.env.*.local
+
+# 비밀키 및 인증 관련 파일
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.der
+
+# 로그 파일
+*.log
+logs/
+
+# IDE 관련 파일
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# 빌드 결과물
+/build/
+*/build/
+/bin/
+*/bin/
+/out/
+*/out/
+/target/
+*/target/
+
+# 의존성 폴더
+/node_modules/
+*/node_modules/
+
+# 기타 임시 파일
+*.tmp
+*.temp
+*.swp
+.DS_Store
+Thumbs.db

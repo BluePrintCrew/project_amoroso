@@ -1,3 +1,26 @@
+variable "database_password" {
+  description = "데이터베이스 비밀번호"
+  type        = string
+  sensitive   = true
+}
+
+variable "database_name" {
+  description = "데이터베이스 이름"
+  type        = string
+  default     = "devdb"
+}
+
+variable "database_username" {
+  description = "데이터베이스 사용자 이름"
+  type        = string
+  default     = "admin"
+}
+
+variable "key_name" {
+  description = "EC2 인스턴스 접속용 SSH 키 페어 이름"
+  type        = string
+}
+
 provider "aws" {
   region = "ap-northeast-2"
 }
@@ -30,11 +53,11 @@ module "network" {
 module "security" {
   source = "../../modules/security"
 
-  environment              = "dev"
-  vpc_id                   = module.network.vpc_id
-  vpc_cidr                 = "10.0.0.0/16"
-  enable_ssh               = true
-  ssh_allowed_cidr         = ["0.0.0.0/0"] # 개발 환경에서는 모든 IP에서 SSH 접근 허용
+  environment                = "dev"
+  vpc_id                     = module.network.vpc_id
+  vpc_cidr                   = "10.0.0.0/16"
+  enable_ssh                 = true
+  ssh_allowed_cidr           = ["0.0.0.0/0"] # 개발 환경에서는 모든 IP에서 SSH 접근 허용
   endpoint_security_group_id = module.network.endpoint_security_group_id
 }
 
@@ -50,13 +73,13 @@ data "aws_acm_certificate" "amoroso" {
 module "dns" {
   source = "../../modules/dns"
 
-  environment            = "dev"
-  domain_name            = "amoroso.blue"
-  create_wildcard        = true
-  create_root_record     = true
-  alb_dns_name           = module.compute.alb_dns_name
-  alb_zone_id            = module.compute.alb_zone_id
-  create_acm_certificate = false  # 기존 인증서 사용
+  environment              = "dev"
+  domain_name              = "amoroso.blue"
+  create_wildcard          = true
+  create_root_record       = true
+  alb_dns_name             = module.compute.alb_dns_name
+  alb_zone_id              = module.compute.alb_zone_id
+  create_acm_certificate   = false # 기존 인증서 사용
   existing_certificate_arn = data.aws_acm_certificate.amoroso.arn
 }
 
@@ -72,7 +95,7 @@ module "compute" {
   alb_security_group_id = module.security.alb_security_group_id
 
   # 인스턴스 설정
-  key_name           = "awskeypair" # SSH 키 페어 이름 추가
+  key_name           = var.key_name # SSH 키 페어 이름 추가
   instance_type      = "t4g.small"  # 2025년까지 월 750시간 무료 제공
   ebs_volume_size    = 8
   use_spot_instances = true # 비용 절감을 위해 스팟 인스턴스 사용
@@ -111,9 +134,9 @@ module "database" {
   enable_encryption       = false
 
   # 데이터베이스 기본 설정
-  database_name     = "devdb"
-  database_username = "admin"
-  database_password = "12345678" # 실제 환경에서는 외부에서 관리되는 비밀번호 사용 권장
+  database_name     = var.database_name
+  database_username = var.database_username
+  database_password = var.database_password
 }
 
 # S3 버킷 모듈 추가 (스프링부트 JAR 파일 저장용)
