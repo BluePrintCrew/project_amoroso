@@ -46,7 +46,7 @@ module "network" {
   public_subnets_cidr  = ["10.0.1.0/24", "10.0.2.0/24"]
   private_subnets_cidr = ["10.0.11.0/24", "10.0.12.0/24"]
   enable_nat_gateway   = false # 개발 환경에서는 비용 절감을 위해 NAT 게이트웨이 비활성화
-  create_vpc_endpoints = true  # SSM 엔드포인트 활성화
+  create_vpc_endpoints = false # 비용 절감을 위해 VPC 엔드포인트 비활성화
 }
 
 # 보안 모듈 추가
@@ -75,8 +75,9 @@ module "dns" {
 
   environment              = "dev"
   domain_name              = "amoroso.blue"
-  create_wildcard          = true
-  create_root_record       = true
+  subdomain                = "api"
+  create_wildcard          = false
+  create_root_record       = false
   alb_dns_name             = module.compute.alb_dns_name
   alb_zone_id              = module.compute.alb_zone_id
   create_acm_certificate   = false # 기존 인증서 사용
@@ -105,8 +106,8 @@ module "compute" {
   asg_max_size         = 4
   asg_desired_capacity = 1
 
-  # 프라이빗 서브넷 사용
-  use_public_subnet = false
+  # 퍼블릭 서브넷 사용
+  use_public_subnet = true
 
   # HTTPS 설정
   acm_certificate_arn = data.aws_acm_certificate.amoroso.arn
@@ -166,6 +167,16 @@ locals {
     Terraform   = "true"
     ManagedBy   = "opentofu"
   }
+}
+
+# 비용 할당 태그 모듈 추가
+module "cost" {
+  source = "../../modules/cost"
+
+  # 추가 AWS 태그 활성화 (이미 리소스에 적용된 태그만 포함)
+  additional_aws_tags = [
+    "aws:autoscaling:groupName"
+  ]
 }
 
 # 출력

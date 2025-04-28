@@ -96,6 +96,16 @@ locals {
   }
 }
 
+# 비용 할당 태그 모듈 추가
+module "cost" {
+  source = "../../modules/cost"
+
+  # 추가 AWS 태그 활성화 (이미 리소스에 적용된 태그만 포함)
+  additional_aws_tags = [
+    "aws:autoscaling:groupName"
+  ]
+}
+
 # 출력
 output "vpc_id" {
   description = "VPC ID"
