@@ -97,7 +97,7 @@ public class Product {
     private Integer stockNotificationThreshold;
     private Integer discountRate; // 0 ~ 9
     @Setter
-    private Integer discountPrice = 0; // discountRate에 따라 바뀜.
+    private Integer discountPrice; // discountRate에 따라 바뀜.
     @Column(nullable = false)
     private Integer salesCount = 0;
 
