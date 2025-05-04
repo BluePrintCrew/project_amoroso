@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../MyPage/api';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import CartPopup from '../Product_Detail/CartPopup';
 import PageLayout from '../../components/PageLayout/PageLayout';
-import ProductQnA from '../../components/ProductQnA/ProductQnA'; 
+import ProductQnA from '../../components/ProductQnA/ProductQnA';
 import ReviewSection from './ReviewSection';
 import couponPack from '../../assets/coupon_pack.png';
 import getCoupon from '../../assets/get_coupon.png';
@@ -49,7 +49,7 @@ const ProductDetailPage = () => {
         if (!data || Object.keys(data).length === 0) {
           throw new Error('받아온 데이터가 비어 있음.');
         }
-        
+
         setProduct(data);
       } catch (error) {
         console.error(error);
@@ -103,7 +103,7 @@ const ProductDetailPage = () => {
   const getEstimatedDeliveryDate = () => {
     const date = new Date();
     date.setDate(date.getDate() + 14); // 현재로부터 14일 뒤 배송 예정
-    
+
     const options = { month: 'numeric', day: 'numeric', weekday: 'short' };
     return date.toLocaleDateString('ko-KR', options);
   };
@@ -111,7 +111,7 @@ const ProductDetailPage = () => {
   // 평균 평점 계산
   const calculateAverageRating = () => {
     if (!product.reviews || product.reviews.length === 0) return 0;
-    
+
     const sum = product.reviews.reduce((acc, review) => acc + review.rating, 0);
     return (sum / product.reviews.length).toFixed(1);
   };
@@ -212,13 +212,13 @@ const ProductDetailPage = () => {
     }
   };
 
-  const scrollToSection = (section) => {
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActiveTab(section);
-    }
-  };
+  // const scrollToSection = (section) => {
+  //   const element = document.getElementById(section);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  //     setActiveTab(section);
+  //   }
+  // };
 
   // 장바구니 추가 핸들러 - 수정됨
   const handleAddToCart = async () => {
@@ -305,8 +305,8 @@ const ProductDetailPage = () => {
     const token = localStorage.getItem('access_token');
 
     if (!token) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
+      setPopupType('login');
+      setIsCartPopupOpen(true);
       return;
     }
 
@@ -430,9 +430,7 @@ const ProductDetailPage = () => {
                 </span>
               </p>
               <div className={styles.productRating}>
-                <span className={styles.ratingStars}>
-                  ⭐ {averageRating}
-                </span>
+                <span className={styles.ratingStars}>⭐ {averageRating}</span>
                 <span className={styles.ratingReviews}>
                   {' '}
                   리뷰 {product.reviews ? product.reviews.length : 0}개{' '}
@@ -455,14 +453,20 @@ const ProductDetailPage = () => {
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>배송정보</span>
                   <span className={styles.infoValue}>
-                    {product.shippingInstallationFee > 0 
-                      ? `${product.shippingInstallationFee.toLocaleString()}원` 
-                      : '무료'} / 로진택배
+                    {product.shippingInstallationFee > 0
+                      ? `${product.shippingInstallationFee.toLocaleString()}원`
+                      : '무료'}{' '}
+                    / 로진택배
                     <br />
                     <span>{getEstimatedDeliveryDate()} 도착예상</span>
-                    <span className={styles.deliveryNote}>(주문 후 평균 14일 소요)</span>
+                    <span className={styles.deliveryNote}>
+                      (주문 후 평균 14일 소요)
+                    </span>
                     <br />
-                    <span>| 도서산간지역과 제주특별자치도의 추가 배송비는 관리자에게 별도로 문의해주세요. </span>
+                    <span>
+                      | 도서산간지역과 제주특별자치도의 추가 배송비는 관리자에게
+                      별도로 문의해주세요.{' '}
+                    </span>
                     <br />
                     <span className={styles.adminContact}>
                       ※ 정확한 배송일은 관리자에게 문의해주세요.
@@ -555,14 +559,15 @@ const ProductDetailPage = () => {
                 </div>
               )}
 
-              {activeTab === 'review' && <ReviewSection productId={product.productId} />}
+              {activeTab === 'review' && (
+                <ReviewSection productId={product.productId} />
+              )}
 
               {activeTab === 'inquiry' && (
                 <div className={styles.inquiryTab}>
                   <ProductQnA productId={product.productId} />
                 </div>
               )}
-              
               {activeTab === 'delivery' && (
                 <div className={styles.deliveryTab}>
                   <h3>배송 및 교환/반품 안내</h3>
@@ -572,13 +577,18 @@ const ProductDetailPage = () => {
                       <ul>
                         <li>배송 방법: 택배</li>
                         <li>배송 지역: 전국(일부 도서 산간 지역 제외)</li>
-                        <li>배송 비용: {product.shippingInstallationFee > 0 
-                            ? `${product.shippingInstallationFee.toLocaleString()}원` 
-                            : '무료'}</li>
-                        <li className={styles.deliveryHighlight}>배송 기간: 주문일로부터 평균 14일 소요</li>
+                        <li>
+                          배송 비용:{' '}
+                          {product.shippingInstallationFee > 0
+                            ? `${product.shippingInstallationFee.toLocaleString()}원`
+                            : '무료'}
+                        </li>
+                        <li className={styles.deliveryHighlight}>
+                          배송 기간: 주문일로부터 평균 14일 소요
+                        </li>
                         <li className={styles.adminContactInfo}>
-                          배송 일정 확인: 정확한 배송일은 주문 후 관리자에게 문의해주세요.
-                          (고객센터: 1588-XXXX)
+                          배송 일정 확인: 정확한 배송일은 주문 후 관리자에게
+                          문의해주세요. (고객센터: 1588-XXXX)
                         </li>
                         <li>
                           배송 안내: 배송 과정에서 상품이 분실되거나 파손된 경우
