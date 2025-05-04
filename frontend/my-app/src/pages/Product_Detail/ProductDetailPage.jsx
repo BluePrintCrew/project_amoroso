@@ -26,6 +26,9 @@ const ProductDetailPage = () => {
   const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState('cart'); // 'cart' 또는 'login'
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  
+  // 옵션 관련 상태 추가
+  const [selectedOptions, setSelectedOptions] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -55,6 +58,20 @@ const ProductDetailPage = () => {
 
     fetchProduct();
   }, [id]);
+
+  // 옵션이 없는 경우 컴포넌트 마운트 시 자동으로 기본 상품 선택
+  useEffect(() => {
+    if (product && 
+        (!product.productOptionResponses || product.productOptionResponses.length === 0) && 
+        selectedOptions.length === 0) {
+      setSelectedOptions([{
+        name: product.productName,
+        price: 0,
+        quantity: 1,
+        type: 'base'
+      }]);
+    }
+  }, [product, selectedOptions.length]);
 
   const handleScroll = () => {
     if (!tabRef.current) return;
@@ -101,6 +118,90 @@ const ProductDetailPage = () => {
 
   const averageRating = calculateAverageRating();
 
+  // 제품 옵션 변경 핸들러
+  const handleOptionChange = (optionId, value) => {
+    if (!value) return;
+    
+    // 새 옵션 추가
+    const optionObj = product.productOptionResponses.find(
+      option => option.productOptionId === optionId
+    );
+    
+    // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
+    const existingOptionIndex = selectedOptions.findIndex(
+      opt => opt.type === 'product' && opt.optionId === optionId
+    );
+    
+    const newOption = {
+      optionId,
+      value,
+      name: `${optionObj.optionName}: ${value}`,
+      price: 0, // 기본 옵션은 추가 비용 없음
+      quantity: 1,
+      type: 'product'
+    };
+    
+    if (existingOptionIndex >= 0) {
+      // 기존 옵션 업데이트
+      const updatedOptions = [...selectedOptions];
+      updatedOptions[existingOptionIndex] = newOption;
+      setSelectedOptions(updatedOptions);
+    } else {
+      // 새 옵션 추가
+      setSelectedOptions([...selectedOptions, newOption]);
+    }
+  };
+
+  // 추가 옵션 변경 핸들러
+  const handleAdditionalOptionChange = (optionId) => {
+    if (!optionId) return;
+    
+    // 새 옵션 추가
+    const optionObj = product.additionalOptionResponses.find(
+      option => option.additionalOptionId === optionId
+    );
+    
+    // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
+    const existingOptionIndex = selectedOptions.findIndex(
+      opt => opt.type === 'additional' && opt.optionId === optionId
+    );
+    
+    const newOption = {
+      optionId,
+      value: optionObj.optionName,
+      name: optionObj.optionName,
+      price: optionObj.additionalPrice,
+      quantity: 1,
+      type: 'additional'
+    };
+    
+    if (existingOptionIndex >= 0) {
+      // 기존 옵션 업데이트
+      const updatedOptions = [...selectedOptions];
+      updatedOptions[existingOptionIndex] = newOption;
+      setSelectedOptions(updatedOptions);
+    } else {
+      // 새 옵션 추가
+      setSelectedOptions([...selectedOptions, newOption]);
+    }
+  };
+
+  // 총 가격 계산
+  const calculateTotalPrice = () => {
+    const basePrice = product.discountPrice;
+    const optionsPrice = selectedOptions.reduce((total, option) => {
+      return total + (option.price * option.quantity);
+    }, 0);
+    
+    // 옵션이 없으면 기본 가격 반환
+    if (selectedOptions.length === 0) {
+      return basePrice;
+    }
+    
+    // 기본 상품 가격 + 옵션별 추가 가격
+    return basePrice + optionsPrice;
+  };
+
   const scrollThumbnails = (direction) => {
     if (thumbnailContainerRef.current) {
       const scrollAmount = direction === 'left' ? -100 : 100;
@@ -119,14 +220,17 @@ const ProductDetailPage = () => {
     }
   };
 
-  // 장바구니 추가 핸들러
+  // 장바구니 추가 핸들러 - 수정됨
   const handleAddToCart = async () => {
-    // 이미 처리 중이면 중복 요청 방지
     if (isAddingToCart) return;
+    
+    if (selectedOptions.length === 0) {
+      alert('옵션을 선택해주세요.');
+      return;
+    }
 
     const token = localStorage.getItem('access_token');
 
-    // 로그인 여부 확인
     if (!token) {
       setPopupType('login');
       setIsCartPopupOpen(true);
@@ -135,26 +239,40 @@ const ProductDetailPage = () => {
 
     try {
       setIsAddingToCart(true);
+      
+      // 첫 번째 옵션만 처리 (나중에 필요시 여러 옵션 처리 기능 추가)
+      const option = selectedOptions[0];
+      
+      const cartItem = {
+        productId: product.productId,
+        quantity: 1, // 항상 1로 고정
+      };
 
-      // 장바구니 API 호출
+      // 옵션 타입에 따라 다르게 처리
+      if (option.type === 'additional' && option.optionId) {
+        cartItem.additionalOptionId = option.optionId;
+      } else if (option.type === 'product' && option.optionId) {
+        cartItem.productOptionId = option.optionId;
+        cartItem.selectedOptionValue = option.value;
+      }
+      
+      console.log('장바구니 추가 데이터:', cartItem);
+
       const response = await fetch(`${API_BASE_URL}/api/v1/cart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          productId: product.productId,
-          quantity: 1,
-          // 추가 옵션이 있다면 여기에 포함
-        }),
+        body: JSON.stringify(cartItem),
       });
 
       if (!response.ok) {
-        throw new Error('장바구니 추가에 실패했습니다.');
+        const errorData = await response.json().catch(() => null);
+        console.error('장바구니 추가 실패:', response.status, errorData);
+        throw new Error(`장바구니 추가 실패: ${response.status}`);
       }
 
-      // 장바구니 추가 성공 시 팝업 표시
       setPopupType('cart');
       setIsCartPopupOpen(true);
     } catch (error) {
@@ -176,7 +294,14 @@ const ProductDetailPage = () => {
     setIsCartPopupOpen(false);
   };
 
+  // 주문하기 핸들러 - 수정됨
   const handleOrderClick = () => {
+    // 선택된 옵션이 없는 경우
+    if (selectedOptions.length === 0) {
+      alert('옵션을 선택해주세요.');
+      return;
+    }
+    
     const token = localStorage.getItem('access_token');
 
     if (!token) {
@@ -185,7 +310,41 @@ const ProductDetailPage = () => {
       return;
     }
 
-    navigate('/order', { state: product });
+    // API 형식에 맞게 orderItems 배열 생성
+    const orderItems = selectedOptions.map(option => {
+      const orderItem = {
+        productId: product.productId,
+        quantity: 1 // 항상 1로 고정
+      };
+      
+      // 옵션 타입에 따라 다르게 처리
+      if (option.type === 'additional' && option.optionId) {
+        orderItem.additionalOptionId = option.optionId;
+      } else if (option.type === 'product' && option.optionId) {
+        orderItem.productOptionId = option.optionId;
+        orderItem.selectedOptionValue = option.value;
+      }
+      
+      return orderItem;
+    });
+
+    // 주문 데이터 (API 형식에 맞게 구성)
+    const orderData = {
+      product: product, // 제품 정보 (화면 표시용)
+      orderRequest: {
+        totalPrice: calculateTotalPrice(),
+        orderItems: orderItems,
+        // 나머지 필드는 주문 페이지에서 입력받을 수 있음
+        userAddressId: null,
+        deliveryRequest: '',
+        freeLoweringService: false,
+        productInstallationAgreement: false,
+        vehicleEntryPossible: false,
+        elevatorType: 'NONE'
+      }
+    };
+
+    navigate('/order', { state: orderData });
   };
 
   return (
@@ -312,11 +471,11 @@ const ProductDetailPage = () => {
                 </div>
               </div>
 
-              <div className={styles.couponPack}>
+           {/*}   <div className={styles.couponPack}>
                 <button className={styles.packButton}>
                   <img src={couponPack} alt="쿠폰팩 버튼" />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -461,16 +620,64 @@ const ProductDetailPage = () => {
         </div>
 
         <div className={styles.productRight}>
-          <button className={styles.selectButton}>
-            기본 상품 선택
-            <span className={styles.arrow}>&gt;</span>
-          </button>
+          {/* 제품 옵션 선택 (옵션이 있는 경우) */}
+          {product.productOptionResponses && product.productOptionResponses.length > 0 ? (
+            product.productOptionResponses.map((option, index) => (
+              <div key={index}>
+                <select 
+                  className={styles.selectButton}
+                  onChange={(e) => handleOptionChange(option.productOptionId, e.target.value)}
+                >
+                  <option value="">{option.optionName} 선택 &gt;</option>
+                  {option.optionValues.map((value, valueIndex) => (
+                    <option key={valueIndex} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))
+          ) : (
+            <button 
+              className={styles.selectButton}
+              onClick={() => {
+                if (selectedOptions.length === 0) {
+                  setSelectedOptions([{
+                    name: product.productName,
+                    price: 0,
+                    quantity: 1,
+                    type: 'base'
+                  }]);
+                }
+              }}
+            >
+              기본 상품 선택
+              <span className={styles.arrow}>&gt;</span>
+            </button>
+          )}
+          
+          {/* 추가 옵션 선택 (있는 경우) */}
+          {product.additionalOptionResponses && product.additionalOptionResponses.length > 0 && (
+            <div>
+              <select 
+                className={styles.selectButton}
+                onChange={(e) => handleAdditionalOptionChange(parseInt(e.target.value))}
+              >
+                <option value="">추가 옵션 선택 &gt;</option>
+                {product.additionalOptionResponses.map((addOption, index) => (
+                  <option key={index} value={addOption.additionalOptionId}>
+                    {addOption.optionName} (+{addOption.additionalPrice.toLocaleString()}원)
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className={styles.totalPrice}>
             <div className={styles.priceInfo}>
               <span className={styles.priceTitle}>총 구매가</span>
               <span className={styles.priceValue}>
-                {product.discountPrice.toLocaleString()}원
+                {calculateTotalPrice().toLocaleString()}원
               </span>
             </div>
             <p className={styles.priceNote}>
@@ -487,7 +694,10 @@ const ProductDetailPage = () => {
             >
               {isAddingToCart ? '처리 중...' : '장바구니'}
             </button>
-            <button className={styles.buyButton} onClick={handleOrderClick}>
+            <button 
+              className={styles.buyButton} 
+              onClick={handleOrderClick}
+            >
               구매하기
             </button>
           </div>
