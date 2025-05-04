@@ -50,6 +50,11 @@ const ProductDetailPage = () => {
           throw new Error('받아온 데이터가 비어 있음.');
         }
 
+        // 할인가가 null인 경우 정가를 할인가로 설정
+        if (data.discountPrice === null || data.discountPrice === undefined) {
+          data.discountPrice = data.marketPrice;
+        }
+
         setProduct(data);
       } catch (error) {
         console.error(error);
@@ -127,13 +132,15 @@ const ProductDetailPage = () => {
       option => option.productOptionId === optionId
     );
     
+    if (!optionObj) return; // 옵션 객체가 없으면 종료
+    
     // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
     const existingOptionIndex = selectedOptions.findIndex(
       opt => opt.type === 'product' && opt.optionId === optionId
     );
     
     const newOption = {
-      optionId,
+      optionId: Number(optionId), // 숫자형으로 변환
       value,
       name: `${optionObj.optionName}: ${value}`,
       price: 0, // 기본 옵션은 추가 비용 없음
@@ -161,16 +168,18 @@ const ProductDetailPage = () => {
       option => option.additionalOptionId === optionId
     );
     
+    if (!optionObj) return; // 옵션 객체가 없으면 종료
+    
     // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
     const existingOptionIndex = selectedOptions.findIndex(
       opt => opt.type === 'additional' && opt.optionId === optionId
     );
     
     const newOption = {
-      optionId,
+      optionId: Number(optionId), // 숫자형으로 변환
       value: optionObj.optionName,
       name: optionObj.optionName,
-      price: optionObj.additionalPrice,
+      price: optionObj.additionalPrice || 0, // null인 경우 0으로 설정
       quantity: 1,
       type: 'additional'
     };
@@ -188,9 +197,11 @@ const ProductDetailPage = () => {
 
   // 총 가격 계산
   const calculateTotalPrice = () => {
-    const basePrice = product.discountPrice;
+    // 할인가가 null인 경우 정가 사용
+    const basePrice = product.discountPrice || product.marketPrice || 0;
+    
     const optionsPrice = selectedOptions.reduce((total, option) => {
-      return total + (option.price * option.quantity);
+      return total + ((option.price || 0) * (option.quantity || 1));
     }, 0);
     
     // 옵션이 없으면 기본 가격 반환
@@ -212,14 +223,6 @@ const ProductDetailPage = () => {
     }
   };
 
-  // const scrollToSection = (section) => {
-  //   const element = document.getElementById(section);
-  //   if (element) {
-  //     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  //     setActiveTab(section);
-  //   }
-  // };
-
   // 장바구니 추가 핸들러 - 수정됨
   const handleAddToCart = async () => {
     if (isAddingToCart) return;
@@ -240,20 +243,25 @@ const ProductDetailPage = () => {
     try {
       setIsAddingToCart(true);
       
-      // 첫 번째 옵션만 처리 (나중에 필요시 여러 옵션 처리 기능 추가)
+      // 첫 번째 옵션만 처리 
       const option = selectedOptions[0];
       
+      // API 문서와 일치하는 형식으로 데이터 구성
+      // 모든 필드 기본값으로 설정
       const cartItem = {
-        productId: product.productId,
-        quantity: 1, // 항상 1로 고정
+        productId: Number(product.productId),
+        quantity: 1,
+        additionalOptionId: 0,
+        productOptionId: 0,
+        selectedOptionValue: ""
       };
 
-      // 옵션 타입에 따라 다르게 처리
+      // 옵션 타입에 따른 처리
       if (option.type === 'additional' && option.optionId) {
-        cartItem.additionalOptionId = option.optionId;
+        cartItem.additionalOptionId = Number(option.optionId);
       } else if (option.type === 'product' && option.optionId) {
-        cartItem.productOptionId = option.optionId;
-        cartItem.selectedOptionValue = option.value;
+        cartItem.productOptionId = Number(option.optionId);
+        cartItem.selectedOptionValue = String(option.value || "");
       }
       
       console.log('장바구니 추가 데이터:', cartItem);
@@ -267,17 +275,33 @@ const ProductDetailPage = () => {
         body: JSON.stringify(cartItem),
       });
 
+      // 응답 상태 로깅
+      console.log('장바구니 응답 상태:', response.status);
+
+      // 에러 응답 처리
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error('장바구니 추가 실패:', response.status, errorData);
-        throw new Error(`장바구니 추가 실패: ${response.status}`);
+        let errorMessage = '장바구니 추가 실패';
+        try {
+          const errorData = await response.json();
+          console.error('장바구니 추가 실패 데이터:', errorData);
+          if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (e) {
+          console.error('에러 응답 파싱 실패:', e);
+        }
+        throw new Error(errorMessage);
       }
+
+      // 성공 처리
+      const responseData = await response.json();
+      console.log('장바구니 추가 성공:', responseData);
 
       setPopupType('cart');
       setIsCartPopupOpen(true);
     } catch (error) {
       console.error('장바구니 추가 오류:', error);
-      alert('장바구니 추가 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert(`장바구니 추가 중 오류가 발생했습니다: ${error.message}`);
     } finally {
       setIsAddingToCart(false);
     }
@@ -310,19 +334,25 @@ const ProductDetailPage = () => {
       return;
     }
 
+    // 할인가 확인 - null이면 정가 사용
+    const finalPrice = product.discountPrice || product.marketPrice || 0;
+
     // API 형식에 맞게 orderItems 배열 생성
     const orderItems = selectedOptions.map(option => {
       const orderItem = {
-        productId: product.productId,
-        quantity: 1 // 항상 1로 고정
+        productId: Number(product.productId),
+        quantity: 1,
+        additionalOptionId: 0,
+        productOptionId: 0,
+        selectedOptionValue: ""
       };
       
       // 옵션 타입에 따라 다르게 처리
       if (option.type === 'additional' && option.optionId) {
-        orderItem.additionalOptionId = option.optionId;
+        orderItem.additionalOptionId = Number(option.optionId);
       } else if (option.type === 'product' && option.optionId) {
-        orderItem.productOptionId = option.optionId;
-        orderItem.selectedOptionValue = option.value;
+        orderItem.productOptionId = Number(option.optionId);
+        orderItem.selectedOptionValue = String(option.value || "");
       }
       
       return orderItem;
@@ -330,7 +360,10 @@ const ProductDetailPage = () => {
 
     // 주문 데이터 (API 형식에 맞게 구성)
     const orderData = {
-      product: product, // 제품 정보 (화면 표시용)
+      product: {
+        ...product,
+        discountPrice: finalPrice, // 할인가 명시적 설정
+      }, // 제품 정보 (화면 표시용)
       orderRequest: {
         totalPrice: calculateTotalPrice(),
         orderItems: orderItems,
@@ -420,13 +453,13 @@ const ProductDetailPage = () => {
               <h1 className={styles.productTitle}>{product.productName}</h1>
               <p className={styles.productPrice}>
                 <span className={styles.discountPrice}>
-                  {product.discountPrice.toLocaleString()}원
+                  {(product.discountPrice || 0).toLocaleString()}원
                 </span>
                 <span className={styles.originalPrice}>
-                  {product.marketPrice.toLocaleString()}원
+                  {(product.marketPrice || 0).toLocaleString()}원
                 </span>
                 <span className={styles.discountPercent}>
-                  {product.discountRate}%
+                  {product.discountRate || 0}%
                 </span>
               </p>
               <div className={styles.productRating}>
@@ -445,7 +478,7 @@ const ProductDetailPage = () => {
                   <span className={styles.infoValue}>
                     구매 시{' '}
                     <span className={styles.highlight}>
-                      {Math.floor(product.discountPrice * 0.003)}P
+                      {Math.floor((product.discountPrice || 0) * 0.003)}P
                     </span>{' '}
                     예상 적립 (회원 0.3%)
                   </span>
@@ -454,7 +487,7 @@ const ProductDetailPage = () => {
                   <span className={styles.infoLabel}>배송정보</span>
                   <span className={styles.infoValue}>
                     {product.shippingInstallationFee > 0
-                      ? `${product.shippingInstallationFee.toLocaleString()}원`
+                      ? `${(product.shippingInstallationFee || 0).toLocaleString()}원`
                       : '무료'}{' '}
                     / 로진택배
                     <br />
@@ -474,12 +507,6 @@ const ProductDetailPage = () => {
                   </span>
                 </div>
               </div>
-
-           {/*}   <div className={styles.couponPack}>
-                <button className={styles.packButton}>
-                  <img src={couponPack} alt="쿠폰팩 버튼" />
-                </button>
-              </div> */}
             </div>
           </div>
 
@@ -580,7 +607,7 @@ const ProductDetailPage = () => {
                         <li>
                           배송 비용:{' '}
                           {product.shippingInstallationFee > 0
-                            ? `${product.shippingInstallationFee.toLocaleString()}원`
+                            ? `${(product.shippingInstallationFee || 0).toLocaleString()}원`
                             : '무료'}
                         </li>
                         <li className={styles.deliveryHighlight}>
@@ -636,7 +663,7 @@ const ProductDetailPage = () => {
               <div key={index}>
                 <select 
                   className={styles.selectButton}
-                  onChange={(e) => handleOptionChange(option.productOptionId, e.target.value)}
+                  onChange={(e) => handleOptionChange(Number(option.productOptionId), e.target.value)}
                 >
                   <option value="">{option.optionName} 선택 &gt;</option>
                   {option.optionValues.map((value, valueIndex) => (
@@ -671,12 +698,12 @@ const ProductDetailPage = () => {
             <div>
               <select 
                 className={styles.selectButton}
-                onChange={(e) => handleAdditionalOptionChange(parseInt(e.target.value))}
+                onChange={(e) => handleAdditionalOptionChange(Number(e.target.value))}
               >
                 <option value="">추가 옵션 선택 &gt;</option>
                 {product.additionalOptionResponses.map((addOption, index) => (
                   <option key={index} value={addOption.additionalOptionId}>
-                    {addOption.optionName} (+{addOption.additionalPrice.toLocaleString()}원)
+                    {addOption.optionName} (+{(addOption.additionalPrice || 0).toLocaleString()}원)
                   </option>
                 ))}
               </select>
