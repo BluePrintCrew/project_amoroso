@@ -44,15 +44,7 @@ const BestProducts = () => {
   useEffect(() => {
     const fetchBestProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/products/', {
-          params: {
-            categoryCode: 'ALL',
-            page: 1,
-            size: 10,
-            sortBy: 'salesCount',
-            order: 'desc',
-          },
-        });
+        const res = await axios.get('http://localhost:8080/api/v1/products/');
         console.log('res.data:', res.data);
         const sorted = res.data.products
           .sort((a, b) => b.salesCount - a.salesCount)

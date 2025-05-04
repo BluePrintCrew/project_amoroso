@@ -23,42 +23,27 @@ import { useNavigate } from 'react-router-dom';
 // ];
 
 const OrderForm = () => {
+  // 1. 라우터 관련 훅
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState(null);
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
-  const handleMethodClick = (method) => {
-    setSelectedMethod(method);
-  };
-
-  const formatDate = (date) => {
-    if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
-
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString();
-    const day = date.getDate().toString();
-    const dayOfWeek = date
-      .toLocaleDateString('ko-KR', { weekday: 'long' })
-      .substring(0, 1);
-
-    return { year, month, day, dayOfWeek };
-  };
-
-  const { year, month, day, dayOfWeek } = formatDate(selectedDate);
-
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [userAddress, setUserAddress] = useState(null);
-  const [user, setUser] = useState(null);
-
   const location = useLocation();
   const passedData = location.state;
   const products = Array.isArray(passedData) ? passedData : [passedData];
 
-  console.log('🧾 products:', products);
+  // 2. 상태 변수 선언
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedMethod, setSelectedMethod] = useState(null);
 
+  const [userAddress, setUserAddress] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const [deliveryRequest, setDeliveryRequest] = useState('');
+  const [freeLoweringService, setFreeLoweringService] = useState(false);
+  const [productInstallationAgreement, setProductInstallationAgreement] =
+    useState(false);
+  const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
+  const [elevatorType, setElevatorType] = useState('ONE_TO_SEVEN');
+
+  // 3. 가격 계산용 변수
   const cartItems = products.map((item) => ({
     price: item.discountPrice,
     originalPrice: item.marketPrice,
@@ -79,6 +64,44 @@ const OrderForm = () => {
   const pointUsed = 0;
   const finalPrice = totalDiscountPrice + shippingPrice - pointUsed;
 
+  // 4. 날짜 포맷
+  const formatDate = (date) => {
+    if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
+
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString();
+    const day = date.getDate().toString();
+    const dayOfWeek = date
+      .toLocaleDateString('ko-KR', { weekday: 'long' })
+      .substring(0, 1);
+
+    return { year, month, day, dayOfWeek };
+  };
+
+  const { year, month, day, dayOfWeek } = formatDate(selectedDate);
+
+  // 5. useEffect: 유저 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/auth/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUser(response.data);
+      } catch (err) {
+        console.error('유저 이메일 가져오기 실패:', err);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
+  // 6. useEffect: 유저 주소 가져오기
   useEffect(() => {
     const fetchUserAddress = async () => {
       try {
@@ -102,32 +125,14 @@ const OrderForm = () => {
     fetchUserAddress();
   }, []);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await axios.get(
-          `${API_BASE_URL}/api/v1/auth/users/me`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setUser(response.data);
-      } catch (err) {
-        console.error('유저 이메일 가져오기 실패:', err);
-      }
-    };
-    fetchUserInfo();
-  }, []);
+  // 7. 핸들러 함수들
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
-  const [deliveryRequest, setDeliveryRequest] = useState('');
-  const [freeLoweringService, setFreeLoweringService] = useState(false);
-  const [productInstallationAgreement, setProductInstallationAgreement] =
-    useState(false);
-  const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
-  const [elevatorType, setElevatorType] = useState('ONE_TO_SEVEN');
+  const handleMethodClick = (method) => {
+    setSelectedMethod(method);
+  };
 
   const handleOrderSubmit = async () => {
     try {
