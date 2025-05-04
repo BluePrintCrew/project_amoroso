@@ -3,6 +3,7 @@ package org.example.amorosobackend.controller.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.service.CategoryService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "제품 관련 API", description = "제품 상세, 제품 목록")
 public class ProductController {
 
@@ -41,6 +43,7 @@ public class ProductController {
         // Category 조회
 
         Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        log.info("byCategoryCode : {}",categoryCode);
 
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
