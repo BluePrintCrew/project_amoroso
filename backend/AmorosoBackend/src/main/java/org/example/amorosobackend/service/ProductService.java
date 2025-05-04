@@ -74,6 +74,7 @@ public class ProductService {
             log.debug("[createProduct] Seller ID: {}", seller.getSellerId());
         }
 
+
         // Builder로 Product 생성
         Product product = Product.builder()
                 .category(category)
@@ -456,8 +457,8 @@ public class ProductService {
                 product.getShippingInstallationFee(),
                 product.getAsPhoneNumber(),
                 product.getMarketPrice(),
-                product.getDiscountPrice(),
-                product.getDiscountRate(),
+                product.getDiscountPrice() == null ? 0 : product.getDiscountPrice(),
+                product.getDiscountRate() == null ? 0 : product.getDiscountPrice(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
                 // MAIN

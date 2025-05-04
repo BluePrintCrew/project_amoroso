@@ -34,8 +34,8 @@ public class ProductDTO {
         private Long productId;
         private String productName;
         private Integer marketPrice;
-        private Integer discountPrice = 0; // 할인가가 없는 상품일때는 0으로 전달
-        private Integer discountRate = 0; // 할인율이 없는 것일때는 0으로 전달
+        private Integer discountPrice; // 할인가가 없는 상품일때는 0으로 전달
+        private Integer discountRate; // 할인율이 없는 것일때는 0으로 전달
         private String category;
         private String primaryImageURL;
         private String createdAt;
