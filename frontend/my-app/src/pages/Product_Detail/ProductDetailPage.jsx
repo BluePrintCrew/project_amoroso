@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../MyPage/api';
 import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
 import CartPopup from '../Product_Detail/CartPopup';
 import PageLayout from '../../components/PageLayout/PageLayout';
-import ProductQnA from '../../components/ProductQnA/ProductQnA'; // ProductQnA 컴포넌트 import
+import ProductQnA from '../../components/ProductQnA/ProductQnA'; 
 import ReviewSection from './ReviewSection';
 import couponPack from '../../assets/coupon_pack.png';
 import getCoupon from '../../assets/get_coupon.png';
@@ -46,6 +46,7 @@ const ProductDetailPage = () => {
         if (!data || Object.keys(data).length === 0) {
           throw new Error('받아온 데이터가 비어 있음.');
         }
+        
         setProduct(data);
       } catch (error) {
         console.error(error);
@@ -80,6 +81,25 @@ const ProductDetailPage = () => {
   }, []);
 
   if (!product) return <p>상품 정보를 불러오는 중...</p>;
+
+  // 배송 예정일 계산 (주문일 기준 14일 후)
+  const getEstimatedDeliveryDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 14); // 현재로부터 14일 뒤 배송 예정
+    
+    const options = { month: 'numeric', day: 'numeric', weekday: 'short' };
+    return date.toLocaleDateString('ko-KR', options);
+  };
+
+  // 평균 평점 계산
+  const calculateAverageRating = () => {
+    if (!product.reviews || product.reviews.length === 0) return 0;
+    
+    const sum = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / product.reviews.length).toFixed(1);
+  };
+
+  const averageRating = calculateAverageRating();
 
   const scrollThumbnails = (direction) => {
     if (thumbnailContainerRef.current) {
@@ -251,7 +271,9 @@ const ProductDetailPage = () => {
                 </span>
               </p>
               <div className={styles.productRating}>
-                <span className={styles.ratingStars}>⭐ 4.7</span>
+                <span className={styles.ratingStars}>
+                  ⭐ {averageRating}
+                </span>
                 <span className={styles.ratingReviews}>
                   {' '}
                   리뷰 {product.reviews ? product.reviews.length : 0}개{' '}
@@ -274,12 +296,18 @@ const ProductDetailPage = () => {
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>배송정보</span>
                   <span className={styles.infoValue}>
-                    무료 / 로진택배
+                    {product.shippingInstallationFee > 0 
+                      ? `${product.shippingInstallationFee.toLocaleString()}원` 
+                      : '무료'} / 로진택배
                     <br />
-                    <span>12/18(수) 도착예상</span>
-                    <span>도서 산간 지역 불가</span>
+                    <span>{getEstimatedDeliveryDate()} 도착예상</span>
+                    <span className={styles.deliveryNote}>(주문 후 평균 14일 소요)</span>
                     <br />
-                    <span>| 제주특별자치도 15,000원 선불 (1개당)</span>
+                    <span>| 도서산간지역과 제주특별자치도의 추가 배송비는 관리자에게 별도로 문의해주세요. </span>
+                    <br />
+                    <span className={styles.adminContact}>
+                      ※ 정확한 배송일은 관리자에게 문의해주세요.
+                    </span>
                   </span>
                 </div>
               </div>
@@ -368,14 +396,14 @@ const ProductDetailPage = () => {
                 </div>
               )}
 
-              {activeTab === 'review' && <ReviewSection />}
+              {activeTab === 'review' && <ReviewSection productId={product.productId} />}
 
               {activeTab === 'inquiry' && (
-  <div className={styles.inquiryTab}>
-    <ProductQnA productId={product.productId} />
-  </div>
-)}
-              {/* 배송 탭 */}
+                <div className={styles.inquiryTab}>
+                  <ProductQnA productId={product.productId} />
+                </div>
+              )}
+              
               {activeTab === 'delivery' && (
                 <div className={styles.deliveryTab}>
                   <h3>배송 및 교환/반품 안내</h3>
@@ -385,8 +413,14 @@ const ProductDetailPage = () => {
                       <ul>
                         <li>배송 방법: 택배</li>
                         <li>배송 지역: 전국(일부 도서 산간 지역 제외)</li>
-                        <li>배송 비용: 무료</li>
-                        <li>배송 기간: 2~3일(주문일로부터)</li>
+                        <li>배송 비용: {product.shippingInstallationFee > 0 
+                            ? `${product.shippingInstallationFee.toLocaleString()}원` 
+                            : '무료'}</li>
+                        <li className={styles.deliveryHighlight}>배송 기간: 주문일로부터 평균 14일 소요</li>
+                        <li className={styles.adminContactInfo}>
+                          배송 일정 확인: 정확한 배송일은 주문 후 관리자에게 문의해주세요.
+                          (고객센터: 1588-XXXX)
+                        </li>
                         <li>
                           배송 안내: 배송 과정에서 상품이 분실되거나 파손된 경우
                           즉시 고객센터로 연락 바랍니다.
@@ -446,7 +480,6 @@ const ProductDetailPage = () => {
             </p>
           </div>
           <div className={styles.buttonGroup}>
-            {/* 장바구니 버튼에 핸들러 추가 */}
             <button
               className={styles.cartButton}
               onClick={handleAddToCart}
@@ -461,7 +494,6 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* 장바구니/로그인 팝업 */}
       <CartPopup
         isOpen={isCartPopupOpen}
         onClose={handlePopupClose}
