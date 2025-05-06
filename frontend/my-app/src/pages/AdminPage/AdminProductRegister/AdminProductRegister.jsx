@@ -1,68 +1,68 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 
-import { API_BASE_URL } from '../../MyPage/api';
-import styles from './AdminProductRegister.module.css';
+import { API_BASE_URL } from "../../MyPage/api";
+import styles from "./AdminProductRegister.module.css";
 
 // --- 카테고리 매핑 테이블
 const categoryMap = {
   LIVING: [
-    { label: '소파', value: 'LIV_SOFA' },
-    { label: '장식장', value: 'LIV_DISPLAY' },
-    { label: '탁자', value: 'LIV_TABLE' },
+    { label: "소파", value: "LIV_SOFA" },
+    { label: "장식장", value: "LIV_DISPLAY" },
+    { label: "탁자", value: "LIV_TABLE" },
   ],
   BEDROOM: [
-    { label: '침대', value: 'BED_BED' },
-    { label: '침대 깔판', value: 'BED_BASE' },
-    { label: '협탁', value: 'BED_NIGHTSTAND' },
+    { label: "침대", value: "BED_BED" },
+    { label: "침대 깔판", value: "BED_BASE" },
+    { label: "협탁", value: "BED_NIGHTSTAND" },
   ],
-  KITCHEN: [{ label: '식탁 & 의자', value: 'KIT_DINING' }],
+  KITCHEN: [{ label: "식탁 & 의자", value: "KIT_DINING" }],
   OFFICE: [
-    { label: '책상', value: 'OFF_DESK' },
-    { label: '의자', value: 'OFF_CHAIR' },
-    { label: '책장', value: 'OFF_BOOKSHELF' },
+    { label: "책상", value: "OFF_DESK" },
+    { label: "의자", value: "OFF_CHAIR" },
+    { label: "책장", value: "OFF_BOOKSHELF" },
   ],
   DRESSING: [
-    { label: '장롱', value: 'DRESS_WARDROBE' },
-    { label: '화장대', value: 'DRESS_TABLE' },
-    { label: '드레스', value: 'DRESS_DRESSER' },
-    { label: '서랍장', value: 'DRESS_DRAWER' },
+    { label: "장롱", value: "DRESS_WARDROBE" },
+    { label: "화장대", value: "DRESS_TABLE" },
+    { label: "드레스", value: "DRESS_DRESSER" },
+    { label: "서랍장", value: "DRESS_DRAWER" },
   ],
   ETC: [
-    { label: '소품', value: 'ETC_DECOR' },
-    { label: '벽걸이 거울', value: 'ETC_WALL_MIRROR' },
-    { label: '액세서리', value: 'ETC_ACCESSORY' },
-    { label: '거울', value: 'ETC_GENERAL_MIRROR' },
+    { label: "소품", value: "ETC_DECOR" },
+    { label: "벽걸이 거울", value: "ETC_WALL_MIRROR" },
+    { label: "액세서리", value: "ETC_ACCESSORY" },
+    { label: "거울", value: "ETC_GENERAL_MIRROR" },
   ],
 };
 
 function AdminProductRegister() {
   // (1) 카테고리 상태
-  const [category1, setCategory1] = useState('');
-  const [category2, setCategory2] = useState('');
+  const [category1, setCategory1] = useState("");
+  const [category2, setCategory2] = useState("");
 
   // (2) 기본 정보
-  const [productCode, setProductCode] = useState('');
-  const [brand, setBrand] = useState('');
-  const [modelName, setModelName] = useState('');
-  const [price, setPrice] = useState('');
-  const [cost, setCost] = useState('');
-  const [discount, setDiscount] = useState('');
+  const [productCode, setProductCode] = useState("");
+  const [brand, setBrand] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [price, setPrice] = useState("");
+  const [cost, setCost] = useState("");
+  const [discount, setDiscount] = useState("");
 
-  const [maker, setMaker] = useState('');
-  const [origin, setOrigin] = useState('');
-  const [basicDesc, setBasicDesc] = useState('');
-  const [color, setColor] = useState('');
-  const [components, setComponents] = useState('');
-  const [material, setMaterial] = useState('');
-  const [manufactureCountry, setManufactureCountry] = useState('');
-  const [asTel, setAsTel] = useState('');
+  const [maker, setMaker] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [basicDesc, setBasicDesc] = useState("");
+  const [color, setColor] = useState("");
+  const [components, setComponents] = useState("");
+  const [material, setMaterial] = useState("");
+  const [manufactureCountry, setManufactureCountry] = useState("");
+  const [asTel, setAsTel] = useState("");
 
-  const [productStatus, setProductStatus] = useState('selling');
+  const [productStatus, setProductStatus] = useState("selling");
 
-  const [stock, setStock] = useState('');
-  const [stockNotify, setStockNotify] = useState('');
-  const [minPurchase, setMinPurchase] = useState('');
-  const [maxPurchase, setMaxPurchase] = useState('');
+  const [stock, setStock] = useState("");
+  const [stockNotify, setStockNotify] = useState("");
+  const [minPurchase, setMinPurchase] = useState("");
+  const [maxPurchase, setMaxPurchase] = useState("");
 
   // (3) 이미지 등록
   const [mainImage, setMainImage] = useState(null);
@@ -74,23 +74,25 @@ function AdminProductRegister() {
   const detailInputRef = useRef(null);
 
   // (4) 옵션 정보
-  const [options, setOptions] = useState([{ optionName: '', optionValue: '' }]);
+  const [options, setOptions] = useState([
+    { optionName: "", optionValues: [""] },
+  ]);
 
   // (5) 상세 설명
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState("");
 
   // (6) 배송 정보
-  const [shippingFee, setShippingFee] = useState('');
+  const [shippingFee, setShippingFee] = useState("");
 
   // (7) 쿠폰 여부
   const [couponApplicable, setCouponApplicable] = useState(false);
 
   // 임시저장
   const handleTempSave = () => {
-    alert('임시 저장되었습니다!');
+    alert("임시 저장되었습니다!");
   };
 
-  const getToken = () => localStorage.getItem('access_token');
+  const getToken = () => localStorage.getItem("access_token");
 
   // Payload 변환
   const transformPayload = () => {
@@ -108,18 +110,18 @@ function AdminProductRegister() {
       color,
       components,
       material,
-      size: '',
+      size: "",
       shippingInstallationFee: Number(shippingFee),
       asPhoneNumber: asTel,
       // marketPrice: Number(cost) * (discount ? (100 - Number(discount)) / 100 : 1),
-      outOfStock: productStatus === 'soldOut',
+      outOfStock: productStatus === "soldOut",
       stock: Number(stock),
       stockNotificationThreshold: Number(stockNotify),
       minPurchase: Number(minPurchase),
       maxPurchase: Number(maxPurchase),
       productOptions: options.map((opt) => ({
         optionName: opt.optionName,
-        optionValues: [opt.optionValue],
+        optionValues: opt.optionValues.filter((val) => val.trim() !== ""),
       })),
       additionalOptions: [],
       couponApplicable: couponApplicable,
@@ -129,37 +131,37 @@ function AdminProductRegister() {
   // 이미지 업로드
   const uploadImage = async (imageFile, productId, imageType, imageOrder) => {
     const formData = new FormData();
-    formData.append('image', imageFile);
+    formData.append("image", imageFile);
     const metadataBlob = new Blob(
       [JSON.stringify({ productId, imageType, imageOrder })],
-      { type: 'application/json' }
+      { type: "application/json" }
     );
-    formData.append('metadata', metadataBlob, 'metadata.json');
+    formData.append("metadata", metadataBlob, "metadata.json");
 
     try {
       console.log(
-        '이미지 업로드 시도:',
+        "이미지 업로드 시도:",
         imageFile.name,
-        '유형:',
+        "유형:",
         imageType,
-        '순서:',
+        "순서:",
         imageOrder
       );
       const response = await fetch(`${API_BASE_URL}/api/v1/images/upload`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
         body: formData,
       });
       if (!response.ok) {
-        throw new Error('이미지 업로드 실패');
+        throw new Error("이미지 업로드 실패");
       }
       const data = await response.json();
-      console.log('이미지 업로드 결과:', data);
+      console.log("이미지 업로드 결과:", data);
       return data;
     } catch (error) {
-      console.error('이미지 업로드 에러:', error);
+      console.error("이미지 업로드 에러:", error);
     }
   };
 
@@ -167,32 +169,32 @@ function AdminProductRegister() {
   const handleRegister = async (e) => {
     e.preventDefault();
     const payload = transformPayload();
-    console.log('(디버그) 전송할 payload:', payload);
+    console.log("(디버그) 전송할 payload:", payload);
 
     try {
       // 1) 상품 등록
       const productResponse = await fetch(`${API_BASE_URL}/api/v1/products/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,
         },
         body: JSON.stringify(payload),
       });
 
       if (!productResponse.ok) {
-        throw new Error('제품 등록에 실패했습니다.');
+        throw new Error("제품 등록에 실패했습니다.");
       }
 
       // 2) productId 반환
       const productData = await productResponse.json();
-      console.log('(디버그) 등록된 제품 정보:', productData);
+      console.log("(디버그) 등록된 제품 정보:", productData);
       const productId = productData; // 실제 백엔드 응답 구조에 맞게 수정
 
       // 3) 이미지 업로드
       // 메인 이미지
       if (mainImage) {
-        await uploadImage(mainImage, productId, 'MAIN', 0);
+        await uploadImage(mainImage, productId, "MAIN", 0);
       }
 
       // 서브 이미지 (orderNum = index)
@@ -201,7 +203,7 @@ function AdminProductRegister() {
         const validSubImages = subImages.slice(0, 6);
         await Promise.all(
           validSubImages.map((file, index) =>
-            uploadImage(file, productId, 'SUB', index)
+            uploadImage(file, productId, "SUB", index)
           )
         );
       }
@@ -212,22 +214,22 @@ function AdminProductRegister() {
         const validDetailImages = detailImages.slice(0, 8);
         await Promise.all(
           validDetailImages.map((file, index) =>
-            uploadImage(file, productId, 'DETAIL', index)
+            uploadImage(file, productId, "DETAIL", index)
           )
         );
       }
 
       // 완료
-      alert('제품 등록 완료!');
+      alert("제품 등록 완료!");
     } catch (error) {
-      console.error('제품 등록 중 에러:', error);
-      alert('제품 등록 중 오류가 발생했습니다.');
+      console.error("제품 등록 중 에러:", error);
+      alert("제품 등록 중 오류가 발생했습니다.");
     }
   };
 
   // 옵션 추가
   const addOption = () => {
-    setOptions([...options, { optionName: '', optionValue: '' }]);
+    setOptions([...options, { optionName: "", optionValues: [""] }]);
   };
 
   // 옵션 변경
@@ -258,7 +260,7 @@ function AdminProductRegister() {
       // 기존 배열 + 새 파일들
       setSubImages((prev) => [...prev, ...newFiles]);
       // input value 초기화 (동일 파일 재선택 가능)
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
@@ -278,7 +280,7 @@ function AdminProductRegister() {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
       setDetailImages((prev) => [...prev, ...newFiles]);
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
@@ -326,7 +328,7 @@ function AdminProductRegister() {
                 value={category1}
                 onChange={(e) => {
                   setCategory1(e.target.value);
-                  setCategory2('');
+                  setCategory2("");
                 }}
               >
                 <option value="">-- 선택 --</option>
@@ -499,7 +501,7 @@ function AdminProductRegister() {
                   type="radio"
                   name="productStatus"
                   value="selling"
-                  checked={productStatus === 'selling'}
+                  checked={productStatus === "selling"}
                   onChange={(e) => setProductStatus(e.target.value)}
                 />
                 <span>판매중</span>
@@ -509,7 +511,7 @@ function AdminProductRegister() {
                   type="radio"
                   name="productStatus"
                   value="soldOut"
-                  checked={productStatus === 'soldOut'}
+                  checked={productStatus === "soldOut"}
                   onChange={(e) => setProductStatus(e.target.value)}
                 />
                 <span>품절</span>
@@ -579,7 +581,7 @@ function AdminProductRegister() {
               <input
                 type="file"
                 ref={subInputRef}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
                 multiple
                 onChange={handleSubImagesChange}
               />
@@ -594,11 +596,11 @@ function AdminProductRegister() {
                 {subImages.map((file, index) => (
                   <li key={index}>
                     {/* 순서: index+1 */}
-                    {index + 1}. {file.name}{' '}
+                    {index + 1}. {file.name}{" "}
                     <button
                       type="button"
                       onClick={() => removeSubImage(index)}
-                      style={{ marginLeft: '10px', color: 'red' }}
+                      style={{ marginLeft: "10px", color: "red" }}
                     >
                       x
                     </button>
@@ -627,7 +629,7 @@ function AdminProductRegister() {
               <input
                 type="file"
                 ref={detailInputRef}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
                 multiple
                 onChange={handleDetailImagesChange}
               />
@@ -640,11 +642,11 @@ function AdminProductRegister() {
               <ul>
                 {detailImages.map((file, index) => (
                   <li key={index}>
-                    {index + 1}. {file.name}{' '}
+                    {index + 1}. {file.name}{" "}
                     <button
                       type="button"
                       onClick={() => removeDetailImage(index)}
-                      style={{ marginLeft: '10px', color: 'red' }}
+                      style={{ marginLeft: "10px", color: "red" }}
                     >
                       x
                     </button>
@@ -658,32 +660,68 @@ function AdminProductRegister() {
         {/* (4) 옵션 정보 */}
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>옵션 정보</h3>
-          {options.map((opt, idx) => (
-            <div className={styles.formGrid} key={idx}>
+          {options.map((opt, optIdx) => (
+            <div className={styles.formGrid} key={optIdx}>
               <div className={styles.formLabel}>옵션명</div>
               <div className={styles.formInput}>
                 <input
                   type="text"
                   placeholder="예) 색상"
                   value={opt.optionName}
-                  onChange={(e) =>
-                    updateOption(idx, 'optionName', e.target.value)
-                  }
+                  onChange={(e) => {
+                    const newOptions = [...options];
+                    newOptions[optIdx].optionName = e.target.value;
+                    setOptions(newOptions);
+                  }}
                 />
               </div>
-              <div className={styles.formLabel}>옵션값</div>
+
+              <div className={styles.formLabel}>옵션값들</div>
               <div className={styles.formInput}>
-                <input
-                  type="text"
-                  placeholder="예) 블랙"
-                  value={opt.optionValue}
-                  onChange={(e) =>
-                    updateOption(idx, 'optionValue', e.target.value)
-                  }
-                />
+                {opt.optionValues.map((value, valIdx) => (
+                  <div
+                    key={valIdx}
+                    style={{ display: "flex", gap: "8px", marginBottom: "4px" }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="예) 블랙"
+                      value={value}
+                      onChange={(e) => {
+                        const newOptions = [...options];
+                        newOptions[optIdx].optionValues[valIdx] =
+                          e.target.value;
+                        setOptions(newOptions);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newOptions = [...options];
+                        newOptions[optIdx].optionValues.splice(valIdx, 1);
+                        setOptions(newOptions);
+                      }}
+                      className={styles.deleteOptionValueBtn}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newOptions = [...options];
+                    newOptions[optIdx].optionValues.push("");
+                    setOptions(newOptions);
+                  }}
+                  className={styles.subButton}
+                >
+                  옵션값 추가
+                </button>
               </div>
             </div>
           ))}
+
           <button
             type="button"
             onClick={addOption}
@@ -704,7 +742,7 @@ function AdminProductRegister() {
                 placeholder="상품 상세 설명을 입력하세요"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                style={{ width: '100%', resize: 'vertical' }}
+                style={{ width: "100%", resize: "vertical" }}
               />
             </div>
           </div>
