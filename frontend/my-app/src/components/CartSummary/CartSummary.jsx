@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './CartSummary.module.css';
+import React from "react";
+import styles from "./CartSummary.module.css";
 
 function CartSummary({ cartItems = [] }) {
   // 주어진 로직 - 총 상품금액, 총 결제금액, 할인액 계산
@@ -14,7 +14,9 @@ function CartSummary({ cartItems = [] }) {
   const totalDiscount = totalOriginalPrice - totalPrice;
 
   const shippingPrice = 0; // 예시로 고정 0원
-  const point = 9918; // 예시로 고정
+
+  const POINT_RATE = 0.01;
+  const point = Math.floor(totalPrice * POINT_RATE); // 예시로 고정
 
   return (
     <div className={styles.orderSummary}>
