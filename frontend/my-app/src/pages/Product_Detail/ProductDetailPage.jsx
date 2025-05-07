@@ -480,9 +480,9 @@ const ProductDetailPage = () => {
                   {" "}
                   리뷰 {product.reviews ? product.reviews.length : 0}개{" "}
                 </span>
-                <button className={styles.couponButton}>
+                {/* <button className={styles.couponButton}>
                   <img src={getCoupon} alt="쿠폰받기 버튼" />
-                </button>
+                </button> */}
               </div>
               <div className={styles.productInfo}>
                 <div className={styles.infoRow}>
@@ -687,7 +687,7 @@ const ProductDetailPage = () => {
                     )
                   }
                 >
-                  <option value="">{option.optionName} 선택 &gt;</option>
+                  <option value="">{option.optionName} 선택</option>
                   {option.optionValues.map((value, valueIndex) => (
                     <option key={valueIndex} value={value}>
                       {value}
@@ -727,7 +727,7 @@ const ProductDetailPage = () => {
                     handleAdditionalOptionChange(Number(e.target.value))
                   }
                 >
-                  <option value="">추가 옵션 선택 &gt;</option>
+                  <option value="">추가 옵션 선택</option>
                   {product.additionalOptionResponses.map((addOption, index) => (
                     <option key={index} value={addOption.additionalOptionId}>
                       {addOption.optionName} (+
