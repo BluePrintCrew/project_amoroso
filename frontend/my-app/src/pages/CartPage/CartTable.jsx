@@ -1,9 +1,9 @@
-import './CartTable.css';
+import "./CartTable.css";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { API_BASE_URL } from '../MyPage/api';
-import axios from 'axios';
+import { API_BASE_URL } from "../MyPage/api";
+import axios from "axios";
 
 function CartTable({ cartItems, setCartItems, onSelectionChange }) {
   // 선택된 상품 ID들을 관리 (체크박스용)
@@ -18,13 +18,13 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
 
   // 토큰 가져오기
   const getToken = () => {
-    return localStorage.getItem('access_token');
+    return localStorage.getItem("access_token");
   };
 
   // 이미지 URL 처리 함수
   const getImageUrl = (item) => {
     // 디버깅을 위해 이미지 관련 데이터 확인
-    console.log('상품 이미지 데이터:', {
+    console.log("상품 이미지 데이터:", {
       id: item.id,
       name: item.name,
       imageUrl: item.imageUrl,
@@ -34,22 +34,22 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
 
     // 가능한 모든 이미지 필드 확인
     const possibleImageUrl =
-      item.imageUrl || item.primaryImageURL || item.mainImageURL || '';
+      item.imageUrl || item.primaryImageURL || item.mainImageURL || "";
 
     // 이미지 URL이 없는 경우 기본 이미지 반환
-    if (!possibleImageUrl) return 'https://placehold.co/100x100';
+    if (!possibleImageUrl) return "https://placehold.co/100x100";
 
     // URL 형식 처리
-    if (possibleImageUrl.startsWith('http')) {
+    if (possibleImageUrl.startsWith("http")) {
       return possibleImageUrl;
-    } else if (possibleImageUrl.startsWith('/images/')) {
+    } else if (possibleImageUrl.startsWith("/images/")) {
       // 파일명만 추출하여 API 엔드포인트에 추가
-      const filename = possibleImageUrl.split('/').pop();
+      const filename = possibleImageUrl.split("/").pop();
       return `${API_BASE_URL}/api/v1/images/${filename}`;
-    } else if (possibleImageUrl.startsWith('/api/')) {
+    } else if (possibleImageUrl.startsWith("/api/")) {
       // 이미 API 경로인 경우
       return `${API_BASE_URL}${possibleImageUrl}`;
-    } else if (possibleImageUrl.startsWith('/')) {
+    } else if (possibleImageUrl.startsWith("/")) {
       // 다른 형식의 절대 경로
       return `${API_BASE_URL}${possibleImageUrl}`;
     } else {
@@ -90,7 +90,7 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
 
     const token = getToken();
     if (!token) {
-      console.error('로그인이 필요합니다.');
+      console.error("로그인이 필요합니다.");
       return;
     }
 
@@ -101,12 +101,12 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       )
       .then((response) => {
-        console.log('수량 업데이트 성공:', response.data);
+        console.log("수량 업데이트 성공:", response.data);
         setCartItems((prevItems) =>
           prevItems.map((item) =>
             item.id === itemId ? { ...item, quantity: newQuantity } : item
@@ -114,8 +114,8 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
         );
       })
       .catch((error) => {
-        console.error('수량 업데이트 오류: ', error);
-        alert('수량 업데이트에 실패했습니다.');
+        console.error("수량 업데이트 오류: ", error);
+        alert("수량 업데이트에 실패했습니다.");
       });
   };
 
@@ -123,7 +123,7 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
   const handleDelete = (itemId) => {
     const token = getToken();
     if (!token) {
-      console.error('로그인이 필요합니다.');
+      console.error("로그인이 필요합니다.");
       return;
     }
 
@@ -140,21 +140,21 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
         setSelectedItems((prev) => prev.filter((id) => id !== itemId));
       })
       .catch((error) => {
-        console.error('삭제 오류: ', error);
-        alert('상품 삭제에 실패했습니다.');
+        console.error("삭제 오류: ", error);
+        alert("상품 삭제에 실패했습니다.");
       });
   };
 
   // 선택 상품 일괄 삭제 핸들러
   const handleBulkDelete = () => {
     if (selectedItems.length === 0) {
-      alert('삭제할 상품을 선택해주세요.');
+      alert("삭제할 상품을 선택해주세요.");
       return;
     }
 
     const token = getToken();
     if (!token) {
-      console.error('로그인이 필요합니다.');
+      console.error("로그인이 필요합니다.");
       return;
     }
 
@@ -174,8 +174,8 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
         setSelectedItems([]);
       })
       .catch((error) => {
-        console.error('일괄 삭제 오류: ', error);
-        alert('선택한 상품 삭제에 실패했습니다.');
+        console.error("일괄 삭제 오류: ", error);
+        alert("선택한 상품 삭제에 실패했습니다.");
       });
   };
 
@@ -200,7 +200,7 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
         <div>수량</div>
         <div>상품금액</div>
         <div>배송정보</div>
-        <div>주문하기</div>
+        <div></div>
       </div>
 
       {/* Cart Items */}
@@ -229,7 +229,7 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
                   alt={item.name}
                   onError={(e) => {
                     console.error(`이미지 로드 실패: ${getImageUrl(item)}`);
-                    e.target.src = 'https://placehold.co/100x100';
+                    e.target.src = "https://placehold.co/100x100";
                   }}
                 />
               </div>
@@ -298,8 +298,8 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
 
             {/* 주문하기 (바로주문, 찜, 삭제) */}
             <div className="cell-actions">
-              <button className="order-now-button">바로주문</button>
-              <button className="wishlist-button">찜</button>
+              {/* <button className="order-now-button">바로주문</button>
+              <button className="wishlist-button">찜</button> */}
               <button
                 className="delete-button"
                 onClick={() => handleDelete(item.id)}
