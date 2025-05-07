@@ -146,7 +146,7 @@ const ProductDetailPage = () => {
     );
 
     const newOption = {
-      optionId: Number(optionId), // 숫자형으로 변환
+      optionId: optionId, // 숫자형으로 변환하지 않고 그대로 사용
       value,
       name: `${optionObj.optionName}: ${value}`,
       price: 0, // 기본 옵션은 추가 비용 없음
@@ -257,7 +257,6 @@ const ProductDetailPage = () => {
       const option = selectedOptions[0];
 
       // API 문서와 일치하는 형식으로 데이터 구성
-      // 모든 필드 기본값으로 설정
       const cartItem = {
         productId: Number(product.productId),
         quantity: 1,
@@ -268,9 +267,9 @@ const ProductDetailPage = () => {
 
       // 옵션 타입에 따른 처리
       if (option.type === "additional" && option.optionId) {
-        cartItem.additionalOptionId = Number(option.optionId);
+        cartItem.additionalOptionId = option.optionId;
       } else if (option.type === "product" && option.optionId) {
-        cartItem.productOptionId = Number(option.optionId);
+        cartItem.productOptionId = option.optionId;
         cartItem.selectedOptionValue = String(option.value || "");
       }
 

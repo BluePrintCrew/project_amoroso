@@ -162,7 +162,7 @@ public class ProductService {
             userRepository.findByEmail(email).ifPresent(user -> {
                 wishlistProductIds.addAll(
                         user.getWishlists().stream()
-                                .map(wishlist -> wishlist.getProduct().getProductId())
+                                .map(wishlist -> wishlist.getProduct().getProductId()) // 유저가 wishlist로 정리한 것
                                 .collect(Collectors.toSet())
                 );
             });
@@ -458,7 +458,7 @@ public class ProductService {
                 product.getAsPhoneNumber(),
                 product.getMarketPrice(),
                 product.getDiscountPrice() == null ? 0 : product.getDiscountPrice(),
-                product.getDiscountRate() == null ? 0 : product.getDiscountPrice(),
+                product.getDiscountRate() == null ? 0 : product.getDiscountRate(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
                 // MAIN
