@@ -1,4 +1,4 @@
-package org.example.amorosobackend.Service;
+package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
@@ -14,8 +14,6 @@ import org.example.amorosobackend.enums.CategoryCode;
 import org.example.amorosobackend.enums.UserRole;
 import org.example.amorosobackend.repository.CartItemRepository;
 import org.example.amorosobackend.repository.UserRepository;
-import org.example.amorosobackend.service.CartItemService;
-import org.example.amorosobackend.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

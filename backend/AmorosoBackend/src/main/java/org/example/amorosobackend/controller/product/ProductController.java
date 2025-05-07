@@ -60,18 +60,21 @@ public class ProductController {
             "order - desc or asc")
     public ResponseEntity<ProductDTO.ProductListResponse> getProductsBySearch(
             @PathVariable String keyword,
-            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @RequestParam(required = false, defaultValue = "desc") String order) {
 
         // Category 조회
-        Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
-
+        Category byCategoryCode = null;
+        if(categoryCode != null) {
+             byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        }
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
-                productService.getProductsBySearch(keyword,byCategoryCode.getCategoryId(), page, size, sortBy, order);
+                productService.getProductsBySearch(keyword,(byCategoryCode == null ? null : byCategoryCode.getCategoryId())
+                        , page, size, sortBy, order);
 
         // ResponseEntity로 반환
         return ResponseEntity.ok(products);
