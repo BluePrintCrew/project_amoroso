@@ -2,306 +2,305 @@
   BASIC LAYOUT & TYPOGRAPHY
 *******************************************************/
 .cart-container {
-    width: 100%;
-    max-width: 1170px;
-    margin: 0 auto;
-    font-family: "Pretendard", sans-serif;
-    border-top: 2px solid #666;
-  }
-  
-  .cart-title {
-    font-size: 1.8rem;
-    margin: 16px 0;
-    font-weight: 600;
-  }
-  
-  .cart-top-row {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    padding: 8px 0;
-  }
-  
-  .checkbox-col {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .top-label {
-    font-weight: 500;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  .cart-divider {
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 0.5rem;
-  }
-  
-  /*******************************************************
+  width: 100%;
+  max-width: 1170px;
+  margin: 0 auto;
+  font-family: "Pretendard", sans-serif;
+  border-top: 2px solid #666;
+}
+
+.cart-title {
+  font-size: 1.8rem;
+  margin: 16px 0;
+  font-weight: 600;
+}
+
+.cart-top-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.checkbox-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-label {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+}
+
+.cart-divider {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+}
+
+/*******************************************************
     TABLE HEADER (6 columns)
   *******************************************************/
-  .cart-table-header {
-    display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 14px 0;
-    font-weight: 500;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .header-checkbox {
-    text-align: center;
-  }
-  
-  /*******************************************************
+.cart-table-header {
+  display: grid;
+  grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 14px 0;
+  font-weight: 500;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-checkbox {
+  text-align: center;
+}
+
+/*******************************************************
     TABLE ROWS (6 columns)
   *******************************************************/
-  .cart-table-row {
-    display: grid;
-    grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .cell-checkbox,
-  .cell-quantity,
-  .cell-price,
-  .cell-shipping,
-  .cell-actions {
-    text-align: center;
-  }
-  
-  /*******************************************************
+.cart-table-row {
+  display: grid;
+  grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cell-checkbox,
+.cell-quantity,
+.cell-price,
+.cell-shipping,
+.cell-actions {
+  text-align: center;
+}
+
+/*******************************************************
     PRODUCT INFO
   *******************************************************/
-  .cell-product-info {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  
-  .product-thumb img {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-  
-  .product-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .product-tags span {
-    display: inline-block;
-    margin-right: 6px;
-    background-color: #f2f2f2;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #555;
-  }
-  
-  .product-name {
-    font-weight: 500;
-    color: #333;
-  }
-  
-  .option-change-btn {
-    border: none;
-    background: none;
-    padding: 0;
-    color: #666;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  /*******************************************************
+.cell-product-info {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.product-thumb img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-tags span {
+  display: inline-block;
+  margin-right: 6px;
+  background-color: #f2f2f2;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.product-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.option-change-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/*******************************************************
     QUANTITY
   *******************************************************/
-  .cell-quantity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .quantity-box {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-  
-  .quantity-box button {
-    width: 32px;
-    height: 32px;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .apply-button {
-    border: 1px solid #ddd;
-    background: #fff;
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 20px;
-  }
-  
-  /*******************************************************
+.cell-quantity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-box {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.quantity-box button {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apply-button {
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+/*******************************************************
     PRICE
   *******************************************************/
-  .cell-price {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .sale-price {
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
-  
-  .original-price {
-    font-size: 0.9rem;
-    color: #999;
-    text-decoration: line-through;
-  }
-  
-  /*******************************************************
+.cell-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sale-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.original-price {
+  font-size: 0.9rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+/*******************************************************
     SHIPPING INFO
   *******************************************************/
-  .cell-shipping {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    font-size: 0.85rem;
-    color: #666;
-  }
-  
-  .shipping-info {
-    color: #0080ff;
-  }
-  
-  .shipping-desc {
-    color: #999;
-    font-size: 0.8rem;
-  }
-  
-  /*******************************************************
+.cell-shipping {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.shipping-info {
+  color: #0080ff;
+}
+
+.shipping-desc {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+/*******************************************************
     FOOTER
   *******************************************************/
-  .cart-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 16px 0;
-  }
-  
-  .bulk-delete-btn {
-    border: 1px solid #ddd;
-    background: #fff;
-    color: #333;
-    padding: 4px 12px;
-    font-size: 0.8rem;
-    border-radius: 9999px;
-    cursor: pointer;
-    display: inline-block;
-    width: 120px;
-    margin-top:10px;
-  }
-  
-  .order-guidance {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    padding: 12px 20px;
-  }
-  
-  /*******************************************************
+.cart-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.bulk-delete-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: inline-block;
+  width: 120px;
+  margin-top: 10px;
+}
+
+.order-guidance {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 12px 20px;
+}
+
+/*******************************************************
     CUSTOM CHECKBOX
   *******************************************************/
-  .custom-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #666;
-    border-radius: 4px;
-    cursor: pointer;
-    position: relative;
-    margin: 0;
-  }
-  
-  .custom-checkbox:checked {
-    background-color: #666;
-    border-color: #666;
-  }
-  
-  .custom-checkbox:checked::before {
-    content: "";
-    position: absolute;
-    top: 2px;
-    left: 5px;
-    width: 4px;
-    height: 8px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-  
-  /*******************************************************
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+}
+
+.custom-checkbox:checked {
+  background-color: #666;
+  border-color: #666;
+}
+
+.custom-checkbox:checked::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/*******************************************************
     ACTION BUTTONS (Buy Now, Wishlist, Delete)
   *******************************************************/
-  /* Layout the buttons vertically with a gap */
-  .cell-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  /* Buy Now & Wishlist share common styling:
+/* Layout the buttons vertically with a gap */
+.cell-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Buy Now & Wishlist share common styling:
      White background, red border, curved corners. */
-  .order-now-button,
-  .wishlist-button {
-    width: 80px;
-    height: 35px;
-    background: #fff;
-    border: 1px solid #ff3c3c;
-    color: #ff3c3c;
-    border-radius: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    font-family: "Pretendard", sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
-  }
-  
-  .delete-button {
-    background: #fff;
-    border: none;
-    color: #333;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  .delete-button:hover {
-    color: #ff3c3c;
-  }
-  
+.order-now-button,
+.wishlist-button {
+  width: 80px;
+  height: 35px;
+  background: #fff;
+  border: 1px solid #ff3c3c;
+  color: #ff3c3c;
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.delete-button {
+  background: #fff;
+  border: none;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+}
+.delete-button:hover {
+  color: #ff3c3c;
+}

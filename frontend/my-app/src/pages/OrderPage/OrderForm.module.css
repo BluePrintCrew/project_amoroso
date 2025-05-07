@@ -1,425 +1,423 @@
-.orderTitle{
-    margin-top: 20px;
-    margin-bottom: 40px;
-    font-size: 32px;
+.orderTitle {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  font-size: 32px;
 }
 
-.infoTable{
-    margin-bottom: 70px;
-    font-size: 14px;
+.infoTable {
+  margin-bottom: 70px;
+  font-size: 14px;
 }
 
-.infoHeader1{
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr;
-    border-top: 2px solid #766e68;
-    border-bottom: 1px solid #ddd;
-    padding: 7px 0;
-    text-align: center;
+.infoHeader1 {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  border-top: 2px solid #766e68;
+  border-bottom: 1px solid #ddd;
+  padding: 7px 0;
+  text-align: center;
 }
 
-.Column{
-    padding: 5px 10px;
+.Column {
+  padding: 5px 10px;
 }
 
-.leftAlign{
-    text-align: left;
+.leftAlign {
+  text-align: left;
 }
 
-.centerAlign{
-    text-align: center;
+.centerAlign {
+  text-align: center;
 }
 
-.infoHeader2{
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr;
-    border-bottom: 1.5px solid #766e68;
-    padding: 7px 0;
+.infoHeader2 {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  border-bottom: 1.5px solid #766e68;
+  padding: 7px 0;
 }
 
-.mainText{
-    margin-right: 8px
+.mainText {
+  margin-right: 8px;
 }
 
-.subText{
-    font-size: 12px;
-    color: #666666;
+.subText {
+  font-size: 12px;
+  color: #666666;
 }
 
-.infoBody .row{
-    display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr;
-    align-items: center;
-    border-bottom: 1px solid #e2e2e2;
+.infoBody .row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid #e2e2e2;
 }
 
-.productInfo{
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    padding-top: 28px;
-    padding-left: 20px;
+.productInfo {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-bottom: 12px;
 }
 
-.productInfo div{
-    display: flex;
-    flex-direction: column;
+.productInfo div {
+  display: flex;
+  flex-direction: column;
 }
 
-.productImage{
-    height: 120px;
-    width: 120px;
-    border-radius: 10px;
+.productImage {
+  height: 120px;
+  width: 120px;
+  border-radius: 10px;
 }
 
-.priceInfo{
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    
+.priceInfo {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
 }
 
-.price{
-    font-weight: bold;
-    font-size: 20px;
+.price {
+  font-weight: bold;
+  font-size: 20px;
 }
 
-.originalPrice{
-    font-size: 14px;
-    text-decoration: line-through;
-    color: #999;
+.originalPrice {
+  font-size: 14px;
+  text-decoration: line-through;
+  color: #999;
 }
 
-.discountInfo{
-    margin-top: 5px;
-    padding: 3px 10px;
-    border: 1px solid #e2e2e2;
-    background-color: #fff;
-    border-radius: 5px;
-    font-size: 14px;
-    color: #666666;
-    cursor: pointer;
+.discountInfo {
+  margin-top: 5px;
+  padding: 3px 10px;
+  border: 1px solid #e2e2e2;
+  background-color: #fff;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #666666;
+  cursor: pointer;
 }
 
-.shipping1{
-    font-size: 12px;
-    color: #0064ff;
+.shipping1 {
+  font-size: 12px;
+  color: #0064ff;
 }
 
-.shipping2{
-    font-size: 12px;
-    margin-top: 3px;
+.shipping2 {
+  font-size: 12px;
+  margin-top: 3px;
 }
 
-.shipping3{
-    font-size: 14px;
-    color: #666666;
-    text-decoration: underline;
-    margin-top: 3px;
-    cursor: pointer;;
+.shipping3 {
+  font-size: 14px;
+  color: #666666;
+  text-decoration: underline;
+  margin-top: 3px;
+  cursor: pointer;
 }
 
-.infoBottom{
-    padding: 12px 20px;
-    font-size: 12px;
-    color: #666;
+.infoBottom {
+  padding: 12px 20px;
+  font-size: 12px;
+  color: #666;
 }
 
-.delivery{
-    margin-top: 20px;
+.delivery {
+  margin-top: 20px;
 }
 
-.sectionHeader{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.sectionTitle{
-    font-size: 32px;
+.sectionTitle {
+  font-size: 32px;
 }
 
-.sectionDescription{
-    font-size: 12px;
-    margin-top: 10px;
-    color: #666;
-    line-height: 1.5;
+.sectionDescription {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #666;
+  line-height: 1.5;
 }
 
-.sepLine{
-    margin-top: 20px;
-    border: none;
-    border-top: 2px solid #766e68;
-    margin-bottom: 40px;
+.sepLine {
+  margin-top: 20px;
+  border: none;
+  border-top: 2px solid #766e68;
+  margin-bottom: 40px;
 }
 
-.subTitle{
-    margin-bottom: 12px;
+.subTitle {
+  margin-bottom: 12px;
 }
 
-.deliveryTable{
-    width: 100%;
-    border-collapse: collapse;
+.deliveryTable {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.row{
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-    border-bottom: 1px solid #e2e2e2;
+.row {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  border-bottom: 1px solid #e2e2e2;
 }
 
-.cell{
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
+.cell {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
 }
 
-.label{
-    background-color: #f7f7f7;
+.label {
+  background-color: #f7f7f7;
 }
 
-.required{
-    color: red;
+.required {
+  color: red;
 }
 
-.editButton{
-    background-color: #fff;
-    border: 1px solid #e2e2e2;
-    border-radius: 5px;
-    margin-left: 12px;
-    padding: 2px 10px;
-    cursor: pointer;
+.editButton {
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 5px;
+  margin-left: 12px;
+  padding: 2px 10px;
+  cursor: pointer;
 }
 
 .elevatorOptions,
-.vehicleOptions{
-    margin-bottom: 3px;
+.vehicleOptions {
+  margin-bottom: 3px;
 }
 
 .elevatorOptions span,
-.vehicleOptions span{
-    display: inline-block;
-    font-weight: bold;
+.vehicleOptions span {
+  display: inline-block;
+  font-weight: bold;
 }
 
 .elevatorOptions label,
-.vehicleOptions label{
-    display: inline-block;
-    margin-left: 10px;
-    font-size: 14px;
+.vehicleOptions label {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 14px;
 }
 
-.checkboxOptions label{
-    display: block;
-    margin-bottom: 10px;
+.checkboxOptions label {
+  display: block;
+  margin-bottom: 10px;
 }
 
-
-.additionalInfo{
-    font-size: 12px;
-    color: #666;
-    padding: 15px 5px;
-    background-color: #f7f7f7;
-    margin-top: 10px;
-    margin-bottom: 10px;
+.additionalInfo {
+  font-size: 12px;
+  color: #666;
+  padding: 15px 5px;
+  background-color: #f7f7f7;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-input[type="checkbox"]{
-    margin-right: 4px;
+input[type="checkbox"] {
+  margin-right: 4px;
 }
 
-.deliveryRequest{
-    width: 100%;
-    height: 50px;
-    border: 1px solid #e2e2e2;
-    border-radius: 5px;
-    padding: 7px;
-    resize: none;
+.deliveryRequest {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #e2e2e2;
+  border-radius: 5px;
+  padding: 7px;
+  resize: none;
 }
 
-.divider{
-    margin: 32px 0;
+.divider {
+  margin: 32px 0;
 }
 
-.applyProduct{
-    background-color: #fff;
-    border: 1px solid #e2e2e2;
-    border-radius: 5px;
-    margin-left: 12px;
-    padding: 2px 10px;
-    cursor: pointer;
+.applyProduct {
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 5px;
+  margin-left: 12px;
+  padding: 2px 10px;
+  cursor: pointer;
 }
 
-.deliveryDateInput{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: #f7f7f7;
-    padding: 20px;
-    margin-top: 15px;
+.deliveryDateInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f7f7f7;
+  padding: 20px;
+  margin-top: 15px;
 }
 
-.dateBox{
-    display: flex;
-    gap: 10px;
+.dateBox {
+  display: flex;
+  gap: 10px;
 }
 
-.dateBundle{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.dateBundle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
-.dateItem{
-    width: 50px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
-    border: 1px solid #e2e2e2;
-    border-radius: 5px;
+.dateItem {
+  width: 50px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 5px;
 }
 
-.reservationTimer{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    margin-left: 60px;
-    gap: 5px;
+.reservationTimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-left: 60px;
+  gap: 5px;
 }
 
 .timerMinute,
-.timerSecond{
-    font-weight: bold;
-    color: red;
-    font-size: 20px;
+.timerSecond {
+  font-weight: bold;
+  color: red;
+  font-size: 20px;
 }
 
-.paymentSection{
-    margin-top: 25px;
-    display: flex;
+.paymentSection {
+  margin-top: 25px;
+  display: flex;
 }
 
-.priceTable{
-    margin-top: 12px;
+.priceTable {
+  margin-top: 12px;
 }
 
-.priceCell{
-    display: flex;
-    align-items: center;
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
+.priceCell {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
 }
 
-.priceBundle{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.priceBundle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.priceItem{
-    width: 160px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 15px;
-    background-color: #f7f7f7;
-    color: #999;
+.priceItem {
+  width: 160px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 15px;
+  background-color: #f7f7f7;
+  color: #999;
 }
 
-.couponButton{
-    padding: 5px;
-    background-color: #fff;
-    border: 1px solid #e2e2e2;
-    font-size: 12px;
-    border-radius: 5px;
+.couponButton {
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  font-size: 12px;
+  border-radius: 5px;
 }
 
-.finalPayment{
-    float: right;
-    width: 315px;
-    border: 1px solid #766e68;
-    border-radius: 10px;
-    padding: 20px;
-    margin-left: 65px;
-    position: sticky;
+.finalPayment {
+  float: right;
+  width: 315px;
+  border: 1px solid #766e68;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 65px;
+  position: sticky;
 }
 
-.finalPayment h3{
-    font-size: 18px;
+.finalPayment h3 {
+  font-size: 18px;
 }
 
-.divider1{
-    margin-top: 8px;
-    margin-bottom: 20px;
-    color: #e2e2e2;
+.divider1 {
+  margin-top: 8px;
+  margin-bottom: 20px;
+  color: #e2e2e2;
 }
 
-.detailRow{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 14px;
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-.divider2{
-    margin: 20px 0;
-    color: #766e68;
+.divider2 {
+  margin: 20px 0;
+  color: #766e68;
 }
 
-.agreement{
-    font-size: 12px;
-    align-items: center;
-    margin-bottom: 25px;
+.agreement {
+  font-size: 12px;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-.payButton{
-    display: block;
-    width: 100%;
-    padding: 15px 0;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    background-color: #766e68;
-    color: #fff;
-    font-size: 16px;
+.payButton {
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  background-color: #766e68;
+  color: #fff;
+  font-size: 16px;
 }
 
-.paymentMethod{
-    margin-top: 25px;
+.paymentMethod {
+  margin-top: 25px;
 }
 
-.divider3{
-    margin: 20px 0;
+.divider3 {
+  margin: 20px 0;
 }
 
-.methodOptions{
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 5px;
+.methodOptions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
 }
 
-.methodButton{
-    padding: 10px 0;
-    background-color: #fff;
-    border: 1px solid #e2e2e2;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+.methodButton {
+  padding: 10px 0;
+  background-color: #fff;
+  border: 1px solid #e2e2e2;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 }
 
-.selectedMethod{
-    border: 2px solid #766e68;
-    font-weight: bold;
+.selectedMethod {
+  border: 2px solid #766e68;
+  font-weight: bold;
 }
 
-.agreement1{
-    margin-top: 15px;
-    font-size: 14px;
+.agreement1 {
+  margin-top: 15px;
+  font-size: 14px;
 }
-

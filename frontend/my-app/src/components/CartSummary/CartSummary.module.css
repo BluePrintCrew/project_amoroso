@@ -12,7 +12,7 @@
 .summaryHeader {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  border-top: 2px solid black; 
+  border-top: 2px solid black;
   border-bottom: 1px solid #ddd;
   text-align: center;
   font-weight: 500;
@@ -64,7 +64,7 @@
 /* 각 칸(컬럼) 공통 스타일 */
 .item {
   display: flex;
-  flex-direction: row;  /* 라벨, 값(버튼) 수직 배치 */
+  align-items: center;
   justify-content: center;
   gap: 8px; /* 내부 항목들 간 간격 */
 }
@@ -100,7 +100,6 @@
   border-radius: 4px;
   font-size: 0.9rem;
 }
-
 
 /* 안내 문구 */
 .summaryNotice {
