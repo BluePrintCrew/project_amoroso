@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
-class ProductServiceTest {
+public class ProductServiceTest {
 
     @InjectMocks
     private ProductService productService;
@@ -49,6 +50,7 @@ class ProductServiceTest {
                 .productName("빈티지 의자")
                 .marketPrice(10000)
                 .discountRate(10)
+                .createdAt(LocalDateTime.now())
                 .category(null) // category는 null로 두되 getCategory().getCategoryName()은 stub에서 처리
                 .build();
 
@@ -90,10 +92,7 @@ class ProductServiceTest {
         String sortBy = "createdAt";
         String order = "DESC";
 
-        Page<Product> productPage = new PageImpl<>(List.of(product));
-        when(productRepository.findAllByProductNameContaining(eq(keyword), any(Pageable.class)))
-                .thenReturn(productPage);
-        when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
+
 
         // stub category.getCategoryName() safely
         // spy() -> 일부의 내용만 stub하기 위해 사용하는 객체
@@ -103,6 +102,10 @@ class ProductServiceTest {
         when(spyProduct.getCategory()).thenReturn(mockCategory); // getCategory()가 mockCategory 반환하도록 stub
         when(mockCategory.getCategoryName()).thenReturn("의자"); // mockCategory.getCategoryName() stub
 
+        Page<Product> productPage = new PageImpl<>(List.of(spyProduct));
+        when(productRepository.findAllByProductNameContaining(eq(keyword), any(Pageable.class)))
+                .thenReturn(productPage);
+        when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
 
         // when
         ProductDTO.ProductListResponse response =
@@ -118,5 +121,10 @@ class ProductServiceTest {
         Pageable usedPageable = pageableCaptor.getValue();
         assertThat(usedPageable.getPageSize()).isEqualTo(10);
         assertThat(usedPageable.getSort().getOrderFor(sortBy).getDirection()).isEqualTo(Sort.Direction.DESC);
+    }
+
+    @Test
+    void getProducts_shouldReturnPagedProductInfoDTOs(){
+
     }
 }

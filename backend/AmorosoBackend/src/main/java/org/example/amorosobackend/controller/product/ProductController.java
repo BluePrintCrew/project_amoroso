@@ -34,7 +34,7 @@ public class ProductController {
             "sortBy - createdAt: 최신순 , marketPrice: 판매 가격순" +
             "order - desc or asc")
     public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
-            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "10") Integer size,
@@ -42,7 +42,10 @@ public class ProductController {
 
         // Category 조회
 
-        Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        Category byCategoryCode = null;
+        if(categoryCode != null) {
+            byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        }
         log.info("byCategoryCode : {}",categoryCode);
 
         // Product 리스트 조회
