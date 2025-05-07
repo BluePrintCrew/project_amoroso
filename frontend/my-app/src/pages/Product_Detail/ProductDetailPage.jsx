@@ -14,22 +14,22 @@ import shareButton from "../../assets/share.png";
 import styles from "./ProductDetailPage.module.css";
 
 const ProductDetailPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // URL 파라미터로부터 상품 ID 가져옴
   const navigate = useNavigate();
   const thumbnailContainerRef = useRef(null);
-  const [product, setProduct] = useState(null);
-  const [activeTab, setActiveTab] = useState("info");
-  const [showMore, setShowMore] = useState(false);
   const tabRef = useRef(null);
 
-  // 장바구니 팝업 상태 관리
+  const [product, setProduct] = useState(null); // 상품 데이터 상태
+  const [activeTab, setActiveTab] = useState("info"); // 탭 상태
+  const [showMore, setShowMore] = useState(false); // 상세정보 펼치기 여부
+
+  // 팝업 및 옵션 관련 상태
   const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
   const [popupType, setPopupType] = useState("cart"); // 'cart' 또는 'login'
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-
-  // 옵션 관련 상태 추가
   const [selectedOptions, setSelectedOptions] = useState([]);
 
+  // 상품 정보 API 호출
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -64,7 +64,7 @@ const ProductDetailPage = () => {
     fetchProduct();
   }, [id]);
 
-  // 옵션이 없는 경우 컴포넌트 마운트 시 자동으로 기본 상품 선택
+  // 옵션이 없는 경우 기본 상품 자동 선택
   useEffect(() => {
     if (
       product &&
@@ -83,6 +83,7 @@ const ProductDetailPage = () => {
     }
   }, [product, selectedOptions.length]);
 
+  // 탭 네비게이션 고정 스크롤 처리
   const handleScroll = () => {
     if (!tabRef.current) return;
     const offsetTop = tabRef.current.parentElement.offsetTop;
@@ -128,7 +129,7 @@ const ProductDetailPage = () => {
 
   const averageRating = calculateAverageRating();
 
-  // 제품 옵션 변경 핸들러
+  // 옵션 선택 핸들러러
   const handleOptionChange = (optionId, value) => {
     if (!value) return;
 
@@ -230,9 +231,13 @@ const ProductDetailPage = () => {
 
   // 장바구니 추가 핸들러 - 수정됨
   const handleAddToCart = async () => {
+    const hasSelectableOptions =
+      product.productOptionResponses &&
+      product.productOptionResponses.length > 0;
+
     if (isAddingToCart) return;
 
-    if (selectedOptions.length === 0) {
+    if (hasSelectableOptions && selectedOptions.length === 0) {
       alert("옵션을 선택해주세요.");
       return;
     }
@@ -257,7 +262,7 @@ const ProductDetailPage = () => {
         quantity: 1,
         additionalOptionId: null,
         productOptionId: null,
-        selectedOptionValue: "",
+        selectedOptionValue: null,
       };
 
       // 옵션 타입에 따른 처리
@@ -324,8 +329,11 @@ const ProductDetailPage = () => {
 
   // 주문하기 핸들러 - 수정됨
   const handleOrderClick = () => {
+    const hasSelectableOptions =
+      product.productOptionResponses &&
+      product.productOptionResponses.length > 0;
     // 선택된 옵션이 없는 경우
-    if (selectedOptions.length === 0) {
+    if (hasSelectableOptions && selectedOptions.length === 0) {
       alert("옵션을 선택해주세요.");
       return;
     }
