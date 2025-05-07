@@ -458,7 +458,7 @@ public class ProductService {
                 product.getAsPhoneNumber(),
                 product.getMarketPrice(),
                 product.getDiscountPrice() == null ? 0 : product.getDiscountPrice(),
-                product.getDiscountRate() == null ? 0 : product.getDiscountPrice(),
+                product.getDiscountRate() == null ? 0 : product.getDiscountRate(),
                 product.getOutOfStock(),
                 product.getStockNotificationThreshold(),
                 // MAIN
