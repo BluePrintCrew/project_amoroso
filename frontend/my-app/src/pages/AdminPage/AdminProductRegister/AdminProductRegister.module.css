@@ -5,7 +5,7 @@
   margin: 0 auto;
   padding: 24px;
   box-sizing: border-box;
-  font-family: 'Pretendard', sans-serif; /* Pretendard 폰트 */
+  font-family: "Pretendard", sans-serif; /* Pretendard 폰트 */
 }
 
 /* 상단 바 */
@@ -61,7 +61,7 @@
 .formSection {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 24px;
 }
 
@@ -147,8 +147,7 @@
 
 /* 옵션 추가 등 서브 버튼 */
 .subButton {
-  margin-top: 8px;
-  padding: 6px 12px;
+  padding: 4px 10px;
   border: 1px solid #ccc;
   background: #fff;
   border-radius: 20px;
@@ -159,21 +158,33 @@
   background: #eee;
 }
 
-.radioBox {
-  display: inline-flex;
-    gap: 6px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    align-content: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: row-reverse;
+.deleteOptionValueBtn {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+  color: #97212b;
+  border-radius: 20px;
+  margin-left: 8px;
+  cursor: pointer;
 }
 
- 
+.radioBox {
+  display: inline-flex;
+  gap: 6px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-content: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row-reverse;
+}
+
 .radioBox:hover {
   background: #f8f8f8;
 }
@@ -182,7 +193,7 @@
   cursor: pointer;
 }
 
-.tempButton{
+.tempButton {
   background-color: #766e68;
   color: #fff;
   font-weight: 600;
