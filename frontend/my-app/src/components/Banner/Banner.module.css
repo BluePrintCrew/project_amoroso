@@ -2,12 +2,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
+  position: relative;
   background-size: cover;
   background-position: center;
-  height: 32%;
-  width: 100vw;
-  z-index: 1;;
+  height: 700px;
+  min-height: 400px;
+  width: 100%;
+  z-index: 1;
+}
+
+.bannerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.22);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .bannerContentWrapper{
@@ -16,14 +28,19 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
+  z-index: 2;
 }
 
 .bannerContent{
   position: relative;
   text-align: left;
-  color: black;
+  color: #fff;
   max-width: 1200px;
   width: 100%;
+  z-index: 2;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.28);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.22));
 }
 
 .arrowButton{
@@ -32,6 +49,7 @@
   transform: translate(-50%);
   background: transparent;
   border: none;
+  z-index: 2;
 }
 
 .arrowButton.left{

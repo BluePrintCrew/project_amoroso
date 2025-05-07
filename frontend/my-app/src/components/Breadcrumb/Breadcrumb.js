@@ -1,21 +1,22 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Breadcrumb.css";
 import homeIcon from "../../assets/nav_home.png";
 
 const Breadcrumb = () => {
   return (
     <div className="breadcrumb">
-      <a href="#" className="breadcrumb-link">
+      <Link to="/" className="breadcrumb-link">
         <img src={homeIcon} alt="홈" className="breadcrumb-icon" />
-      </a>
+      </Link>
       <span className="breadcrumb-separator">&gt;</span>
-      <a href="#" className="breadcrumb-link">
+      <Link to="/products?top=LIVING" className="breadcrumb-link">
         거실
-      </a>
+      </Link>
       <span className="breadcrumb-separator">&gt;</span>
-      <a href="#" className="breadcrumb-link">
+      <Link to="/products?top=LIVING&sub=LIV_TABLE" className="breadcrumb-link">
         식탁의자
-      </a>
+      </Link>
     </div>
   );
 };
