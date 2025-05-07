@@ -1,181 +1,214 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.cart.CartAdditionalOption;
 import org.example.amorosobackend.domain.cart.CartItem;
 import org.example.amorosobackend.domain.cart.CartProductOption;
-import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.domain.product.AdditionalOption;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.product.ProductOption;
 import org.example.amorosobackend.dto.CartItemControllerDTO;
-import org.example.amorosobackend.enums.CategoryCode;
-import org.example.amorosobackend.enums.UserRole;
 import org.example.amorosobackend.repository.CartItemRepository;
 import org.example.amorosobackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-
-
+@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class CartItemServiceTest {
 
-    private CartItemRepository cartItemRepository;
-    private UserRepository userRepository;
-    private ProductService productService;
+    @InjectMocks
     private CartItemService cartItemService;
+
+    @Mock
+    private CartItemRepository cartItemRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ProductService productService;
+
+    private User mockUser;
+    private Product mockProduct;
 
     @BeforeEach
     void setUp() {
-        cartItemRepository = Mockito.mock(CartItemRepository.class);
-        userRepository = Mockito.mock(UserRepository.class);
-        productService = Mockito.mock(ProductService.class);
+        // 인증된 사용자 컨텍스트 설정
+        mockUser = User.builder()
+                .email("user@example.com")
+                .password("pass")
+                .role("ROLE_USER")
+                .name("테스트유저")
+                .build();
 
-        cartItemService = new CartItemService(cartItemRepository,userRepository,productService);
+        // 사용자 레포 조회 모킹
+        when(userRepository.findByEmail(mockUser.getEmail()))
+                .thenReturn(Optional.of(mockUser));
 
+        // 공통 상품 목
+        mockProduct = Product.builder()
+                .productName("테스트상품")
+                .marketPrice(1000)
+                .discountRate(0)
+                .build();
+        ReflectionTestUtils.setField(mockProduct, "productId", 42L);
+        when(productService.getProductById(42L)).thenReturn(mockProduct);
+    }
+
+    // 옵션이 있을때 카트 등록이 어떻게 되는 지 확인.
+    @Test
+    void addToCart_withBothOptions_shouldSaveCartItemWithOptionsAndReturnDto() {
+        // given
+        Long additionalOptionId = 100L;
+        Long productOptionId = 200L;
+        String selectedValue = "옵션값A";
+        int qty = 3;
+
+        // 이미 존재하는 CartItem 조회 시 없다고 모킹
+        when(cartItemRepository.findDuplicateCartItem(
+                eq(mockUser), eq(mockProduct), eq(additionalOptionId), eq(productOptionId), eq(selectedValue)))
+                .thenReturn(Optional.empty());
+
+        // 추가 옵션 & 상품 옵션 조회 모킹
+        AdditionalOption addOpt = AdditionalOption.builder()
+                .product(mockProduct)
+                .optionName("추가포장")
+                .additionalPrice(500)
+                .build();
+        ReflectionTestUtils.setField(addOpt, "id", additionalOptionId);
+        when(productService.getAdditionalOptionById(additionalOptionId)).thenReturn(addOpt);
+
+        ProductOption prodOpt = ProductOption.builder()
+                .product(mockProduct)
+                .optionName("색상")
+                .optionValues(java.util.List.of("옵션값A", "옵션값B"))
+                .build();
+        ReflectionTestUtils.setField(prodOpt, "id", productOptionId);
+        when(productService.getProductOptionById(productOptionId)).thenReturn(prodOpt);
+
+        // 저장되는 CartItem 캡처
+        ArgumentCaptor<CartItem> captor = ArgumentCaptor.forClass(CartItem.class);
+        when(cartItemRepository.save(captor.capture())).thenAnswer(inv -> inv.getArgument(0));
+
+        // whend
+        CartItemControllerDTO.CartItemRequestDTO req =
+                new CartItemControllerDTO.CartItemRequestDTO();
+        req.setProductId(42L);
+        req.setAdditionalOptionId(additionalOptionId);
+        req.setProductOptionId(productOptionId);
+        req.setSelectedOptionValue(selectedValue);
+        req.setQuantity(qty);
+
+        CartItemControllerDTO.CartItemResponseDTO response =
+                cartItemService.addToCart(mockUser.getEmail(), req);
+
+        // then
+        // 저장된 엔티티 검증
+        CartItem saved = captor.getValue();
+        assertThat(saved.getUser()).isSameAs(mockUser);
+        assertThat(saved.getProduct()).isSameAs(mockProduct);
+        assertThat(saved.getQuantity()).isEqualTo(qty);
+
+        // 추가 옵션 관계 검증
+        CartAdditionalOption savedAddOptRel = saved.getCartAdditionalOption();
+        assertThat(savedAddOptRel).isNotNull();
+        assertThat(savedAddOptRel.getAdditionalOption()).isSameAs(addOpt);
+
+        // 상품 옵션 관계 검증
+        CartProductOption savedProdOptRel = saved.getCartProductOption();
+        assertThat(savedProdOptRel).isNotNull();
+        assertThat(savedProdOptRel.getProductOption()).isSameAs(prodOpt);
+        assertThat(savedProdOptRel.getSelectedValue()).isEqualTo(selectedValue);
+
+        // DTO 검증
+        assertThat(response.getQuantity()).isEqualTo(qty);
+        assertThat(response.getProductId()).isEqualTo(42L);
+        assertThat(response.getAdditionalOptionId()).isEqualTo(additionalOptionId);
+        assertThat(response.getProductOptionId()).isEqualTo(productOptionId);
+        assertThat(response.getSelectedOptionValue()).isEqualTo(selectedValue);
+
+        // 리포지토리 메서드 호출 횟수 검증
+        verify(cartItemRepository).findDuplicateCartItem(
+                eq(mockUser), eq(mockProduct), eq(additionalOptionId), eq(productOptionId), eq(selectedValue));
+        verify(cartItemRepository).save(any(CartItem.class));
     }
 
     @Test
-    void addToCart_firstCartItem() {
+    void addToCart_withBothOptions_duplicateProduct() {
         // given
-        String email = "test_email";
-        Long productId = 1L;
-        Long additionalOptionId = 1L;
-        Long productOptionId = 1L;
-        String selectedOption = "빨강";
-        int quantity = 1;
+        Long additionalOptionId = 100L;
+        Long productOptionId = 200L;
+        String selectedValue = "옵션값A";
+        int existingQty = 2;
+        int addQty = 3;
 
-        User testUser = User.builder()
-                .email(email)
-                .password("123456789")
-                .name("test_user1")
-                .role(UserRole.ROLE_USER.name())
+        // 이미 존재하는 CartItem 엔티티 준비
+        CartItem existing = CartItem.builder()
+                .user(mockUser)
+                .product(mockProduct)
+                .quantity(existingQty)
                 .build();
+        // 옵션 관계도 설정해줘야 DTO 변환 시 NPE 방지
+        AdditionalOption addOpt = AdditionalOption.builder()
+                .product(mockProduct).optionName("추가포장").additionalPrice(500).build();
+        ReflectionTestUtils.setField(addOpt, "id", additionalOptionId);
+        CartAdditionalOption existingAddRel = CartAdditionalOption.builder()
+                .cartItem(existing).additionalOption(addOpt).build();
+        existing.setCartAdditionalOption(existingAddRel);
 
-        User testSellerUser = User.builder()
-                .email("seller@email.com")
-                .password("123456789")
-                .name("test_seller")
-                .role(UserRole.ROLE_SELLER.name())
-                .build();
+        ProductOption prodOpt = ProductOption.builder()
+                .product(mockProduct).optionName("색상").optionValues(List.of("옵션값A", "옵션값B")).build();
+        ReflectionTestUtils.setField(prodOpt, "id", productOptionId);
 
-        Seller testSeller = Seller.builder()
-                .user(testSellerUser)
-                .brandName("test_brand")
-                .businessRegistrationNumber("123-123-123")
-                .build();
+        CartProductOption existingProdRel = CartProductOption.builder()
+                .cartItem(existing).productOption(prodOpt).selectedValue(selectedValue).build();
+        existing.setCartProductOption(existingProdRel);
 
-        Category category = Category.builder()
-                .categoryName("category")
-                .categoryCode(CategoryCode.BEDROOM_BED)
-                .build();
+        // findDuplicateCartItem이 existing 반환
+        when(cartItemRepository.findDuplicateCartItem(
+                eq(mockUser), eq(mockProduct),
+                eq(additionalOptionId), eq(productOptionId), eq(selectedValue)))
+                .thenReturn(Optional.of(existing));
 
-        Product product = Product.builder()
-                .category(category)
-                .productName("test_product")
-                .marketPrice(20000)
-                .stock(100)
-                .discountRate(25)
-                .seller(testSeller)
-                .build();
-
-        System.out.println(">>> [TEST] product.discountPrice = " + product.getDiscountPrice());
-
-        setId(product, "productId", productId);
-
-        AdditionalOption additionalOption = AdditionalOption.builder()
-                .optionName("포장 추가")
-                .additionalPrice(1000)
-                .product(product)
-                .build();
-        setId(additionalOption, "id", additionalOptionId);
-
-        ProductOption productOption = ProductOption.builder()
-                .product(product)
-                .optionName("색상")
-                .optionValues(List.of("빨강", "파랑", "초록"))
-                .build();
-        setId(productOption, "id", productOptionId);
-
-        CartItem cartItem = CartItem.builder()
-                .user(testUser)
-                .product(product)
-                .quantity(quantity)
-                .build();
-        setId(cartItem, "cartItemId", 10L); // 저장 후 ID
-
-        // cart 옵션들 연결
-        CartAdditionalOption cartAdditionalOption = CartAdditionalOption.builder()
-                .cartItem(cartItem)
-                .additionalOption(additionalOption)
-                .build();
-        cartItem.setCartAdditionalOption(cartAdditionalOption);
-
-        CartProductOption cartProductOption = CartProductOption.builder()
-                .cartItem(cartItem)
-                .productOption(productOption)
-                .selectedValue(selectedOption)
-                .build();
-        cartItem.setCartProductOption(cartProductOption);
-
-        // request DTO
-        CartItemControllerDTO.CartItemRequestDTO requestDTO = new CartItemControllerDTO.CartItemRequestDTO(
-                productId,
-                quantity,
-                additionalOptionId,
-                productOptionId,
-                selectedOption
-        );
-
-        // mock 설정
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(testUser));
-        when(productService.getProductById(productId)).thenReturn(product);
-        when(productService.getAdditionalOptionById(additionalOptionId)).thenReturn(additionalOption);
-        when(productService.getProductOptionById(productOptionId)).thenReturn(productOption);
-        when(cartItemRepository.save(any(CartItem.class)))
-                .thenAnswer(invocation -> {
-                    CartItem saved = invocation.getArgument(0);
-                    System.out.println(">>> [SAVE] saved.product.discountPrice = " + saved.getProduct().getDiscountPrice());
-                    setId(saved, "cartItemId", 10L);
-                    return saved;
-                });
+        // request 준비
+        CartItemControllerDTO.CartItemRequestDTO req =
+                new CartItemControllerDTO.CartItemRequestDTO();
+        req.setProductId(42L);
+        req.setAdditionalOptionId(additionalOptionId);
+        req.setProductOptionId(productOptionId);
+        req.setSelectedOptionValue(selectedValue);
+        req.setQuantity(addQty);
 
         // when
-        CartItemControllerDTO.CartItemResponseDTO responseDTO = cartItemService.addToCart(email, requestDTO);
+        CartItemControllerDTO.CartItemResponseDTO response =
+                cartItemService.addToCart(mockUser.getEmail(), req);
 
         // then
-        assertNotNull(responseDTO);
-        assertEquals(productId, responseDTO.getProductId());
-        assertEquals("test_product", responseDTO.getProductName());
-        assertEquals(20000,responseDTO.getMarketPrice());
-        assertEquals(quantity, responseDTO.getQuantity());
-        assertEquals(15000, responseDTO.getDiscountPrice());
-        assertEquals(quantity * 15000 + quantity * 1000, responseDTO.getTotalPrice());
-        assertEquals(additionalOptionId, responseDTO.getAdditionalOptionId());
-        assertEquals("포장 추가", responseDTO.getAdditionalOptionName());
-        assertEquals("색상", responseDTO.getProductOptionName());
-        assertEquals("빨강", responseDTO.getSelectedOptionValue());
+        // 기존 엔티티의 quantity만 업데이트됐는지
+        assertThat(existing.getQuantity()).isEqualTo(existingQty + addQty);
 
-        verify(cartItemRepository, times(1)).save(any(CartItem.class));
+        // save는 호출되지 않아야 함
+        verify(cartItemRepository, never()).save(any());
+
+        // 반환 DTO의 quantity도 합산된 값
+        assertThat(response.getQuantity()).isEqualTo(existingQty + addQty);
+
+        // 기존 옵션 관계가 유지되는지 DTO에도 반영됐는지
+        assertThat(response.getAdditionalOptionId()).isEqualTo(additionalOptionId);
+        assertThat(response.getProductOptionId()).isEqualTo(productOptionId);
+        assertThat(response.getSelectedOptionValue()).isEqualTo(selectedValue);
     }
 
-
-    private <T> void setId(T entity, String fieldName, Object value){
-        try{
-            Field field = entity.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(entity, value);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
 }

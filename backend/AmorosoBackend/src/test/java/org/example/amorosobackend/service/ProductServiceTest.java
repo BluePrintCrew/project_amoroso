@@ -1,10 +1,12 @@
 package org.example.amorosobackend.service;
 
-import org.example.amorosobackend.domain.User;
-import org.example.amorosobackend.domain.Wishlist;
+import org.example.amorosobackend.domain.*;
 import org.example.amorosobackend.domain.category.Category;
-import org.example.amorosobackend.domain.product.Product;
+import org.example.amorosobackend.domain.product.*;
+import org.example.amorosobackend.domain.review.Review;
 import org.example.amorosobackend.dto.ProductDTO;
+import org.example.amorosobackend.enums.ImageType;
+import org.example.amorosobackend.repository.ReviewRepository;
 import org.example.amorosobackend.repository.UserRepository;
 import org.example.amorosobackend.repository.product.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.springframework.data.domain.*;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,6 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 public class ProductServiceTest {
@@ -33,6 +33,9 @@ public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private ReviewRepository reviewRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -45,20 +48,15 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setup() {
-        // product 정의
         product = Product.builder()
                 .productName("빈티지 의자")
                 .marketPrice(10000)
                 .discountRate(10)
                 .createdAt(LocalDateTime.now())
-                .category(null) // category는 null로 두되 getCategory().getCategoryName()은 stub에서 처리
+                .category(null)
+                .seller(mock(Seller.class))
                 .build();
-
-        // id 설정
-        // ReflectionTestUtils 로 setProductId 진행. 엔티티 내부에서 빌더로 선언하는 것은 유지보수성이 떨어지고
-        // 좋지 않음. -> 아이디를 정해주는 것은 데이터 내부에서만 진행해야한다.
         ReflectionTestUtils.setField(product, "productId", 1L);
-
 
         mockUser = User.builder()
                 .email("test@example.com")
@@ -67,24 +65,22 @@ public class ProductServiceTest {
                 .name("홍길동")
                 .build();
 
-        // 위시리스트 설정
         Wishlist wishlist = Wishlist.builder()
                 .user(mockUser)
                 .product(product)
                 .build();
         mockUser.getWishlists().add(wishlist);
 
-        // SecurityContext 설정
+
+    }
+
+    @Test
+    void getProductsBySearch_shouldReturnPagedProductInfoDTOs() {
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(mockUser.getEmail(), null, new ArrayList<>());
         SecurityContext context = mock(SecurityContext.class);
         when(context.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(context);
-    }
-
-    @Test
-    void getProductsBySearch_shouldReturnPagedProductInfoDTOs() {
-        // given
         String keyword = "의자";
         Long categoryId = null;
         int page = 1;
@@ -92,26 +88,19 @@ public class ProductServiceTest {
         String sortBy = "createdAt";
         String order = "DESC";
 
-
-
-        // stub category.getCategoryName() safely
-        // spy() -> 일부의 내용만 stub하기 위해 사용하는 객체
-        Product spyProduct = spy(product);                      // 진짜 product 객체 감쌈
-        Category mockCategory = mock(Category.class);           // 카테고리 필요 없으므로 mock 설정 진행
-
-        when(spyProduct.getCategory()).thenReturn(mockCategory); // getCategory()가 mockCategory 반환하도록 stub
-        when(mockCategory.getCategoryName()).thenReturn("의자"); // mockCategory.getCategoryName() stub
+        Product spyProduct = spy(product);
+        Category mockCategory = mock(Category.class);
+        when(spyProduct.getCategory()).thenReturn(mockCategory);
+        when(mockCategory.getCategoryName()).thenReturn("의자");
 
         Page<Product> productPage = new PageImpl<>(List.of(spyProduct));
         when(productRepository.findAllByProductNameContaining(eq(keyword), any(Pageable.class)))
                 .thenReturn(productPage);
         when(userRepository.findByEmail(mockUser.getEmail())).thenReturn(Optional.of(mockUser));
 
-        // when
         ProductDTO.ProductListResponse response =
                 productService.getProductsBySearch(keyword, categoryId, page, size, sortBy, order);
 
-        // then
         assertThat(response.getTotalPages()).isEqualTo(1);
         assertThat(response.getTotalItems()).isEqualTo(1);
         assertThat(response.getProducts().get(0).getProductName()).isEqualTo("빈티지 의자");
@@ -123,8 +112,80 @@ public class ProductServiceTest {
         assertThat(usedPageable.getSort().getOrderFor(sortBy).getDirection()).isEqualTo(Sort.Direction.DESC);
     }
 
-    @Test
-    void getProducts_shouldReturnPagedProductInfoDTOs(){
 
+    @Test
+    void getProductDetail_shouldIncludeReviewsAndOptionsCorrectly() {
+        // given
+        Review review = Review.builder()
+                .user(mockUser)
+                .product(product)
+                .rating(4)
+                .content("좋아요")
+                .isReported(false)
+                .createdAt(LocalDateTime.of(2024, 5, 1, 12, 0))
+                .build();
+        ReflectionTestUtils.setField(review, "reviewId", 101L);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(reviewRepository.findByProduct(product)).thenReturn(List.of(review));
+
+        ProductImage mainImage = ProductImage.builder()
+                .product(product)
+                .imageUrl("main.jpg")
+                .imageOrder(0)
+                .imageType(ImageType.MAIN)
+                .build();
+        ProductImage subImage = ProductImage.builder()
+                .product(product)
+                .imageUrl("sub1.jpg")
+                .imageOrder(1)
+                .imageType(ImageType.SUB)
+                .build();
+        ProductImage detailImage = ProductImage.builder()
+                .product(product)
+                .imageUrl("detail1.jpg")
+                .imageOrder(1)
+                .imageType(ImageType.DETAIL)
+                .build();
+        product.getProductImages().addAll(List.of(mainImage, subImage, detailImage));
+
+        ProductOption colorOption = ProductOption.builder()
+                .product(product)
+                .optionName("색상")
+                .optionValues(List.of("빨강", "파랑"))
+                .build();
+        ReflectionTestUtils.setField(colorOption, "id", 201L);
+        product.getProductOptions().add(colorOption);
+
+        AdditionalOption giftWrapOption = AdditionalOption.builder()
+                .product(product)
+                .optionName("선물 포장")
+                .additionalPrice(3000)
+                .build();
+        ReflectionTestUtils.setField(giftWrapOption, "id", 301L);
+        product.getAdditionalOptions().add(giftWrapOption);
+
+        //when
+        ProductDTO.ProductInfoDetailDTO dto = productService.getProductDetail(1L);
+
+        //then
+        assertThat(dto.getReviews()).hasSize(1);
+        ProductDTO.ProductReviewDTO reviewDTO = dto.getReviews().get(0);
+        assertThat(reviewDTO.getReviewId()).isEqualTo(101L);
+        assertThat(reviewDTO.getUserName()).isEqualTo("홍길동");
+        assertThat(reviewDTO.getRating()).isEqualTo(4);
+        assertThat(reviewDTO.getContent()).isEqualTo("좋아요");
+
+        assertThat(dto.getMainImageURL()).isEqualTo("main.jpg");
+        assertThat(dto.getSubImagesURL()).extracting("imageURL").contains("sub1.jpg");
+        assertThat(dto.getDetailDescriptionImageURL()).extracting("imageURL").contains("detail1.jpg");
+
+        assertThat(dto.getProductOptionResponses()).hasSize(1);
+        assertThat(dto.getProductOptionResponses().get(0).getOptionName()).isEqualTo("색상");
+        assertThat(dto.getProductOptionResponses().get(0).getOptionValues()).containsExactly("빨강", "파랑");
+
+        assertThat(dto.getAdditionalOptionResponses()).hasSize(1);
+        assertThat(dto.getAdditionalOptionResponses().get(0).getOptionName()).isEqualTo("선물 포장");
+        assertThat(dto.getAdditionalOptionResponses().get(0).getAdditionalPrice()).isEqualTo(3000);
     }
 }
