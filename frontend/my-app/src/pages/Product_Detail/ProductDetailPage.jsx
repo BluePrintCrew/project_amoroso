@@ -352,9 +352,14 @@ const ProductDetailPage = () => {
     // API 형식에 맞게 orderItems 배열 생성
     const orderItems = selectedOptions.map((option) => {
       const orderItem = {
-        productId: Number(product.productId),
+        productId: product.productId,
+        productName: product.productName,
+        mainImageURL: product.mainImageURL,
+        marketPrice: product.marketPrice,
+        discountPrice: product.discountPrice,
         quantity: 1,
         additionalOptionId: null,
+        additionalOptionName: null,
         productOptionId: null,
         selectedOptionValue: null,
       };
@@ -367,29 +372,31 @@ const ProductDetailPage = () => {
         orderItem.selectedOptionValue = String(option.value || "");
       }
 
+      orderItem.additionalOptionName = option.name;
+
       return orderItem;
     });
 
-    // 주문 데이터 (API 형식에 맞게 구성)
-    const orderData = {
-      product: {
-        ...product,
-        discountPrice: finalPrice, // 할인가 명시적 설정
-      }, // 제품 정보 (화면 표시용)
-      orderRequest: {
-        totalPrice: calculateTotalPrice(),
-        orderItems: orderItems,
-        // 나머지 필드는 주문 페이지에서 입력받을 수 있음
-        userAddressId: null,
-        deliveryRequest: "",
-        freeLoweringService: false,
-        productInstallationAgreement: false,
-        vehicleEntryPossible: false,
-        elevatorType: "NONE",
-      },
-    };
+    // // 주문 데이터 (API 형식에 맞게 구성)
+    // const orderData = {
+    //   product: {
+    //     ...product,
+    //     discountPrice: finalPrice, // 할인가 명시적 설정
+    //   }, // 제품 정보 (화면 표시용)
+    //   orderRequest: {
+    //     totalPrice: calculateTotalPrice(),
+    //     orderItems: orderItems,
+    //     // 나머지 필드는 주문 페이지에서 입력받을 수 있음
+    //     userAddressId: null,
+    //     deliveryRequest: "",
+    //     freeLoweringService: false,
+    //     productInstallationAgreement: false,
+    //     vehicleEntryPossible: false,
+    //     elevatorType: "NONE",
+    //   },
+    // };
 
-    navigate("/order", { state: orderData });
+    navigate("/order", { state: orderItems });
   };
 
   return (

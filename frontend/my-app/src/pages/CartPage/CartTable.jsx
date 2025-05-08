@@ -312,13 +312,13 @@ function CartTable({ cartItems, setCartItems, onSelectionChange }) {
       )}
 
       {/* Footer */}
-      {cartItems.length > 0 && (
+      {/* {cartItems.length > 0 && (
         <div className="cart-footer">
           <button className="bulk-delete-btn" onClick={handleBulkDelete}>
             선택상품 삭제
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
