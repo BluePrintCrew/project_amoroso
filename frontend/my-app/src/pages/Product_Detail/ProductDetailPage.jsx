@@ -19,6 +19,9 @@ const ProductDetailPage = () => {
   const thumbnailContainerRef = useRef(null);
   const tabRef = useRef(null);
 
+  const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(0);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false); // 썸네일 부분 화살표 렌더링 여부
   const [product, setProduct] = useState(null); // 상품 데이터 상태
   const [activeTab, setActiveTab] = useState("info"); // 탭 상태
   const [showMore, setShowMore] = useState(false); // 상세정보 펼치기 여부
@@ -56,6 +59,7 @@ const ProductDetailPage = () => {
         }
 
         setProduct(data);
+        console.log(data);
       } catch (error) {
         console.error(error);
       }
@@ -63,6 +67,26 @@ const ProductDetailPage = () => {
 
     fetchProduct();
   }, [id]);
+
+  // 썸네일 렌더링 후 스크롤 가능 여부 확인
+  useEffect(() => {
+    const updateArrowVisibility = () => {
+      const container = thumbnailContainerRef.current?.querySelector(
+        `.${styles.thumbnailImages}`
+      );
+      if (!container) return;
+
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollWidth > container.clientWidth + container.scrollWidth
+      );
+    };
+
+    updateArrowVisibility();
+    window.addEventListener("resize", updateArrowVisibility);
+
+    return () => window.removeEventListener("resize", updateArrowVisibility);
+  }, [product]);
 
   // 옵션이 없는 경우 기본 상품 자동 선택
   useEffect(() => {
@@ -110,6 +134,12 @@ const ProductDetailPage = () => {
 
   if (!product) return <p>상품 정보를 불러오는 중...</p>;
 
+  // 썸네일 이미지 배열
+  const thumbnailImages = [
+    { imageURL: product.mainImageURL },
+    ...(product.subImagesURL || []),
+  ];
+
   // 배송 예정일 계산 (주문일 기준 14일 후)
   const getEstimatedDeliveryDate = () => {
     const date = new Date();
@@ -129,7 +159,7 @@ const ProductDetailPage = () => {
 
   const averageRating = calculateAverageRating();
 
-  // 옵션 선택 핸들러러
+  // 옵션 선택 핸들러
   const handleOptionChange = (optionId, value) => {
     if (!value) return;
 
@@ -346,8 +376,8 @@ const ProductDetailPage = () => {
       return;
     }
 
-    // 할인가 확인 - null이면 정가 사용
-    const finalPrice = product.discountPrice || product.marketPrice || 0;
+    // // 할인가 확인 - null이면 정가 사용
+    // const finalPrice = product.discountPrice || product.marketPrice || 0;
 
     // API 형식에 맞게 orderItems 배열 생성
     const orderItems = selectedOptions.map((option) => {
@@ -355,6 +385,7 @@ const ProductDetailPage = () => {
         productId: product.productId,
         productName: product.productName,
         mainImageURL: product.mainImageURL,
+        brandName: product.manufacturer,
         marketPrice: product.marketPrice,
         discountPrice: product.discountPrice,
         quantity: 1,
@@ -409,55 +440,79 @@ const ProductDetailPage = () => {
             <div className={styles.productImage}>
               <img
                 src={
-                  product.mainImageURL
-                    ? `${API_BASE_URL}/api/v1/images/${product.mainImageURL
+                  thumbnailImages.length > 0
+                    ? `${API_BASE_URL}/api/v1/images/${thumbnailImages[
+                        selectedThumbnailIndex
+                      ]?.imageURL
                         .split("/")
                         .pop()}`
                     : "https://placehold.co/500x500"
                 }
-                alt={product.productName}
+                alt="선택된 이미지"
                 className={styles.mainImage}
               />
+
               <div
                 className={styles.thumbnailContainer}
                 ref={thumbnailContainerRef}
               >
-                <button
-                  className={styles.arrow}
-                  onClick={() => scrollThumbnails("left")}
+                {showLeftArrow && (
+                  <button
+                    className={styles.arrow}
+                    onClick={() => scrollThumbnails("left")}
+                  >
+                    ◀
+                  </button>
+                )}
+                <div
+                  className={styles.thumbnailImages}
+                  onScroll={() => {
+                    const container =
+                      thumbnailContainerRef.current?.querySelector(
+                        `.${styles.thumbnailImages}`
+                      );
+                    if (!container) return;
+
+                    setShowLeftArrow(container.scrollLeft > 0);
+                    setShowRightArrow(
+                      container.scrollWidth >
+                        container.clientWidth + container.scrollLeft
+                    );
+                  }}
                 >
-                  ◀
-                </button>
-                <div className={styles.thumbnailImages}>
-                  {product.subImagesURL && product.subImagesURL.length > 0
-                    ? product.subImagesURL.map((img, index) => (
-                        <div key={index} className={styles.thumbnail}>
-                          <img
-                            src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                              .split("/")
-                              .pop()}`}
-                            alt={`${product.productName} 썸네일 ${index + 1}`}
-                          />
-                        </div>
-                      ))
-                    : [...Array(5)].map((_, index) => (
-                        <div key={index} className={styles.thumbnail}>
-                          썸네일 {index + 1}
-                        </div>
-                      ))}
+                  {thumbnailImages.map((img, index) => (
+                    <div
+                      key={index}
+                      className={`${styles.thumbnail} ${
+                        selectedThumbnailIndex === index
+                          ? styles.activeThumbnail
+                          : ""
+                      }`}
+                      onClick={() => setSelectedThumbnailIndex(index)}
+                    >
+                      <img
+                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
+                          .split("/")
+                          .pop()}`}
+                        alt={`썸네일 ${index + 1}`}
+                      />
+                    </div>
+                  ))}
                 </div>
-                <button
-                  className={styles.arrow}
-                  onClick={() => scrollThumbnails("right")}
-                >
-                  ▶
-                </button>
+                {showRightArrow && (
+                  <button
+                    className={styles.arrow}
+                    onClick={() => scrollThumbnails("right")}
+                  >
+                    ▶
+                  </button>
+                )}
               </div>
             </div>
             <div className={styles.productMiddle}>
               <div className={styles.breadcrumb}>
                 <a href="#" className={styles.breadcrumbLink}>
-                  Amoroso
+                  {product.manufacturer}
                 </a>{" "}
                 &gt;
                 <div className={styles.breadcrumbActions}>

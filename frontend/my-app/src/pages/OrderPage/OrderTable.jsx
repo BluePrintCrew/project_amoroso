@@ -36,7 +36,7 @@ const OrderTable = ({ products }) => {
                   className={styles.productImage}
                 />
                 <div>
-                  <p>Amoroso</p>
+                  <p>{product.brandName}</p>
                   <p className={styles.productName}>{product.productName}</p>
                   {product.additionalOptionName && (
                     <p className={styles.productOption}>
