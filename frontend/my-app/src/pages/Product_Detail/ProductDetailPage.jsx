@@ -427,7 +427,13 @@ const ProductDetailPage = () => {
     //   },
     // };
 
-    navigate("/order", { state: orderItems });
+    navigate("/order", {
+      state: {
+        from: "detail",
+        returnPath: `/product/${product.productId}`,
+        orderItems,
+      },
+    });
   };
 
   return (
@@ -514,7 +520,6 @@ const ProductDetailPage = () => {
                 <a href="#" className={styles.breadcrumbLink}>
                   {product.manufacturer}
                 </a>{" "}
-                &gt;
                 <div className={styles.breadcrumbActions}>
                   <button className={styles.iconButton}>
                     <img src={likeButton} alt="좋아요 버튼" />

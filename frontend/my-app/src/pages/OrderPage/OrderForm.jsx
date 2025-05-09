@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from "../MyPage/api";
 import CartSummary from "../../components/CartSummary/CartSummary";
 import DatePicker from "react-datepicker";
-import { ko } from "date-fns/locale";
+import { ko, tr } from "date-fns/locale";
 import PageLayout from "../../components/PageLayout/PageLayout";
 import axios from "axios";
 import styles from "./OrderForm.module.css";
@@ -29,11 +29,21 @@ const OrderForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const passedData = location.state;
-  const products = Array.isArray(passedData) ? passedData : [passedData];
+
+  // 배열이면 첫 번째 요소 꺼냄
+  const root = Array.isArray(passedData) ? passedData[0] : passedData;
+
+  // 제품들 꺼냄
+  const products = Array.isArray(root?.orderItems) ? root.orderItems : [];
+
+  // 돌아갈 경로 꺼냄
+  const returnPath = root?.returnPath || "/";
 
   console.log(products);
 
   // 2. 상태 변수 선언
+  const [checkingAddress, setCheckingAddress] = useState(true);
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState(null);
 
@@ -123,15 +133,34 @@ const OrderForm = () => {
           }
         );
 
-        setUserAddress(response.data);
+        const data = response.data;
+        setUserAddress(data);
+
+        if (
+          !data.address?.trim() ||
+          !data.detailAddress?.trim() ||
+          !data.postalCode?.trim()
+        ) {
+          alert("배송지 정보가 없습니다. 배송지를 먼저 입력해주세요.");
+          navigate("/mypageinfo");
+          return;
+        }
+        if (!data.phoneNumber?.trim()) {
+          alert("배송지 연락처가 입력되지 않았습니다. 정보를 확인해주세요.");
+        }
       } catch (error) {
         console.error("주소 정보 불러오기 실패:", error);
-        alert("배송지 정보를 불러오지 못했습니다.");
+        alert("배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다.");
+        navigate(returnPath);
+      } finally {
+        setCheckingAddress(false);
       }
     };
 
     fetchUserAddress();
-  }, []);
+  }, [location.state?.returnPath, navigate]);
+
+  if (checkingAddress) return null;
 
   // 7. 핸들러 함수들
   const handleDateChange = (date) => {

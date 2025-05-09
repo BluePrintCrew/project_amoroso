@@ -74,9 +74,7 @@ function AdminProductRegister() {
   const detailInputRef = useRef(null);
 
   // (4) 옵션 정보
-  const [options, setOptions] = useState([
-    { optionName: "", optionValues: [""] },
-  ]);
+  const [options, setOptions] = useState([]);
 
   // (5) 상세 설명
   const [description, setDescription] = useState("");
@@ -168,6 +166,45 @@ function AdminProductRegister() {
   // 등록
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (!category2 || !productCode || !modelName || !price || !brand) {
+      alert("필수 항목을 모두 채워주세요");
+      return;
+    }
+
+    if (isNaN(Number(price)) || Number(price) <= 0) {
+      alert("가격은 0보다 큰 값이어야 합니다.");
+      return;
+    }
+
+    if (isNaN(Number(cost)) || Number(cost) <= 0) {
+      alert("원가는 0보다 큰 숫자여야 합니다.");
+      return;
+    }
+
+    if (
+      isNaN(Number(discount)) ||
+      Number(discount) < 0 ||
+      Number(discount) > 100
+    ) {
+      alert("할인율은 0 이상 100 이하의 숫자여야 합니다.");
+      return;
+    }
+
+    // 옵션 검증
+    if (options.length > 0) {
+      const hasInvalidOption = options.some(
+        (opt) =>
+          !opt.optionName.trim() || // 옵션명 비어있거나 공백
+          opt.optionValues.some((val) => !val.trim()) // 옵션값 중 비어있는 것
+      );
+
+      if (hasInvalidOption) {
+        alert("옵션명 또는 옵션값에 비어있는 항목이 있습니다.");
+        return;
+      }
+    }
+
     const payload = transformPayload();
     console.log("(디버그) 전송할 payload:", payload);
 
@@ -322,7 +359,9 @@ function AdminProductRegister() {
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>상품카테고리 설정</h3>
           <div className={styles.formGrid}>
-            <div className={styles.formLabel}>1차 카테고리</div>
+            <div className={styles.formLabel}>
+              1차 카테고리<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <select
                 value={category1}
@@ -341,7 +380,9 @@ function AdminProductRegister() {
               </select>
             </div>
 
-            <div className={styles.formLabel}>2차 카테고리</div>
+            <div className={styles.formLabel}>
+              2차 카테고리<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               {category1 ? (
                 <select
@@ -368,7 +409,9 @@ function AdminProductRegister() {
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>기본 정보</h3>
           <div className={styles.formGrid}>
-            <div className={styles.formLabel}>상품코드</div>
+            <div className={styles.formLabel}>
+              상품코드 <span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="text"
@@ -377,7 +420,9 @@ function AdminProductRegister() {
                 onChange={(e) => setProductCode(e.target.value)}
               />
             </div>
-            <div className={styles.formLabel}>브랜드</div>
+            <div className={styles.formLabel}>
+              브랜드<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="text"
@@ -386,7 +431,9 @@ function AdminProductRegister() {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </div>
-            <div className={styles.formLabel}>모델명</div>
+            <div className={styles.formLabel}>
+              모델명<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="text"
@@ -395,7 +442,9 @@ function AdminProductRegister() {
                 onChange={(e) => setModelName(e.target.value)}
               />
             </div>
-            <div className={styles.formLabel}>가격</div>
+            <div className={styles.formLabel}>
+              가격<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="number"
@@ -404,7 +453,9 @@ function AdminProductRegister() {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-            <div className={styles.formLabel}>원가</div>
+            <div className={styles.formLabel}>
+              원가<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="number"
@@ -413,7 +464,9 @@ function AdminProductRegister() {
                 onChange={(e) => setCost(e.target.value)}
               />
             </div>
-            <div className={styles.formLabel}>할인율</div>
+            <div className={styles.formLabel}>
+              할인율<span className={styles.required}>*</span>
+            </div>
             <div className={styles.formInput}>
               <input
                 type="number"
@@ -661,63 +714,81 @@ function AdminProductRegister() {
         <section className={styles.formSection}>
           <h3 className={styles.sectionTitle}>옵션 정보</h3>
           {options.map((opt, optIdx) => (
-            <div className={styles.formGrid} key={optIdx}>
-              <div className={styles.formLabel}>옵션명</div>
-              <div className={styles.formInput}>
-                <input
-                  type="text"
-                  placeholder="예) 색상"
-                  value={opt.optionName}
-                  onChange={(e) => {
-                    const newOptions = [...options];
-                    newOptions[optIdx].optionName = e.target.value;
-                    setOptions(newOptions);
-                  }}
-                />
-              </div>
+            <div className={styles.optionBlock} key={optIdx}>
+              <button
+                type="button"
+                onClick={() => {
+                  const newOptions = options.filter((_, i) => i !== optIdx);
+                  setOptions(newOptions);
+                }}
+                className={styles.deleteOptionBlockBtn}
+              >
+                ×
+              </button>
+              <div className={styles.formGrid} key={optIdx}>
+                <div className={styles.formLabel}>옵션명</div>
+                <div className={styles.formInput}>
+                  <input
+                    type="text"
+                    placeholder="예) 색상"
+                    value={opt.optionName}
+                    onChange={(e) => {
+                      const newOptions = [...options];
+                      newOptions[optIdx].optionName = e.target.value;
+                      setOptions(newOptions);
+                    }}
+                  />
+                </div>
 
-              <div className={styles.formLabel}>옵션값들</div>
-              <div className={styles.formInput}>
-                {opt.optionValues.map((value, valIdx) => (
-                  <div
-                    key={valIdx}
-                    style={{ display: "flex", gap: "8px", marginBottom: "4px" }}
-                  >
-                    <input
-                      type="text"
-                      placeholder="예) 블랙"
-                      value={value}
-                      onChange={(e) => {
-                        const newOptions = [...options];
-                        newOptions[optIdx].optionValues[valIdx] =
-                          e.target.value;
-                        setOptions(newOptions);
+                <div className={styles.formLabel}>옵션값들</div>
+                <div className={styles.formInput}>
+                  {opt.optionValues.map((value, valIdx) => (
+                    <div
+                      key={valIdx}
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        marginBottom: "4px",
                       }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newOptions = [...options];
-                        newOptions[optIdx].optionValues.splice(valIdx, 1);
-                        setOptions(newOptions);
-                      }}
-                      className={styles.deleteOptionValueBtn}
                     >
-                      삭제
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newOptions = [...options];
-                    newOptions[optIdx].optionValues.push("");
-                    setOptions(newOptions);
-                  }}
-                  className={styles.subButton}
-                >
-                  옵션값 추가
-                </button>
+                      <input
+                        type="text"
+                        placeholder="예) 블랙"
+                        value={value}
+                        onChange={(e) => {
+                          const newOptions = [...options];
+                          newOptions[optIdx].optionValues[valIdx] =
+                            e.target.value;
+                          setOptions(newOptions);
+                        }}
+                      />
+                      {opt.optionValues.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newOptions = [...options];
+                            newOptions[optIdx].optionValues.splice(valIdx, 1);
+                            setOptions(newOptions);
+                          }}
+                          className={styles.deleteOptionValueBtn}
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newOptions = [...options];
+                      newOptions[optIdx].optionValues.push("");
+                      setOptions(newOptions);
+                    }}
+                    className={styles.subButton}
+                  >
+                    옵션값 추가
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -725,7 +796,7 @@ function AdminProductRegister() {
           <button
             type="button"
             onClick={addOption}
-            className={styles.subButton}
+            className={styles.addOptionButton}
           >
             옵션 추가
           </button>

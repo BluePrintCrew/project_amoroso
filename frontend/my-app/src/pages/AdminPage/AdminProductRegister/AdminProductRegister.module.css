@@ -109,7 +109,7 @@
   padding: 8px 16px;
   font-size: 0.95rem;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 10px;
   box-sizing: border-box;
   outline: none;
   background-color: #fff;
@@ -150,11 +150,24 @@
   padding: 4px 10px;
   border: 1px solid #ccc;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
 }
 .subButton:hover {
+  background: #eee;
+}
+
+.addOptionButton {
+  margin-top: 12px;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.addOptionButton:hover {
   background: #eee;
 }
 
@@ -163,12 +176,13 @@
   border: 1px solid #ccc;
   background: #fff;
   font-size: 0.9rem;
-  white-space: nowrap;
-  writing-mode: horizontal-tb;
   color: #97212b;
-  border-radius: 20px;
+  border-radius: 5px;
   margin-left: 8px;
   cursor: pointer;
+  display: inline-block;
+  min-width: 50px;
+  text-align: center;
 }
 
 .radioBox {
@@ -202,4 +216,34 @@
   padding: 8px 16px;
   cursor: pointer;
   transition: background 0.2s ease;
+}
+
+.required {
+  color: red;
+}
+
+.optionBlock {
+  position: relative;
+  border: 1px solid #eee;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: #fafafa;
+}
+
+.deleteOptionBlockBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  color: red;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
 }
