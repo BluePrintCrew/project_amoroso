@@ -20,7 +20,7 @@ public class UserAddressService {
     UserAddressRepository userAddressRepository;
     UserRepository userRepository;
 
-    public UserAddressDto.GetAddress registerAddress(UserControllerDTO.UserUpdateRequest request){
+    public UserAddressDto.GetAddress registerAddress(UserControllerDTO.UserUpdateOrRegisterRequest request){
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -58,7 +58,26 @@ public class UserAddressService {
     }
 
     @Transactional
-    public void updateUserAddress(UserControllerDTO.UserUpdateRequest request) {
+    public void updateUserAddress(UserControllerDTO.UserUpdateOrRegisterRequest request) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 기본 배송지를 찾음 (없으면 예외 발생)
+        UserAddress address = userAddressRepository.findByUserAndIsDefaultTrue(user)
+                .orElseThrow(() -> new IllegalStateException("기본 배송지를 찾을 수 없습니다."));
+
+        // 기존 배송지 정보 업데이트
+        address.updateAddress(
+                request.getPostalCode(),
+                request.getAddress(),
+                request.getDetailAddress()
+
+        );
+    }
+
+    @Transactional
+    public void createUserAddress(UserControllerDTO.UserUpdateOrRegisterRequest request) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

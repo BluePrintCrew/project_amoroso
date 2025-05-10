@@ -69,7 +69,7 @@ public class UserControllerDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserUpdateRequest {
+    public static class UserUpdateOrRegisterRequest {
         private String name;
         private String email;
         private String birthDate; // YYYY-MM-DD 형식의 문자열로 저장 (프론트에서 변환)

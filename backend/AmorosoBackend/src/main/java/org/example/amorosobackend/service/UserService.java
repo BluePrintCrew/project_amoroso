@@ -88,7 +88,7 @@ public class UserService {
                 availableCoupons,pendingReviews,wishlistCount,orderCount,cartItemCount, orderStatusSummary);
     }
 
-    public void updateUserProfile(UserControllerDTO.UserUpdateRequest request) {
+    public void updateUserProfile(UserUpdateOrRegisterRequest request) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
