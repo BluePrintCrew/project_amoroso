@@ -41,14 +41,20 @@ public class UserAddressService {
         return toDto(address);
     }
 
-    // 기본 배송지
     public UserAddressDto.GetAddress getDefaultAddress() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return toDto(userAddressRepository.findByUserAndIsDefaultTrue(user)
-                .orElseThrow(() -> new IllegalStateException("기본 배송지가 설정되지 않았습니다.")));
+        return userAddressRepository.findByUserAndIsDefaultTrue(user)
+                .map(this::toDto)
+                .orElseGet(() -> {
+                    // addressId만 null, 나머지는 기본값(null 또는 false)
+                    UserAddressDto.GetAddress empty = new UserAddressDto.GetAddress();
+                    empty.setAddressId(null);
+                    // recipientName, phoneNumber, postalCode, address, detailAddress 는 null 그대로
+                    return empty;
+                });
     }
 
     @Transactional
