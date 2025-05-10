@@ -19,19 +19,30 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     int countByUser(User user);
     @Query("""
-    SELECT c FROM CartItem c
+    SELECT c
+      FROM CartItem c
+      LEFT JOIN c.cartAdditionalOption ca
+      LEFT JOIN ca.additionalOption ao
+      LEFT JOIN c.cartProductOption cp
+      LEFT JOIN cp.productOption po
     WHERE c.user = :user
       AND c.product = :product
-      AND ((:additionalOptionId IS NULL AND c.cartAdditionalOption IS NULL) OR (c.cartAdditionalOption.additionalOption.id = :additionalOptionId))
-      AND ((:productOptionId IS NULL AND c.cartProductOption IS NULL) OR 
-           (c.cartProductOption.productOption.id = :productOptionId AND c.cartProductOption.selectedValue = :selectedValue))
-    """)
+      AND (
+           (:additionalOptionId  IS NULL AND ca IS NULL)
+        OR (ao.id = :additionalOptionId)
+      )
+      AND (
+           (:productOptionId     IS NULL AND cp IS NULL AND :selectedValue IS NULL)
+        OR (po.id = :productOptionId AND cp.selectedValue = :selectedValue)
+      )
+""")
     Optional<CartItem> findDuplicateCartItem(
-            @Param("user") User user,
-            @Param("product") Product product,
+            @Param("user")               User user,
+            @Param("product")            Product product,
             @Param("additionalOptionId") Long additionalOptionId,
-            @Param("productOptionId") Long productOptionId,
-            @Param("selectedValue") String selectedValue
+            @Param("productOptionId")    Long productOptionId,
+            @Param("selectedValue")      String selectedValue
     );
+
 
 }

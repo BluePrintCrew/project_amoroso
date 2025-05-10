@@ -50,11 +50,28 @@ public class ProductServiceTest {
     void setup() {
         product = Product.builder()
                 .productName("빈티지 의자")
-                .marketPrice(10000)
-                .discountRate(10)
+                .description("설명")
+                .stock(10)
+                .productCode("P001")
+                .manufacturer("제조사")
+                .origin("한국")
+                .brand("테스트브랜드")
+                .couponApplicable(true)
+                .color("빨강")
+                .components("의자 본체, 설명서")
+                .material("플라스틱")
+                .size("중간")
+                .shippingInstallationFee(5000)
+                .asPhoneNumber("1234-5678")
+                .costPrice(8000)
+                .marketPrice(15000)
+                .outOfStock(false)
+                .stockNotificationThreshold(2)
                 .createdAt(LocalDateTime.now())
-                .category(null)
+                .discountRate(20)
+                .discountPrice(12000)
                 .seller(mock(Seller.class))
+                .category(null)
                 .build();
         ReflectionTestUtils.setField(product, "productId", 1L);
 
@@ -70,8 +87,6 @@ public class ProductServiceTest {
                 .product(product)
                 .build();
         mockUser.getWishlists().add(wishlist);
-
-
     }
 
     @Test
@@ -81,6 +96,7 @@ public class ProductServiceTest {
         SecurityContext context = mock(SecurityContext.class);
         when(context.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(context);
+
         String keyword = "의자";
         Long categoryId = null;
         int page = 1;
@@ -112,10 +128,8 @@ public class ProductServiceTest {
         assertThat(usedPageable.getSort().getOrderFor(sortBy).getDirection()).isEqualTo(Sort.Direction.DESC);
     }
 
-
     @Test
     void getProductDetail_shouldIncludeReviewsAndOptionsCorrectly() {
-        // given
         Review review = Review.builder()
                 .user(mockUser)
                 .product(product)
@@ -165,10 +179,29 @@ public class ProductServiceTest {
         ReflectionTestUtils.setField(giftWrapOption, "id", 301L);
         product.getAdditionalOptions().add(giftWrapOption);
 
-        //when
         ProductDTO.ProductInfoDetailDTO dto = productService.getProductDetail(1L);
 
-        //then
+        assertThat(dto.getProductName()).isEqualTo("빈티지 의자");
+        assertThat(dto.getDescription()).isEqualTo("설명");
+        assertThat(dto.getStock()).isEqualTo(10);
+        assertThat(dto.getProductCode()).isEqualTo("P001");
+        assertThat(dto.getManufacturer()).isEqualTo("제조사");
+        assertThat(dto.getOrigin()).isEqualTo("한국");
+        assertThat(dto.getBrand()).isEqualTo("테스트브랜드");
+        assertThat(dto.getCouponApplicable()).isTrue();
+        assertThat(dto.getColor()).isEqualTo("빨강");
+        assertThat(dto.getComponents()).isEqualTo("의자 본체, 설명서");
+        assertThat(dto.getMaterial()).isEqualTo("플라스틱");
+        assertThat(dto.getSize()).isEqualTo("중간");
+        assertThat(dto.getShippingInstallationFee()).isEqualTo(5000);
+        assertThat(dto.getAsPhoneNumber()).isEqualTo("1234-5678");
+        assertThat(dto.getMarketPrice()).isEqualTo(15000);
+        assertThat(dto.getDiscountPrice()).isEqualTo(12000);
+        assertThat(dto.getDiscountRate()).isEqualTo(20);
+        assertThat(dto.getOutOfStock()).isFalse();
+        assertThat(dto.getStockNotificationThreshold()).isEqualTo(2);
+        assertThat(dto.getSalesCount()).isEqualTo(0);
+
         assertThat(dto.getReviews()).hasSize(1);
         ProductDTO.ProductReviewDTO reviewDTO = dto.getReviews().get(0);
         assertThat(reviewDTO.getReviewId()).isEqualTo(101L);

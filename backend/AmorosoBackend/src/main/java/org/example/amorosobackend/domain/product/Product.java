@@ -101,9 +101,11 @@ public class Product {
     @Column(nullable = false)
     private Integer salesCount = 0;
 
+    @Setter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
 
+    @Setter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdditionalOption> additionalOptions = new ArrayList<>();
 

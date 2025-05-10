@@ -1,5 +1,6 @@
 package org.example.amorosobackend.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.cart.CartAdditionalOption;
 import org.example.amorosobackend.domain.cart.CartItem;
 import org.example.amorosobackend.domain.cart.CartProductOption;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CartItemService {
 
     private final CartItemRepository cartItemRepository;
@@ -48,6 +50,7 @@ public class CartItemService {
         if (optionalExistingCartItem.isPresent()) {
             CartItem existingCartItem = optionalExistingCartItem.get();
             existingCartItem.updateQuantity(existingCartItem.getQuantity() + request.getQuantity());
+            log.info("중복 발생! 수량 변화 to {}", existingCartItem.getQuantity());
             return new CartItemControllerDTO.CartItemResponseDTO(existingCartItem);
         }
 
