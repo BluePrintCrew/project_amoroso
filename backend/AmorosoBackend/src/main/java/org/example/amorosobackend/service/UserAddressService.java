@@ -30,6 +30,7 @@ public class UserAddressService {
         }
 
         UserAddress address = UserAddress.builder()
+                        .user(user)
                         .postalCode(request.getPostalCode())
                         .detailAddress(request.getDetailAddress())
                         .address(request.getAddress())

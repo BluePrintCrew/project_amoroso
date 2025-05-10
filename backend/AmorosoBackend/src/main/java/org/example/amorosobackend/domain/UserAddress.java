@@ -16,6 +16,7 @@ public class UserAddress {
     private Long addressId;
 
     @ManyToOne
+    @Setter
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

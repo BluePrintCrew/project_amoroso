@@ -139,7 +139,9 @@ public class User {
 
     }
     public void addAddress(UserAddress address) {
+
         this.addresses.add(address);
+        address.setUser(this);
     }
 
     public void removeAddress(UserAddress address) {
