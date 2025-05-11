@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './OrderTable.module.css';
+import { FaChevronRight } from 'react-icons/fa';
+import OrderDetailModal from './OrderDetailModal';
+import MoreOrderListModal from './MoreOrderListModal';
+import { useNavigate } from 'react-router-dom';
 
 const orders = [
   {
@@ -38,7 +42,7 @@ const orders = [
     orderDate: '2025.01.20 17:49',
     customerName: '황길동',
     customerAddress: '서울특별시 종로구 이마빌딩',
-    orderStatus: '배송완료',
+    orderStatus: '발송완료',
     paymentStatus: '결제완료',
     totalAmount: 2787400,
   },
@@ -62,7 +66,7 @@ const getStatusClass = (status) => {
       return styles.statusConfirmed;
     case '배송중':
       return styles.statusShipping;
-    case '배송완료':
+    case '발송완료':
       return styles.statusDelivered;
     case '주문취소':
       return styles.statusCanceled;
@@ -76,10 +80,47 @@ const getPaymentClass = (status) => {
 };
 
 const OrderTable = () => {
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderDetailModal, setShowOrderDetailModal] = useState(false);
+  const [showMoreOrderListModal, setShowMoreOrderListModal] = useState(false);
+  const [orderList, setOrderList] = useState(orders);
+  const navigate = useNavigate();
+
+  const handleRowClick = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetailModal(true);
+  };
+
+  const handleMoreListClick = () => {
+    navigate('/admin/order-list');
+  };
+
+  const handleCloseOrderDetailModal = () => {
+    setShowOrderDetailModal(false);
+    setSelectedOrder(null);
+  };
+
+  const handleCloseMoreOrderListModal = () => {
+    setShowMoreOrderListModal(false);
+  };
+
+  // 발송 완료 버튼 클릭 시 상태 변경
+  const handleShippingComplete = (id) => {
+    setOrderList((prev) =>
+      prev.map((order) =>
+        order.id === id ? { ...order, orderStatus: '발송완료' } : order
+      )
+    );
+  };
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>주문 현황</h2>
-
+      <div className={styles.titleRow}>
+        <h2 className={styles.title}>주문 현황</h2>
+        <button className={styles.moreListBtn} onClick={handleMoreListClick}>
+          <FaChevronRight />
+        </button>
+      </div>
       <table className={styles.orderTable}>
         <thead>
           <tr>
@@ -90,11 +131,12 @@ const OrderTable = () => {
             <th>주문 상태</th>
             <th>결제 상태</th>
             <th>총 결제 금액</th>
+            <th>관리</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
+          {orderList.map((order) => (
+            <tr key={order.id} onClick={() => handleRowClick(order)} style={{ cursor: 'pointer' }}>
               <td>{order.orderCode}</td>
               <td>{order.orderDate}</td>
               <td>{order.customerName}</td>
@@ -118,10 +160,27 @@ const OrderTable = () => {
                 </span>
               </td>
               <td>{order.totalAmount.toLocaleString()} 원</td>
+              <td onClick={e => e.stopPropagation()}>
+                <button
+                  className={styles.shippingBtn}
+                  disabled={order.orderStatus === '발송완료' || order.orderStatus === '주문취소'}
+                  onClick={() => handleShippingComplete(order.id)}
+                >
+                  발송 완료
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {/* 주문 상세 모달 */}
+      {showOrderDetailModal && selectedOrder && (
+        <OrderDetailModal order={selectedOrder} onClose={handleCloseOrderDetailModal} />
+      )}
+      {/* 더 많은 주문 리스트 모달 */}
+      {showMoreOrderListModal && (
+        <MoreOrderListModal orderList={orderList} onClose={handleCloseMoreOrderListModal} />
+      )}
     </div>
   );
 };

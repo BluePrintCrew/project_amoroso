@@ -7,6 +7,7 @@ import InfiniteScrollProducts from '../../components/ProductList/InfiniteScrollP
 import CategoryNavigation from '../../components/Navigation/CategoryNavigation/CategoryNavigation';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu';
 import BestProducts from '../../components/BestProducts/BestProducts';
+import { useNavigate } from 'react-router-dom';
 
 // 카테고리 맵핑 (ProductListPage에서 가져온 것)
 const categoryMap = {
@@ -45,6 +46,7 @@ const categoryMap = {
 function MainPage() {
   // 모든 카테고리를 하나의 배열로 평탄화
   const allCategories = Object.values(categoryMap).flat();
+  const navigate = useNavigate();
 
   return (
     <div className={styles.mainPage}>
@@ -53,8 +55,18 @@ function MainPage() {
       <div className={styles.content}>
         <CategoryMenu />
         <BestProducts />
-        
-        {/* 각 카테고리 섹션 */}
+
+        {/* Amoroso Products 섹션 */}
+        <div className={styles.productsHeader}>
+          <h2 className={styles.productsTitle}>Amoroso Products</h2>
+          <button className={styles.productsMoreBtn} onClick={() => navigate('/productlist')}>
+            더보기 &gt;
+          </button>
+        </div>
+        {/* 상품 리스트 예시: 전체 상품 보여주기 */}
+        <InfiniteScrollProducts />
+        {/* 기존 카테고리별 섹션은 필요시 유지/삭제 */}
+        {/*
         {allCategories.map(category => (
           <section 
             key={category.value}
@@ -64,7 +76,7 @@ function MainPage() {
             <InfiniteScrollProducts categoryCode={category.value} />
           </section>
         ))}
-
+        */}
         {/* 카테고리 네비게이션 */}
         <CategoryNavigation categoryMap={categoryMap} />
       </div>
