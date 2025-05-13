@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './BestProducts.module.css';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from '../ProductCard/ProductCard';
+import InfiniteScrollProducts from '../ProductList/InfiniteScrollProducts/InfiniteScrollProducts';
 
 const BestProducts = () => {
   const [products, setProducts] = useState([]);
@@ -36,15 +37,7 @@ const BestProducts = () => {
           <ProductCard key={product.productId} product={product} />
         ))}
       </div>
-      <div className={styles.bestProducts}>
-        <div className={styles.header}>
-        <h2>Amoroso Best</h2>
-        <button className={styles.moreBtn} onClick={() => navigate('/productlist')}>
-          더보기 &gt;
-        </button>
-      </div>
     </div>
-        </div>
   );
 };
 

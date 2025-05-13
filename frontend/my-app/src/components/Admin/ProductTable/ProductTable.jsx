@@ -1,6 +1,7 @@
 import React from 'react';
 import searchIcon from '../../../assets/search.png';
 import styles from './ProductTable.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const products = [
   {
@@ -28,6 +29,7 @@ const products = [
 ];
 
 const ProductTable = () => {
+  const navigate = useNavigate();
   return (
     <div className={styles.container}>
       <div className={styles.topContent}>
@@ -49,7 +51,7 @@ const ProductTable = () => {
             </button>
           </div>
           <button className={styles.showAll}>전체보기</button>
-          <button className={styles.addProduct}>상품 등록</button>
+          <button className={styles.addProduct} onClick={() => navigate('/admin/register')}>상품 등록</button>
         </div>
       </div>
 

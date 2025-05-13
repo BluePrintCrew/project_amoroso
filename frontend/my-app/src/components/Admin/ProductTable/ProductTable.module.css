@@ -135,3 +135,25 @@
     font-size: 16px;
 }
 
+.shippingBtn {
+  background: #00940f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.shippingBtn:disabled {
+  background: #bdbdbd;
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.shippingBtn:hover:not(:disabled) {
+  background: #007a0c;
+}
+
