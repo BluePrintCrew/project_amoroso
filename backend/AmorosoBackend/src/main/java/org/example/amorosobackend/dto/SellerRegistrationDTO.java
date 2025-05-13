@@ -32,8 +32,6 @@ public class SellerRegistrationDTO {
         private LocalDate businessStartDate;
         private String businessAddress;
         private String businessDetailAddress;
-        private String taxationType;
-        private String businessStatus;
         private String businessTel;
         private String businessEmail;
     }

@@ -1,6 +1,13 @@
 package org.example.amorosobackend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.*;
@@ -15,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/sellers")
 @RequiredArgsConstructor
+@Tag(name = "Seller", description = "Seller related APIs")
 public class SellerController {
 
     private final SellerService sellerService;
@@ -75,6 +83,22 @@ public class SellerController {
     @PostMapping("/register")
     public ResponseEntity<SellerRegistrationDTO.Response> registerSeller(@RequestBody SellerRegistrationDTO.Request request) {
         SellerRegistrationDTO.Response response = sellerService.registerSeller(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Check business registration status", 
+              description = "Check the current status of a business registration number")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Status check successful",
+            content = @Content(schema = @Schema(implementation = BusinessStatusResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/business-status")
+    public ResponseEntity<BusinessStatusResponse> checkBusinessStatus(
+            @Parameter(description = "Business registration number", required = true)
+            @RequestParam String businessNumber) {
+        BusinessStatusResponse response = businessValidationService.checkBusinessStatus(businessNumber);
         return ResponseEntity.ok(response);
     }
 }

@@ -284,22 +284,14 @@ public class SellerService {
     public SellerRegistrationDTO.Response registerSeller(SellerRegistrationDTO.Request request) {
         // 1. 이메일 중복 체크
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 사용중인 이메일입니다");
+            throw new IllegalArgumentException("Email already in use");
         }
 
-        // 2. 사업자등록번호 재검증
-        BusinessValidationResponse validationResponse = businessValidationService.validateBusiness(
-                BusinessValidationRequest.builder()
-                        .businessNumber(request.getBusinessNumber())
-                        .startDate(request.getBusinessStartDate().toString())
-                        .ownerName(request.getName())
-                        .companyName(request.getBrandName())
-                        .businessAddress(request.getBusinessAddress())
-                        .build()
-        );
-
-        if (!validationResponse.isValid()) {
-            throw new IllegalArgumentException("유효하지 않은 사업자 등록 정보: " + validationResponse.getValidationMessage());
+        // 2. 사업자 상태 조회 및 검증
+        BusinessStatusResponse statusResponse = businessValidationService.checkBusinessStatus(request.getBusinessNumber());
+        
+        if (!"계속사업자".equals(statusResponse.getBusinessStatus())) {
+            throw new IllegalArgumentException("Only active business can register");
         }
 
         // 3. User 엔티티 생성
@@ -317,7 +309,7 @@ public class SellerService {
         
         userRepository.save(user);
 
-        // 4. Seller 엔티티 생성
+        // 4. Seller 엔티티 생성 (Status API 정보 활용)
         Seller seller = Seller.builder()
                 .user(user)
                 .brandName(request.getBrandName())
@@ -325,8 +317,8 @@ public class SellerService {
                 .businessStartDate(request.getBusinessStartDate())
                 .businessAddress(request.getBusinessAddress())
                 .businessDetailAddress(request.getBusinessDetailAddress())
-                .taxationType(request.getTaxationType())
-                .businessStatus(request.getBusinessStatus())
+                .taxationType(statusResponse.getTaxationType())    // Status API 정보
+                .businessStatus(statusResponse.getBusinessStatus()) // Status API 정보
                 .businessTel(request.getBusinessTel())
                 .businessEmail(request.getBusinessEmail())
                 .build();
@@ -344,7 +336,7 @@ public class SellerService {
                 .businessDetailAddress(seller.getBusinessDetailAddress())
                 .taxationType(seller.getTaxationType())
                 .businessStatus(seller.getBusinessStatus())
-                .message("판매자 등록이 완료되었습니다")
+                .message("Seller registration completed")
                 .build();
     }
 
