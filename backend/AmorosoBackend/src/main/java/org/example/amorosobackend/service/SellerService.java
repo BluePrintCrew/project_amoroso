@@ -6,16 +6,14 @@ import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.product.Product;
-import org.example.amorosobackend.dto.SellerDTO;
+import org.example.amorosobackend.dto.*;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
-import org.example.amorosobackend.repository.OrderItemRepository;
-import org.example.amorosobackend.repository.OrderRepository;
-import org.example.amorosobackend.repository.SellerRepository;
-import org.example.amorosobackend.repository.UserRepository;
+import org.example.amorosobackend.repository.*;
 import org.example.amorosobackend.repository.product.ProductRepository;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +34,8 @@ public class SellerService {
     private final OrderItemRepository orderItemRepository;
     private final SellerRepository sellerRepository;
     private final ProductRepository productRepository;
+    private final BusinessValidationService businessValidationService;
+    private final PasswordEncoder passwordEncoder;
 
     public SellerDTO.SellerStatsResponse getSellerStats() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -47,11 +47,6 @@ public class SellerService {
 
         return new SellerDTO.SellerStatsResponse(paidOrders, readyShipments, inTransitOrders);
     }
-    private Long getSellerIdByEmail(String email) {
-        // Seller 엔티티를 통해 이메일 기반으로 sellerId 조회하는 로직 구현 필요
-        return 1L; // 예제이므로 1L을 반환 (실제 구현 시 Repository 활용)
-    }
-
 
     public SellerDTO.TotalSaleResponse getTotalSales(int year, int month) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -285,5 +280,76 @@ public class SellerService {
         return new PageImpl<>(dtoList, pageable, orderPage.getTotalElements());
     }
 
+    @Transactional
+    public SellerRegistrationDTO.Response registerSeller(SellerRegistrationDTO.Request request) {
+        // 1. 이메일 중복 체크
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용중인 이메일입니다");
+        }
 
+        // 2. 사업자등록번호 재검증
+        BusinessValidationResponse validationResponse = businessValidationService.validateBusiness(
+                BusinessValidationRequest.builder()
+                        .businessNumber(request.getBusinessNumber())
+                        .startDate(request.getBusinessStartDate().toString())
+                        .ownerName(request.getName())
+                        .companyName(request.getBrandName())
+                        .businessAddress(request.getBusinessAddress())
+                        .build()
+        );
+
+        if (!validationResponse.isValid()) {
+            throw new IllegalArgumentException("유효하지 않은 사업자 등록 정보: " + validationResponse.getValidationMessage());
+        }
+
+        // 3. User 엔티티 생성
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .role("ROLE_SELLER")
+                .emailConsent(request.getEmailConsent())
+                .smsConsent(request.getSmsConsent())
+                .dmConsent(request.getDmConsent())
+                .locationConsent(request.getLocationConsent())
+                .build();
+        
+        userRepository.save(user);
+
+        // 4. Seller 엔티티 생성
+        Seller seller = Seller.builder()
+                .user(user)
+                .brandName(request.getBrandName())
+                .businessRegistrationNumber(request.getBusinessNumber())
+                .businessStartDate(request.getBusinessStartDate())
+                .businessAddress(request.getBusinessAddress())
+                .businessDetailAddress(request.getBusinessDetailAddress())
+                .taxationType(request.getTaxationType())
+                .businessStatus(request.getBusinessStatus())
+                .businessTel(request.getBusinessTel())
+                .businessEmail(request.getBusinessEmail())
+                .build();
+        
+        sellerRepository.save(seller);
+
+        // 5. 응답 생성
+        return SellerRegistrationDTO.Response.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .brandName(seller.getBrandName())
+                .businessNumber(seller.getBusinessRegistrationNumber())
+                .businessStartDate(seller.getBusinessStartDate())
+                .businessAddress(seller.getBusinessAddress())
+                .businessDetailAddress(seller.getBusinessDetailAddress())
+                .taxationType(seller.getTaxationType())
+                .businessStatus(seller.getBusinessStatus())
+                .message("판매자 등록이 완료되었습니다")
+                .build();
+    }
+
+    private Long getSellerIdByEmail(String email) {
+        // Seller 엔티티를 통해 이메일 기반으로 sellerId 조회하는 로직 구현 필요
+        return 1L; // 예제이므로 1L을 반환 (실제 구현 시 Repository 활용)
+    }
 }

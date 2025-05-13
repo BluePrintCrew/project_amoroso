@@ -3,6 +3,7 @@ package org.example.amorosobackend.controller;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.time.LocalDate;
 
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
@@ -68,6 +69,13 @@ public class TestUserController {
                     .user(testUser)
                     .brandName("Test Brand")
                     .businessRegistrationNumber(UUID.randomUUID().toString().substring(0, 12))
+                    .businessStartDate(LocalDate.of(2024, 1, 1))  // 테스트용 사업 시작일
+                    .businessAddress("서울특별시 강남구 테헤란로 123")  // 테스트용 사업장 주소
+                    .businessDetailAddress("4층 401호")  // 테스트용 상세주소
+                    .taxationType("일반과세자")  // 테스트용 과세유형
+                    .businessStatus("계속사업자")  // 테스트용 사업자상태
+                    .businessTel("02-1234-5678")  // 테스트용 사업장 전화번호
+                    .businessEmail("business@testbrand.com")  // 테스트용 사업장 이메일
                     .build();
             return sellerRepository.save(newSeller);
         });
