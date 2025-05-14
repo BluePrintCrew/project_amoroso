@@ -4,7 +4,8 @@
   justify-content: space-around;
   gap: 20px;
   padding: 20px;
-  margin-top: 200px;
+  margin-top: 16px;
+  margin-bottom: 20px;
 }
 
 .categoryItem {
@@ -42,4 +43,12 @@
 .special {
   /* 예: 특별한 카테고리에 표시할 스타일 */
   border: 2px solid #ff6347;
+}
+
+.bannerWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 250px; /* 적당한 높이 */
+  margin-bottom: 40px;
+  z-index: 1;
 }

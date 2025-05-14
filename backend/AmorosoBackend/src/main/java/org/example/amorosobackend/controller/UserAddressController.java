@@ -29,7 +29,10 @@ public class UserAddressController {
     @Operation(description = "기본 배송지 조회")
     @GetMapping("/default")
     public ResponseEntity<UserAddressDto.GetAddress> getDefaultAddress() {
-        UserAddressDto.GetAddress defaultAddress = userAddressService.getDefaultAddress();
+        UserAddressDto.GetAddress defaultAddress = null;
+
+        defaultAddress = userAddressService.getDefaultAddress();
+
         return ResponseEntity.ok(defaultAddress);
     }
 

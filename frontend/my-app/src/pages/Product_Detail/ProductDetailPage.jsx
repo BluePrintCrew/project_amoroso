@@ -1,52 +1,65 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { API_BASE_URL } from '../MyPage/api';
-import Breadcrumb from '../../components/Breadcrumb/Breadcrumb';
-import CartPopup from '../Product_Detail/CartPopup';
-import PageLayout from '../../components/PageLayout/PageLayout';
-import ProductQnA from '../../components/ProductQnA/ProductQnA'; // ProductQnA 컴포넌트 import
-import ReviewSection from './ReviewSection';
-import couponPack from '../../assets/coupon_pack.png';
-import getCoupon from '../../assets/get_coupon.png';
-import likeButton from '../../assets/like.png';
-import shareButton from '../../assets/share.png';
-import styles from './ProductDetailPage.module.css';
+import { API_BASE_URL } from "../MyPage/api";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
+import CartPopup from "../Product_Detail/CartPopup";
+import PageLayout from "../../components/PageLayout/PageLayout";
+import ProductQnA from "../../components/ProductQnA/ProductQnA";
+import ReviewSection from "./ReviewSection";
+import couponPack from "../../assets/coupon_pack.png";
+import getCoupon from "../../assets/get_coupon.png";
+import likeButton from "../../assets/like.png";
+import shareButton from "../../assets/share.png";
+import styles from "./ProductDetailPage.module.css";
 
 const ProductDetailPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // URL 파라미터로부터 상품 ID 가져옴
   const navigate = useNavigate();
   const thumbnailContainerRef = useRef(null);
-  const [product, setProduct] = useState(null);
-  const [activeTab, setActiveTab] = useState('info');
-  const [showMore, setShowMore] = useState(false);
   const tabRef = useRef(null);
 
-  // 장바구니 팝업 상태 관리
-  const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
-  const [popupType, setPopupType] = useState('cart'); // 'cart' 또는 'login'
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(0);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false); // 썸네일 부분 화살표 렌더링 여부
+  const [product, setProduct] = useState(null); // 상품 데이터 상태
+  const [activeTab, setActiveTab] = useState("info"); // 탭 상태
+  const [showMore, setShowMore] = useState(false); // 상세정보 펼치기 여부
 
+  // 팝업 및 옵션 관련 상태
+  const [isCartPopupOpen, setIsCartPopupOpen] = useState(false);
+  const [popupType, setPopupType] = useState("cart"); // 'cart' 또는 'login'
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  // 상품 정보 API 호출
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/v1/products/${id}`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
         if (!response.ok) {
-          throw new Error('상품 정보를 불러올 수 없습니다.');
+          throw new Error("상품 정보를 불러올 수 없습니다.");
         }
         const data = await response.json();
 
-        console.log('API 응답 데이터:', data);
+        console.log("API 응답 데이터:", data);
 
         if (!data || Object.keys(data).length === 0) {
-          throw new Error('받아온 데이터가 비어 있음.');
+          throw new Error("받아온 데이터가 비어 있음.");
         }
+
+        // 할인가가 null인 경우 정가를 할인가로 설정
+        if (data.discountPrice === null || data.discountPrice === undefined) {
+          data.discountPrice = data.marketPrice;
+        }
+
         setProduct(data);
+        console.log(data);
       } catch (error) {
         console.error(error);
       }
@@ -55,6 +68,46 @@ const ProductDetailPage = () => {
     fetchProduct();
   }, [id]);
 
+  // 썸네일 렌더링 후 스크롤 가능 여부 확인
+  useEffect(() => {
+    const updateArrowVisibility = () => {
+      const container = thumbnailContainerRef.current?.querySelector(
+        `.${styles.thumbnailImages}`
+      );
+      if (!container) return;
+
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollWidth > container.clientWidth + container.scrollWidth
+      );
+    };
+
+    updateArrowVisibility();
+    window.addEventListener("resize", updateArrowVisibility);
+
+    return () => window.removeEventListener("resize", updateArrowVisibility);
+  }, [product]);
+
+  // 옵션이 없는 경우 기본 상품 자동 선택
+  useEffect(() => {
+    if (
+      product &&
+      (!product.productOptionResponses ||
+        product.productOptionResponses.length === 0) &&
+      selectedOptions.length === 0
+    ) {
+      setSelectedOptions([
+        {
+          name: product.productName,
+          price: 0,
+          quantity: 1,
+          type: "base",
+        },
+      ]);
+    }
+  }, [product, selectedOptions.length]);
+
+  // 탭 네비게이션 고정 스크롤 처리
   const handleScroll = () => {
     if (!tabRef.current) return;
     const offsetTop = tabRef.current.parentElement.offsetTop;
@@ -69,46 +122,160 @@ const ProductDetailPage = () => {
       }
     } else {
       tabRef.current.classList.remove(styles.fixedTab);
-      tabRef.current.style.width = '100%';
-      tabRef.current.style.left = '0';
+      tabRef.current.style.width = "100%";
+      tabRef.current.style.left = "0";
     }
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   if (!product) return <p>상품 정보를 불러오는 중...</p>;
 
+  // 썸네일 이미지 배열
+  const thumbnailImages = [
+    { imageURL: product.mainImageURL },
+    ...(product.subImagesURL || []),
+  ];
+
+  // 배송 예정일 계산 (주문일 기준 14일 후)
+  const getEstimatedDeliveryDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 14); // 현재로부터 14일 뒤 배송 예정
+
+    const options = { month: "numeric", day: "numeric", weekday: "short" };
+    return date.toLocaleDateString("ko-KR", options);
+  };
+
+  // 평균 평점 계산
+  const calculateAverageRating = () => {
+    if (!product.reviews || product.reviews.length === 0) return 0;
+
+    const sum = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / product.reviews.length).toFixed(1);
+  };
+
+  const averageRating = calculateAverageRating();
+
+  // 옵션 선택 핸들러
+  const handleOptionChange = (optionId, value) => {
+    if (!value) return;
+
+    // 새 옵션 추가
+    const optionObj = product.productOptionResponses.find(
+      (option) => option.productOptionId === optionId
+    );
+
+    if (!optionObj) return; // 옵션 객체가 없으면 종료
+
+    // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
+    const existingOptionIndex = selectedOptions.findIndex(
+      (opt) => opt.type === "product" && opt.optionId === optionId
+    );
+
+    const newOption = {
+      optionId: optionId, // 숫자형으로 변환하지 않고 그대로 사용
+      value,
+      name: `${optionObj.optionName}: ${value}`,
+      price: 0, // 기본 옵션은 추가 비용 없음
+      quantity: 1,
+      type: "product",
+    };
+
+    if (existingOptionIndex >= 0) {
+      // 기존 옵션 업데이트
+      const updatedOptions = [...selectedOptions];
+      updatedOptions[existingOptionIndex] = newOption;
+      setSelectedOptions(updatedOptions);
+    } else {
+      // 새 옵션 추가
+      setSelectedOptions([...selectedOptions, newOption]);
+    }
+  };
+
+  // 추가 옵션 변경 핸들러
+  const handleAdditionalOptionChange = (optionId) => {
+    if (!optionId) return;
+
+    // 새 옵션 추가
+    const optionObj = product.additionalOptionResponses.find(
+      (option) => option.additionalOptionId === optionId
+    );
+
+    if (!optionObj) return; // 옵션 객체가 없으면 종료
+
+    // 기존 옵션 중 같은 종류가 있으면 업데이트, 없으면 새로 추가
+    const existingOptionIndex = selectedOptions.findIndex(
+      (opt) => opt.type === "additional" && opt.optionId === optionId
+    );
+
+    const newOption = {
+      optionId: Number(optionId), // 숫자형으로 변환
+      value: optionObj.optionName,
+      name: optionObj.optionName,
+      price: optionObj.additionalPrice || 0, // null인 경우 0으로 설정
+      quantity: 1,
+      type: "additional",
+    };
+
+    if (existingOptionIndex >= 0) {
+      // 기존 옵션 업데이트
+      const updatedOptions = [...selectedOptions];
+      updatedOptions[existingOptionIndex] = newOption;
+      setSelectedOptions(updatedOptions);
+    } else {
+      // 새 옵션 추가
+      setSelectedOptions([...selectedOptions, newOption]);
+    }
+  };
+
+  // 총 가격 계산
+  const calculateTotalPrice = () => {
+    // 할인가가 null인 경우 정가 사용
+    const basePrice = product.discountPrice || product.marketPrice || 0;
+
+    const optionsPrice = selectedOptions.reduce((total, option) => {
+      return total + (option.price || 0) * (option.quantity || 1);
+    }, 0);
+
+    // 옵션이 없으면 기본 가격 반환
+    if (selectedOptions.length === 0) {
+      return basePrice;
+    }
+
+    // 기본 상품 가격 + 옵션별 추가 가격
+    return basePrice + optionsPrice;
+  };
+
   const scrollThumbnails = (direction) => {
     if (thumbnailContainerRef.current) {
-      const scrollAmount = direction === 'left' ? -100 : 100;
+      const scrollAmount = direction === "left" ? -100 : 100;
       thumbnailContainerRef.current.scrollBy({
         left: scrollAmount,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
   };
 
-  const scrollToSection = (section) => {
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActiveTab(section);
-    }
-  };
-
-  // 장바구니 추가 핸들러
+  // 장바구니 추가 핸들러 - 수정됨
   const handleAddToCart = async () => {
-    // 이미 처리 중이면 중복 요청 방지
+    const hasSelectableOptions =
+      product.productOptionResponses &&
+      product.productOptionResponses.length > 0;
+
     if (isAddingToCart) return;
 
-    const token = localStorage.getItem('access_token');
+    if (hasSelectableOptions && selectedOptions.length === 0) {
+      alert("옵션을 선택해주세요.");
+      return;
+    }
 
-    // 로그인 여부 확인
+    const token = localStorage.getItem("access_token");
+
     if (!token) {
-      setPopupType('login');
+      setPopupType("login");
       setIsCartPopupOpen(true);
       return;
     }
@@ -116,30 +283,64 @@ const ProductDetailPage = () => {
     try {
       setIsAddingToCart(true);
 
-      // 장바구니 API 호출
-      const response = await fetch(`${API_BASE_URL}/api/v1/cart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: product.productId,
-          quantity: 1,
-          // 추가 옵션이 있다면 여기에 포함
-        }),
-      });
+      // 첫 번째 옵션만 처리
+      const option = selectedOptions[0];
 
-      if (!response.ok) {
-        throw new Error('장바구니 추가에 실패했습니다.');
+      // API 문서와 일치하는 형식으로 데이터 구성
+      const cartItem = {
+        productId: Number(product.productId),
+        quantity: 1,
+        additionalOptionId: null,
+        productOptionId: null,
+        selectedOptionValue: null,
+      };
+
+      // 옵션 타입에 따른 처리
+      if (option.type === "additional" && option.optionId) {
+        cartItem.additionalOptionId = option.optionId;
+      } else if (option.type === "product" && option.optionId) {
+        cartItem.productOptionId = option.optionId;
+        cartItem.selectedOptionValue = String(option.value || "");
       }
 
-      // 장바구니 추가 성공 시 팝업 표시
-      setPopupType('cart');
+      console.log("장바구니 추가 데이터:", cartItem);
+
+      const response = await fetch(`${API_BASE_URL}/api/v1/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(cartItem),
+      });
+
+      // 응답 상태 로깅
+      console.log("장바구니 응답 상태:", response.status);
+
+      // 에러 응답 처리
+      if (!response.ok) {
+        let errorMessage = "장바구니 추가 실패";
+        try {
+          const errorData = await response.json();
+          console.error("장바구니 추가 실패 데이터:", errorData);
+          if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (e) {
+          console.error("에러 응답 파싱 실패:", e);
+        }
+        throw new Error(errorMessage);
+      }
+
+      // 성공 처리
+      const responseData = await response.json();
+      console.log("장바구니 추가 성공:", responseData);
+
+      setPopupType("cart");
       setIsCartPopupOpen(true);
     } catch (error) {
-      console.error('장바구니 추가 오류:', error);
-      alert('장바구니 추가 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error("장바구니 추가 오류:", error);
+      alert(`장바구니 추가 중 오류가 발생했습니다: ${error.message}`);
     } finally {
       setIsAddingToCart(false);
     }
@@ -148,7 +349,7 @@ const ProductDetailPage = () => {
   // 장바구니 이동 확인 핸들러
   const handleCartConfirm = () => {
     setIsCartPopupOpen(false);
-    navigate('/cart');
+    navigate("/cart");
   };
 
   // 팝업 닫기 핸들러
@@ -156,16 +357,83 @@ const ProductDetailPage = () => {
     setIsCartPopupOpen(false);
   };
 
+  // 주문하기 핸들러 - 수정됨
   const handleOrderClick = () => {
-    const token = localStorage.getItem('access_token');
-
-    if (!token) {
-      alert('로그인이 필요합니다.');
-      navigate('/login');
+    const hasSelectableOptions =
+      product.productOptionResponses &&
+      product.productOptionResponses.length > 0;
+    // 선택된 옵션이 없는 경우
+    if (hasSelectableOptions && selectedOptions.length === 0) {
+      alert("옵션을 선택해주세요.");
       return;
     }
 
-    navigate('/order', { state: product });
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      setPopupType("login");
+      setIsCartPopupOpen(true);
+      return;
+    }
+
+    // // 할인가 확인 - null이면 정가 사용
+    // const finalPrice = product.discountPrice || product.marketPrice || 0;
+
+    // API 형식에 맞게 orderItems 배열 생성
+    const orderItems = selectedOptions.map((option) => {
+      const orderItem = {
+        productId: product.productId,
+        productName: product.productName,
+        mainImageURL: product.mainImageURL,
+        brandName: product.manufacturer,
+        marketPrice: product.marketPrice,
+        discountPrice: product.discountPrice,
+        quantity: 1,
+        additionalOptionId: null,
+        additionalOptionName: null,
+        productOptionId: null,
+        selectedOptionValue: null,
+      };
+
+      // 옵션 타입에 따라 다르게 처리
+      if (option.type === "additional" && option.optionId) {
+        orderItem.additionalOptionId = Number(option.optionId);
+      } else if (option.type === "product" && option.optionId) {
+        orderItem.productOptionId = Number(option.optionId);
+        orderItem.selectedOptionValue = String(option.value || "");
+      }
+
+      orderItem.additionalOptionName = option.name;
+
+      return orderItem;
+    });
+
+    // // 주문 데이터 (API 형식에 맞게 구성)
+    // const orderData = {
+    //   product: {
+    //     ...product,
+    //     discountPrice: finalPrice, // 할인가 명시적 설정
+    //   }, // 제품 정보 (화면 표시용)
+    //   orderRequest: {
+    //     totalPrice: calculateTotalPrice(),
+    //     orderItems: orderItems,
+    //     // 나머지 필드는 주문 페이지에서 입력받을 수 있음
+    //     userAddressId: null,
+    //     deliveryRequest: "",
+    //     freeLoweringService: false,
+    //     productInstallationAgreement: false,
+    //     vehicleEntryPossible: false,
+    //     elevatorType: "NONE",
+    //   },
+    // };
+
+    navigate("/order", {
+      state: {
+        from: "detail",
+        returnPath: `/product/${product.productId}`,
+        orderItems,
+      },
+    });
   };
 
   return (
@@ -178,57 +446,80 @@ const ProductDetailPage = () => {
             <div className={styles.productImage}>
               <img
                 src={
-                  product.mainImageURL
-                    ? `${API_BASE_URL}/api/v1/images/${product.mainImageURL
-                        .split('/')
+                  thumbnailImages.length > 0
+                    ? `${API_BASE_URL}/api/v1/images/${thumbnailImages[
+                        selectedThumbnailIndex
+                      ]?.imageURL
+                        .split("/")
                         .pop()}`
-                    : 'https://placehold.co/500x500'
+                    : "https://placehold.co/500x500"
                 }
-                alt={product.productName}
+                alt="선택된 이미지"
                 className={styles.mainImage}
               />
+
               <div
                 className={styles.thumbnailContainer}
                 ref={thumbnailContainerRef}
               >
-                <button
-                  className={styles.arrow}
-                  onClick={() => scrollThumbnails('left')}
+                {showLeftArrow && (
+                  <button
+                    className={styles.arrow}
+                    onClick={() => scrollThumbnails("left")}
+                  >
+                    ◀
+                  </button>
+                )}
+                <div
+                  className={styles.thumbnailImages}
+                  onScroll={() => {
+                    const container =
+                      thumbnailContainerRef.current?.querySelector(
+                        `.${styles.thumbnailImages}`
+                      );
+                    if (!container) return;
+
+                    setShowLeftArrow(container.scrollLeft > 0);
+                    setShowRightArrow(
+                      container.scrollWidth >
+                        container.clientWidth + container.scrollLeft
+                    );
+                  }}
                 >
-                  ◀
-                </button>
-                <div className={styles.thumbnailImages}>
-                  {product.subImagesURL && product.subImagesURL.length > 0
-                    ? product.subImagesURL.map((img, index) => (
-                        <div key={index} className={styles.thumbnail}>
-                          <img
-                            src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                              .split('/')
-                              .pop()}`}
-                            alt={`${product.productName} 썸네일 ${index + 1}`}
-                          />
-                        </div>
-                      ))
-                    : [...Array(5)].map((_, index) => (
-                        <div key={index} className={styles.thumbnail}>
-                          썸네일 {index + 1}
-                        </div>
-                      ))}
+                  {thumbnailImages.map((img, index) => (
+                    <div
+                      key={index}
+                      className={`${styles.thumbnail} ${
+                        selectedThumbnailIndex === index
+                          ? styles.activeThumbnail
+                          : ""
+                      }`}
+                      onClick={() => setSelectedThumbnailIndex(index)}
+                    >
+                      <img
+                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
+                          .split("/")
+                          .pop()}`}
+                        alt={`썸네일 ${index + 1}`}
+                      />
+                    </div>
+                  ))}
                 </div>
-                <button
-                  className={styles.arrow}
-                  onClick={() => scrollThumbnails('right')}
-                >
-                  ▶
-                </button>
+                {showRightArrow && (
+                  <button
+                    className={styles.arrow}
+                    onClick={() => scrollThumbnails("right")}
+                  >
+                    ▶
+                  </button>
+                )}
               </div>
             </div>
             <div className={styles.productMiddle}>
               <div className={styles.breadcrumb}>
                 <a href="#" className={styles.breadcrumbLink}>
-                  Amoroso
-                </a>{' '}
-                &gt;
+                  {product.manufacturer}
+                </a>{" "}
                 <div className={styles.breadcrumbActions}>
                   <button className={styles.iconButton}>
                     <img src={likeButton} alt="좋아요 버튼" />
@@ -241,53 +532,61 @@ const ProductDetailPage = () => {
               <h1 className={styles.productTitle}>{product.productName}</h1>
               <p className={styles.productPrice}>
                 <span className={styles.discountPrice}>
-                  {product.discountPrice.toLocaleString()}원
+                  {(product.discountPrice || 0).toLocaleString()}원
                 </span>
                 <span className={styles.originalPrice}>
-                  {product.marketPrice.toLocaleString()}원
+                  {(product.marketPrice || 0).toLocaleString()}원
                 </span>
                 <span className={styles.discountPercent}>
-                  {product.discountRate}%
+                  {product.discountRate || 0}%
                 </span>
               </p>
               <div className={styles.productRating}>
-                <span className={styles.ratingStars}>⭐ 4.7</span>
+                <span className={styles.ratingStars}>⭐ {averageRating}</span>
                 <span className={styles.ratingReviews}>
-                  {' '}
-                  리뷰 {product.reviews ? product.reviews.length : 0}개{' '}
+                  {" "}
+                  리뷰 {product.reviews ? product.reviews.length : 0}개{" "}
                 </span>
-                <button className={styles.couponButton}>
+                {/* <button className={styles.couponButton}>
                   <img src={getCoupon} alt="쿠폰받기 버튼" />
-                </button>
+                </button> */}
               </div>
               <div className={styles.productInfo}>
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>포인트</span>
                   <span className={styles.infoValue}>
-                    구매 시{' '}
+                    구매 시{" "}
                     <span className={styles.highlight}>
-                      {Math.floor(product.discountPrice * 0.003)}P
-                    </span>{' '}
+                      {Math.floor((product.discountPrice || 0) * 0.003)}P
+                    </span>{" "}
                     예상 적립 (회원 0.3%)
                   </span>
                 </div>
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>배송정보</span>
                   <span className={styles.infoValue}>
-                    무료 / 로진택배
+                    {product.shippingInstallationFee > 0
+                      ? `${(
+                          product.shippingInstallationFee || 0
+                        ).toLocaleString()}원`
+                      : "무료"}{" "}
+                    / 로진택배
                     <br />
-                    <span>12/18(수) 도착예상</span>
-                    <span>도서 산간 지역 불가</span>
+                    <span>{getEstimatedDeliveryDate()} 도착예상</span>
+                    <span className={styles.deliveryNote}>
+                      (주문 후 평균 14일 소요)
+                    </span>
                     <br />
-                    <span>| 제주특별자치도 15,000원 선불 (1개당)</span>
+                    <span>
+                      | 도서산간지역과 제주특별자치도의 추가 배송비는 관리자에게
+                      별도로 문의해주세요.{" "}
+                    </span>
+                    <br />
+                    <span className={styles.adminContact}>
+                      ※ 정확한 배송일은 관리자에게 문의해주세요.
+                    </span>
                   </span>
                 </div>
-              </div>
-
-              <div className={styles.couponPack}>
-                <button className={styles.packButton}>
-                  <img src={couponPack} alt="쿠폰팩 버튼" />
-                </button>
               </div>
             </div>
           </div>
@@ -295,33 +594,33 @@ const ProductDetailPage = () => {
           <div className={styles.productBottom}>
             <div ref={tabRef} className={styles.tabNavigation}>
               <button
-                onClick={() => setActiveTab('info')}
-                className={activeTab === 'info' ? styles.active : ''}
+                onClick={() => setActiveTab("info")}
+                className={activeTab === "info" ? styles.active : ""}
               >
                 상품정보
               </button>
               <button
-                onClick={() => setActiveTab('review')}
-                className={activeTab === 'review' ? styles.active : ''}
+                onClick={() => setActiveTab("review")}
+                className={activeTab === "review" ? styles.active : ""}
               >
                 후기
               </button>
               <button
-                onClick={() => setActiveTab('inquiry')}
-                className={activeTab === 'inquiry' ? styles.active : ''}
+                onClick={() => setActiveTab("inquiry")}
+                className={activeTab === "inquiry" ? styles.active : ""}
               >
                 문의
               </button>
               <button
-                onClick={() => setActiveTab('delivery')}
-                className={activeTab === 'delivery' ? styles.active : ''}
+                onClick={() => setActiveTab("delivery")}
+                className={activeTab === "delivery" ? styles.active : ""}
               >
                 배송
               </button>
             </div>
 
             <div className={styles.tabContent}>
-              {activeTab === 'info' && (
+              {activeTab === "info" && (
                 <div className={styles.infoTab}>
                   {product.detailDescriptionImageURL &&
                   product.detailDescriptionImageURL.length > 0 ? (
@@ -329,7 +628,7 @@ const ProductDetailPage = () => {
                       <img
                         key={index}
                         src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                          .split('/')
+                          .split("/")
                           .pop()}`}
                         alt={`상세 이미지 ${index}`}
                         className={styles.detailImage}
@@ -362,21 +661,22 @@ const ProductDetailPage = () => {
                       onClick={() => setShowMore(!showMore)}
                       className={styles.toggleButton}
                     >
-                      {showMore ? '상세정보 접기 ▲' : '상세정보 펼치기 ▼'}
+                      {showMore ? "상세정보 접기 ▲" : "상세정보 펼치기 ▼"}
                     </button>
                   </div>
                 </div>
               )}
 
-              {activeTab === 'review' && <ReviewSection />}
+              {activeTab === "review" && (
+                <ReviewSection productId={product.productId} />
+              )}
 
-              {activeTab === 'inquiry' && (
-  <div className={styles.inquiryTab}>
-    <ProductQnA productId={product.productId} />
-  </div>
-)}
-              {/* 배송 탭 */}
-              {activeTab === 'delivery' && (
+              {activeTab === "inquiry" && (
+                <div className={styles.inquiryTab}>
+                  <ProductQnA productId={product.productId} />
+                </div>
+              )}
+              {activeTab === "delivery" && (
                 <div className={styles.deliveryTab}>
                   <h3>배송 및 교환/반품 안내</h3>
                   <div className={styles.deliveryInfo}>
@@ -385,8 +685,21 @@ const ProductDetailPage = () => {
                       <ul>
                         <li>배송 방법: 택배</li>
                         <li>배송 지역: 전국(일부 도서 산간 지역 제외)</li>
-                        <li>배송 비용: 무료</li>
-                        <li>배송 기간: 2~3일(주문일로부터)</li>
+                        <li>
+                          배송 비용:{" "}
+                          {product.shippingInstallationFee > 0
+                            ? `${(
+                                product.shippingInstallationFee || 0
+                              ).toLocaleString()}원`
+                            : "무료"}
+                        </li>
+                        <li className={styles.deliveryHighlight}>
+                          배송 기간: 주문일로부터 평균 14일 소요
+                        </li>
+                        <li className={styles.adminContactInfo}>
+                          배송 일정 확인: 정확한 배송일은 주문 후 관리자에게
+                          문의해주세요. (고객센터: 1588-XXXX)
+                        </li>
                         <li>
                           배송 안내: 배송 과정에서 상품이 분실되거나 파손된 경우
                           즉시 고객센터로 연락 바랍니다.
@@ -427,16 +740,76 @@ const ProductDetailPage = () => {
         </div>
 
         <div className={styles.productRight}>
-          <button className={styles.selectButton}>
-            기본 상품 선택
-            <span className={styles.arrow}>&gt;</span>
-          </button>
+          {/* 제품 옵션 선택 (옵션이 있는 경우) */}
+          {product.productOptionResponses &&
+          product.productOptionResponses.length > 0 ? (
+            product.productOptionResponses.map((option, index) => (
+              <div key={index}>
+                <select
+                  className={styles.selectButton}
+                  onChange={(e) =>
+                    handleOptionChange(
+                      Number(option.productOptionId),
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="">{option.optionName} 선택</option>
+                  {option.optionValues.map((value, valueIndex) => (
+                    <option key={valueIndex} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))
+          ) : (
+            <button
+              className={styles.selectButton}
+              onClick={() => {
+                if (selectedOptions.length === 0) {
+                  setSelectedOptions([
+                    {
+                      name: product.productName,
+                      price: 0,
+                      quantity: 1,
+                      type: "base",
+                    },
+                  ]);
+                }
+              }}
+            >
+              기본 상품 선택
+              <span className={styles.arrow}>&gt;</span>
+            </button>
+          )}
+
+          {/* 추가 옵션 선택 (있는 경우) */}
+          {product.additionalOptionResponses &&
+            product.additionalOptionResponses.length > 0 && (
+              <div>
+                <select
+                  className={styles.selectButton}
+                  onChange={(e) =>
+                    handleAdditionalOptionChange(Number(e.target.value))
+                  }
+                >
+                  <option value="">추가 옵션 선택</option>
+                  {product.additionalOptionResponses.map((addOption, index) => (
+                    <option key={index} value={addOption.additionalOptionId}>
+                      {addOption.optionName} (+
+                      {(addOption.additionalPrice || 0).toLocaleString()}원)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
           <div className={styles.totalPrice}>
             <div className={styles.priceInfo}>
               <span className={styles.priceTitle}>총 구매가</span>
               <span className={styles.priceValue}>
-                {product.discountPrice.toLocaleString()}원
+                {calculateTotalPrice().toLocaleString()}원
               </span>
             </div>
             <p className={styles.priceNote}>
@@ -446,13 +819,12 @@ const ProductDetailPage = () => {
             </p>
           </div>
           <div className={styles.buttonGroup}>
-            {/* 장바구니 버튼에 핸들러 추가 */}
             <button
               className={styles.cartButton}
               onClick={handleAddToCart}
               disabled={isAddingToCart}
             >
-              {isAddingToCart ? '처리 중...' : '장바구니'}
+              {isAddingToCart ? "처리 중..." : "장바구니"}
             </button>
             <button className={styles.buyButton} onClick={handleOrderClick}>
               구매하기
@@ -461,7 +833,6 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* 장바구니/로그인 팝업 */}
       <CartPopup
         isOpen={isCartPopupOpen}
         onClose={handlePopupClose}

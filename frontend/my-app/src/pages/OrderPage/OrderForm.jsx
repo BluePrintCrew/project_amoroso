@@ -1,14 +1,17 @@
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { API_BASE_URL } from '../MyPage/api';
-import CartSummary from '../../components/CartSummary/CartSummary';
-import DatePicker from 'react-datepicker';
-import PageLayout from '../../components/PageLayout/PageLayout';
-import axios from 'axios';
-import styles from './OrderForm.module.css';
-import { useLocation } from 'react-router-dom';
+import { API_BASE_URL } from "../MyPage/api";
+import CartSummary from "../../components/CartSummary/CartSummary";
+import DatePicker from "react-datepicker";
+import { ko, tr } from "date-fns/locale";
+import PageLayout from "../../components/PageLayout/PageLayout";
+import axios from "axios";
+import styles from "./OrderForm.module.css";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import OrderTable from "./OrderTable";
 
 // const paymentMethods = [
 //   '퀵 계좌이체',
@@ -22,41 +25,39 @@ import { useLocation } from 'react-router-dom';
 // ];
 
 const OrderForm = () => {
+  // 1. 라우터 관련 훅
+  const navigate = useNavigate();
+  const location = useLocation();
+  const passedData = location.state;
+
+  // 배열이면 첫 번째 요소 꺼냄
+  const root = Array.isArray(passedData) ? passedData[0] : passedData;
+
+  // 제품들 꺼냄
+  const products = Array.isArray(root?.orderItems) ? root.orderItems : [];
+
+  // 돌아갈 경로 꺼냄
+  const returnPath = root?.returnPath || "/";
+
+  console.log(products);
+
+  // 2. 상태 변수 선언
+  const [checkingAddress, setCheckingAddress] = useState(true);
+
   const [selectedDate, setSelectedDate] = useState(null);
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
-  const handleMethodClick = (method) => {
-    setSelectedMethod(method);
-  };
-
-  const formatDate = (date) => {
-    if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
-
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString();
-    const day = date.getDate().toString();
-    const dayOfWeek = date
-      .toLocaleDateString('ko-KR', { weekday: 'long' })
-      .substring(0, 1);
-
-    return { year, month, day, dayOfWeek };
-  };
-
-  const { year, month, day, dayOfWeek } = formatDate(selectedDate);
-
   const [selectedMethod, setSelectedMethod] = useState(null);
+
   const [userAddress, setUserAddress] = useState(null);
   const [user, setUser] = useState(null);
 
-  const location = useLocation();
-  const passedData = location.state;
-  const products = Array.isArray(passedData) ? passedData : [passedData];
+  const [deliveryRequest, setDeliveryRequest] = useState("");
+  const [freeLoweringService, setFreeLoweringService] = useState(false);
+  const [productInstallationAgreement, setProductInstallationAgreement] =
+    useState(false);
+  const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
+  const [elevatorType, setElevatorType] = useState("ONE_TO_SEVEN");
 
-  console.log('🧾 products:', products);
-
+  // 3. 가격 계산용 변수
   const cartItems = products.map((item) => ({
     price: item.discountPrice,
     originalPrice: item.marketPrice,
@@ -77,33 +78,31 @@ const OrderForm = () => {
   const pointUsed = 0;
   const finalPrice = totalDiscountPrice + shippingPrice - pointUsed;
 
-  useEffect(() => {
-    const fetchUserAddress = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await axios.get(
-          `${API_BASE_URL}/api/v1/UserAddress/default`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  // 4. 날짜 포맷
+  const formatDate = (date) => {
+    if (!date) return { year: "", month: "", day: "", dayOfWeek: "" };
 
-        setUserAddress(response.data);
-      } catch (error) {
-        console.error('주소 정보 불러오기 실패:', error);
-        alert('배송지 정보를 불러오지 못했습니다.');
-      }
-    };
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString();
+    const day = date.getDate().toString();
+    const dayOfWeek = date
+      .toLocaleDateString("ko-KR", { weekday: "long" })
+      .substring(0, 1);
 
-    fetchUserAddress();
-  }, []);
+    return { year, month, day, dayOfWeek };
+  };
 
+  const { year, month, day, dayOfWeek } = formatDate(selectedDate);
+
+  const today = new Date();
+  const minSelecableDate = new Date();
+  minSelecableDate.setDate(today.getDate() + 7);
+
+  // 5. useEffect: 유저 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem("access_token");
         const response = await axios.get(
           `${API_BASE_URL}/api/v1/auth/users/me`,
           {
@@ -114,22 +113,67 @@ const OrderForm = () => {
         );
         setUser(response.data);
       } catch (err) {
-        console.error('유저 이메일 가져오기 실패:', err);
+        console.error("유저 이메일 가져오기 실패:", err);
       }
     };
     fetchUserInfo();
   }, []);
 
-  const [deliveryRequest, setDeliveryRequest] = useState('');
-  const [freeLoweringService, setFreeLoweringService] = useState(false);
-  const [productInstallationAgreement, setProductInstallationAgreement] =
-    useState(false);
-  const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
-  const [elevatorType, setElevatorType] = useState('ONE_TO_SEVEN');
+  // 6. useEffect: 유저 주소 가져오기
+  useEffect(() => {
+    const fetchUserAddress = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/UserAddress/default`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = response.data;
+        setUserAddress(data);
+
+        if (
+          !data.address?.trim() ||
+          !data.detailAddress?.trim() ||
+          !data.postalCode?.trim()
+        ) {
+          alert("배송지 정보가 없습니다. 배송지를 먼저 입력해주세요.");
+          navigate("/mypageinfo");
+          return;
+        }
+        if (!data.phoneNumber?.trim()) {
+          alert("배송지 연락처가 입력되지 않았습니다. 정보를 확인해주세요.");
+        }
+      } catch (error) {
+        console.error("주소 정보 불러오기 실패:", error);
+        alert("배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다.");
+        navigate(returnPath);
+      } finally {
+        setCheckingAddress(false);
+      }
+    };
+
+    fetchUserAddress();
+  }, [location.state?.returnPath, navigate]);
+
+  if (checkingAddress) return null;
+
+  // 7. 핸들러 함수들
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleMethodClick = (method) => {
+    setSelectedMethod(method);
+  };
 
   const handleOrderSubmit = async () => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem("access_token");
 
       const orderItems = products.map((item) => ({
         productId: item.productId,
@@ -151,18 +195,18 @@ const OrderForm = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
-      console.log('✅ 주문 완료:', orderResponse.data);
+      console.log("✅ 주문 완료:", orderResponse.data);
 
       const orderId = orderResponse.data.orderId;
 
       const { IMP } = window;
       if (!IMP) {
-        alert('결제 모듈이 로드되지 않았습니다.');
+        alert("결제 모듈이 로드되지 않았습니다.");
         return;
       }
 
@@ -172,17 +216,17 @@ const OrderForm = () => {
       IMP.request_pay(
         {
           channelKey: process.env.REACT_APP_PORTONE_CHANNEL_KEY,
-          pg: 'html5_inicis',
-          pay_method: 'card',
+          pg: "html5_inicis",
+          pay_method: "card",
           merchant_uid,
           name: `주문번호 ${orderId}`,
           amount: finalPrice,
-          buyer_email: user?.email ?? 'guest@example.com',
-          buyer_name: user?.name ?? '비회원',
-          buyer_tel: user?.phoneNumber ?? '010-0000-0000',
-          buyer_addr: userAddress?.address ?? '',
-          buyer_postcode: userAddress?.postalCode ?? '',
-          currency: 'KRW',
+          buyer_email: user?.email ?? "guest@example.com",
+          buyer_name: user?.name ?? "비회원",
+          buyer_tel: user?.phoneNumber ?? "010-0000-0000",
+          buyer_addr: userAddress?.address ?? "",
+          buyer_postcode: userAddress?.postalCode ?? "",
+          currency: "KRW",
         },
         async function (rsp) {
           if (rsp.success) {
@@ -196,101 +240,36 @@ const OrderForm = () => {
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                   },
                 }
               );
 
               if (verifyRes.data.success) {
-                alert('결제가 성공적으로 처리되었습니다.');
+                alert("결제가 성공적으로 처리되었습니다.");
               } else {
-                alert('결제 검증 실패: ' + verifyRes.data.message);
+                alert("결제 검증 실패: " + verifyRes.data.message);
               }
             } catch (err) {
-              console.error('결제 검증 오류', err);
-              alert('결제 검증 중 오류가 발생했습니다.');
+              console.error("결제 검증 오류", err);
+              alert("결제 검증 중 오류가 발생했습니다.");
             }
           } else {
-            console.error('결제 실패: ', rsp.error_msg);
+            console.error("결제 실패: ", rsp.error_msg);
             alert(`결제 실패: ${rsp.error_msg}`);
           }
         }
       );
     } catch (error) {
-      console.error('❌ 주문 실패:', error);
-      alert('주문에 실패했습니다. 다시 시도해주세요.');
+      console.error("❌ 주문 실패:", error);
+      alert("주문에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   return (
     <PageLayout>
       <h1 className={styles.orderTitle}>주문서 작성</h1>
-      <div className={styles.infoTable}>
-        <div className={styles.infoHeader1}>
-          <div className={`${styles.column} ${styles.leftAlign}`}>상품정보</div>
-          <div className={`${styles.column} ${styles.centerAlign}`}>수량</div>
-          <div className={`${styles.column} ${styles.centerAlign}`}>
-            상품금액
-          </div>
-          <div className={`${styles.column} ${styles.centerAlign}`}>
-            배송정보
-          </div>
-        </div>
-        <div className={styles.infoHeader2}>
-          <div className={`${styles.column} ${styles.leftAlign}`}>
-            <span className={styles.mainText}>로젠택배</span>
-            <span className={styles.subText}>배송/설치일 직접 지정 가능</span>
-          </div>
-        </div>
-        {products.map((product, index) => (
-          <div key={index} className={styles.infoBody}>
-            <div className={styles.row}>
-              <div className={`${styles.column} ${styles.leftAlign}`}>
-                <div className={styles.productInfo}>
-                  <img
-                    src={
-                      product.mainImageURL
-                        ? `${API_BASE_URL}/api/v1/images/${product.mainImageURL
-                            .split('/')
-                            .pop()}`
-                        : 'https://placehold.co/120x120'
-                    }
-                    alt="상품 이미지"
-                    className={styles.productImage}
-                  />
-                  <div>
-                    <p>Amoroso</p>
-                    <p className={styles.productName}>{product.productName}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className={`${styles.column} ${styles.centerAlign}`}>
-                <p>1</p>
-              </div>
-
-              <div className={`${styles.column} ${styles.centerAlign}`}>
-                <p className={styles.price}>{product.discountPrice}원</p>
-                <p className={styles.originalPrice}>{product.marketPrice}원</p>
-                <button className={styles.discountInfo}>할인내역</button>
-              </div>
-
-              <div className={`${styles.column} ${styles.centerAlign}`}>
-                <p className={styles.shipping1}>무료배송</p>
-                <p className={styles.shipping2}>지역별/옵션별 배송비 추가</p>
-                <p className={styles.shipping3}>지역별 배송비</p>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <div className={styles.infoBottom}>
-          <p>
-            • 배송일자 안내 내용입니다. 배송일자 안내 내용입니다. 배송일자 안내
-            내용입니다.
-          </p>
-        </div>
-      </div>
+      <OrderTable products={products} />
       <CartSummary cartItems={cartItems} />
 
       <div className={styles.delivery}>
@@ -317,7 +296,10 @@ const OrderForm = () => {
                 </div>
                 <div className={styles.cell}>
                   {userAddress.recipientName} / {userAddress.phoneNumber}
-                  <button className={styles.editButton}>
+                  <button
+                    className={styles.editButton}
+                    onClick={() => navigate("/mypageinfo")}
+                  >
                     주문자 정보 변경
                   </button>
                 </div>
@@ -328,20 +310,20 @@ const OrderForm = () => {
                 </div>
                 <div className={styles.cell}>
                   기본배송지:
-                  <br />({userAddress.postalCode}) {userAddress.address}{' '}
+                  <br />({userAddress.postalCode}) {userAddress.address}{" "}
                   {userAddress.detailAddress}
                   <button className={styles.editButton}>배송지 목록</button>
                   <br />
                   {userAddress.phoneNumber}
                 </div>
               </div>
-              <div className={styles.row} style={{ border: 'none' }}>
+              <div className={styles.row} style={{ border: "none" }}>
                 <div className={`${styles.cell} ${styles.label}`}>
                   가구배송 추가정보<span className={styles.required}>*</span>
                 </div>
                 <div
                   className={styles.cell}
-                  style={{ borderBottom: '1px solid #e6e6e6' }}
+                  style={{ borderBottom: "1px solid #e6e6e6" }}
                 >
                   <div className={styles.radioButtons}>
                     <div className={styles.elevatorOptions}>
@@ -351,8 +333,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="ONE_TO_SEVEN"
-                          checked={elevatorType === 'ONE_TO_SEVEN'}
-                          onChange={() => setElevatorType('ONE_TO_SEVEN')}
+                          checked={elevatorType === "ONE_TO_SEVEN"}
+                          onChange={() => setElevatorType("ONE_TO_SEVEN")}
                         />
                         1~7인승
                       </label>
@@ -361,8 +343,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="EIGHT_TO_TEN"
-                          checked={elevatorType === 'EIGHT_TO_TEN'}
-                          onChange={() => setElevatorType('EIGHT_TO_TEN')}
+                          checked={elevatorType === "EIGHT_TO_TEN"}
+                          onChange={() => setElevatorType("EIGHT_TO_TEN")}
                         />
                         8~10인승
                       </label>
@@ -371,8 +353,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="ELEVEN_OR_MORE"
-                          checked={elevatorType === 'ELEVEN_OR_MORE'}
-                          onChange={() => setElevatorType('ELEVEN_OR_MORE')}
+                          checked={elevatorType === "ELEVEN_OR_MORE"}
+                          onChange={() => setElevatorType("ELEVEN_OR_MORE")}
                         />
                         11인승 이상
                       </label>
@@ -381,8 +363,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="NONE"
-                          checked={elevatorType === 'NONE'}
-                          onChange={() => setElevatorType('NONE')}
+                          checked={elevatorType === "NONE"}
+                          onChange={() => setElevatorType("NONE")}
                         />
                         없음
                       </label>
@@ -465,13 +447,15 @@ const OrderForm = () => {
             <div className={styles.deliveryDate}>
               <div className={styles.deliveryDateTop}>
                 <span>배송 예정일</span>
-                <button className={styles.applyProduct}>적용상품보기</button>
+                {/* <button className={styles.applyProduct}>적용상품보기</button> */}
               </div>
               <div className={styles.deliveryDateInput}>
                 <DatePicker
                   selected={selectedDate}
                   onChange={handleDateChange}
                   dateFormat="yyyy/MM/dd"
+                  locale={ko}
+                  minDate={minSelecableDate}
                   className={styles.hiddenDateInput}
                   customInput={
                     <button className={styles.editButton} style={{ margin: 0 }}>
@@ -498,13 +482,13 @@ const OrderForm = () => {
                     <label>요일</label>
                   </div>
                 </div>
-                <div className={styles.reservationTimer}>
+                {/* <div className={styles.reservationTimer}>
                   <span>⏰ 남은 예약시간은</span>
                   <span className={styles.timerMinute}>12</span>
                   <span>분</span>
                   <span className={styles.timerSecond}>34</span>
                   <span>초 입니다.</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -628,7 +612,7 @@ const OrderForm = () => {
               <span>최종결제금액</span>
               <span
                 className={styles.amount}
-                style={{ fontSize: '20px', color: 'red' }}
+                style={{ fontSize: "20px", color: "red" }}
               >
                 {finalPrice.toLocaleString()}원
               </span>

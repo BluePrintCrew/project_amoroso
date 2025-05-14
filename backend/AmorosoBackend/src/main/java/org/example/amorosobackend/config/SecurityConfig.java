@@ -55,10 +55,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui/**",
                                 "/api/v1/auth/**", "/oauth2/**", "/api/v1/Test-User/**",
-                                "/error", "/health")
+                                "/error", "/health" , "/api/v1/sellers/register" , "/api/v1/sellers/validate-business" )
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/products/**")
                         .hasAnyRole("ADMIN", "SELLER")

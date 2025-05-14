@@ -3,6 +3,7 @@ package org.example.amorosobackend.controller;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.time.LocalDate;
 
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
@@ -68,48 +69,16 @@ public class TestUserController {
                     .user(testUser)
                     .brandName("Test Brand")
                     .businessRegistrationNumber(UUID.randomUUID().toString().substring(0, 12))
+                    .businessStartDate(LocalDate.of(2024, 1, 1))  // 테스트용 사업 시작일
+                    .businessAddress("서울특별시 강남구 테헤란로 123")  // 테스트용 사업장 주소
+                    .businessDetailAddress("4층 401호")  // 테스트용 상세주소
+                    .taxationType("일반과세자")  // 테스트용 과세유형
+                    .businessStatus("계속사업자")  // 테스트용 사업자상태
+                    .businessTel("02-1234-5678")  // 테스트용 사업장 전화번호
+                    .businessEmail("business@testbrand.com")  // 테스트용 사업장 이메일
                     .build();
             return sellerRepository.save(newSeller);
         });
-
-        // 3. Category 생성
-        Category category = categoryRepository.findByCategoryCode(CategoryCode.LIVING_SOFA)
-                .orElseGet(() -> {
-                    Category newCategory = Category.builder()
-                            .categoryName("소파")
-                            .categoryCode(CategoryCode.LIVING_SOFA)
-                            .build();
-                    return categoryRepository.save(newCategory);
-                });
-
-        // 4. Product 생성
-        Optional<Product> existingProduct = productRepository.findByProductCode("TEST123");
-        if (existingProduct.isEmpty()) {
-            Product product = Product.builder()
-                    .category(category)
-                    .productName("테스트 소파")
-                    .productCode("TEST123")
-                    .description("테스트용 소파 설명입니다.")
-                    .seller(testSeller)
-                    .mainImageUri("https://placehold.co/120")
-                    .stock(5)
-                    .manufacturer("Amoroso")
-                    .origin("대한민국")
-                    .brand("Amoroso")
-                    .couponApplicable(true)
-                    .color("베이지")
-                    .components("소파 1개, 쿠션 2개")
-                    .material("패브릭")
-                    .size("W200 x D90 x H80")
-                    .shippingInstallationFee(0)
-                    .asPhoneNumber("1234-5678")
-                    .costPrice(100)
-                    .marketPrice(100)
-                    .discountRate(0)
-                    .discountPrice(0)
-                    .build();
-            productRepository.save(product);
-        }
 
         // 5. 기본 배송지 저장 (없을 경우)
         if (testUser.getAddresses().isEmpty()) {

@@ -1,41 +1,75 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../MyPage/api'; // 경로 수정
 import styles from './ReviewSection.module.css';
 
-const reviews = [
-  {
-    id: 1,
-    user: 'ha******',
-    rating: 5,
-    date: '2025.01.23',
-    text: '디자인 깔끔합니다. 곡선도 모나지 않고 수납 서랍도 튼튼합니다. 매트리스 단단한 느낌이지만 편안합니다.',
-    images: ['https://placehold.co/150', 'https://placehold.co/150'],
-  },
-  {
-    id: 2,
-    user: 'ba*******',
-    rating: 3,
-    date: '2025.01.22',
-    text: '방이 작아서 서랍장을 놓을 공간이 없어서 수납침대로 구입했습니다. 생각보다 너무 만족합니다.',
-    images: ['https://placehold.co/150'],
-  },
-];
-
-const averageRating = (
-  reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-).toFixed(1);
-
-const ReviewSection = () => {
+const ReviewSection = ({ productId }) => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState('전체');
   const [selectedFilter, setSelectedFilter] = useState('베스트순');
-  const [isDropdownOpen, SetIsDropdownOpen] = useState(false);
-  const filteredReviews =
-    filter === '사진'
-      ? reviews.filter((review) => review.images && review.images.length > 0)
-      : reviews;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+        // 페이지 크기를 10으로 설정한 예시입니다. 필요에 따라 조정하세요.
+        const response = await fetch(
+          `${API_BASE_URL}/api/v1/reviews/product/${productId}?page=0&size=10`, 
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
+        if (!response.ok) {
+          throw new Error('리뷰를 불러오는데 실패했습니다');
+        }
+
+        const data = await response.json();
+        console.log('API 응답 리뷰 데이터:', data);
+        
+        // API 응답 구조에 따라 여기를 조정하세요. 이 예시에서는 data.content가 리뷰 배열이라고 가정합니다.
+        setReviews(data.content || []);
+      } catch (error) {
+        console.error('리뷰 가져오기 오류:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchReviews();
+    }
+  }, [productId, selectedFilter]);
+
+  // 필터링된 리뷰 계산
+  const filteredReviews = filter === '사진'
+    ? reviews.filter((review) => review.imageUrls && review.imageUrls.length > 0)
+    : reviews;
+
+  // 모든 리뷰 이미지 모으기
+  const allImages = reviews.flatMap(review => review.imageUrls || []);
+  
+  // 평균 평점 계산
+  const calculateAverageRating = () => {
+    if (!reviews || reviews.length === 0) return 0;
+    
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+  };
+  
+  const averageRating = calculateAverageRating();
+  
   const filterOptions = ['베스트순', '최신순', '평점 높은순', '평점 낮은순'];
-  const allImages = reviews.flatMap((review) => review.images);
+
+  if (loading) return <div className={styles.loading}>리뷰를 불러오는 중...</div>;
+  if (error) return <div className={styles.error}>리뷰를 불러오는데 실패했습니다: {error}</div>;
+  if (!reviews || reviews.length === 0) return <div className={styles.noReviews}>아직 등록된 리뷰가 없습니다.</div>;
 
   return (
     <div className={styles.reviewSection}>
@@ -71,34 +105,38 @@ const ReviewSection = () => {
             </div>
 
             <div className={styles.imageGallery}>
-              {reviews.slice(0, 5).map((review, index) => (
+              {filteredReviews
+                .filter(review => review.imageUrls && review.imageUrls.length > 0)
+                .slice(0, 5).map((review, index) => (
                 <div key={index} className={styles.imageWrapper}>
                   <img
-                    src={review.images[0]}
+                    src={`${API_BASE_URL}/api/v1/review-images/file/${review.imageUrls[0].split('/').pop()}`}
                     alt={`리뷰 ${index + 1} 첫 번째 이미지`}
                     className={styles.galleryImage}
                   />
-                  {review.images.length > 1 && (
+                  {review.imageUrls.length > 1 && (
                     <span className={styles.imageCountBadge}>
-                      +{review.images.length - 1}
+                      +{review.imageUrls.length - 1}
                     </span>
                   )}
                 </div>
               ))}
-              <div className={styles.imageWrapper}>
-                <div className={styles.moreImage}>
-                  +<br />
-                  사진 전체보기
+              {allImages.length > 0 && (
+                <div className={styles.imageWrapper}>
+                  <div className={styles.moreImage}>
+                    +<br />
+                    사진 전체보기
+                  </div>
+                  <span className={styles.imageCount}>{allImages.length}</span>
                 </div>
-                <span className={styles.imageCount}>{reviews.length}</span>
-              </div>
+              )}
             </div>
           </div>
 
           <div className={styles.dropdown}>
             <button
               className={styles.dropdownButton}
-              onClick={() => SetIsDropdownOpen(!isDropdownOpen)}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               {selectedFilter} ▼
             </button>
@@ -110,7 +148,7 @@ const ReviewSection = () => {
                     className={styles.dropdownItem}
                     onClick={() => {
                       setSelectedFilter(option);
-                      SetIsDropdownOpen(false);
+                      setIsDropdownOpen(false);
                     }}
                   >
                     {option}
@@ -121,22 +159,35 @@ const ReviewSection = () => {
           </div>
 
           <div className={styles.reviewList}>
-            {reviews.map((review) => (
-              <div key={review.id} className={styles.reviewItem}>
-                {review.images.length > 0 && (
+            {filteredReviews.map((review) => (
+              <div key={review.reviewId} className={styles.reviewItem}>
+                {review.imageUrls && review.imageUrls.length > 0 && (
                   <img
-                    src={review.images[0]}
+                    src={`${API_BASE_URL}/api/v1/review-images/file/${review.imageUrls[0].split('/').pop()}`}
                     alt="리뷰 이미지"
                     className={styles.reviewImage}
                   />
                 )}
                 <div className={styles.reviewContent}>
                   <div className={styles.userInfo}>
-                    <span className={styles.stars}>★★★★★</span>
-                    <span className={styles.user}>{review.user}</span>
-                    <span className={styles.date}>{review.date}</span>
+                    <span className={styles.stars}>
+                      {'★'.repeat(review.rating)}
+                      {'☆'.repeat(5 - review.rating)}
+                    </span>
+                    <span className={styles.user}>
+                      {/* 사용자 이름 마스킹 처리 */}
+                      {review.userName.substring(0, 2)}{'*'.repeat(Math.max(review.userName.length - 2, 3))}
+                    </span>
+                    <span className={styles.date}>
+                      {/* 날짜 형식 변환 (ISO -> YYYY.MM.DD) */}
+                      {new Date(review.createdAt).toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      }).replace(/\./g, '.').replace(/\s/g, '')}
+                    </span>
                   </div>
-                  <p className={styles.text}>{review.text}</p>
+                  <p className={styles.text}>{review.content}</p>
                   <button className={styles.helpfulButton}>도움돼요</button>
                 </div>
               </div>
@@ -156,22 +207,24 @@ const ReviewSection = () => {
           </div>
 
           <div className={styles.photoGrid}>
-            {filteredReviews.map((review) => (
-              <div key={review.id} className={styles.photoCard}>
-                <div className={styles.photoWrapper}>
-                  <img
-                    src={review.images[0]}
-                    alt="리뷰 이미지"
-                    className={styles.galleryImage}
-                  />
-                  {review.images.length > 1 && (
-                    <span className={styles.imageCountBadge}>
-                      {review.images.length}
-                    </span>
-                  )}
+            {filteredReviews
+              .filter(review => review.imageUrls && review.imageUrls.length > 0)
+              .map((review) => (
+                <div key={review.reviewId} className={styles.photoCard}>
+                  <div className={styles.photoWrapper}>
+                    <img
+                      src={`${API_BASE_URL}/api/v1/review-images/file/${review.imageUrls[0].split('/').pop()}`}
+                      alt="리뷰 이미지"
+                      className={styles.galleryImage}
+                    />
+                    {review.imageUrls.length > 1 && (
+                      <span className={styles.imageCountBadge}>
+                        {review.imageUrls.length}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </>
       )}

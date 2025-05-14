@@ -18,6 +18,7 @@ import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
 import React from 'react';
 import SignUp from './pages/SignUp/SignUpPage';
 import TestJWTProviderPage from './pages/TestPage/TestJWTProviderPage';
+import OrderListPage from './pages/AdminPage/OrderListPage';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route index element={<Admin />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="register" element={<AdminProductRegister />} />
+            <Route path="order-list" element={<OrderListPage />} />
           </Route>
         </Routes>
       </div>

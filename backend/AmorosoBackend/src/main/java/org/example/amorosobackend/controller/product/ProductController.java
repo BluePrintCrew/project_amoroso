@@ -3,6 +3,7 @@ package org.example.amorosobackend.controller.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.dto.ProductDTO;
 import org.example.amorosobackend.service.CategoryService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "제품 관련 API", description = "제품 상세, 제품 목록")
 public class ProductController {
 
@@ -32,7 +34,7 @@ public class ProductController {
             "sortBy - createdAt: 최신순 , marketPrice: 판매 가격순" +
             "order - desc or asc")
     public ResponseEntity<ProductDTO.ProductListResponse> getProducts(
-            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "10") Integer size,
@@ -40,7 +42,11 @@ public class ProductController {
 
         // Category 조회
 
-        Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        Category byCategoryCode = null;
+        if(categoryCode != null) {
+            byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        }
+        log.info("byCategoryCode : {}",categoryCode);
 
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
@@ -57,18 +63,21 @@ public class ProductController {
             "order - desc or asc")
     public ResponseEntity<ProductDTO.ProductListResponse> getProductsBySearch(
             @PathVariable String keyword,
-            @RequestParam(required = false, defaultValue = "ALL") String categoryCode,
+            @RequestParam(required = false) String categoryCode,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @RequestParam(required = false, defaultValue = "desc") String order) {
 
         // Category 조회
-        Category byCategoryCode = categoryService.findByCategoryCode(categoryCode);
-
+        Category byCategoryCode = null;
+        if(categoryCode != null) {
+             byCategoryCode = categoryService.findByCategoryCode(categoryCode);
+        }
         // Product 리스트 조회
         ProductDTO.ProductListResponse products =
-                productService.getProductsBySearch(keyword,byCategoryCode.getCategoryId(), page, size, sortBy, order);
+                productService.getProductsBySearch(keyword,(byCategoryCode == null ? null : byCategoryCode.getCategoryId())
+                        , page, size, sortBy, order);
 
         // ResponseEntity로 반환
         return ResponseEntity.ok(products);

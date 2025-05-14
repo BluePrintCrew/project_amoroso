@@ -3,7 +3,6 @@ package org.example.amorosobackend.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.amorosobackend.domain.UserAddress;
 import org.example.amorosobackend.dto.*;
 import org.example.amorosobackend.service.UserAddressService;
 import org.example.amorosobackend.service.UserService;
@@ -49,10 +48,18 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(description = "유저 프로필 업데이트")
+    @PostMapping("/users/me")
+    public ResponseEntity<ApiResponse> registerUserAddress(@RequestBody UserUpdateOrRegisterRequest request) {
+        userService.updateUserProfile(request);
+        userAddressService.registerAddress(request);
+        ApiResponse profileUpdatedSuccessfully = new ApiResponse("Profile updated successfully");
+        return ResponseEntity.ok(profileUpdatedSuccessfully);
+    }
 
     @Operation(description = "유저 프로필 업데이트")
     @PutMapping("/users/me")
-    public ResponseEntity<ApiResponse> updateUserProfile(@RequestBody UserUpdateRequest request) {
+    public ResponseEntity<ApiResponse> updateUserProfile(@RequestBody UserUpdateOrRegisterRequest request) {
         userService.updateUserProfile(request);
         userAddressService.updateUserAddress(request);
         ApiResponse profileUpdatedSuccessfully = new ApiResponse("Profile updated successfully");

@@ -35,6 +35,7 @@ function Banner() {
       className={styles.banner}
       style={{ backgroundImage: `url(${covers[currentIndex]})` }}
     >
+      <div className={styles.bannerOverlay} />
       <div className={styles.bannerContentWrapper}>
         <button
           className={`${styles.arrowButton} ${styles.left}`}

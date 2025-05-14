@@ -5,6 +5,7 @@ import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.domain.UserAddress;
 import org.example.amorosobackend.dto.UserAddressDto;
 import org.example.amorosobackend.dto.UserControllerDTO;
+import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.repository.UserAddressRepository;
 import org.example.amorosobackend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,16 +21,17 @@ public class UserAddressService {
     UserAddressRepository userAddressRepository;
     UserRepository userRepository;
 
-    public UserAddressDto.GetAddress registerAddress(UserControllerDTO.UserUpdateRequest request){
+    public UserAddressDto.GetAddress registerAddress(UserControllerDTO.UserUpdateOrRegisterRequest request){
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
 
         if (user.getAddresses().size() >= 3) {
-            throw new IllegalStateException("사용자는 최대 3개의 배송지만 등록할 수 있습니다.");
+            throw new IllegalStateException("User can register up to 3 addresses only.");
         }
 
         UserAddress address = UserAddress.builder()
+                        .user(user)
                         .postalCode(request.getPostalCode())
                         .detailAddress(request.getDetailAddress())
                         .address(request.getAddress())
@@ -41,27 +43,69 @@ public class UserAddressService {
         return toDto(address);
     }
 
-    // 기본 배송지
     public UserAddressDto.GetAddress getDefaultAddress() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        return toDto(userAddressRepository.findByUserAndIsDefaultTrue(user)
-                .orElseThrow(() -> new IllegalStateException("기본 배송지가 설정되지 않았습니다.")));
+        return userAddressRepository.findByUserAndIsDefaultTrue(user)
+                .map(this::toDto)
+                .orElseGet(() -> {
+                    // Set only addressId to null, others to default values (null or false)
+                    UserAddressDto.GetAddress empty = new UserAddressDto.GetAddress();
+                    empty.setAddressId(null);
+                    // recipientName, phoneNumber, postalCode, address, detailAddress remain null
+                    return empty;
+                });
     }
 
     @Transactional
-    public void updateUserAddress(UserControllerDTO.UserUpdateRequest request) {
+    public void updateUserAddress(UserControllerDTO.UserUpdateOrRegisterRequest request) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // 기본 배송지를 찾음 (없으면 예외 발생)
+        // Find default address
         UserAddress address = userAddressRepository.findByUserAndIsDefaultTrue(user)
-                .orElseThrow(() -> new IllegalStateException("기본 배송지를 찾을 수 없습니다."));
+                .orElseGet(() -> {
+                    // Create new default address if not exists
+                    UserAddress newAddress = UserAddress.builder()
+                            .user(user)
+                            .postalCode(request.getPostalCode())
+                            .address(request.getAddress())
+                            .detailAddress(request.getDetailAddress())
+                            .isDefault(true)
+                            .build();
+                    
+                    // Set default values for required fields
+                    newAddress.setFreeLoweringService(false);
+                    newAddress.setProductInstallationAgreement(false);
+                    newAddress.setVehicleEntryPossible(false);
+                    newAddress.setElevatorType(ElevatorType.ONE_TO_SEVEN); // Set default value
+                    
+                    user.addAddress(newAddress);
+                    return newAddress;
+                });
 
-        // 기존 배송지 정보 업데이트
+        // Update existing address information
+        address.updateAddress(
+                request.getPostalCode(),
+                request.getAddress(),
+                request.getDetailAddress()
+        );
+    }
+
+    @Transactional
+    public void createUserAddress(UserControllerDTO.UserUpdateOrRegisterRequest request) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Find default address (throw exception if not exists)
+        UserAddress address = userAddressRepository.findByUserAndIsDefaultTrue(user)
+                .orElseThrow(() -> new IllegalStateException("Default address not found"));
+
+        // Update existing address information
         address.updateAddress(
                 request.getPostalCode(),
                 request.getAddress(),

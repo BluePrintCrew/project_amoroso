@@ -5,7 +5,7 @@
   margin: 0 auto;
   padding: 24px;
   box-sizing: border-box;
-  font-family: 'Pretendard', sans-serif; /* Pretendard 폰트 */
+  font-family: "Pretendard", sans-serif; /* Pretendard 폰트 */
 }
 
 /* 상단 바 */
@@ -61,7 +61,7 @@
 .formSection {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 24px;
 }
 
@@ -109,7 +109,7 @@
   padding: 8px 16px;
   font-size: 0.95rem;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 10px;
   box-sizing: border-box;
   outline: none;
   background-color: #fff;
@@ -147,11 +147,10 @@
 
 /* 옵션 추가 등 서브 버튼 */
 .subButton {
-  margin-top: 8px;
-  padding: 6px 12px;
+  padding: 4px 10px;
   border: 1px solid #ccc;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -159,21 +158,47 @@
   background: #eee;
 }
 
-.radioBox {
-  display: inline-flex;
-    gap: 6px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    align-content: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: row-reverse;
+.addOptionButton {
+  margin-top: 12px;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.addOptionButton:hover {
+  background: #eee;
 }
 
- 
+.deleteOptionValueBtn {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 0.9rem;
+  color: #97212b;
+  border-radius: 5px;
+  margin-left: 8px;
+  cursor: pointer;
+  display: inline-block;
+  min-width: 50px;
+  text-align: center;
+}
+
+.radioBox {
+  display: inline-flex;
+  gap: 6px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-content: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row-reverse;
+}
+
 .radioBox:hover {
   background: #f8f8f8;
 }
@@ -182,7 +207,7 @@
   cursor: pointer;
 }
 
-.tempButton{
+.tempButton {
   background-color: #766e68;
   color: #fff;
   font-weight: 600;
@@ -191,4 +216,34 @@
   padding: 8px 16px;
   cursor: pointer;
   transition: background 0.2s ease;
+}
+
+.required {
+  color: red;
+}
+
+.optionBlock {
+  position: relative;
+  border: 1px solid #eee;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  background: #fafafa;
+}
+
+.deleteOptionBlockBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  color: red;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
 }

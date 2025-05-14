@@ -97,13 +97,15 @@ public class Product {
     private Integer stockNotificationThreshold;
     private Integer discountRate; // 0 ~ 9
     @Setter
-    private Integer discountPrice = 0; // discountRate에 따라 바뀜.
+    private Integer discountPrice; // discountRate에 따라 바뀜.
     @Column(nullable = false)
     private Integer salesCount = 0;
 
+    @Setter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions = new ArrayList<>();
 
+    @Setter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdditionalOption> additionalOptions = new ArrayList<>();
 
