@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "ap-northeast-2"
+  region  = "ap-northeast-2"
+  profile = "-" # 새로 만든 AWS 계정의 awscli 프로파일 이름으로 변경 필요!!
 }
 
 terraform {

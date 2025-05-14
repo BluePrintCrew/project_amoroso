@@ -47,3 +47,5 @@ variable "existing_certificate_arn" {
   type        = string
   default     = ""
 }
+
+# Amplify 관련 설정은 frontend 모듈의 aws_amplify_domain_association 리소스로 처리됩니다.

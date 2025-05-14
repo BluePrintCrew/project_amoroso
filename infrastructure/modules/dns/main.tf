@@ -93,3 +93,5 @@ resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.this[0].arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
+
+# Amplify DNS 설정은 aws_amplify_domain_association 리소스를 통해 자동으로 처리됩니다.

@@ -1,3 +1,9 @@
+variable "github_access_token" {
+  description = "GitHub 액세스 토큰"
+  type        = string
+  sensitive   = true
+}
+
 variable "database_password" {
   description = "데이터베이스 비밀번호"
   type        = string
@@ -22,7 +28,8 @@ variable "key_name" {
 }
 
 provider "aws" {
-  region = "ap-northeast-2"
+  region  = "ap-northeast-2"
+  profile = "persona"
 }
 
 terraform {
@@ -82,6 +89,8 @@ module "dns" {
   alb_zone_id              = module.compute.alb_zone_id
   create_acm_certificate   = false # 기존 인증서 사용
   existing_certificate_arn = data.aws_acm_certificate.amoroso.arn
+  
+  # Amplify 도메인 설정은 frontend 모듈의 aws_amplify_domain_association 리소스로 처리됩니다.
 }
 
 # 컴퓨팅 모듈 추가
@@ -179,6 +188,18 @@ module "cost" {
   ]
 }
 
+# Amplify 모듈 추가
+module "frontend" {
+  source = "../../modules/frontend"
+
+  environment        = "dev"
+  app_name           = "project_amoroso"
+  branch_name        = "develop"
+  github_access_token = var.github_access_token
+  monorepo_app_root  = "frontend/my-app"
+  domain_name        = "amoroso.blue"
+}
+
 # 출력
 output "vpc_id" {
   description = "VPC ID"
@@ -223,4 +244,14 @@ output "domain_name" {
 output "certificate_arn" {
   description = "ACM 인증서 ARN"
   value       = data.aws_acm_certificate.amoroso.arn
+}
+
+output "amplify_app_id" {
+  description = "Amplify 앱 ID"
+  value       = module.frontend.app_id
+}
+
+output "amplify_default_domain" {
+  description = "Amplify 앱 기본 도메인"
+  value       = module.frontend.default_domain
 }

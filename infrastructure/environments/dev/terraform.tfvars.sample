@@ -8,3 +8,6 @@ database_password = "your-secure-password"
 
 # SSH 키 페어 설정
 key_name = "your-key-pair-name"
+
+# GitHub 설정
+github_access_token = "your-github-access-token" # GitHub Personal Access Token

@@ -22,3 +22,5 @@ output "certificate_domain_validation_options" {
   description = "인증서 검증 옵션 (인증서가 생성된 경우)"
   value       = var.create_acm_certificate ? aws_acm_certificate.this[0].domain_validation_options : []
 }
+
+# Amplify 도메인 설정은 frontend 모듈의 aws_amplify_domain_association 리소스로 처리됩니다.
