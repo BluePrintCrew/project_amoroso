@@ -92,9 +92,21 @@ public class UserService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        user.updateProfile(request.getName(),request.getEmail(), request.getBirthDate(), request.getPhoneNumber(),
-                request.getEmailConsent(),request.getSmsConsent(),request.getDmConsent(),request.getLocationConsent());
-        userRepository.save(user);
+        try {
+            user.updateProfile(
+                request.getName(),
+                request.getEmail(),
+                request.getBirthDateTime(),
+                request.getPhoneNumber(),
+                request.getEmailConsent(),
+                request.getSmsConsent(),
+                request.getDmConsent(),
+                request.getLocationConsent()
+            );
+            userRepository.save(user);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Failed to update profile: " + e.getMessage());
+        }
     }
 
     public void deleteCurrentUser() {

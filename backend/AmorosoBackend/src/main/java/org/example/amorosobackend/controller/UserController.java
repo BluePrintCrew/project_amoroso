@@ -48,22 +48,34 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(description = "유저 프로필 업데이트")
+    @Operation(description = "신규 유저 프로필 및 기본 주소 등록")
     @PostMapping("/users/me")
-    public ResponseEntity<ApiResponse> registerUserAddress(@RequestBody UserUpdateOrRegisterRequest request) {
-        userService.updateUserProfile(request);
-        userAddressService.registerAddress(request);
-        ApiResponse profileUpdatedSuccessfully = new ApiResponse("Profile updated successfully");
-        return ResponseEntity.ok(profileUpdatedSuccessfully);
+    public ResponseEntity<?> registerUserProfile(@RequestBody UserUpdateOrRegisterRequest request) {
+        try {
+            userService.updateUserProfile(request);
+            UserAddressDto.GetAddress address = userAddressService.registerAddress(request);
+            return ResponseEntity.ok(new ApiResponse("Profile and address registered successfully"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ApiResponse("An error occurred while registering profile"));
+        }
     }
 
-    @Operation(description = "유저 프로필 업데이트")
+    @Operation(description = "기존 유저 프로필 및 주소 업데이트")
     @PutMapping("/users/me")
-    public ResponseEntity<ApiResponse> updateUserProfile(@RequestBody UserUpdateOrRegisterRequest request) {
-        userService.updateUserProfile(request);
-        userAddressService.updateUserAddress(request);
-        ApiResponse profileUpdatedSuccessfully = new ApiResponse("Profile updated successfully");
-        return ResponseEntity.ok(profileUpdatedSuccessfully);
+    public ResponseEntity<?> updateUserProfile(@RequestBody UserUpdateOrRegisterRequest request) {
+        try {
+            userService.updateUserProfile(request);
+            userAddressService.updateUserAddress(request);
+            return ResponseEntity.ok(new ApiResponse("Profile and address updated successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new ApiResponse("An error occurred while updating profile"));
+        }
     }
 
 
