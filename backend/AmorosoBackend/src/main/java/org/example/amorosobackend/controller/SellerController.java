@@ -101,4 +101,20 @@ public class SellerController {
         BusinessStatusResponse response = businessValidationService.checkBusinessStatus(businessNumber);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/orders/{orderId}/deliver")
+    @Operation(summary = "Update order status to delivered",
+            description = "Seller can mark an order as delivered when they complete the shipping")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Order status updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "403", description = "Not authorized to update this order"),
+        @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    public ResponseEntity<Void> markOrderAsDelivered(
+            @Parameter(description = "Order ID to mark as delivered", required = true)
+            @PathVariable Long orderId) {
+        sellerService.markOrderAsDelivered(orderId);
+        return ResponseEntity.ok().build();
+    }
 }
