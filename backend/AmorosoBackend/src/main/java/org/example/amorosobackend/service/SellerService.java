@@ -36,6 +36,7 @@ public class SellerService {
     private final ProductRepository productRepository;
     private final BusinessValidationService businessValidationService;
     private final PasswordEncoder passwordEncoder;
+    private final EcommerceValidationService ecommerceValidationService;
 
     public SellerDTO.SellerStatsResponse getSellerStats() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -294,7 +295,15 @@ public class SellerService {
             throw new IllegalArgumentException("Only active business can register");
         }
 
-        // 3. User 엔티티 생성
+        // 3. 통신판매업 정보 조회
+        EcommerceValidationResponse ecommerceValidation = ecommerceValidationService.validateEcommerceBusiness(
+                new EcommerceValidationRequest(request.getBusinessNumber(), request.getBrandName()));
+
+        if (!ecommerceValidation.isValid()) {
+            throw new IllegalArgumentException("Invalid e-commerce business: " + ecommerceValidation.getMessage());
+        }
+
+        // 4. User 엔티티 생성
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -309,7 +318,7 @@ public class SellerService {
         
         userRepository.save(user);
 
-        // 4. Seller 엔티티 생성 (Status API 정보 활용)
+        // 5. Seller 엔티티 생성 (Status API 정보와 통신판매업 정보 활용)
         Seller seller = Seller.builder()
                 .user(user)
                 .brandName(request.getBrandName())
@@ -317,15 +326,22 @@ public class SellerService {
                 .businessStartDate(request.getBusinessStartDate())
                 .businessAddress(request.getBusinessAddress())
                 .businessDetailAddress(request.getBusinessDetailAddress())
-                .taxationType(statusResponse.getTaxationType())    // Status API 정보
-                .businessStatus(statusResponse.getBusinessStatus()) // Status API 정보
+                .taxationType(statusResponse.getTaxationType())
+                .businessStatus(statusResponse.getBusinessStatus())
                 .businessTel(request.getBusinessTel())
                 .businessEmail(request.getBusinessEmail())
+                .ecommerceRegistrationNumber(ecommerceValidation.getRegistrationNumber())
+                .ecommerceRegistrationDate(ecommerceValidation.getRegistrationDate())
+                .ecommerceBusinessStatus(ecommerceValidation.getBusinessStatus())
+                .ecommerceDomain(ecommerceValidation.getDomain())
+                .serverLocation(ecommerceValidation.getServerLocation())
+                .salesMethod(ecommerceValidation.getSalesMethod())
+                .productCategories(ecommerceValidation.getProductCategories())
                 .build();
         
         sellerRepository.save(seller);
 
-        // 5. 응답 생성
+        // 6. 응답 생성
         return SellerRegistrationDTO.Response.builder()
                 .email(user.getEmail())
                 .name(user.getName())
