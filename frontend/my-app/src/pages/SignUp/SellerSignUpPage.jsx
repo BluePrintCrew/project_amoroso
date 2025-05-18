@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./SignUpPage.css";
@@ -13,6 +13,7 @@ const SellerSignUpPage = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [businessNumber, setBusinessNumber] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
   const [ceoName, setCeoName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [zipcode, setZipcode] = useState("");
@@ -113,6 +114,8 @@ const SellerSignUpPage = () => {
       if (result?.businessStatus === "계속사업자") {
         setIsVerified(true);
         alert("정상 사업자로 인증되었습니다.");
+
+        await fetchSalesRegistrationInfo();
       } else {
         setIsVerified(false);
         alert("유효하지 않은 사업자등록번호입니다.");
@@ -120,6 +123,37 @@ const SellerSignUpPage = () => {
     } catch (err) {
       console.error("사업자 인증 오류:", err);
       alert("사업자 인증 중 오류가 발생했습니다.");
+    }
+  };
+
+  const fetchSalesRegistrationInfo = async () => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/sellers/validate-ecommerce`,
+        {
+          businessNumber,
+          brandName: companyName,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = response?.data;
+
+      console.log("📦 validate-ecommerce 응답:", result);
+
+      if (result?.valid && result?.registrationNumber) {
+        setRegistrationNumber(result.registrationNumber);
+      } else {
+        setRegistrationNumber("조회 실패");
+        alert("통신판매업신고번호를 조회할 수 없습니다.");
+      }
+    } catch (err) {
+      console.error("❌ 통신판매업신고번호 조회 오류:", err);
+      alert("통신판매업신고번호 조회 중 오류가 발생했습니다.");
     }
   };
 
@@ -160,13 +194,12 @@ const SellerSignUpPage = () => {
               />
             </div>
 
-            <div className="certification-group">
-              <label>사업자등록번호</label>
-              <div>
+            <div className="business-verification-box">
+              <div className="input-group">
+                <label>사업자등록번호</label>
                 <input
                   type="text"
                   value={businessNumber}
-                  className="business-number-input"
                   onChange={(e) => {
                     const onlyNums = e.target.value.replace(/\D/g, "");
                     setBusinessNumber(onlyNums);
@@ -174,25 +207,40 @@ const SellerSignUpPage = () => {
                   required
                   maxLength={10}
                   placeholder=" '-' 없이 작성하세요"
+                  readOnly={isVerified}
                 />
-                <button
-                  type="button"
-                  onClick={handleVerifyBusinessNumber}
-                  className="certification-button"
-                >
-                  인증
-                </button>
               </div>
-            </div>
 
-            <div className="input-group">
-              <label>회사명</label>
-              <input
-                type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
+              <div className="certification-group">
+                <label>상호명(브랜드명)</label>
+                <div>
+                  <input
+                    type="text"
+                    value={companyName}
+                    className="business-number-input"
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={handleVerifyBusinessNumber}
+                    className="certification-button"
+                    disabled={isVerified}
+                  >
+                    인증
+                  </button>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label>통신판매업신고번호</label>
+                <input
+                  type="text"
+                  value={registrationNumber || ""}
+                  readOnly
+                  placeholder="인증 시 자동조회됩니다."
+                />
+              </div>
             </div>
 
             <div className="input-group">
@@ -206,7 +254,7 @@ const SellerSignUpPage = () => {
             </div>
 
             <div className="input-group">
-              <label>대표 전화번호</label>
+              <label>사업장 전화번호</label>
               <input
                 type="text"
                 value={phoneNumber}
