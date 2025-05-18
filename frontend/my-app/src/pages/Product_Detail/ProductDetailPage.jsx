@@ -446,7 +446,8 @@ const ProductDetailPage = () => {
             <div className={styles.productImage}>
               <img
                 src={
-                  thumbnailImages.length > 0
+                  thumbnailImages.length > 0 &&
+                  thumbnailImages[selectedThumbnailIndex]?.imageURL
                     ? `${API_BASE_URL}/api/v1/images/${thumbnailImages[
                         selectedThumbnailIndex
                       ]?.imageURL
@@ -497,9 +498,13 @@ const ProductDetailPage = () => {
                       onClick={() => setSelectedThumbnailIndex(index)}
                     >
                       <img
-                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                          .split("/")
-                          .pop()}`}
+                        src={
+                          img.imageURL
+                            ? `${API_BASE_URL}/api/v1/images/${img.imageURL
+                                .split("/")
+                                .pop()}`
+                            : "https://placehold.co/80x80"
+                        }
                         alt={`썸네일 ${index + 1}`}
                       />
                     </div>

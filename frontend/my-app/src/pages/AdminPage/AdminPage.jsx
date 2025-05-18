@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import AdminCard from '../../components/Admin/AdminCard/AdminCard';
-import AdminChart from '../../components/Admin/AdminChart/AdminChart';
-import OrderTable from '../../components/Admin/OrderTable/OrderTable';
-import TopProducts from '../../components/Admin/TopProducts/TopProducts';
-import styles from './AdminPage.module.css';
-import axios from 'axios';
-import { API_BASE_URL } from '../MyPage/api';
+import React, { useEffect, useState } from "react";
+import AdminCard from "../../components/Admin/AdminCard/AdminCard";
+import AdminChart from "../../components/Admin/AdminChart/AdminChart";
+import OrderTable from "../../components/Admin/OrderTable/OrderTable";
+import TopProducts from "../../components/Admin/TopProducts/TopProducts";
+import styles from "./AdminPage.module.css";
+import axios from "axios";
+import { API_BASE_URL } from "../MyPage/api";
 
-const accessToken = localStorage.getItem('access_token');
+const accessToken = localStorage.getItem("access_token");
 
-function AdminPage() {
+function SellerPage() {
   const [data, setData] = useState({
     totalSales: 0,
     orderCount: 0,
@@ -30,8 +30,14 @@ function AdminPage() {
         };
 
         const [salesRes, orderRes, productRes, statsRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/v1/seller/total-sales?year=${year}&month=${month}`, headers),
-          axios.get(`${API_BASE_URL}/api/v1/seller/total-orders?year=${year}&month=${month}`, headers),
+          axios.get(
+            `${API_BASE_URL}/api/v1/seller/total-sales?year=${year}&month=${month}`,
+            headers
+          ),
+          axios.get(
+            `${API_BASE_URL}/api/v1/seller/total-orders?year=${year}&month=${month}`,
+            headers
+          ),
           axios.get(`${API_BASE_URL}/api/v1/seller/total-products`, headers),
           axios.get(`${API_BASE_URL}/api/v1/seller/stats`, headers),
         ]);
@@ -43,7 +49,7 @@ function AdminPage() {
           inTransitOrders: statsRes.data.inTransitOrders,
         });
       } catch (err) {
-        console.error('AdminPage fetch error:', err);
+        console.error("AdminPage fetch error:", err);
       }
     };
 
@@ -54,7 +60,9 @@ function AdminPage() {
     <div className={styles.mainContent}>
       <div className={styles.topContent}>
         <div className={styles.cardSection}>
-          <AdminCard title="총 매출">{data.totalSales.toLocaleString()} 원</AdminCard>
+          <AdminCard title="총 매출">
+            {data.totalSales.toLocaleString()} 원
+          </AdminCard>
           <AdminCard title="주문 수">{data.orderCount} 건</AdminCard>
           <AdminCard title="상품 수">{data.totalProducts} 개</AdminCard>
           <AdminCard title="배송 중">{data.inTransitOrders} 건</AdminCard>
@@ -75,4 +83,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage;
+export default SellerPage;
