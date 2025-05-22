@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './MainPage.module.css';
 import Banner from '../../components/Banner/Banner';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
-import InfiniteScrollProducts from '../../components/ProductList/InfiniteScrollProducts/InfiniteScrollProducts';
 import CategoryNavigation from '../../components/Navigation/CategoryNavigation/CategoryNavigation';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu';
 import BestProducts from '../../components/BestProducts/BestProducts';
-import { useNavigate } from 'react-router-dom';
+import ProductSection from '../../components/ProductSection/ProductSection';
+import axios from 'axios';
 
 // 카테고리 맵핑 (ProductListPage에서 가져온 것)
 const categoryMap = {
@@ -44,9 +44,20 @@ const categoryMap = {
 };
 
 function MainPage() {
-  // 모든 카테고리를 하나의 배열로 평탄화
+  const [products, setProducts] = useState([]);
   const allCategories = Object.values(categoryMap).flat();
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/v1/products/');
+        setProducts(res.data.products.slice(0, 8)); // 최대 8개 상품 표시
+      } catch (err) {
+        console.error('상품 불러오기 실패:', err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <div className={styles.mainPage}>
@@ -57,26 +68,13 @@ function MainPage() {
         <BestProducts />
 
         {/* Amoroso Products 섹션 */}
-        <div className={styles.productsHeader}>
-          <h2 className={styles.productsTitle}>Amoroso Products</h2>
-          <button className={styles.productsMoreBtn} onClick={() => navigate('/productlist')}>
-            더보기 &gt;
-          </button>
-        </div>
-        {/* 상품 리스트 예시: 전체 상품 보여주기 */}
-        <InfiniteScrollProducts />
-        {/* 기존 카테고리별 섹션은 필요시 유지/삭제 */}
-        {/*
-        {allCategories.map(category => (
-          <section 
-            key={category.value}
-            id={`category-${category.value}`}
-            className={styles.categorySection}
-          >
-            <InfiniteScrollProducts categoryCode={category.value} />
-          </section>
-        ))}
-        */}
+        <ProductSection
+          title="Amoroso Products"
+          products={products}
+          showMoreLink="/products"
+          gridColumns={4}
+        />
+
         {/* 카테고리 네비게이션 */}
         <CategoryNavigation categoryMap={categoryMap} />
       </div>
