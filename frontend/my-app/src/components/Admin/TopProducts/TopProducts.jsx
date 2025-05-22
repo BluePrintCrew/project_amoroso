@@ -1,45 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import styles from './TopProducts.module.css';
-
-const topProducts = [
-  {
-    id: 1,
-    name: '수납장 상품명 1',
-    category: '수납장',
-    code: '202501201627',
-    price: 136900,
-  },
-  {
-    id: 2,
-    name: '수납장 상품명 1',
-    category: '수납장',
-    code: '202501201627',
-    price: 136900,
-  },
-  {
-    id: 3,
-    name: '수납장 상품명 1',
-    category: '수납장',
-    code: '202501201627',
-    price: 136900,
-  },
-  {
-    id: 4,
-    name: '수납장 상품명 1',
-    category: '수납장',
-    code: '202501201627',
-    price: 136900,
-  },
-  {
-    id: 5,
-    name: '수납장 상품명 1',
-    category: '수납장',
-    code: '202501201627',
-    price: 136900,
-  },
-];
+import { API_BASE_URL } from '../../../pages/MyPage/api';
 
 const TopProducts = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    axios.get(`${API_BASE_URL}/api/v1/sellers/popular-products`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(res => setProducts(res.data))
+      .catch(err => console.error('TopProducts fetch error:', err));
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -50,25 +27,29 @@ const TopProducts = () => {
       </div>
 
       <ul className={styles.productList}>
-        {topProducts.map((product) => (
-          <li key={product.id} className={styles.productItem}>
+        {products.map((product, idx) => (
+          <li key={product.productId} className={styles.productItem}>
+            <div className={styles.rank}>{idx + 1}.</div>
             <div className={styles.productInfo}>
-              <div className={styles.imagePlaceholder} />
               <div>
-                <p className={styles.productName}>{product.name}</p>
-                <p className={styles.category}>{product.category}</p>
+                <p className={styles.productName}>{product.productName}</p>
+                <p className={styles.category}>{product.categoryName || '-'}</p>
               </div>
             </div>
             <div className={styles.productMeta}>
               <div className={styles.code}>
                 <p className={styles.codeHeader}>상품 코드</p>
-                <span className={styles.productCode}>{product.code}</span>
+                <span className={styles.productCode}>{product.productCode || '-'}</span>
               </div>
               <div className={styles.price}>
                 <p className={styles.priceHeader}>상품 가격</p>
                 <span className={styles.productPrice}>
-                  {product.price.toLocaleString()}원
+                  {product.marketPrice ? Number(product.marketPrice).toLocaleString() + '원' : '-'}
                 </span>
+              </div>
+              <div className={styles.sales}>
+                <p className={styles.salesHeader}>판매수</p>
+                <span className={styles.salesCount}>{product.salesCount || 0}개</span>
               </div>
             </div>
           </li>

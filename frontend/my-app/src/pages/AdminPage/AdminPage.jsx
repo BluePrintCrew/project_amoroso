@@ -31,15 +31,15 @@ function SellerPage() {
 
         const [salesRes, orderRes, productRes, statsRes] = await Promise.all([
           axios.get(
-            `${API_BASE_URL}/api/v1/seller/total-sales?year=${year}&month=${month}`,
+            `${API_BASE_URL}/api/v1/sellers/total-sales?year=${year}&month=${month}`,
             headers
           ),
           axios.get(
-            `${API_BASE_URL}/api/v1/seller/total-orders?year=${year}&month=${month}`,
+            `${API_BASE_URL}/api/v1/sellers/total-orders?year=${year}&month=${month}`,
             headers
           ),
-          axios.get(`${API_BASE_URL}/api/v1/seller/total-products`, headers),
-          axios.get(`${API_BASE_URL}/api/v1/seller/stats`, headers),
+          axios.get(`${API_BASE_URL}/api/v1/sellers/total-products`, headers),
+          axios.get(`${API_BASE_URL}/api/v1/sellers/stats`, headers),
         ]);
 
         setData({

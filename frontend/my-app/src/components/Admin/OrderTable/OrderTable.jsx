@@ -1,62 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './OrderTable.module.css';
 import { FaChevronRight } from 'react-icons/fa';
 import OrderDetailModal from './OrderDetailModal';
 import MoreOrderListModal from './MoreOrderListModal';
 import { useNavigate } from 'react-router-dom';
-
-const orders = [
-  {
-    id: 1,
-    orderCode: '202501201749',
-    orderDate: '2025.01.20 17:49',
-    customerName: '황길동',
-    customerAddress: '서울특별시 종로구 수리연로 44',
-    orderStatus: '접수대기',
-    paymentStatus: '결제완료',
-    totalAmount: 356900,
-  },
-  {
-    id: 2,
-    orderCode: '202501201749-1',
-    orderDate: '2025.01.20 17:49',
-    customerName: '황길동',
-    customerAddress: '서울특별시 종로구 삼일대로 454',
-    orderStatus: '접수완료',
-    paymentStatus: '결제완료',
-    totalAmount: 1657900,
-  },
-  {
-    id: 3,
-    orderCode: '202501201749-1',
-    orderDate: '2025.01.20 17:49',
-    customerName: '황길동',
-    customerAddress: '서울특별시 종로구 사직로6길 16',
-    orderStatus: '배송중',
-    paymentStatus: '결제완료',
-    totalAmount: 787400,
-  },
-  {
-    id: 4,
-    orderCode: '202501201749-1',
-    orderDate: '2025.01.20 17:49',
-    customerName: '황길동',
-    customerAddress: '서울특별시 종로구 이마빌딩',
-    orderStatus: '발송완료',
-    paymentStatus: '결제완료',
-    totalAmount: 2787400,
-  },
-  {
-    id: 5,
-    orderCode: '202501201749-1',
-    orderDate: '2025.01.20 17:49',
-    customerName: '황길동',
-    customerAddress: '서울특별시 성동구 상원길 278-17',
-    orderStatus: '주문취소',
-    paymentStatus: '결제취소',
-    totalAmount: 156200,
-  },
-];
+import axios from 'axios';
+import { API_BASE_URL } from '../../../pages/MyPage/api';
 
 const getStatusClass = (status) => {
   switch (status) {
@@ -83,8 +32,29 @@ const OrderTable = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetailModal, setShowOrderDetailModal] = useState(false);
   const [showMoreOrderListModal, setShowMoreOrderListModal] = useState(false);
-  const [orderList, setOrderList] = useState(orders);
+  const [orderList, setOrderList] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/sellers/order-summary?page=0&size=5`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setOrderList(response.data.content || []);
+      } catch (err) {
+        setOrderList([]);
+        console.error('OrderTable fetch error:', err);
+      }
+    };
+    fetchOrders();
+  }, []);
 
   const handleRowClick = (order) => {
     setSelectedOrder(order);
@@ -104,11 +74,11 @@ const OrderTable = () => {
     setShowMoreOrderListModal(false);
   };
 
-  // 발송 완료 버튼 클릭 시 상태 변경
+  // 발송 완료 버튼 클릭 시 상태 변경 (더미용, 실제 API 연동 시 수정 필요)
   const handleShippingComplete = (id) => {
     setOrderList((prev) =>
       prev.map((order) =>
-        order.id === id ? { ...order, orderStatus: '발송완료' } : order
+        order.orderId === id ? { ...order, orderStatus: '발송완료' } : order
       )
     );
   };
@@ -136,11 +106,11 @@ const OrderTable = () => {
         </thead>
         <tbody>
           {orderList.map((order) => (
-            <tr key={order.id} onClick={() => handleRowClick(order)} style={{ cursor: 'pointer' }}>
+            <tr key={order.orderId} onClick={() => handleRowClick(order)} style={{ cursor: 'pointer' }}>
               <td>{order.orderCode}</td>
-              <td>{order.orderDate}</td>
+              <td>{order.orderDate ? new Date(order.orderDate).toLocaleString() : '-'}</td>
               <td>{order.customerName}</td>
-              <td>{order.customerAddress}</td>
+              <td>{order.fullAddress}</td>
               <td>
                 <span
                   className={`${styles.statusTag} ${getStatusClass(
@@ -159,12 +129,12 @@ const OrderTable = () => {
                   {order.paymentStatus}
                 </span>
               </td>
-              <td>{order.totalAmount.toLocaleString()} 원</td>
+              <td>{order.totalPrice ? order.totalPrice.toLocaleString() + ' 원' : '-'}</td>
               <td onClick={e => e.stopPropagation()}>
                 <button
                   className={styles.shippingBtn}
                   disabled={order.orderStatus === '발송완료' || order.orderStatus === '주문취소'}
-                  onClick={() => handleShippingComplete(order.id)}
+                  onClick={() => handleShippingComplete(order.orderId)}
                 >
                   발송 완료
                 </button>
