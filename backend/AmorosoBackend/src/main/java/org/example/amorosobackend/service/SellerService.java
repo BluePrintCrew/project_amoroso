@@ -256,7 +256,7 @@ public class SellerService {
         Seller seller = sellerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "order.createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         // OrderItem 기준 페이징 불가 → Order 기준으로 가져와야 함
         Page<Order> orderPage = orderRepository.findDistinctByOrderItemsProductSeller(seller, pageable);
