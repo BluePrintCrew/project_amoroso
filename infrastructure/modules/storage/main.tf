@@ -5,7 +5,3 @@
  * - S3 버킷
  * - 버킷 접근 정책 및 권한 설정
  */
-
-provider "aws" {
-  region = var.region
-}

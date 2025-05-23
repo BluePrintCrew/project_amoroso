@@ -11,3 +11,11 @@ key_name = "your-key-pair-name"
 
 # GitHub 설정
 github_access_token = "your-github-access-token" # GitHub Personal Access Token
+
+# 새 AWS 계정 자격 증명 (나머지 모든 리소스용)
+aws_access_key = "your-new-account-access-key"
+aws_secret_key = "your-new-account-secret-key"
+
+# 기존 AWS 계정 자격 증명 (Route 53용)
+route53_access_key = "your-existing-account-access-key"
+route53_secret_key = "your-existing-account-secret-key"

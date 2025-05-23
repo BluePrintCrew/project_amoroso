@@ -8,7 +8,3 @@
  * - NAT 게이트웨이 (선택적)
  * - 라우팅 테이블
  */
-
-provider "aws" {
-  region = var.region
-}

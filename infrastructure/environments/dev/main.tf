@@ -27,23 +27,36 @@ variable "key_name" {
   type        = string
 }
 
-provider "aws" {
-  region  = "ap-northeast-2"
-  profile = "persona"
+variable "aws_access_key" {
+  description = "AWS 액세스 키"
+  type        = string
+  sensitive   = true
+}
+
+variable "aws_secret_key" {
+  description = "AWS 시크릿 키"
+  type        = string
+  sensitive   = true
+}
+
+variable "route53_access_key" {
+  description = "Route 53용 AWS 액세스 키"
+  type        = string
+  sensitive   = true
+}
+
+variable "route53_secret_key" {
+  description = "Route 53용 AWS 시크릿 키"
+  type        = string
+  sensitive   = true
 }
 
 terraform {
-  required_providers {
-    aws = {
-      source  = "opentofu/aws"
-      version = "~> 5.0"
-    }
-  }
-
   # 로컬 상태 파일 사용 (개인 개발 환경에 적합)
   # 팀 환경이나 프로덕션에서는 원격 백엔드 사용 권장
 }
 
+# 네트워크 모듈
 module "network" {
   source = "../../modules/network"
 
@@ -68,28 +81,35 @@ module "security" {
   endpoint_security_group_id = module.network.endpoint_security_group_id
 }
 
-# 기존 ACM 인증서 참조
-data "aws_acm_certificate" "amoroso" {
-  domain      = "*.amoroso.blue"
-  statuses    = ["ISSUED"]
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
+# 인증서 모듈 추가
+module "certificate" {
+  source = "../../modules/certificate"
+  providers = {
+    aws        = aws
+    aws.route53 = aws.route53
+  }
+
+  environment     = "dev"
+  domain_name     = "amoroso.blue"
+  create_wildcard = true  # 와일드카드 인증서 활성화
 }
 
 # DNS 모듈 추가
 module "dns" {
   source = "../../modules/dns"
+  providers = {
+    aws = aws.route53
+  }
 
-  environment              = "dev"
-  domain_name              = "amoroso.blue"
-  subdomain                = "api"
-  create_wildcard          = false
-  create_root_record       = false
-  alb_dns_name             = module.compute.alb_dns_name
-  alb_zone_id              = module.compute.alb_zone_id
-  create_acm_certificate   = false # 기존 인증서 사용
-  existing_certificate_arn = data.aws_acm_certificate.amoroso.arn
-  
+  environment            = "dev"
+  domain_name            = "amoroso.blue"
+  subdomain              = "api"
+  create_wildcard        = false  # 와일드카드 비활성화 - api 서브도메인만 생성
+  create_root_record     = false
+  alb_dns_name           = module.compute.alb_dns_name
+  alb_zone_id            = module.compute.alb_zone_id
+  create_acm_certificate = false
+
   # Amplify 도메인 설정은 frontend 모듈의 aws_amplify_domain_association 리소스로 처리됩니다.
 }
 
@@ -119,7 +139,7 @@ module "compute" {
   use_public_subnet = true
 
   # HTTPS 설정
-  acm_certificate_arn = data.aws_acm_certificate.amoroso.arn
+  acm_certificate_arn = module.certificate.certificate_arn
 
   # S3와 IAM 설정 추가
   iam_instance_profile = module.iam.instance_profile_name
@@ -153,7 +173,7 @@ module "database" {
 module "storage" {
   source = "../../modules/storage"
 
-  bucket_name   = "amoroso-app"
+  bucket_name   = "amoroso-app-7v0olrvi"
   environment   = "dev"
   region        = "ap-northeast-2"
   force_destroy = true # 개발 환경에서는 버킷 삭제 시 콘텐츠도 삭제 허용
@@ -182,22 +202,24 @@ locals {
 module "cost" {
   source = "../../modules/cost"
 
-  # 추가 AWS 태그 활성화 (이미 리소스에 적용된 태그만 포함)
-  additional_aws_tags = [
-    "aws:autoscaling:groupName"
-  ]
+  # AWS 생성 태그 임시 비활성화 - 리소스 생성 후 활성화 예정
+  additional_aws_tags = []
 }
 
 # Amplify 모듈 추가
 module "frontend" {
   source = "../../modules/frontend"
+  providers = {
+    aws        = aws
+    aws.route53 = aws.route53
+  }
 
-  environment        = "dev"
-  app_name           = "project_amoroso"
-  branch_name        = "develop"
+  environment         = "dev"
+  app_name            = "project_amoroso"
+  branch_name         = "develop"
   github_access_token = var.github_access_token
-  monorepo_app_root  = "frontend/my-app"
-  domain_name        = "amoroso.blue"
+  monorepo_app_root   = "frontend/my-app"
+  domain_name         = "amoroso.blue"
 }
 
 # 출력
@@ -243,7 +265,7 @@ output "domain_name" {
 
 output "certificate_arn" {
   description = "ACM 인증서 ARN"
-  value       = data.aws_acm_certificate.amoroso.arn
+  value       = module.certificate.certificate_arn
 }
 
 output "amplify_app_id" {

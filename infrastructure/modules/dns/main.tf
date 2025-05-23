@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source  = "opentofu/aws"
+      source  = "hashicorp/aws"
       version = "~> 5.0"
     }
   }
@@ -10,15 +10,6 @@ terraform {
 # 이미 생성된 Route53 호스팅 영역 참조 (도메인이 이미 구매되어 있음)
 data "aws_route53_zone" "this" {
   name = var.domain_name
-}
-
-# 이미 생성된 ACM 인증서 참조
-data "aws_acm_certificate" "this" {
-  count = var.existing_certificate_arn == "" ? 0 : 0  # 현재는 사용하지 않고, domains 파라미터를 써서 찾습니다
-  domain      = var.domain_name
-  statuses    = ["ISSUED"]
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
 }
 
 # ALB를 가리키는 A 레코드

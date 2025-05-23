@@ -1,3 +1,13 @@
+terraform {
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
+      version               = "~> 5.0"
+      configuration_aliases = [aws.route53]
+    }
+  }
+}
+
 resource "aws_amplify_app" "frontend" {
   name       = var.app_name
   repository = var.repository
@@ -45,11 +55,6 @@ applications:
     target = "/index.html"
     status = "200"
   }
-
-  # 기본값과 다른 설정만 명시
-  enable_branch_auto_build    = false
-  enable_branch_auto_deletion = false
-  enable_auto_branch_creation = false
 }
 
 # 브랜치 설정
@@ -62,7 +67,8 @@ resource "aws_amplify_branch" "main" {
 
 # Route53 호스팅 영역 참조
 data "aws_route53_zone" "this" {
-  name = var.domain_name
+  provider = aws.route53
+  name     = var.domain_name
 }
 
 # 도메인 연결 설정
@@ -85,9 +91,10 @@ resource "aws_amplify_domain_association" "domain" {
 
 # 루트 도메인 레코드 생성
 resource "aws_route53_record" "root_domain" {
-  zone_id = data.aws_route53_zone.this.zone_id
-  name    = var.domain_name
-  type    = "A"
+  provider = aws.route53
+  zone_id  = data.aws_route53_zone.this.zone_id
+  name     = var.domain_name
+  type     = "A"
 
   alias {
     name                   = element(split(" ", element([for s in aws_amplify_domain_association.domain.sub_domain : s.dns_record], 0)), 2)
@@ -101,9 +108,10 @@ resource "aws_route53_record" "root_domain" {
 
 # www 서브도메인 레코드 생성
 resource "aws_route53_record" "www_domain" {
-  zone_id = data.aws_route53_zone.this.zone_id
-  name    = "www.${var.domain_name}"
-  type    = "CNAME"
-  ttl     = 300
-  records = ["${aws_amplify_app.frontend.default_domain}"]
+  provider = aws.route53
+  zone_id  = data.aws_route53_zone.this.zone_id
+  name     = "www.${var.domain_name}"
+  type     = "CNAME"
+  ttl      = 300
+  records  = ["${aws_amplify_app.frontend.default_domain}"]
 }
