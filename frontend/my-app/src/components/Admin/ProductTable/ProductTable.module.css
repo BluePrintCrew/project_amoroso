@@ -84,27 +84,43 @@
 }
 
 .productTable th, .productTable td{
-    padding: 12px 15px;
+    padding: 16px 12px !important;
+    border: 1px solid #e2e2e2 !important;
+    min-width: 100px;
+    white-space: nowrap;
     text-align: center;
-    border-bottom: 1px solid #e2e2e2;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .productTable th{
     font-size: 16px;
+    font-weight: 600;
+    color: #333;
     border-top: 2px solid #766e68;
+    background: #f9f9f9;
 }
 
 .productInfo{
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
+}
+
+.productImage {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f2f2f2;
+    border: 1px solid #e2e2e2;
 }
 
 .imagePlaceholder{
-    width: 50px;
-    height: 50px;
-    background: #d9d9d9;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: #eaeaea;
+    border: 1px solid #e2e2e2;
 }
 
 .statusTag{
@@ -125,14 +141,27 @@
 }
 
 .buttonSection{
-    gap: 10px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
 }
 
 .actionBtn{
-    background: none;
+    padding: 8px 12px;
+    font-size: 20px;
     border: none;
+    background: #f7f7f7;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actionBtn:hover{
+    background: #e0e0e0;
 }
 
 .shippingBtn {
@@ -155,5 +184,29 @@
 }
 .shippingBtn:hover:not(:disabled) {
   background: #007a0c;
+}
+
+.orderTable th, .orderTable td {
+  padding: 16px 12px !important;
+  border: 1px solid #e2e2e2 !important;
+  min-width: 100px;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 15px;
+}
+
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.orderTable th {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  border-top: 2px solid #766e68;
+  background: #f9f9f9;
 }
 

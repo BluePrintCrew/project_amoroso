@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Bar,
   BarChart,
@@ -8,28 +10,42 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import React, { useState } from 'react';
-
 import styles from './AdminChart.module.css';
 
-const data = [
-  { month: '1월', sales: 889217520 },
-  { month: '2월', sales: 750000000 },
-  { month: '3월', sales: 720000000 },
-  { month: '4월', sales: 430000000 },
-  { month: '5월', sales: 990000000 },
-  { month: '6월', sales: 680000000 },
-  { month: '7월', sales: 770000000 },
-  { month: '8월', sales: 810000000 },
-  { month: '9월', sales: 670000000 },
-  { month: '10월', sales: 970000000 },
-  { month: '11월', sales: 760000000 },
-  { month: '12월', sales: 980000000 },
-];
+const API_BASE_URL = 'http://localhost:8080';
 
 const AdminChart = () => {
+  const [data, setData] = useState([]);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [hoveredData, setHoveredData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      setLoading(true);
+      try {
+        const year = new Date().getFullYear();
+        const accessToken = localStorage.getItem('access_token');
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/sellers/monthly-sales?year=${year}`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        // 월별 매출 데이터 변환
+        const salesArr = response.data.monthlySales || [];
+        const chartData = Array.from({ length: 12 }, (_, i) => ({
+          month: `${i + 1}월`,
+          sales: salesArr[i] || 0,
+        }));
+        setData(chartData);
+      } catch (err) {
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSales();
+  }, []);
+
+  if (loading) return <div className={styles.chartContainer}>로딩 중...</div>;
 
   return (
     <div className={styles.chartContainer}>
@@ -70,17 +86,9 @@ const AdminChart = () => {
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={
-                  hoveredIndex === index ? '#008000' : 'rgba(0, 128, 0, 0.2)'
-                }
-                onMouseEnter={() => {
-                  setHoveredIndex(index);
-                  setHoveredData(entry);
-                }}
-                onMouseLeave={() => {
-                  setHoveredIndex(null);
-                  setHoveredData(null);
-                }}
+                fill={hoveredIndex === index ? '#008000' : 'rgba(0, 128, 0, 0.2)'}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
               />
             ))}
           </Bar>

@@ -1,12 +1,14 @@
-import PageLayout from '../../components/PageLayout/PageLayout';
-import React from 'react';
-import google from '../../assets/google_login.png';
-import kakao from '../../assets/kakao_login.png';
-import naver from '../../assets/naver_login.png';
-import styles from './LoginForm.module.css';
-import { API_BASE_URL } from '../MyPage/api';
+import PageLayout from "../../components/PageLayout/PageLayout";
+import React from "react";
+import google from "../../assets/google_login.png";
+import kakao from "../../assets/kakao_login.png";
+import naver from "../../assets/naver_login.png";
+import styles from "./LoginForm.module.css";
+import { API_BASE_URL } from "../MyPage/api";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
 
   return (
     <PageLayout>
@@ -61,8 +63,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorization/kakao`)
+                  (window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`)
                 }
                 className={`${styles.socialButton} ${styles.kakao}`}
               >
@@ -71,8 +72,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorization/naver`)
+                  (window.location.href = `${API_BASE_URL}/oauth2/authorization/naver`)
                 }
                 className={`${styles.socialButton} ${styles.naver}`}
               >
@@ -81,8 +81,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() =>
-                  (window.location.href =
-                    `${API_BASE_URL}/oauth2/authorization/google`)
+                  (window.location.href = `${API_BASE_URL}/oauth2/authorization/google`)
                 }
                 className={`${styles.socialButton} ${styles.google}`}
               >
@@ -93,7 +92,12 @@ const LoginForm = () => {
 
           <div className={styles.loginLinks}>
             <button className={styles.linkButton}>아이디/비밀번호 찾기</button>
-            <button className={styles.linkButton}>회원가입</button>
+            <button
+              className={styles.linkButton}
+              onClick={() => navigate("/signup")}
+            >
+              회원가입
+            </button>
           </div>
         </form>
       </div>

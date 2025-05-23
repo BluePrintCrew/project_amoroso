@@ -101,7 +101,7 @@ public class TestUserController {
             userAddressRepository.save(address);
         }
 
-        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_SELLER");
+        String token = jwtProvider.createToken(TEST_EMAIL, testUser.getRole().name());
         return ResponseEntity.ok(Map.of("access_token", token));
     }
 
@@ -140,7 +140,7 @@ public class TestUserController {
             userAddressRepository.save(address);
         }
 
-        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_USER");
+        String token = jwtProvider.createToken(TEST_EMAIL, testUser.getRole().name());
         return ResponseEntity.ok(Map.of("access_token", token));
     }
 
@@ -159,7 +159,9 @@ public class TestUserController {
             userRepository.save(testUser);
         }
 
-        String token = jwtProvider.createToken(TEST_EMAIL, "ROLE_ADMIN");
+        User testUser = userRepository.findByEmail(TEST_EMAIL)
+                .orElseThrow(() -> new RuntimeException("Test user not found"));
+        String token = jwtProvider.createToken(TEST_EMAIL, testUser.getRole().name());
         return ResponseEntity.ok(Map.of("access_token", token));
     }
 

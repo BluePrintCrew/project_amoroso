@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,20 +124,16 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateProfile(String name, String email, String brithDate, String phoneNumber,
+    public void updateProfile(String name, String email, LocalDateTime birthDate, String phoneNumber,
                              Boolean emailConsent, Boolean smsConsent, Boolean dmConsent, Boolean locationConsent) {
-
-
         this.name = name;
         this.email = email;
-        this.birthDate = LocalDateTime.parse(brithDate + "T00:00:00");
-
+        this.birthDate = birthDate;
         this.phoneNumber = phoneNumber;
         this.emailConsent = emailConsent;
         this.smsConsent = smsConsent;
         this.dmConsent = dmConsent;
         this.locationConsent = locationConsent;
-
     }
     public void addAddress(UserAddress address) {
 

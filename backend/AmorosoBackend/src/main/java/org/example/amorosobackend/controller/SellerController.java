@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.*;
 import org.example.amorosobackend.service.BusinessValidationService;
+import org.example.amorosobackend.service.EcommerceValidationService;
 import org.example.amorosobackend.service.SellerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final BusinessValidationService businessValidationService;
+    private final EcommerceValidationService ecommerceValidationService;
 
     @GetMapping("/total-sales")
     public SellerDTO.TotalSaleResponse getSellerTotalSales(@RequestParam int year,
@@ -80,8 +82,46 @@ public class SellerController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/validate-ecommerce")
+    @Operation(summary = "Validate e-commerce business registration",
+            description = "Validates the e-commerce business registration using the Fair Trade Commission API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Validation successful",
+                    content = @Content(schema = @Schema(implementation = EcommerceValidationResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<EcommerceValidationResponse> validateEcommerceBusiness(
+            @RequestBody EcommerceValidationRequest request) {
+        EcommerceValidationResponse response = ecommerceValidationService.validateEcommerceBusiness(request);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<SellerRegistrationDTO.Response> registerSeller(@RequestBody SellerRegistrationDTO.Request request) {
+        // 1. 사업자등록 검증
+        BusinessValidationRequest businessValidation = BusinessValidationRequest.builder()
+                .businessNumber(request.getBusinessNumber())
+                .companyName(request.getBrandName())
+                .startDate(request.getBusinessStartDate().toString().replace("-", ""))
+                .businessAddress(request.getBusinessAddress())
+                .build();
+        
+        BusinessValidationResponse validationResponse = businessValidationService.validateBusiness(businessValidation);
+        
+        if (!validationResponse.isValid()) {
+            throw new IllegalArgumentException("Invalid business registration: " + validationResponse.getValidationMessage());
+        }
+
+        // 2. 통신판매업 검증
+        EcommerceValidationResponse ecommerceValidation = ecommerceValidationService.validateEcommerceBusiness(
+                new EcommerceValidationRequest(request.getBusinessNumber(), request.getBrandName()));
+        
+        if (!ecommerceValidation.isValid()) {
+            throw new IllegalArgumentException("Invalid e-commerce business: " + ecommerceValidation.getMessage());
+        }
+
+        // 3. 판매자 등록 진행
         SellerRegistrationDTO.Response response = sellerService.registerSeller(request);
         return ResponseEntity.ok(response);
     }
@@ -100,5 +140,21 @@ public class SellerController {
             @RequestParam String businessNumber) {
         BusinessStatusResponse response = businessValidationService.checkBusinessStatus(businessNumber);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/orders/{orderId}/deliver")
+    @Operation(summary = "Update order status to delivered",
+            description = "Seller can mark an order as delivered when they complete the shipping")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Order status updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request"),
+        @ApiResponse(responseCode = "403", description = "Not authorized to update this order"),
+        @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    public ResponseEntity<Void> markOrderAsDelivered(
+            @Parameter(description = "Order ID to mark as delivered", required = true)
+            @PathVariable Long orderId) {
+        sellerService.markOrderAsDelivered(orderId);
+        return ResponseEntity.ok().build();
     }
 }

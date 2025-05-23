@@ -1,290 +1,379 @@
 /* 네비게이션 영역 */
 .navigation-container {
-    padding-top: 50px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    font-family: 'Pretendard', sans-serif;
-  }
-  
-  .navigation-item {
-    font-size: 14px;
-    line-height: 24px;
-    font-weight: 400;
-    color: #999999;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .navigation-item img {
-    width: 19px;
-    height: 19px;
-    margin-right: 5px;
-  }
-  
-  /* 현재 위치 표시 */
-  .navigation-active {
-    color: #222222;
-    font-weight: 500;
-  }
-  
-  /* 네비게이션 구분선 */
-  .navigation-separator {
-    margin: 0 10px;
-    font-size: 14px;
-    color: #CCCCCC;
-  }
-  
-  /* 전체 레이아웃 */
-  .header-container {
-    margin-bottom: 20px;
-  }
-  
-  .footer-container {
-    margin-top: 40px;
-  }
-  
-  .signup-container {
-    width: 570px;
-    margin: 0 auto;
-    padding-top: 100px;
-    font-family: 'Pretendard', sans-serif;
-  }
-  
-  /* 제목 스타일 */
-  .signup-title {
-    font-size: 28px;
-    font-weight: 500;
-    color: #222222;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .signup-subtitle {
-    font-size: 16px;
-    font-weight: 500;
-    color: #666666;
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  
-  /* 입력 필드 */
-  .input-group {
-    margin-bottom: 30px;
-  }
-  
-  .input-group label {
-    display: block;
-    font-size: 16px;
-    font-weight: 700;
-    color: #666666;
-    margin-bottom: 10px;
-  }
-  
-  .input-group input {
-    width: 100%;
-    height: 48px;
-    padding: 0 15px; /* 패딩 수정 */
-    border: 1px solid #E2E2E2;
-    border-radius: 15px;
-    font-size: 14px;
-    color: #B3B3B3;
-  }
-  
-  .input-group input::placeholder {
-    color: #B3B3B3;
-  }
-  
-  /* 주소 입력 */
-  .address-group {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .address-group .zipcode {
-    flex: 2;
-    padding: 0 15px; /* 우편번호 입력 패딩 수정 */
-    border: 1px solid #E2E2E2;
-    border-radius: 15px;
-  }
-  
-  .address-group .search-button {
-    flex: 1;
-    background-color: #EFEFEF;
-    border: 1px solid #E2E2E2;
-    border-radius: 15px;
-    text-align: center;
-    line-height: 48px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #222222;
-    cursor: pointer;
-  }
-  
-  /* 약관 섹션 */
-  .agreement-section {
-    margin-top: 40px;
-    border-top: 1px solid #EFEFEF;
-    padding-top: 20px;
-  }
-  
-  .agreement-section h3 {
-    font-size: 20px;
-    font-weight: 500;
-    color: #222222;
-    margin-bottom: 20px;
-  }
-  
+  padding-top: 50px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.navigation-item {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #999999;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.navigation-item img {
+  width: 19px;
+  height: 19px;
+  margin-right: 5px;
+}
+
+/* 현재 위치 표시 */
+.navigation-active {
+  color: #222222;
+  font-weight: 500;
+}
+
+/* 네비게이션 구분선 */
+.navigation-separator {
+  margin: 0 10px;
+  font-size: 14px;
+  color: #cccccc;
+}
+
+/* 전체 레이아웃 */
+.header-container {
+  margin-bottom: 20px;
+}
+
+.footer-container {
+  margin-top: 40px;
+}
+
+.signup-container {
+  width: 570px;
+  margin: 0 auto;
+  padding-top: 100px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 제목 스타일 */
+.signup-title {
+  font-size: 28px;
+  font-weight: 500;
+  color: #222222;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.signup-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666666;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* 입력 필드 */
+.input-group {
+  margin-bottom: 30px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 10px;
+}
+
+.input-group input {
+  width: 100%;
+  height: 48px;
+  padding: 0 15px; /* 패딩 수정 */
+  border: 1px solid #e2e2e2;
+  border-radius: 15px;
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.input-group input::placeholder {
+  color: #b3b3b3;
+}
+
+.input-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.input-group input[type="checkbox"]:checked {
+  background-color: #766e68;
+  border-color: #766e68;
+}
+
+.input-group input[type="checkbox"]:checked::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.certification-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.certification-group > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.certification-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 10px;
+}
+
+.certification-group .business-number-input {
+  flex: 8;
+  height: 48px;
+  padding: 0 15px;
+  border: 1px solid #e2e2e2;
+  border-radius: 15px;
+}
+
+.certification-button {
+  flex: 1;
+  background-color: #efefef;
+  border: 1px solid #e2e2e2;
+  border-radius: 15px;
+  text-align: center;
+  line-height: 48px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #222222;
+  cursor: pointer;
+}
+
+/* 주소 입력 */
+.address-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.address-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 10px;
+}
+
+.address-group > div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.address-group .zipcode {
+  flex: 3;
+  height: 48px;
+  padding: 0 15px; /* 우편번호 입력 패딩 수정 */
+  border: 1px solid #e2e2e2;
+  border-radius: 15px;
+}
+
+.address-group .search-button {
+  flex: 1;
+  background-color: #efefef;
+  border: 1px solid #e2e2e2;
+  border-radius: 15px;
+  text-align: center;
+  line-height: 48px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #222222;
+  cursor: pointer;
+}
+
 /* 약관 섹션 */
 .agreement-section {
-    margin-top: 40px;
-    border-top: 1px solid #EFEFEF;
-    padding-top: 20px;
-  }
-  
-  .agreement-section h3 {
-    font-size: 20px;
-    font-weight: 500;
-    color: #222222;
-    margin-bottom: 20px;
-  }
-  
-  /* 약관 텍스트 추가 */
-  .agreement-introduction {
-    font-family: 'Pretendard', sans-serif; /* Pretendard 폰트 적용 */
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 16.8px; /* 약간 더 촘촘한 줄 간격 */
-    text-align: left;
-    text-underline-position: from-font; /* 폰트 아래에서 정렬 */
-    text-decoration-skip-ink: none; /* 밑줄이 글씨를 끊지 않도록 설정 */
-    color: #666666; /* 약관 텍스트 색상 */
-    margin-bottom: 20px;
-  }
-  
-  .agreement-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .agreement-item input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-  }
-  
-  .agreement-item label {
-    font-family: 'Pretendard', sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px; /* 기본 텍스트 정렬 유지 */
-    color: #222222;
-  }
-  
-  .agreement-item .required {
-    color: #FF3C3C;
-    margin-left: 5px;
-  }
-   
-  /* 버튼 스타일 */
-  .submit-button {
-    display: block;
-    width: 100%;
-    height: 48px;
-    background-color: #766E68;
-    border: none;
-    border-radius: 15px;
-    color: #FFFFFF;
-    font-size: 16px;
-    font-weight: 500;
-    text-align: center;
-    line-height: 48px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .submit-button:hover {
-    background-color: #5A524E;
-    margin-bottom: 40px;
-  }
- 
-  .agreement-item-marketing {
-   /* border: 1px solid #e2e2e2;
+  margin-top: 40px;
+  border-top: 1px solid #efefef;
+  padding-top: 20px;
+}
+
+.agreement-section h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #222222;
+  margin-bottom: 20px;
+}
+
+/* 약관 섹션 */
+.agreement-section {
+  margin-top: 40px;
+  border-top: 1px solid #efefef;
+  padding-top: 20px;
+}
+
+.agreement-section h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #222222;
+  margin-bottom: 20px;
+}
+
+/* 약관 텍스트 추가 */
+.agreement-introduction {
+  font-family: "Pretendard", sans-serif; /* Pretendard 폰트 적용 */
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16.8px; /* 약간 더 촘촘한 줄 간격 */
+  text-align: left;
+  text-underline-position: from-font; /* 폰트 아래에서 정렬 */
+  text-decoration-skip-ink: none; /* 밑줄이 글씨를 끊지 않도록 설정 */
+  color: #666666; /* 약관 텍스트 색상 */
+  margin-bottom: 20px;
+}
+
+.agreement-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.agreement-item input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.agreement-item label {
+  font-family: "Pretendard", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px; /* 기본 텍스트 정렬 유지 */
+  color: #222222;
+}
+
+.agreement-item .required {
+  color: #ff3c3c;
+  margin-left: 5px;
+}
+
+/* 버튼 스타일 */
+.submit-button {
+  display: block;
+  width: 100%;
+  height: 48px;
+  background-color: #766e68;
+  border: none;
+  border-radius: 15px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 48px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.submit-button:hover {
+  background-color: #5a524e;
+  margin-bottom: 40px;
+}
+
+.agreement-item-marketing {
+  /* border: 1px solid #e2e2e2;
     border-radius: 15px;
     padding: 20px; */
-    margin-bottom: 20px;
-  }
-  
-  .marketing-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-  
-  .marketing-header input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-  }
-  
-  .marketing-header label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #222222;
-    display: flex;
-    align-items: center;
-  }
-  
-  .marketing-header .optional {
-    font-size: 14px;
-    font-weight: 400;
-    color: #666666;
-    margin-left: 5px;
-  }
-  
-  .coupon-info {
-    font-size: 14px;
-    font-weight: 500;
-    color: #766e68;
-    background-color: #f6f6f6;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-  
-  .marketing-options {
-    display: flex;
-    justify-content: flex-start;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
-  
-  .option-item {
-    display: flex;
-    align-items: center;
-  }
-  
-  .option-item input[type="checkbox"] {
-    width: 24px;
-    height: 24px;
-    margin-right: 5px;
-  }
-  
-  .option-item label {
-    font-size: 14px;
-    font-weight: 400;
-    color: #222222;
-  }
-  
-  .marketing-description {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 16.8px;
-    color: #666666;
-    margin-top: 10px;
-  }
- 
-  
+  margin-bottom: 20px;
+}
+
+.marketing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.marketing-header input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.marketing-header label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #222222;
+  display: flex;
+  align-items: center;
+}
+
+.marketing-header .optional {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666666;
+  margin-left: 5px;
+}
+
+.coupon-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: #766e68;
+  background-color: #f6f6f6;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.marketing-options {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+}
+
+.option-item input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+
+.option-item label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #222222;
+}
+
+.marketing-description {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16.8px;
+  color: #666666;
+  margin-top: 10px;
+}
+
+.business-verification-box {
+  background-color: #f7f7f7;
+  border: none;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}

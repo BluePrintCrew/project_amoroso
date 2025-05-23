@@ -17,6 +17,7 @@ const ProductDetailPage = () => {
   const { id } = useParams(); // URL 파라미터로부터 상품 ID 가져옴
   const navigate = useNavigate();
   const thumbnailContainerRef = useRef(null);
+  const thumbnailImagesRef = useRef(null);
   const tabRef = useRef(null);
 
   const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(0);
@@ -71,14 +72,12 @@ const ProductDetailPage = () => {
   // 썸네일 렌더링 후 스크롤 가능 여부 확인
   useEffect(() => {
     const updateArrowVisibility = () => {
-      const container = thumbnailContainerRef.current?.querySelector(
-        `.${styles.thumbnailImages}`
-      );
-      if (!container) return;
+      if (!thumbnailImagesRef.current) return;
 
-      setShowLeftArrow(container.scrollLeft > 0);
+      setShowLeftArrow(thumbnailImagesRef.current.scrollLeft > 0);
       setShowRightArrow(
-        container.scrollWidth > container.clientWidth + container.scrollWidth
+        thumbnailImagesRef.current.scrollWidth > 
+        thumbnailImagesRef.current.clientWidth + thumbnailImagesRef.current.scrollLeft
       );
     };
 
@@ -446,7 +445,8 @@ const ProductDetailPage = () => {
             <div className={styles.productImage}>
               <img
                 src={
-                  thumbnailImages.length > 0
+                  thumbnailImages.length > 0 &&
+                  thumbnailImages[selectedThumbnailIndex]?.imageURL
                     ? `${API_BASE_URL}/api/v1/images/${thumbnailImages[
                         selectedThumbnailIndex
                       ]?.imageURL
@@ -472,17 +472,14 @@ const ProductDetailPage = () => {
                 )}
                 <div
                   className={styles.thumbnailImages}
+                  ref={thumbnailImagesRef}
                   onScroll={() => {
-                    const container =
-                      thumbnailContainerRef.current?.querySelector(
-                        `.${styles.thumbnailImages}`
-                      );
-                    if (!container) return;
+                    if (!thumbnailImagesRef.current) return;
 
-                    setShowLeftArrow(container.scrollLeft > 0);
+                    setShowLeftArrow(thumbnailImagesRef.current.scrollLeft > 0);
                     setShowRightArrow(
-                      container.scrollWidth >
-                        container.clientWidth + container.scrollLeft
+                      thumbnailImagesRef.current.scrollWidth > 
+                      thumbnailImagesRef.current.clientWidth + thumbnailImagesRef.current.scrollLeft
                     );
                   }}
                 >
@@ -497,9 +494,13 @@ const ProductDetailPage = () => {
                       onClick={() => setSelectedThumbnailIndex(index)}
                     >
                       <img
-                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                          .split("/")
-                          .pop()}`}
+                        src={
+                          img.imageURL
+                            ? `${API_BASE_URL}/api/v1/images/${img.imageURL
+                                .split("/")
+                                .pop()}`
+                            : "https://placehold.co/80x80"
+                        }
                         alt={`썸네일 ${index + 1}`}
                       />
                     </div>

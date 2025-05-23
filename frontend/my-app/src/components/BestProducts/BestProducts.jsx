@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import styles from './BestProducts.module.css';
-import { useNavigate } from 'react-router-dom';
-import ProductCard from '../ProductCard/ProductCard';
-import InfiniteScrollProducts from '../ProductList/InfiniteScrollProducts/InfiniteScrollProducts';
+import ProductSection from '../ProductSection/ProductSection';
 
 const BestProducts = () => {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBestProducts = async () => {
@@ -25,19 +21,12 @@ const BestProducts = () => {
   }, []);
 
   return (
-    <div className={styles.bestProducts}>
-      <div className={styles.header}>
-        <h2>Amoroso Best</h2>
-        <button className={styles.moreBtn} onClick={() => navigate('/productlist')}>
-          더보기 &gt;
-        </button>
-      </div>
-      <div className={styles.productList}>
-        {products.map((product) => (
-          <ProductCard key={product.productId} product={product} />
-        ))}
-      </div>
-    </div>
+    <ProductSection
+      title="Amoroso Best"
+      products={products}
+      showMoreLink="/products"
+      gridColumns={4}
+    />
   );
 };
 

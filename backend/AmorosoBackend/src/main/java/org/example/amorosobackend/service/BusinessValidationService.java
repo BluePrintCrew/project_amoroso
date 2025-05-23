@@ -101,8 +101,7 @@ public class BusinessValidationService {
 
             String url = UriComponentsBuilder.fromHttpUrl(STATUS_API_URL)
                     .queryParam("serviceKey", apiKey)
-                    .build()
-                    .encode()
+                    .build(false)
                     .toUriString();
 
             JsonNode response = restTemplate.postForObject(url, entity, JsonNode.class);

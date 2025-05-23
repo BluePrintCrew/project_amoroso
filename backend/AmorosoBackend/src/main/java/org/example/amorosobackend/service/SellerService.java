@@ -36,6 +36,7 @@ public class SellerService {
     private final ProductRepository productRepository;
     private final BusinessValidationService businessValidationService;
     private final PasswordEncoder passwordEncoder;
+    private final EcommerceValidationService ecommerceValidationService;
 
     public SellerDTO.SellerStatsResponse getSellerStats() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -255,7 +256,7 @@ public class SellerService {
         Seller seller = sellerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "order.createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         // OrderItem 기준 페이징 불가 → Order 기준으로 가져와야 함
         Page<Order> orderPage = orderRepository.findDistinctByOrderItemsProductSeller(seller, pageable);
@@ -294,7 +295,15 @@ public class SellerService {
             throw new IllegalArgumentException("Only active business can register");
         }
 
-        // 3. User 엔티티 생성
+        // 3. 통신판매업 정보 조회
+        EcommerceValidationResponse ecommerceValidation = ecommerceValidationService.validateEcommerceBusiness(
+                new EcommerceValidationRequest(request.getBusinessNumber(), request.getBrandName()));
+
+        if (!ecommerceValidation.isValid()) {
+            throw new IllegalArgumentException("Invalid e-commerce business: " + ecommerceValidation.getMessage());
+        }
+
+        // 4. User 엔티티 생성
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -309,7 +318,7 @@ public class SellerService {
         
         userRepository.save(user);
 
-        // 4. Seller 엔티티 생성 (Status API 정보 활용)
+        // 5. Seller 엔티티 생성 (Status API 정보와 통신판매업 정보 활용)
         Seller seller = Seller.builder()
                 .user(user)
                 .brandName(request.getBrandName())
@@ -317,15 +326,22 @@ public class SellerService {
                 .businessStartDate(request.getBusinessStartDate())
                 .businessAddress(request.getBusinessAddress())
                 .businessDetailAddress(request.getBusinessDetailAddress())
-                .taxationType(statusResponse.getTaxationType())    // Status API 정보
-                .businessStatus(statusResponse.getBusinessStatus()) // Status API 정보
+                .taxationType(statusResponse.getTaxationType())
+                .businessStatus(statusResponse.getBusinessStatus())
                 .businessTel(request.getBusinessTel())
                 .businessEmail(request.getBusinessEmail())
+                .ecommerceRegistrationNumber(ecommerceValidation.getRegistrationNumber())
+                .ecommerceRegistrationDate(ecommerceValidation.getRegistrationDate())
+                .ecommerceBusinessStatus(ecommerceValidation.getBusinessStatus())
+                .ecommerceDomain(ecommerceValidation.getDomain())
+                .serverLocation(ecommerceValidation.getServerLocation())
+                .salesMethod(ecommerceValidation.getSalesMethod())
+                .productCategories(ecommerceValidation.getProductCategories())
                 .build();
         
         sellerRepository.save(seller);
 
-        // 5. 응답 생성
+        // 6. 응답 생성
         return SellerRegistrationDTO.Response.builder()
                 .email(user.getEmail())
                 .name(user.getName())
@@ -343,5 +359,38 @@ public class SellerService {
     private Long getSellerIdByEmail(String email) {
         // Seller 엔티티를 통해 이메일 기반으로 sellerId 조회하는 로직 구현 필요
         return 1L; // 예제이므로 1L을 반환 (실제 구현 시 Repository 활용)
+    }
+
+    @Transactional
+    public void markOrderAsDelivered(Long orderId) {
+        // 현재 로그인한 판매자 정보 가져오기
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isSeller()) {
+            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
+        }
+
+        Seller seller = sellerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
+
+        // 주문 정보 가져오기
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        // 해당 주문이 이 판매자의 것인지 확인
+        if (!order.getSeller().equals(seller)) {
+            throw new RuntimeException("해당 주문에 대한 권한이 없습니다.");
+        }
+
+        // 주문 상태가 PAYMENT_COMPLETED인지 확인
+        if (order.getOrderStatus() != OrderStatus.PAYMENT_COMPLETED) {
+            throw new RuntimeException("결제가 완료된 주문만 배송 완료 처리할 수 있습니다.");
+        }
+
+        // 주문 상태를 DELIVERED로 변경
+        order.setOrderStatus(OrderStatus.DELIVERED);
+        orderRepository.save(order);
     }
 }

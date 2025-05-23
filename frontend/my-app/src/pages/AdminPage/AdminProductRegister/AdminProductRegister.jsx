@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
-
+import React, { useRef, useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../MyPage/api";
 import styles from "./AdminProductRegister.module.css";
+import axios from "axios";
 
 // --- 카테고리 매핑 테이블
 const categoryMap = {
@@ -36,6 +37,12 @@ const categoryMap = {
 };
 
 function AdminProductRegister() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const isEdit = params.get('edit') === '1';
+  const productId = params.get('id');
+
   // (1) 카테고리 상태
   const [category1, setCategory1] = useState("");
   const [category2, setCategory2] = useState("");
@@ -84,6 +91,73 @@ function AdminProductRegister() {
 
   // (7) 쿠폰 여부
   const [couponApplicable, setCouponApplicable] = useState(false);
+
+  // 상품 정보 불러오기
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (isEdit && productId) {
+        try {
+          const accessToken = localStorage.getItem("access_token");
+          const response = await axios.get(
+            `${API_BASE_URL}/api/v1/products/${productId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          
+          const product = response.data;
+          
+          // 카테고리 설정
+          const mainCategory = product.categoryCode?.split('_')[0];
+          setCategory1(mainCategory || '');
+          setCategory2(product.categoryCode || '');
+          
+          // 기본 정보 설정
+          setProductCode(product.productCode || '');
+          setBrand(product.brand || '');
+          setModelName(product.productName || '');
+          setPrice(product.marketPrice?.toString() || '');
+          setCost(product.costPrice?.toString() || '');
+          setDiscount(product.discountRate?.toString() || '');
+          setMaker(product.manufacturer || '');
+          setOrigin(product.origin || '');
+          setBasicDesc(product.description || '');
+          setColor(product.color || '');
+          setComponents(product.components || '');
+          setMaterial(product.material || '');
+          setManufactureCountry(product.manufactureCountry || '');
+          setAsTel(product.asPhoneNumber || '');
+          setProductStatus(product.outOfStock ? 'soldOut' : 'selling');
+          setStock(product.stock?.toString() || '');
+          setStockNotify(product.stockNotificationThreshold?.toString() || '');
+          setMinPurchase(product.minPurchase?.toString() || '');
+          setMaxPurchase(product.maxPurchase?.toString() || '');
+          setShippingFee(product.shippingInstallationFee?.toString() || '');
+          setCouponApplicable(product.couponApplicable || false);
+          
+          // 옵션 설정
+          if (product.productOptions && product.productOptions.length > 0) {
+            setOptions(product.productOptions.map(opt => ({
+              optionName: opt.optionName,
+              optionValues: opt.optionValues || ['']
+            })));
+          }
+          
+          // 상세 설명 설정
+          setDescription(product.description || '');
+          
+        } catch (error) {
+          console.error('상품 정보 불러오기 실패:', error);
+          alert('상품 정보를 불러오는데 실패했습니다.');
+          navigate('/admin/products');
+        }
+      }
+    };
+
+    fetchProduct();
+  }, [isEdit, productId, navigate]);
 
   // 임시저장
   const handleTempSave = () => {
@@ -163,8 +237,8 @@ function AdminProductRegister() {
     }
   };
 
-  // 등록
-  const handleRegister = async (e) => {
+  // 등록/수정 처리
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!category2 || !productCode || !modelName || !price || !brand) {
@@ -209,26 +283,37 @@ function AdminProductRegister() {
     console.log("(디버그) 전송할 payload:", payload);
 
     try {
-      // 1) 상품 등록
-      const productResponse = await fetch(`${API_BASE_URL}/api/v1/products/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const accessToken = localStorage.getItem("access_token");
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      };
 
-      if (!productResponse.ok) {
-        throw new Error("제품 등록에 실패했습니다.");
+      let productResponse;
+      
+      if (isEdit) {
+        // 수정 모드: PUT 요청
+        productResponse = await axios.put(
+          `${API_BASE_URL}/api/v1/products/${productId}`,
+          payload,
+          { headers }
+        );
+      } else {
+        // 등록 모드: POST 요청
+        productResponse = await axios.post(
+          `${API_BASE_URL}/api/v1/products/`,
+          payload,
+          { headers }
+        );
       }
 
-      // 2) productId 반환
-      const productData = await productResponse.json();
-      console.log("(디버그) 등록된 제품 정보:", productData);
-      const productId = productData; // 실제 백엔드 응답 구조에 맞게 수정
+      if (!productResponse.data) {
+        throw new Error(isEdit ? "제품 수정에 실패했습니다." : "제품 등록에 실패했습니다.");
+      }
 
-      // 3) 이미지 업로드
+      const productId = productResponse.data;
+
+      // 이미지 업로드
       // 메인 이미지
       if (mainImage) {
         await uploadImage(mainImage, productId, "MAIN", 0);
@@ -256,11 +341,12 @@ function AdminProductRegister() {
         );
       }
 
-      // 완료
-      alert("제품 등록 완료!");
+      alert(isEdit ? "제품 수정 완료!" : "제품 등록 완료!");
+      navigate('/admin/products');
+      
     } catch (error) {
-      console.error("제품 등록 중 에러:", error);
-      alert("제품 등록 중 오류가 발생했습니다.");
+      console.error("제품 처리 중 에러:", error);
+      alert(isEdit ? "제품 수정 중 오류가 발생했습니다." : "제품 등록 중 오류가 발생했습니다.");
     }
   };
 
@@ -329,7 +415,7 @@ function AdminProductRegister() {
   return (
     <div className={styles.adminProductRegister}>
       <div className={styles.topBar}>
-        <h2 className={styles.pageTitle}>상품 입력</h2>
+        <h2 className={styles.pageTitle}>{isEdit ? '상품 수정' : '상품 입력'}</h2>
         <div className={styles.topBarButtons}>
           <button
             type="button"
@@ -343,7 +429,7 @@ function AdminProductRegister() {
             type="submit"
             className={styles.mainButton}
           >
-            등록하기
+            {isEdit ? '수정하기' : '등록하기'}
           </button>
         </div>
       </div>
@@ -352,7 +438,7 @@ function AdminProductRegister() {
 
       <form
         id="productForm"
-        onSubmit={handleRegister}
+        onSubmit={handleSubmit}
         className={styles.registerForm}
       >
         {/* (1) 상품카테고리 설정 */}

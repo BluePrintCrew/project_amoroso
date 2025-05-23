@@ -3,6 +3,8 @@ package org.example.amorosobackend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 public class UserControllerDTO {
 
@@ -86,6 +88,17 @@ public class UserControllerDTO {
         private Boolean smsConsent;
         private Boolean dmConsent;
         private Boolean locationConsent;
+
+        public LocalDateTime getBirthDateTime() {
+            try {
+                if (birthDate == null || birthDate.trim().isEmpty()) {
+                    return null;
+                }
+                return LocalDateTime.parse(birthDate + "T00:00:00");
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Invalid date format. Please use YYYY-MM-DD format.", e);
+            }
+        }
     }
 
     @Data

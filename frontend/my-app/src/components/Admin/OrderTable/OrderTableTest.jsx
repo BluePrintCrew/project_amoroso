@@ -9,7 +9,7 @@ const OrderTableTest = () => {
     useEffect(() => {
         const accessToken = localStorage.getItem('access_token');
 
-        axios.get(`${API_BASE_URL}/api/v1/seller/order-summary?page=0&size=5`, {
+        axios.get(`${API_BASE_URL}/api/v1/sellers/order-summary?page=0&size=5`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
