@@ -21,7 +21,7 @@ const AdminChartTest = () => {
         const year = new Date().getFullYear();
         const accessToken = localStorage.getItem('access_token');
 
-        axios.get(`${API_BASE_URL}/api/v1/seller/monthly-sales?year=${year}`, {
+        axios.get(`${API_BASE_URL}/api/v1/sellers/monthly-sales?year=${year}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },

@@ -369,3 +369,11 @@
   color: #666666;
   margin-top: 10px;
 }
+
+.business-verification-box {
+  background-color: #f7f7f7;
+  border: none;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}

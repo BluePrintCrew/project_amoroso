@@ -1,31 +1,203 @@
-import React from 'react';
-import styles from './OrderTable.module.css';
+import React, { useState, useEffect } from 'react';
+import styles from '../ProductTable/ProductTable.module.css';
+import axios from 'axios';
+import { API_BASE_URL } from '../../../pages/MyPage/api';
 
-const OrderDetailModal = ({ order, onClose }) => {
-  // 임시 데이터: 실제로는 order 객체에 포함되어야 함
-  const sellerInfo = {
-    담당자: '김판매',
-    연락처: '010-1234-5678',
-    송장번호: 'INV202501201749',
+const accessToken = localStorage.getItem('access_token');
+
+const OrderDetailModal = ({ order, onClose, onStatusUpdate }) => {
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/sellers/orders/${order.orderId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setOrderDetails(response.data);
+      } catch (err) {
+        console.error('주문 상세 정보 조회 실패:', err);
+        setError('주문 상세 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [order.orderId]);
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await onStatusUpdate(order.orderId, newStatus);
+      onClose();
+    } catch (err) {
+      console.error('주문 상태 업데이트 실패:', err);
+      alert('주문 상태 업데이트에 실패했습니다.');
+    }
   };
+
+  const getStatusButton = (currentStatus) => {
+    switch (currentStatus) {
+      case 'ORDER_PENDING':
+        return (
+          <button
+            className={styles.shippingBtn}
+            onClick={() => handleStatusChange('ORDER_CONFIRMED')}
+          >
+            주문 접수
+          </button>
+        );
+      case 'ORDER_CONFIRMED':
+        return (
+          <button
+            className={styles.shippingBtn}
+            onClick={() => handleStatusChange('SHIPPING')}
+          >
+            배송 시작
+          </button>
+        );
+      case 'SHIPPING':
+        return (
+          <button
+            className={styles.shippingBtn}
+            onClick={() => handleStatusChange('DELIVERED')}
+          >
+            배송 완료
+          </button>
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <div>로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <div>{error}</div>
+          <button onClick={onClose} className={styles.closeButton}>
+            닫기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orderDetails) {
+    return null;
+  }
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalBox}>
-        <button className={styles.closeBtn} onClick={onClose}>&times;</button>
-        <div className={styles.modalTitle}>주문 상세 정보</div>
-        <div className={styles.modalContent}>
-          <div><b>주문 코드:</b> {order.orderCode}</div>
-          <div><b>주문 일시:</b> {order.orderDate}</div>
-          <div><b>고객 성함:</b> {order.customerName}</div>
-          <div><b>고객 주소:</b> {order.customerAddress}</div>
-          <div><b>주문 상태:</b> {order.orderStatus}</div>
-          <div><b>결제 상태:</b> {order.paymentStatus}</div>
-          <div><b>총 결제 금액:</b> {order.totalAmount.toLocaleString()} 원</div>
-          <hr style={{margin: '18px 0'}} />
-          <div><b>판매자 담당자:</b> {sellerInfo.담당자}</div>
-          <div><b>연락처:</b> {sellerInfo.연락처}</div>
-          <div><b>송장번호:</b> {sellerInfo.송장번호}</div>
+      <div className={styles.modalContent}>
+        <div className={styles.modalHeader}>
+          <h2>주문 상세 정보</h2>
+          <button onClick={onClose} className={styles.closeButton}>
+            ×
+          </button>
+        </div>
+
+        <div className={styles.modalBody}>
+          <div className={styles.orderInfo}>
+            <h3>주문 정보</h3>
+            <table className={styles.infoTable}>
+              <tbody>
+                <tr>
+                  <th>주문번호</th>
+                  <td>{orderDetails.orderCode}</td>
+                  <th>주문일시</th>
+                  <td>{new Date(orderDetails.orderDate).toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <th>주문상태</th>
+                  <td>
+                    <span className={`${styles.statusTag} ${styles[orderDetails.orderStatus.toLowerCase()]}`}>
+                      {orderDetails.orderStatus}
+                    </span>
+                  </td>
+                  <th>결제상태</th>
+                  <td>
+                    <span className={`${styles.statusTag} ${styles[orderDetails.paymentStatus.toLowerCase()]}`}>
+                      {orderDetails.paymentStatus}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className={styles.customerInfo}>
+            <h3>구매자 정보</h3>
+            <table className={styles.infoTable}>
+              <tbody>
+                <tr>
+                  <th>구매자</th>
+                  <td>{orderDetails.customerName}</td>
+                  <th>연락처</th>
+                  <td>{orderDetails.customerPhone}</td>
+                </tr>
+                <tr>
+                  <th>배송지</th>
+                  <td colSpan="3">{orderDetails.customerAddress}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className={styles.productInfo}>
+            <h3>상품 정보</h3>
+            <table className={styles.productTable}>
+              <thead>
+                <tr>
+                  <th>상품명</th>
+                  <th>수량</th>
+                  <th>가격</th>
+                  <th>합계</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderDetails.orderItems.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.productName}</td>
+                    <td>{item.quantity}개</td>
+                    <td>{item.price.toLocaleString()}원</td>
+                    <td>{(item.price * item.quantity).toLocaleString()}원</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan="3" className={styles.totalLabel}>
+                    총 결제금액
+                  </td>
+                  <td className={styles.totalAmount}>
+                    {orderDetails.totalAmount.toLocaleString()}원
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div className={styles.actionButtons}>
+            {getStatusButton(orderDetails.orderStatus)}
+          </div>
         </div>
       </div>
     </div>

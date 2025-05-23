@@ -13,7 +13,7 @@ const SellerLoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/v1/seller/login`, {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/sellers/login`, {
         email,
         password,
       });

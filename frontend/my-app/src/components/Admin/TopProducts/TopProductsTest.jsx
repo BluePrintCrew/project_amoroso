@@ -9,7 +9,7 @@ const TopProductsTest = () => {
     useEffect(() => {
         const accessToken = localStorage.getItem('access_token');
 
-        axios.get(`${API_BASE_URL}/api/v1/seller/popular-products`, {
+        axios.get(`${API_BASE_URL}/api/v1/sellers/popular-products`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -34,19 +34,23 @@ const TopProductsTest = () => {
                             <div className={styles.imagePlaceholder} />
                             <div>
                                 <p className={styles.productName}>{product.productName}</p>
-                                <p className={styles.category}>{product.categoryName}</p>
+                                <p className={styles.category}>{product.categoryName || '-'}</p>
                             </div>
                         </div>
                         <div className={styles.productMeta}>
                             <div className={styles.code}>
                                 <p className={styles.codeHeader}>상품 코드</p>
-                                <span className={styles.productCode}>{product.productCode}</span>
+                                <span className={styles.productCode}>{product.productCode || '-'}</span>
                             </div>
                             <div className={styles.price}>
                                 <p className={styles.priceHeader}>상품 가격</p>
                                 <span className={styles.productPrice}>
-                  {Number(product.marketPrice).toLocaleString()}원
-                </span>
+                                    {product.marketPrice ? Number(product.marketPrice).toLocaleString() + '원' : '-'}
+                                </span>
+                            </div>
+                            <div className={styles.sales}>
+                                <p className={styles.salesHeader}>판매수</p>
+                                <span className={styles.salesCount}>{product.salesCount || 0}개</span>
                             </div>
                         </div>
                     </li>

@@ -3,64 +3,77 @@
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: #fff;
 }
 
 .title{
     font-size: 24px;
- 
+    font-weight: 600;
+    color: #333;
 }
 
 .orderTable{
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
 .orderTable th, .orderTable td{
     padding: 12px 15px;
     text-align: center;
     border-bottom: 1px solid #e2e2e2;
+    font-size: 14px;
 }
 
 .orderTable th{
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
     border-top: 2px solid #766e68;
+    background: #f9f9f9;
 }
 
 .statusTag{
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 5px;
     display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .paymentComplete{
-    color: green;
+    background: #e8f5e9;
+    color: #2e7d32;
 }
 
 .paymentFailed{
-    color: red;
+    background: #ffebee;
+    color: #c62828;
 }
 
 .statusPending{
-    background: #666;
-    color: white;
+    background: #f5f5f5;
+    color: #616161;
 }
 
 .statusConfirmed{
-    background: #FFD87C;
+    background: #fff3e0;
+    color: #ef6c00;
 }
 
 .statusShipping{
-    background: #0064ff;
-    color: white;
+    background: #e3f2fd;
+    color: #1565c0;
 }
 
 .statusDelivered{
-    background: #00940f;
-    color: white;
+    background: #e8f5e9;
+    color: #2e7d32;
 }
 
 .statusCanceled{
-    background: #ff3c3c;
-    color: white;
+    background: #ffebee;
+    color: #c62828;
 }
 
 .titleRow {
@@ -90,82 +103,198 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
+.shippingBtn {
+  background: #766e68;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.shippingBtn:hover {
+  background: #5a544f;
+}
+
+.shippingBtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pageButton {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageButton:hover {
+  background: #f5f5f5;
+}
+
+.activePage {
+  background: #766e68;
+  color: #fff;
+  border-color: #766e68;
+}
+
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 
-.shippingBtn {
-  background: #00940f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 7px 18px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-  transition: background 0.2s, box-shadow 0.2s;
-}
-.shippingBtn:disabled {
-  background: #bdbdbd;
-  color: #fff;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.shippingBtn:hover:not(:disabled) {
-  background: #007a0c;
-}
-
-.modalBox {
+.modalContent {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  padding: 40px 40px 32px 40px;
-  min-width: 480px;
-  max-width: 600px;
-  min-height: 320px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
-  animation: modalShow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-@keyframes modalShow {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
 }
 
-.closeBtn {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: #888;
-  transition: color 0.2s;
-}
-.closeBtn:hover {
-  color: #222;
-}
-
-.modalTitle {
+.modalHeader h2 {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 18px;
-  text-align: left;
+  color: #333;
+  margin: 0;
 }
 
-.modalContent {
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.modalBody {
+  padding: 24px;
+}
+
+.orderInfo,
+.customerInfo,
+.productInfo {
+  margin-bottom: 24px;
+}
+
+.orderInfo h3,
+.customerInfo h3,
+.productInfo h3 {
   font-size: 16px;
-  color: #222;
-  line-height: 1.7;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.infoTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.infoTable th,
+.infoTable td {
+  padding: 12px;
+  border: 1px solid #eee;
+  font-size: 14px;
+}
+
+.infoTable th {
+  background: #f9f9f9;
+  font-weight: 500;
+  color: #666;
+  width: 120px;
+}
+
+.productTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.productTable th,
+.productTable td {
+  padding: 12px;
+  border: 1px solid #eee;
+  text-align: center;
+  font-size: 14px;
+}
+
+.productTable th {
+  background: #f9f9f9;
+  font-weight: 500;
+  color: #666;
+}
+
+.totalLabel {
+  text-align: right;
+  font-weight: 600;
+  color: #333;
+}
+
+.totalAmount {
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+
+@media (max-width: 768px) {
+  .orderTable th,
+  .orderTable td {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .modalContent {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .infoTable th,
+  .infoTable td,
+  .productTable th,
+  .productTable td {
+    padding: 8px;
+    font-size: 13px;
+  }
 }
