@@ -34,20 +34,20 @@ public class EcommerceValidationService {
                 .toUriString();
 
         try {
-            // API È£Ãâ ¹× ÀÀ´ä Ã³¸®
+            // API í˜¸ì¶œ ë° ê²°ê³¼ ì²˜ë¦¬
             ApiResponse response = restTemplate.getForObject(url, ApiResponse.class);
             
             if (response == null || response.getItems() == null || response.getItems().getItem() == null) {
                 return EcommerceValidationResponse.builder()
                         .isValid(false)
-                        .message("Åë½ÅÆÇ¸Å¾÷ÀÚ Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.")
+                        .message("í†µì‹ íŒë§¤ì—… ì •ë³´ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.")
                         .build();
             }
 
             ApiItem item = response.getItems().getItem();
 
-            // ¿µ¾÷»óÅÂ È®ÀÎ
-            boolean isValidStatus = "Á¤»ó".equals(item.getOperSttusCdNm());
+            // ìš´ì˜ìƒíƒœ í™•ì¸
+            boolean isValidStatus = "ì •ìƒ".equals(item.getOperSttusCdNm());
 
             return EcommerceValidationResponse.builder()
                     .registrationNumber(item.getPrmmiMnno())
@@ -58,18 +58,18 @@ public class EcommerceValidationService {
                     .salesMethod(item.getNtslMthdNm())
                     .productCategories(item.getTrtmntPrdlstNm())
                     .isValid(isValidStatus)
-                    .message(isValidStatus ? "À¯È¿ÇÑ Åë½ÅÆÇ¸Å¾÷ÀÚÀÔ´Ï´Ù." : "À¯È¿ÇÏÁö ¾ÊÀº Åë½ÅÆÇ¸Å¾÷ÀÚÀÔ´Ï´Ù.")
+                    .message(isValidStatus ? "ìœ íš¨í•œ í†µì‹ íŒë§¤ì—…ì²´ì…ë‹ˆë‹¤." : "ìœ íš¨í•˜ì§€ ì•Šì€ í†µì‹ íŒë§¤ì—…ì²´ì…ë‹ˆë‹¤.")
                     .build();
 
         } catch (Exception e) {
             return EcommerceValidationResponse.builder()
                     .isValid(false)
-                    .message("Åë½ÅÆÇ¸Å¾÷ÀÚ °ËÁõ Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù: " + e.getMessage())
+                    .message("í†µì‹ íŒë§¤ì—… ê²€ì¦ ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤: " + e.getMessage())
                     .build();
         }
     }
 
-    // API ÀÀ´äÀ» ¸ÅÇÎÇÏ±â À§ÇÑ ³»ºÎ Å¬·¡½ºµé
+    // API ì‘ë‹µì„ ì²˜ë¦¬í•˜ê¸° ìœ„í•œ ë‚´ë¶€ í´ë˜ìŠ¤ë“¤
     private static class ApiResponse {
         private Items items;
         public Items getItems() { return items; }
@@ -83,13 +83,13 @@ public class EcommerceValidationService {
     }
 
     private static class ApiItem {
-        private String prmmiMnno;         // Åë½ÅÆÇ¸Å¾÷ ½Å°í¹øÈ£
-        private String dclrDate;          // ½Å°íÀÏÀÚ
-        private String operSttusCdNm;     // ¿µ¾÷»óÅÂ
-        private String domnCn;            // µµ¸ŞÀÎ
-        private String opnServerPlaceAladr; // ¼­¹ö À§Ä¡
-        private String ntslMthdNm;        // ÆÇ¸Å ¹æ¹ı
-        private String trtmntPrdlstNm;    // Ãë±Ş Ç°¸ñ
+        private String prmmiMnno;         // í†µì‹ íŒë§¤ ì‹ ê³ ë²ˆí˜¸
+        private String dclrDate;          // ì‹ ê³ ì¼ì
+        private String operSttusCdNm;     // ìš´ì˜ìƒíƒœ
+        private String domnCn;            // ë„ë©”ì¸
+        private String opnServerPlaceAladr; // ì„œë²„ ìœ„ì¹˜
+        private String ntslMthdNm;        // íŒë§¤ ë°©ë²•
+        private String trtmntPrdlstNm;    // ì·¨ê¸‰ í’ˆëª©
 
         // Getters and Setters
         public String getPrmmiMnno() { return prmmiMnno; }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EcommerceValidationRequest {
-    private String businessNumber;  // »ç¾÷ÀÚµî·Ï¹øÈ£
-    private String brandName;      // »óÈ£¸í
+    private String businessNumber;  // ì‚¬ì—…ìë“±ë¡ë²ˆí˜¸
+    private String brandName;      // ìƒí˜¸ëª…
 } 
