@@ -48,3 +48,24 @@ resource "aws_iam_policy" "ssm_parameter_policy" {
     ]
   })
 }
+
+# EIP 연결 권한 정책
+resource "aws_iam_policy" "eip_policy" {
+  name        = "eip-policy-${var.environment}"
+  description = "EC2 인스턴스가 EIP를 연결할 수 있는 권한 부여"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeAddresses",
+          "ec2:AssociateAddress",
+          "ec2:DescribeInstances"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}

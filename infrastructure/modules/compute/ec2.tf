@@ -16,6 +16,12 @@ resource "aws_launch_template" "backend" {
 
   vpc_security_group_ids = [var.ec2_security_group_id]
 
+  # IMDS 설정 (IMDSv1과 IMDSv2 모두 허용)
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "optional"  # IMDSv1과 v2 모두 허용
+  }
+
   block_device_mappings {
     device_name = "/dev/xvda"
     ebs {
@@ -30,7 +36,8 @@ resource "aws_launch_template" "backend" {
     environment    = var.environment,
     s3_bucket_name = var.s3_bucket_name,
     jar_file_key   = var.jar_file_key,
-    java_opts      = var.java_opts
+    java_opts      = var.java_opts,
+    enable_eip     = var.enable_eip ? "true" : "false"
   }))
 
   tag_specifications {

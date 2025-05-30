@@ -5,6 +5,49 @@ echo "Environment: ${environment}" > /etc/environment
 yum update -y
 yum install -y java-21-amazon-corretto
 
+# EIP 연결 (사용 가능한 EIP가 있는 경우)
+if [ "${enable_eip}" = "true" ]; then
+  echo "[$(date)] Starting EIP association..."
+  
+  # 인스턴스 정보 가져오기
+  INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+  REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+  
+  echo "[$(date)] Instance ID: $INSTANCE_ID, Region: $REGION"
+  
+  # 사용 가능한 EIP 찾기 (연결되지 않은 EIP)
+  AVAILABLE_EIP=$(aws ec2 describe-addresses \
+    --region $REGION \
+    --query 'Addresses[0].AllocationId' \
+    --output text 2>&1)
+  
+  if [ $? -ne 0 ]; then
+    echo "[$(date)] ERROR: Failed to describe addresses - $AVAILABLE_EIP"
+  elif [ "$AVAILABLE_EIP" = "None" ] || [ -z "$AVAILABLE_EIP" ]; then
+    echo "[$(date)] ERROR: No available EIP found"
+    echo "[$(date)] DEBUG: All EIPs status:"
+    aws ec2 describe-addresses --region $REGION --output table
+  else
+    echo "[$(date)] Found available EIP: $AVAILABLE_EIP"
+    
+    # EIP 연결 시도
+    RESULT=$(aws ec2 associate-address \
+      --region $REGION \
+      --instance-id $INSTANCE_ID \
+      --allocation-id $AVAILABLE_EIP 2>&1)
+    
+    if [ $? -eq 0 ]; then
+      echo "[$(date)] SUCCESS: EIP associated successfully"
+      echo "[$(date)] Result: $RESULT"
+    else
+      echo "[$(date)] ERROR: Failed to associate EIP - $RESULT"
+      echo "[$(date)] TROUBLESHOOT: Check IAM permissions and EIP status"
+    fi
+  fi
+else
+  echo "[$(date)] EIP association disabled"
+fi
+
 # 애플리케이션 디렉토리 생성
 mkdir -p /opt/app
 

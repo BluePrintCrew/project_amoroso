@@ -111,4 +111,22 @@ variable "java_opts" {
   default     = "-Xms256m -Xmx512m"
 }
 
+variable "enable_eip" {
+  description = "Elastic IP 사용 여부 (고정 IP 필요 시 활성화)"
+  type        = bool
+  default     = false
+}
+
+variable "eip_count" {
+  description = "생성할 EIP 개수 (보통 ASG max_size와 동일)"
+  type        = number
+  default     = 1
+}
+
+variable "eip_tags" {
+  description = "EIP에 적용할 추가 태그"
+  type        = map(string)
+  default     = {}
+}
+
 

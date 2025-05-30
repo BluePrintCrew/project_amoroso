@@ -27,3 +27,13 @@ output "launch_template_id" {
   description = "시작 템플릿 ID"
   value       = aws_launch_template.backend.id
 }
+
+output "eip_addresses" {
+  description = "Elastic IP 주소 목록"
+  value       = var.enable_eip ? aws_eip.backend[*].public_ip : []
+}
+
+output "eip_allocation_ids" {
+  description = "EIP Allocation ID 목록 (user-data에서 사용)"
+  value       = var.enable_eip ? aws_eip.backend[*].allocation_id : []
+}

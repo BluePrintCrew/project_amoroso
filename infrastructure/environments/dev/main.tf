@@ -132,8 +132,12 @@ module "compute" {
 
   # 오토 스케일링 설정
   asg_min_size         = 1
-  asg_max_size         = 4
+  asg_max_size         = 1  # EIP 1개 사용을 위해 1로 제한
   asg_desired_capacity = 1
+
+  # EIP 설정
+  enable_eip = true
+  eip_count  = 1
 
   # 퍼블릭 서브넷 사용
   use_public_subnet = true
@@ -276,4 +280,9 @@ output "amplify_app_id" {
 output "amplify_default_domain" {
   description = "Amplify 앱 기본 도메인"
   value       = module.frontend.default_domain
+}
+
+output "eip_addresses" {
+  description = "할당된 Elastic IP 주소 목록"
+  value       = module.compute.eip_addresses
 }

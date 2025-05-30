@@ -38,3 +38,9 @@ resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
   role       = aws_iam_role.ec2_s3_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+# EIP 연결을 위한 정책 연결
+resource "aws_iam_role_policy_attachment" "eip_policy_attachment" {
+  role       = aws_iam_role.ec2_s3_role.name
+  policy_arn = aws_iam_policy.eip_policy.arn
+}
