@@ -139,7 +139,7 @@ function MyInfoEdit() {
       } else {
         setError(
           "사용자 정보를 가져오는데 실패했습니다. " +
-            (err.response?.data?.message || err.message)
+          (err.response?.data?.message || err.message)
         );
       }
 
@@ -198,7 +198,7 @@ function MyInfoEdit() {
 
       // 개인정보 업데이트 요청
       const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/users/me",
+        `${API_BASE_URL}/api/v1/auth/users/me`,
         updateData,
         {
           headers: {
@@ -221,7 +221,7 @@ function MyInfoEdit() {
 
       alert(
         "개인정보 업데이트에 실패했습니다: " +
-          (err.response?.data?.message || err.message || "알 수 없는 오류")
+        (err.response?.data?.message || err.message || "알 수 없는 오류")
       );
     }
   };
@@ -241,7 +241,7 @@ function MyInfoEdit() {
       }
 
       const response = await axios.delete(
-        "http://localhost:8080/api/v1/auth/users/me",
+        `${API_BASE_URL}/api/v1/auth/users/me`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -373,9 +373,8 @@ function MyInfoEdit() {
                   {/* Two squares for 남/여 */}
                   <div className="gender-squares">
                     <div
-                      className={`gender-square male-square ${
-                        userInfo.gender === "male" ? "selected" : ""
-                      }`}
+                      className={`gender-square male-square ${userInfo.gender === "male" ? "selected" : ""
+                        }`}
                       onClick={() =>
                         handleInputChange({
                           target: { name: "gender", value: "male" },
@@ -385,9 +384,8 @@ function MyInfoEdit() {
                       남
                     </div>
                     <div
-                      className={`gender-square female-square ${
-                        userInfo.gender === "female" ? "selected" : ""
-                      }`}
+                      className={`gender-square female-square ${userInfo.gender === "female" ? "selected" : ""
+                        }`}
                       onClick={() =>
                         handleInputChange({
                           target: { name: "gender", value: "female" },

@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductSection from '../ProductSection/ProductSection';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 const BestProducts = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchBestProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/products/');
+        const res = await axios.get(`${API_BASE_URL}/api/v1/products/`);
         const sorted = res.data.products
           .sort((a, b) => b.salesCount - a.salesCount)
           .slice(0, 4);

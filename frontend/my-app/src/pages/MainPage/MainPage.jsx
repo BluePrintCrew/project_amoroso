@@ -9,6 +9,8 @@ import BestProducts from '../../components/BestProducts/BestProducts';
 import ProductSection from '../../components/ProductSection/ProductSection';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 // 카테고리 맵핑 (ProductListPage에서 가져온 것)
 const categoryMap = {
   '거실': [
@@ -50,7 +52,7 @@ function MainPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/products/');
+        const res = await axios.get(`${API_BASE_URL}/api/v1/products/`);
         setProducts(res.data.products.slice(0, 8)); // 최대 8개 상품 표시
       } catch (err) {
         console.error('상품 불러오기 실패:', err);

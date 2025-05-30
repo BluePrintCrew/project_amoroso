@@ -23,6 +23,8 @@ const paymentMethods = [
   "페이코 결제",
 ];
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 const OrderForm = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -54,7 +56,7 @@ const OrderForm = () => {
 
       // 1. 주문 생성
       const orderResponse = await axios.post(
-        "http://localhost:8080/api/v1/orders",
+        `${API_BASE_URL}/api/v1/orders`,
         {
           totalPrice: 100,
           orderItems: [{ productId: 1, quantity: 1 }],
@@ -111,7 +113,7 @@ const OrderForm = () => {
                 orderId: orderId,
               });
               const verifyRes = await axios.post(
-                "http://localhost:8080/api/v1/payments/verify",
+                `${API_BASE_URL}/api/v1/payments/verify`,
                 {
                   impUid: rsp.imp_uid,
                   orderId: orderId,
@@ -414,9 +416,8 @@ const OrderForm = () => {
               {paymentMethods.map((method) => (
                 <button
                   key={method}
-                  className={`${styles.methodButton} ${
-                    selectedMethod === method ? styles.selectedMethod : ""
-                  }`}
+                  className={`${styles.methodButton} ${selectedMethod === method ? styles.selectedMethod : ""
+                    }`}
                   onClick={() => handleMethodClick(method)}
                 >
                   {method}
