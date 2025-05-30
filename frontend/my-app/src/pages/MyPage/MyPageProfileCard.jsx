@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./MyPageProfileCard.css";
 import axios from "axios";
-import { API_BASE_URL } from "./api";
 import { useNavigate } from "react-router-dom";
 
 // Import your images
@@ -10,6 +9,8 @@ import couponIcon from "../../assets/coupon_img.png";
 import reviewIcon from "../../assets/review_img.png";
 import zzimIcon from "../../assets/zzim_img.png";
 import editIcon from "../../assets/svg/edit.svg"; // 연필 아이콘 추가 필요
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function MyPageProfileCard() {
   const navigate = useNavigate();

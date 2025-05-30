@@ -1,6 +1,6 @@
+import React from 'react';
 import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
-import React from 'react';
 import styles from './PageLayout.module.css';
 
 const PageLayout = ({ children }) => {

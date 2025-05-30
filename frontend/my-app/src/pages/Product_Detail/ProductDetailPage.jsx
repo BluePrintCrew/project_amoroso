@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { API_BASE_URL } from "../MyPage/api";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import CartPopup from "../Product_Detail/CartPopup";
 import PageLayout from "../../components/PageLayout/PageLayout";
@@ -12,6 +11,8 @@ import getCoupon from "../../assets/get_coupon.png";
 import likeButton from "../../assets/like.png";
 import shareButton from "../../assets/share.png";
 import styles from "./ProductDetailPage.module.css";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const ProductDetailPage = () => {
   const { id } = useParams(); // URL 파라미터로부터 상품 ID 가져옴

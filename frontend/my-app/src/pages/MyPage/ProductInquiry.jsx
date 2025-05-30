@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./ProductInquiry.css";
 import kakaoIcon from "../../assets/kakao_icon.png";
 import ProductQnADetail from "../../components/ProductQnA/ProductQnADetail";
-import { API_BASE_URL } from "./api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function ProductInquiry() {
   const [productInquiries, setProductInquiries] = useState([]);

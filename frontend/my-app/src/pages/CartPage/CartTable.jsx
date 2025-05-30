@@ -2,8 +2,9 @@ import "./CartTable.css";
 
 import React, { useEffect, useState } from "react";
 
-import { API_BASE_URL } from "../MyPage/api";
 import axios from "axios";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function CartTable({ cartItems, setCartItems, onSelectionChange }) {
   // 선택된 상품 ID들을 관리 (체크박스용)

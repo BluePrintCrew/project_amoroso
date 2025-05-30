@@ -2,7 +2,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import React, { useEffect, useState } from "react";
 
-import { API_BASE_URL } from "../MyPage/api";
 import CartSummary from "../../components/CartSummary/CartSummary";
 import DatePicker from "react-datepicker";
 import { ko, tr } from "date-fns/locale";
@@ -12,6 +11,8 @@ import styles from "./OrderForm.module.css";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OrderTable from "./OrderTable";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 // const paymentMethods = [
 //   '퀵 계좌이체',

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProductCard from '../../ProductCard/ProductCard';
 import styles from './InfiniteScrollProducts.module.css';
-import { API_BASE_URL } from '../../../pages/MyPage/api';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const InfiniteScrollProducts = ({ categoryCode }) => {
   const [products, setProducts] = useState([]);

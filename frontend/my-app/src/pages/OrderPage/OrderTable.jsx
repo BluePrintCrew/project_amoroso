@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./OrderForm.module.css";
-import { API_BASE_URL } from "../MyPage/api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const OrderTable = ({ products }) => {
   return (

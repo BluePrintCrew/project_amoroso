@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../MyPage/api'; // 경로 수정
 import styles from './ReviewSection.module.css';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const ReviewSection = ({ productId }) => {
   const [reviews, setReviews] = useState([]);

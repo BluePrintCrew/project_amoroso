@@ -3,8 +3,9 @@ import searchIcon from '../../../assets/search.png';
 import styles from './ProductTable.module.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../../../pages/MyPage/api';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const ProductTable = () => {
   const [products, setProducts] = useState([]);

@@ -2,8 +2,9 @@ import PageLayout from "../../components/PageLayout/PageLayout";
 import React, { useState } from "react";
 import styles from "./LoginForm.module.css";
 import axios from "axios";
-import { API_BASE_URL } from "../MyPage/api";
 import { useNavigate } from "react-router-dom";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const SellerLoginForm = () => {
   const [email, setEmail] = useState("");

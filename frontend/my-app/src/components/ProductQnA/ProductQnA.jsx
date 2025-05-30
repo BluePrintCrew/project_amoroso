@@ -5,7 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import lockIcon from '../../assets/lock-icon.svg';
 import ProductQnAWrite from './ProductQnAWrite';
 import ProductQnADetail from './ProductQnADetail';
-import { API_BASE_URL } from '../../pages/MyPage/api';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 const ProductQnA = () => {
   const [qnaList, setQnaList] = useState([]);
   const [loading, setLoading] = useState(true);

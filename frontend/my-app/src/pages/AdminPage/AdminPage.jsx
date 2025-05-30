@@ -5,7 +5,8 @@ import OrderTable from "../../components/Admin/OrderTable/OrderTable";
 import TopProducts from "../../components/Admin/TopProducts/TopProducts";
 import styles from "./AdminPage.module.css";
 import axios from "axios";
-import { API_BASE_URL } from "../MyPage/api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const accessToken = localStorage.getItem("access_token");
 

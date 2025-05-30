@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styles from '../../components/Admin/ProductTable/ProductTable.module.css';
 import OrderDetailModal from '../../components/Admin/OrderTable/OrderDetailModal';
 import axios from 'axios';
-import { API_BASE_URL } from '../../pages/MyPage/api';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const PAGE_SIZE = 10;
 const accessToken = localStorage.getItem('access_token');

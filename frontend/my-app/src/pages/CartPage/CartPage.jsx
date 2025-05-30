@@ -2,7 +2,6 @@ import './CartPage.css';
 
 import React, { useEffect, useState } from 'react';
 
-import { API_BASE_URL } from '../MyPage/api';
 import CartFooter from './CartFooter';
 import CartSummary from '../../components/CartSummary/CartSummary';
 import CartTable from './CartTable';
@@ -10,6 +9,8 @@ import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function CartPage() {
   const navigate = useNavigate();

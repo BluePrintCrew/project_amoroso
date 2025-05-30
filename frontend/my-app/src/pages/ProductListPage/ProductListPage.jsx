@@ -2,11 +2,12 @@ import './ProductListPage.css';
 
 import React, { useEffect, useState } from 'react';
 
-import { API_BASE_URL } from '../MyPage/api';
 import PageLayout from '../../components/PageLayout/PageLayout';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import homeicon from '../../assets/nav_home.png';
 import { useSearchParams } from 'react-router-dom';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 // Replace hardcoded API_BASE_URL with imported constant
 const API_ENDPOINT = `${API_BASE_URL}/api/v1`;

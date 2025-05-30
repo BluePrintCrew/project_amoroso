@@ -3,7 +3,8 @@ import magnifierIcon from "../../assets/magnifier.png";
 import "./MyInfoEdit.css";
 import PageLayout from "../../components/PageLayout/PageLayout";
 import axios from "axios";
-import { API_BASE_URL } from "./api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function MyInfoEdit() {
   const [isLoading, setIsLoading] = useState(true);

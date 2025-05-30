@@ -11,7 +11,8 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import styles from './AdminChart.module.css';
-import { API_BASE_URL } from "../../../pages/MyPage/api";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const AdminChartTest = () => {
     const [data, setData] = useState([]);
