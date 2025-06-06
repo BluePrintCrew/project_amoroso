@@ -198,7 +198,7 @@ function MyInfoEdit() {
       console.log("전송 데이터:", JSON.stringify(updateData, null, 2));
 
       // 개인정보 업데이트 요청
-      const response = await axios.post(
+      const response = await axios.put(
         `${API_BASE_URL}/api/v1/auth/users/me`,
         updateData,
         {
