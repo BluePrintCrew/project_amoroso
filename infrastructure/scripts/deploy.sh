@@ -12,7 +12,8 @@ fi
 
 ENV=$1
 JAR_PATH=$2
-ENV_FILE=${3:-""}    # 환경 변수 파일 경로 (선택 사항)
+ENV_FILE=${3:-""}
+PROFILE="admin-chaebs"    # 환경 변수 파일 경로 (선택 사항)
 
 # JAR 파일 존재 여부 확인
 if [ ! -f "$JAR_PATH" ]; then
@@ -51,7 +52,7 @@ JAR_FILENAME="application.jar"
 
 # S3에 JAR 파일 업로드
 echo "S3에 JAR 파일 업로드 중..."
-aws s3 cp "$JAR_PATH" "s3://$BUCKET_NAME/$JAR_FILENAME"
+aws s3 cp "$JAR_PATH" "s3://$BUCKET_NAME/$JAR_FILENAME" --profile "$PROFILE"
 
 if [ $? -ne 0 ]; then
     echo "오류: JAR 파일 업로드 실패"
@@ -87,7 +88,7 @@ cd - > /dev/null
 
 # ASG에서 인스턴스 ID 가져오기
 echo "Auto Scaling Group($ASG_NAME)에서 인스턴스 ID 가져오는 중..."
-INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$ASG_NAME" --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text)
+INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names "$ASG_NAME" --query "AutoScalingGroups[0].Instances[*].InstanceId" --output text --profile "$PROFILE")
 
 if [ -z "$INSTANCE_IDS" ]; then
     echo "경고: 실행 중인 EC2 인스턴스를 찾을 수 없습니다."
@@ -117,7 +118,8 @@ for INSTANCE_ID in $INSTANCE_IDS; do
             \"sudo systemctl restart load-env-vars.service\", \
             \"sudo systemctl restart springboot.service\" \
         ]" \
-        --comment "SpringBoot 애플리케이션 재배포" > /dev/null
+        --comment "SpringBoot 애플리케이션 재배포" \
+        --profile "$PROFILE" > /dev/null
 
     if [ $? -eq 0 ]; then
         echo "✅ 인스턴스 ${INSTANCE_ID} 업데이트 완료!"
