@@ -59,6 +59,3 @@ logs/
 *.swp
 .DS_Store
 Thumbs.db
-
-# Claude Code 파일
-CLAUDE.md
