@@ -9,6 +9,7 @@ import ReviewSection from "./ReviewSection";
 import couponPack from "../../assets/coupon_pack.png";
 import getCoupon from "../../assets/get_coupon.png";
 import likeButton from "../../assets/like.png";
+import redLikeButton from "../../assets/like_red.png";
 import shareButton from "../../assets/share.png";
 import styles from "./ProductDetailPage.module.css";
 
@@ -22,6 +23,7 @@ const ProductDetailPage = () => {
   const thumbnailImagesRef = useRef(null);
   const tabRef = useRef(null);
 
+  const [isLiked, setIsLiked] = useState(false);
   const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false); // 썸네일 부분 화살표 렌더링 여부
@@ -526,8 +528,14 @@ const ProductDetailPage = () => {
                   {product.manufacturer}
                 </a>{" "}
                 <div className={styles.breadcrumbActions}>
-                  <button className={styles.iconButton}>
-                    <img src={likeButton} alt="좋아요 버튼" />
+                  <button
+                    className={styles.iconButton}
+                    onClick={() => setIsLiked(!isLiked)}
+                  >
+                    <img
+                      src={isLiked ? redLikeButton : likeButton}
+                      alt="좋아요 버튼"
+                    />
                   </button>
                   <button className={styles.iconButton}>
                     <img src={shareButton} alt="공유 버튼" />
