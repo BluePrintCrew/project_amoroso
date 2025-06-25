@@ -157,4 +157,16 @@ public class SellerController {
         sellerService.markOrderAsDelivered(orderId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/products")
+    @Operation(summary = "판매자가 등록한 제품 목록 조회",
+            description = "현재 로그인한 판매자가 등록한 제품 목록을 페이징하여 조회합니다.")
+    public Page<SellerDTO.SellerProductDto> getSellerProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String order
+    ) {
+        return sellerService.getSellerProducts(page, size, sortBy, order);
+    }
 }

@@ -11,6 +11,21 @@ import java.util.List;
 
 public class SellerDTO {
 
+    @Data
+    @AllArgsConstructor
+    public static class SellerProductDto {
+        private Long productId;
+        private String productName;
+        private String productCode;
+        private String categoryName;
+        private Integer marketPrice;
+        private Integer discountPrice;
+        private Integer stock;
+        private Integer salesCount;
+        private Boolean outOfStock;
+        private String mainImageUri;
+        private LocalDateTime createdAt;
+    }
     @Getter
     @AllArgsConstructor
     public static class SellerStatsResponse {

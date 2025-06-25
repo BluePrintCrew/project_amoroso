@@ -393,4 +393,59 @@ public class SellerService {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
     }
+
+    /**
+     * 판매자가 등록한 제품 목록 조회 (페이징 지원)
+     */
+    public Page<SellerDTO.SellerProductDto> getSellerProducts(int page, int size, String sortBy, String order) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isSeller()) {
+            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
+        }
+
+        Seller seller = sellerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
+
+        // 정렬 방향 설정
+        Sort.Direction direction = "asc".equalsIgnoreCase(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        // 정렬 기준 설정 (기본값: createdAt)
+        String sortField = "createdAt";
+        if ("productName".equals(sortBy)) {
+            sortField = "productName";
+        } else if ("marketPrice".equals(sortBy)) {
+            sortField = "marketPrice";
+        } else if ("stock".equals(sortBy)) {
+            sortField = "stock";
+        } else if ("salesCount".equals(sortBy)) {
+            sortField = "salesCount";
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        // 판매자의 제품 조회 (페이징 지원)
+        Page<Product> productPage = productRepository.findBySeller(seller, pageable);
+
+        // DTO로 변환
+        List<SellerDTO.SellerProductDto> dtoList = productPage.getContent().stream()
+                .map(product -> new SellerDTO.SellerProductDto(
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getProductCode(),
+                        product.getCategory().getCategoryName(),
+                        product.getMarketPrice(),
+                        product.getDiscountPrice(),
+                        product.getStock(),
+                        product.getSalesCount(),
+                        product.getOutOfStock(),
+                        product.getMainImageUri(),
+                        product.getCreatedAt()
+                ))
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, productPage.getTotalElements());
+    }
 }

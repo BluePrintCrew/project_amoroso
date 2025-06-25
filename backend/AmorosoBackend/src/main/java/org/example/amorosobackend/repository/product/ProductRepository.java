@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-
+    Page<Product> findBySeller(Seller seller, Pageable pageable);
     // 추후 성능 최적화 필요 개발시 만 객체 위주로 조회 2025-01-23
     Page<Product> findAllByCategory_CategoryId(Long categoryId, Pageable pageable);
     Optional<Product> findByProductId(Long Id);
