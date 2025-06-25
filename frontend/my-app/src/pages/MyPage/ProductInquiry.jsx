@@ -204,6 +204,7 @@ const formattedProductInquiries = productResponse.data.content
       </div>
       
       {/* Note + 카톡상담하기 button */}
+      {/*
       <div className="inquiry-footer">
         <p className="inquiry-note">
           • 주문, AS 및 반품관련 문의는 간편하게 카톡상담을 이용해 주세요.
@@ -212,7 +213,7 @@ const formattedProductInquiries = productResponse.data.content
           <span className="kakao-icon">💬</span> 카톡상담하기
         </button>
       </div>
-      
+      */}
       {/* 상세 모달창 추가 */}
       {showDetailModal && selectedInquiry && (
         <ProductQnADetail 

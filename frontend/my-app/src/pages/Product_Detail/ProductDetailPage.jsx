@@ -9,10 +9,12 @@ import ReviewSection from "./ReviewSection";
 import couponPack from "../../assets/coupon_pack.png";
 import getCoupon from "../../assets/get_coupon.png";
 import likeButton from "../../assets/like.png";
+import redLikeButton from "../../assets/like_red.png";
 import shareButton from "../../assets/share.png";
 import styles from "./ProductDetailPage.module.css";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 const ProductDetailPage = () => {
   const { id } = useParams(); // URL 파라미터로부터 상품 ID 가져옴
@@ -21,6 +23,7 @@ const ProductDetailPage = () => {
   const thumbnailImagesRef = useRef(null);
   const tabRef = useRef(null);
 
+  const [isLiked, setIsLiked] = useState(false);
   const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false); // 썸네일 부분 화살표 렌더링 여부
@@ -77,8 +80,9 @@ const ProductDetailPage = () => {
 
       setShowLeftArrow(thumbnailImagesRef.current.scrollLeft > 0);
       setShowRightArrow(
-        thumbnailImagesRef.current.scrollWidth > 
-        thumbnailImagesRef.current.clientWidth + thumbnailImagesRef.current.scrollLeft
+        thumbnailImagesRef.current.scrollWidth >
+          thumbnailImagesRef.current.clientWidth +
+            thumbnailImagesRef.current.scrollLeft
       );
     };
 
@@ -479,8 +483,9 @@ const ProductDetailPage = () => {
 
                     setShowLeftArrow(thumbnailImagesRef.current.scrollLeft > 0);
                     setShowRightArrow(
-                      thumbnailImagesRef.current.scrollWidth > 
-                      thumbnailImagesRef.current.clientWidth + thumbnailImagesRef.current.scrollLeft
+                      thumbnailImagesRef.current.scrollWidth >
+                        thumbnailImagesRef.current.clientWidth +
+                          thumbnailImagesRef.current.scrollLeft
                     );
                   }}
                 >
@@ -523,8 +528,14 @@ const ProductDetailPage = () => {
                   {product.manufacturer}
                 </a>{" "}
                 <div className={styles.breadcrumbActions}>
-                  <button className={styles.iconButton}>
-                    <img src={likeButton} alt="좋아요 버튼" />
+                  <button
+                    className={styles.iconButton}
+                    onClick={() => setIsLiked(!isLiked)}
+                  >
+                    <img
+                      src={isLiked ? redLikeButton : likeButton}
+                      alt="좋아요 버튼"
+                    />
                   </button>
                   <button className={styles.iconButton}>
                     <img src={shareButton} alt="공유 버튼" />
@@ -624,48 +635,61 @@ const ProductDetailPage = () => {
             <div className={styles.tabContent}>
               {activeTab === "info" && (
                 <div className={styles.infoTab}>
-                  {product.detailDescriptionImageURL &&
-                  product.detailDescriptionImageURL.length > 0 ? (
-                    product.detailDescriptionImageURL.map((img, index) => (
-                      <img
-                        key={index}
-                        src={`${API_BASE_URL}/api/v1/images/${img.imageURL
-                          .split("/")
-                          .pop()}`}
-                        alt={`상세 이미지 ${index}`}
-                        className={styles.detailImage}
-                      />
-                    ))
-                  ) : (
-                    <img
-                      src="https://placehold.co/800x500"
-                      alt="상품 상세 이미지 없음"
-                      className={styles.detailImage}
-                    />
-                  )}
-
-                  <div className={styles.moreInfo}>
-                    {showMore && (
-                      <>
+                  <div
+                    className={`${styles.detailImageWrapper} ${
+                      showMore ? styles.expanded : ""
+                    }`}
+                  >
+                    {product.detailDescriptionImageURL &&
+                    product.detailDescriptionImageURL.length > 0 ? (
+                      product.detailDescriptionImageURL.map((img, index) => (
                         <img
-                          src="https://placehold.co/800x300"
-                          alt="상품 공지사항"
-                          className={styles.noticeImage}
-                        />
-                        <img
-                          src="https://placehold.co/800x500"
-                          alt="상품 설명"
+                          key={index}
+                          src={`${API_BASE_URL}/api/v1/images/${img.imageURL
+                            .split("/")
+                            .pop()}`}
+                          alt={`상세 이미지 ${index}`}
                           className={styles.detailImage}
                         />
+                      ))
+                    ) : (
+                      <img
+                        src="https://placehold.co/800x500"
+                        alt="상품 상세 이미지 없음"
+                        className={styles.detailImage}
+                      />
+                    )}
+
+                    {!showMore && (
+                      <>
+                        <div className={styles.blurOverlay} />
+                        <div className={styles.toggleButtonContainer}>
+                          <button
+                            onClick={() => setShowMore(true)}
+                            className={styles.toggleButton}
+                          >
+                            상세정보 펼치기 ▼
+                          </button>
+                        </div>
                       </>
                     )}
-                    <button
-                      onClick={() => setShowMore(!showMore)}
-                      className={styles.toggleButton}
-                    >
-                      {showMore ? "상세정보 접기 ▲" : "상세정보 펼치기 ▼"}
-                    </button>
                   </div>
+
+                  {showMore && (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        marginTop: "20px",
+                      }}
+                    >
+                      <button
+                        onClick={() => setShowMore(false)}
+                        className={styles.toggleButton}
+                      >
+                        상세정보 접기 ▲
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ErrorPopup from "../../components/ErrorPopup/ErrorPopup";
 import "./MyPageReview.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -9,6 +10,8 @@ function MyPageReview() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +21,8 @@ function MyPageReview() {
         
         if (!token) {
           setError("로그인이 필요합니다");
+          setErrorMsg("로그인이 필요합니다. 로그인 후 다시 시도해 주세요.");
+          setShowError(true);
           setLoading(false);
           return;
         }
@@ -29,13 +34,10 @@ function MyPageReview() {
           }
         });
         
-        // 로그를 통해 응답 확인
-        console.log("사용자 정보 응답:", userResponse.data);
-        
         const userId = userResponse.data.id || userResponse.data.userId;
         
         if (!userId) {
-          setError("사용자 ID를 찾을 수 없습니다");
+          setReviews([]); // 빈 상태로 처리
           setLoading(false);
           return;
         }
@@ -56,16 +58,12 @@ function MyPageReview() {
           }
         });
 
-        console.log("리뷰 작성 가능 상품 응답:", reviewableResponse.data);
-
         // 이미 작성한 리뷰 목록 가져오기
         const writtenReviewsResponse = await axios.get(`${API_BASE_URL}/api/v1/reviews/my`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-
-        console.log("작성한 리뷰 응답:", writtenReviewsResponse.data);
 
         // 리뷰 가능한 상품 목록과 이미 작성한 리뷰를 결합하여 데이터 구성
         let reviewableProducts = [];
@@ -89,6 +87,8 @@ function MyPageReview() {
       } catch (error) {
         console.error("리뷰 데이터 로딩 오류:", error);
         setError("리뷰 목록을 불러오는데 실패했습니다");
+        setErrorMsg(error.response?.data?.message || "리뷰 목록을 불러오는데 실패했습니다");
+        setShowError(true);
       } finally {
         setLoading(false);
       }
@@ -100,7 +100,6 @@ function MyPageReview() {
   // 날짜 포맷팅 함수
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    
     try {
       const date = new Date(dateString);
       return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -120,6 +119,16 @@ function MyPageReview() {
     navigate(`/my-reviews/${productId}`);
   };
 
+  // 팝업 닫기 시 새로고침
+  const handleClosePopup = () => {
+    setShowError(false);
+    if (errorMsg.includes("로그인")) {
+      navigate('/login');
+    } else {
+      window.location.reload();
+    }
+  };
+
   if (loading) {
     return (
       <div className="my-page-review-container loading">
@@ -131,10 +140,13 @@ function MyPageReview() {
 
   if (error) {
     return (
-      <div className="my-page-review-container error">
-        <h2 className="review-title">작성 가능한 후기 &gt;</h2>
-        <p>{error}</p>
-      </div>
+      <>
+        <ErrorPopup
+          message={errorMsg}
+          onClose={handleClosePopup}
+        />
+        <div className="my-page-review-container empty" style={{ minHeight: 200 }} />
+      </>
     );
   }
 
@@ -142,7 +154,26 @@ function MyPageReview() {
     return (
       <div className="my-page-review-container empty">
         <h2 className="review-title">작성 가능한 후기 &gt;</h2>
-        <p className="empty-message">작성 가능한 후기가 없습니다.</p>
+        <div className="empty-message" style={{textAlign:'center'}}>
+          <div style={{ fontSize: 48, marginBottom: 12 }}>📝</div>
+          <div>작성 가능한 후기가 없습니다.</div>
+          <button
+            className="go-products-btn"
+            onClick={() => navigate('/products')}
+            style={{
+              marginTop: 24,
+              padding: '10px 24px',
+              borderRadius: 8,
+              border: 'none',
+              background: '#766e68',
+              color: '#fff',
+              fontWeight: 500,
+              cursor: 'pointer'
+            }}
+          >
+            상품 보러가기
+          </button>
+        </div>
       </div>
     );
   }
