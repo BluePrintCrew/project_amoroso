@@ -28,7 +28,7 @@ function App() {
   return (
     <Router>
       <div>
-        {/* ErrorPopup 테스트용 임시 버튼 및 팝업 */}
+        {/* ErrorPopup 테스트용 임시 버튼 및 팝업 *
         <button style={{position:'fixed',top:20,right:20,zIndex:10000}} onClick={() => setShowError(true)}>에러팝업 테스트</button>
         {showError && (
           <ErrorPopup
@@ -36,6 +36,7 @@ function App() {
             onClose={() => setShowError(false)}
           />
         )}
+        */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
