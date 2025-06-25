@@ -1,4 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import ErrorPopup from "./components/ErrorPopup/ErrorPopup";
 
 import Admin from "./pages/AdminPage/AdminPage";
 import AdminTest from "./pages/AdminPage/AdminPageTest";
@@ -15,7 +17,6 @@ import Order from "./pages/OrderPage/OrderForm";
 import OrderTest from "./pages/OrderPage/OrderFormTest";
 import Products from "./pages/ProductListPage/ProductListPage";
 import ProductsPage from "./pages/AdminPage/ProductsPage/ProductsPage";
-import React from "react";
 import SignUp from "./pages/SignUp/SignUpPage";
 import TestJWTProviderPage from "./pages/TestPage/TestJWTProviderPage";
 import OrderListPage from "./pages/AdminPage/OrderListPage";
@@ -23,9 +24,18 @@ import SellerLoginForm from "./pages/Login/SellerLoginForm";
 import SellerSignUpPage from "./pages/SignUp/SellerSignUpPage";
 
 function App() {
+  const [showError, setShowError] = useState(false);
   return (
     <Router>
       <div>
+        {/* ErrorPopup 테스트용 임시 버튼 및 팝업 */}
+        <button style={{position:'fixed',top:20,right:20,zIndex:10000}} onClick={() => setShowError(true)}>에러팝업 테스트</button>
+        {showError && (
+          <ErrorPopup
+            message="백엔드에서 내려온 에러 메시지 예시입니다.\n이곳에 실제 에러 메시지가 표시됩니다."
+            onClose={() => setShowError(false)}
+          />
+        )}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

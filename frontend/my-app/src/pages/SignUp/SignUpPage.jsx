@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./SignUpPage.css";
 import PageLayout from "../../components/PageLayout/PageLayout";
+import homeIcon from '../../assets/nav_home.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -12,6 +13,8 @@ const SignUpPage = () => {
 
   // 상태 변수 선언
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [zipcode, setZipcode] = useState("");
@@ -60,9 +63,11 @@ const SignUpPage = () => {
       // 토큰으로 사용자 정보 확인
       fetchUserInfo(token);
     } else {
-      // 개발 중인 경우 테스트 모드로 진행 (추후 배포 시 아래 주석 해제)
-      navigate("/login", { replace: true });
-      console.log("개발 테스트 모드로 진행");
+      // 토큰이 없는 경우 일반 회원가입 모드로 진행
+      setIsNewUser(true);
+      setPageTitle("회원가입");
+      setLoading(false);
+      console.log("일반 회원가입 모드로 진행");
     }
   }, [location, navigate]);
 
@@ -232,57 +237,97 @@ const SignUpPage = () => {
       return;
     }
 
+    // 일반 회원가입인 경우 비밀번호 확인
+    if (!socialProvider) {
+      if (password !== passwordConfirm) {
+        setError("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+      if (password.length < 6) {
+        setError("비밀번호는 6자 이상이어야 합니다.");
+        return;
+      }
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      // 사용자 프로필 업데이트 데이터 - 백엔드 UserUpdateRequest 형식에 맞춤
-      const updateData = {
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        nickname: name,
-        postalCode: zipcode,
-        address: address,
-        detailAddress: detailAddress,
-        emailConsent: true,
-        smsConsent: true,
-        dmConsent: true,
-        locationConsent: false,
-        // 중요: elevatorType 추가
-        elevatorType: elevatorType,
-      };
+      if (socialProvider) {
+        // 소셜 로그인 후 추가 정보 입력
+        const updateData = {
+          name: name,
+          email: email,
+          phoneNumber: phoneNumber,
+          nickname: name,
+          postalCode: zipcode,
+          address: address,
+          detailAddress: detailAddress,
+          emailConsent: emailConsent,
+          smsConsent: smsConsent,
+          dmConsent: dmConsent,
+          locationConsent: false,
+          elevatorType: elevatorType,
+        };
 
-      console.log("전송할 데이터:", updateData);
+        console.log("소셜 로그인 추가 정보:", updateData);
 
-      // API 호출 시도
-      const updateResponse = await axios.put(
-        `${API_BASE_URL}/api/v1/auth/users/me`,
-        updateData,
-        {
-          headers: {
-            Authorization: `Bearer ${socialToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        const updateResponse = await axios.put(
+          `${API_BASE_URL}/api/v1/auth/users/me`,
+          updateData,
+          {
+            headers: {
+              Authorization: `Bearer ${socialToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      console.log("프로필 업데이트 성공:", updateResponse.data);
+        console.log("프로필 업데이트 성공:", updateResponse.data);
+        alert("회원가입이 완료되었습니다.");
+        navigate("/");
+      } else {
+        // 일반 회원가입
+        const signupData = {
+          email: email,
+          password: password,
+          name: name,
+          phoneNumber: phoneNumber,
+          postalCode: zipcode,
+          address: address,
+          detailAddress: detailAddress,
+          emailConsent: emailConsent,
+          smsConsent: smsConsent,
+          dmConsent: dmConsent,
+          locationConsent: false,
+          elevatorType: elevatorType,
+        };
 
-      // 가입/수정 성공 메시지와 함께 홈 페이지로 리다이렉트
-      alert(
-        isNewUser ? "회원가입이 완료되었습니다." : "회원정보가 수정되었습니다."
-      );
-      navigate("/");
+        console.log("일반 회원가입 데이터:", signupData);
+
+        const signupResponse = await axios.post(
+          `${API_BASE_URL}/api/v1/auth/register`,
+          signupData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("회원가입 성공:", signupResponse.data);
+        alert("회원가입이 완료되었습니다. 로그인해주세요.");
+        navigate("/login");
+      }
     } catch (err) {
-      // 자세한 에러 로깅
-      console.error(
-        "에러 상세 정보:",
-        err.response?.data || "응답 데이터 없음"
-      );
+      console.error("에러 상세 정보:", err.response?.data || "응답 데이터 없음");
       console.error("에러 상태 코드:", err.response?.status);
 
-      setError("정보 저장에 실패했습니다. 입력 정보를 확인해주세요.");
+      if (err.response?.status === 409) {
+        setError("이미 가입된 이메일입니다.");
+      } else {
+        setError("회원가입에 실패했습니다. 입력 정보를 확인해주세요.");
+      }
     } finally {
       setLoading(false);
     }
@@ -305,16 +350,11 @@ const SignUpPage = () => {
       <PageLayout>
         {/* 네비게이션 */}
         <div className="navigation-container">
-          <div className="navigation-item">
-            <img src="/path/to/home-icon.png" alt="홈 아이콘" />홈
+          <div className="navigation-item" style={{cursor: 'pointer'}} onClick={() => navigate('/')}> 
+            <img src={homeIcon} alt="홈 아이콘" />홈
           </div>
           <span className="navigation-separator">/</span>
           <div className="navigation-item navigation-active">{pageTitle}</div>
-        </div>
-
-        {/* 개발 모드 알림 */}
-        <div className="dev-mode-banner">
-          <p>개발 모드: API 연동 전 프론트엔드 기능 테스트 중입니다.</p>
         </div>
 
         {/* 회원가입/정보수정 메인 컨테이너 */}
@@ -327,43 +367,70 @@ const SignUpPage = () => {
           </p>
           {error && <div className="error-message">{error}</div>}
 
-          {/* 소셜 로그인 정보 표시 */}
-          <div className="social-login-info">
-            <div className="social-icon">
-              {socialProvider === "kakao" && (
-                <img src="/path/to/kakao-icon.png" alt="카카오 로그인" />
-              )}
-              {socialProvider === "naver" && (
-                <img src="/path/to/naver-icon.png" alt="네이버 로그인" />
-              )}
-              {socialProvider === "google" && (
-                <img src="/path/to/google-icon.png" alt="구글 로그인" />
-              )}
-              {!socialProvider && (
-                <span className="dev-badge">개발 테스트</span>
-              )}
+          {/* 소셜 로그인 정보 표시 (소셜 로그인인 경우에만) */}
+          {socialProvider && (
+            <div className="social-login-info">
+              <div className="social-icon">
+                {socialProvider === "kakao" && (
+                  <img src="/path/to/kakao-icon.png" alt="카카오 로그인" />
+                )}
+                {socialProvider === "naver" && (
+                  <img src="/path/to/naver-icon.png" alt="네이버 로그인" />
+                )}
+                {socialProvider === "google" && (
+                  <img src="/path/to/google-icon.png" alt="구글 로그인" />
+                )}
+              </div>
+              <div className="social-text">
+                {socialProvider === "kakao" && "카카오 계정으로 로그인"}
+                {socialProvider === "naver" && "네이버 계정으로 로그인"}
+                {socialProvider === "google" && "구글 계정으로 로그인"}
+              </div>
             </div>
-            <div className="social-text">
-              {socialProvider === "kakao" && "카카오 계정으로 로그인"}
-              {socialProvider === "naver" && "네이버 계정으로 로그인"}
-              {socialProvider === "google" && "구글 계정으로 로그인"}
-              {!socialProvider && "소셜 로그인 계정으로 진행"}
-            </div>
-          </div>
+          )}
 
           <form onSubmit={handleSubmit}>
-            {/* 이메일 (소셜 로그인에서 가져온 값) */}
+            {/* 이메일 입력 (소셜 로그인인 경우 비활성화, 일반 회원가입인 경우 활성화) */}
             <div className="input-group">
               <label htmlFor="email">이메일</label>
               <input
                 type="email"
                 id="email"
+                placeholder={socialProvider ? "" : "이메일을 입력해주세요"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={true} // 소셜 로그인에서 받아온 이메일은 수정 불가
+                disabled={!!socialProvider} // 소셜 로그인에서 받아온 이메일은 수정 불가
                 required
               />
             </div>
+
+            {/* 비밀번호 입력 (일반 회원가입인 경우에만 표시) */}
+            {!socialProvider && (
+              <>
+                <div className="input-group">
+                  <label htmlFor="password">비밀번호</label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="비밀번호를 입력해주세요"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="passwordConfirm">비밀번호 확인</label>
+                  <input
+                    type="password"
+                    id="passwordConfirm"
+                    placeholder="비밀번호를 다시 입력해주세요"
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    required
+                  />
+                </div>
+              </>
+            )}
 
             {/* 이름 입력 */}
             <div className="input-group">
