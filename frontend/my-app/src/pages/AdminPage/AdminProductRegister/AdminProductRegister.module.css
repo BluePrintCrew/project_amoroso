@@ -1,11 +1,6 @@
 /* 전체 컨테이너 */
 .adminProductRegister {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-  box-sizing: border-box;
-  font-family: "Pretendard", sans-serif; /* Pretendard 폰트 */
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 상단 바 */
@@ -14,6 +9,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  margin-top: 40px;
 }
 
 .pageTitle {

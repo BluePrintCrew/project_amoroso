@@ -168,31 +168,31 @@ function OrderManagement() {
       {/* Main row with each status in a separate item */}
       <div className="order-steps">
         {/* 1) 입금확인중 */}
-        <div className="status-item" onClick={() => window.location.href = '/orders?status=deposit'}>
+        <div className="status-item">
           <div className="status-num">{statusData.depositConfirm}</div>
           <div className="status-label">입금 확인중</div>
         </div>
         <span className="divider">&gt;</span>
         {/* 2) 결제완료 */}
-        <div className="status-item" onClick={() => window.location.href = '/orders?status=payment'}>
+        <div className="status-item">
           <div className="status-num">{statusData.paymentComplete}</div>
           <div className="status-label">결제완료</div>
         </div>
         <span className="divider">&gt;</span>
         {/* 3) 배송준비중 */}
-        <div className="status-item" onClick={() => window.location.href = '/orders?status=prepare'}>
+        <div className="status-item">
           <div className="status-num">{statusData.prepareShipping}</div>
           <div className="status-label">배송준비중</div>
         </div>
         <span className="divider">&gt;</span>
         {/* 4) 배송중 */}
-        <div className="status-item" onClick={() => window.location.href = '/orders?status=shipping'}>
+        <div className="status-item">
           <div className="status-num">{statusData.shipping}</div>
           <div className="status-label">배송중</div>
         </div>
         <span className="divider">&gt;</span>
         {/* 5) 배송완료 */}
-        <div className="status-item" onClick={() => window.location.href = '/orders?status=complete'}>
+        <div className="status-item">
           <div className="status-num">{statusData.shippingComplete}</div>
           <div className="status-label">배송완료</div>
         </div>

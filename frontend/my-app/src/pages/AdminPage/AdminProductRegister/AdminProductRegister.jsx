@@ -160,11 +160,6 @@ function AdminProductRegister() {
     fetchProduct();
   }, [isEdit, productId, navigate]);
 
-  // 임시저장
-  const handleTempSave = () => {
-    alert("임시 저장되었습니다!");
-  };
-
   const getToken = () => localStorage.getItem("access_token");
 
   // Payload 변환
@@ -414,10 +409,11 @@ function AdminProductRegister() {
   };
 
   return (
-    <div className={styles.adminProductRegister}>
+    <div className={"mainContent"}>
       <div className={styles.topBar}>
         <h2 className={styles.pageTitle}>{isEdit ? '상품 수정' : '상품 입력'}</h2>
         <div className={styles.topBarButtons}>
+          {/*
           <button
             type="button"
             className={styles.tempButton}
@@ -425,6 +421,7 @@ function AdminProductRegister() {
           >
             임시저장
           </button>
+          */}
           <button
             form="productForm"
             type="submit"
