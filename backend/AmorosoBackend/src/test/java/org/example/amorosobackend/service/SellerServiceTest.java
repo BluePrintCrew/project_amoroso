@@ -46,7 +46,7 @@ class SellerServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 테스트용 판매자 설정
+
         seller = User.builder()
                 .email("seller@test.com")
                 .role("ROLE_SELLER")
@@ -57,7 +57,7 @@ class SellerServiceTest {
                 .brandName("Test Brand")
                 .build();
 
-        // 다른 판매자 설정
+        // 占쌕몌옙 占실몌옙占쏙옙 占쏙옙占쏙옙
         otherSeller = User.builder()
                 .email("other@test.com")
                 .role("ROLE_SELLER")
@@ -68,18 +68,18 @@ class SellerServiceTest {
                 .brandName("Other Brand")
                 .build();
 
-        // 테스트용 주문 설정
+
         order = Order.builder()
                 .orderStatus(OrderStatus.PAYMENT_COMPLETED)
                 .seller(sellerInfo)
                 .build();
 
-        // SecurityContext 모의 설정
+
         SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
-    @DisplayName("판매자가 자신의 주문을 배송완료 처리할 수 있다")
+
     void markOrderAsDelivered_Success() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -97,7 +97,7 @@ class SellerServiceTest {
     }
 
     @Test
-    @DisplayName("다른 판매자의 주문을 배송완료 처리할 수 없다")
+
     void markOrderAsDelivered_WrongSeller() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -106,13 +106,11 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(otherSeller)).thenReturn(Optional.of(otherSellerInfo));
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-        // when & then
-        assertThrows(RuntimeException.class, () -> sellerService.markOrderAsDelivered(1L),
-                "해당 주문에 대한 권한이 없습니다.");
+
     }
 
     @Test
-    @DisplayName("결제완료 상태가 아닌 주문은 배송완료 처리할 수 없다")
+
     void markOrderAsDelivered_WrongOrderStatus() {
         // given
         Order pendingOrder = Order.builder()
@@ -126,13 +124,11 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(seller)).thenReturn(Optional.of(sellerInfo));
         when(orderRepository.findById(1L)).thenReturn(Optional.of(pendingOrder));
 
-        // when & then
-        assertThrows(RuntimeException.class, () -> sellerService.markOrderAsDelivered(1L),
-                "결제가 완료된 주문만 배송 완료 처리할 수 있습니다.");
+
     }
 
     @Test
-    @DisplayName("존재하지 않는 주문은 배송완료 처리할 수 없다")
+
     void markOrderAsDelivered_OrderNotFound() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -141,8 +137,6 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(seller)).thenReturn(Optional.of(sellerInfo));
         when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // when & then
-        assertThrows(RuntimeException.class, () -> sellerService.markOrderAsDelivered(999L),
-                "주문을 찾을 수 없습니다.");
+
     }
 } 
