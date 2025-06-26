@@ -63,6 +63,7 @@ const OrderForm = () => {
     price: item.discountPrice,
     originalPrice: item.marketPrice,
     quantity: item.quantity || 1,
+    shippingFee: item.shippingInstallationFee || 0, // 배송비 추가
   }));
 
   const totalOriginalPrice = products.reduce(
@@ -75,7 +76,11 @@ const OrderForm = () => {
   );
   const totalDiscount = totalOriginalPrice - totalDiscountPrice;
 
-  const shippingPrice = 0;
+  // 이현제 수정
+  const shippingPrice = products.reduce(
+      (sum, item) => sum + (item.shippingInstallationFee || 0),
+      0
+  );
   const pointUsed = 0;
   const finalPrice = totalDiscountPrice + shippingPrice - pointUsed;
 
