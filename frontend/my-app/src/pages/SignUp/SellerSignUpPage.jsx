@@ -66,6 +66,11 @@ const SellerSignUpPage = () => {
       return;
     }
 
+    if (!isPhoneVerified) {
+      alert("휴대폰 번호를 인증해주세요.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -321,19 +326,19 @@ const SellerSignUpPage = () => {
                   placeholder=" '-' 없이 작성하세요"
                   readOnly={isPhoneVerified}
                 />
-                <button
-                  type="button"
-                  onClick={handleSendVerificationCode}
-                  className="certification-button"
-                  style={{ flex: "3" }}
-                  disabled={isCodeSent}
-                >
-                  인증번호 전송
-                </button>
+                {!isPhoneVerified && (
+                  <button
+                    type="button"
+                    onClick={handleSendVerificationCode}
+                    className="certification-button"
+                  >
+                    인증번호 전송
+                  </button>
+                )}
               </div>
             </div>
 
-            {isCodeSent && (
+            {isCodeSent && !isPhoneVerified && (
               <div className="certification-group">
                 <label>인증번호 입력</label>
                 <div>
