@@ -12,7 +12,8 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OrderTable from "./OrderTable";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 // const paymentMethods = [
 //   '퀵 계좌이체',
@@ -44,6 +45,8 @@ const OrderForm = () => {
 
   // 2. 상태 변수 선언
   const [checkingAddress, setCheckingAddress] = useState(true);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [redirectReason, setRedirectReason] = useState(""); // 알림 문구 저장용
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -78,8 +81,8 @@ const OrderForm = () => {
 
   // 이현제 수정
   const shippingPrice = products.reduce(
-      (sum, item) => sum + (item.shippingInstallationFee || 0),
-      0
+    (sum, item) => sum + (item.shippingInstallationFee || 0),
+    0
   );
   const pointUsed = 0;
   const finalPrice = totalDiscountPrice + shippingPrice - pointUsed;
@@ -140,31 +143,48 @@ const OrderForm = () => {
         );
 
         const data = response.data;
+        console.log(data);
         setUserAddress(data);
 
-        if (
+        const isMissing =
           !data.address?.trim() ||
           !data.detailAddress?.trim() ||
-          !data.postalCode?.trim()
-        ) {
-          alert("배송지 정보가 없습니다. 배송지를 먼저 입력해주세요.");
-          navigate("/mypageinfo");
+          !data.postalCode?.trim();
+
+        if (isMissing) {
+          setRedirectReason(
+            "배송지 정보가 없습니다. 배송지를 먼저 입력해주세요."
+          );
+          setShouldRedirect(true);
           return;
         }
         if (!data.phoneNumber?.trim()) {
-          alert("배송지 연락처가 입력되지 않았습니다. 정보를 확인해주세요.");
+          setRedirectReason(
+            "연락처가 입력되지 않았습니다. 정보를 확인해주세요."
+          );
+          setShouldRedirect(true);
+          return;
         }
       } catch (error) {
         console.error("주소 정보 불러오기 실패:", error);
-        alert("배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다.");
-        navigate(returnPath);
+        setRedirectReason(
+          "배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다."
+        );
+        setShouldRedirect(true);
       } finally {
         setCheckingAddress(false);
       }
     };
 
     fetchUserAddress();
-  }, [location.state?.returnPath, navigate]);
+  }, []);
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      alert(redirectReason);
+      navigate("/mypageinfo");
+    }
+  }, [shouldRedirect, redirectReason, navigate]);
 
   if (checkingAddress) return null;
 
