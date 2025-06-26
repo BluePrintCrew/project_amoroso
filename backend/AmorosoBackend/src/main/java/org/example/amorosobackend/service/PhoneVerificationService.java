@@ -3,6 +3,7 @@ package org.example.amorosobackend.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PhoneVerificationService {
     private final RestTemplate restTemplate;
     private final RedisTemplate<String, String> redisTemplate;
@@ -48,6 +50,8 @@ public class PhoneVerificationService {
 
     public boolean verifyCode(String phoneNumber, String code) {
         String savedCode = redisTemplate.opsForValue().get("verification:" + phoneNumber);
+        log.info("입력된 코드 : {} " ,code);
+        log.info(" 저장된 코드 : {}", savedCode);
         return savedCode != null && savedCode.equals(code);
     }
 

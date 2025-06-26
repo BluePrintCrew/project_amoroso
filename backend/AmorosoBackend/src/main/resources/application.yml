@@ -94,5 +94,5 @@ api:
 
 solapi:
   api:
-    key: "NCSS7UMXBW8QOLAI"  # Solapi API Key
-    secret: "AFMW7CFX8B2PEK72OYGEHRUHNZHJKMR"  # Solapi API Secret
+    key: ${SOLAPI_API_KEY}  # Solapi API Key
+    secret: ${SOLAPI_API_SECRET}  # Solapi API Secret
