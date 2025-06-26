@@ -40,7 +40,7 @@ public class UserAddressService {
         user.addAddress(address);
         userRepository.save(user);
 
-        return toDto(address);
+        return toDto(address, user);
     }
 
     public UserAddressDto.GetAddress getDefaultAddress() {
@@ -48,13 +48,14 @@ public class UserAddressService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+
         return userAddressRepository.findByUserAndIsDefaultTrue(user)
-                .map(this::toDto)
+                .map(address -> toDto(address, user)) // user 파라미터 추가
                 .orElseGet(() -> {
-                    // Set only addressId to null, others to default values (null or false)
+                    // Set only addressId to null, phoneNumber to user's phoneNumber, others to default values
                     UserAddressDto.GetAddress empty = new UserAddressDto.GetAddress();
                     empty.setAddressId(null);
-                    // recipientName, phoneNumber, postalCode, address, detailAddress remain null
+                    empty.setPhoneNumber(user.getPhoneNumber());
                     return empty;
                 });
     }
@@ -119,14 +120,15 @@ public class UserAddressService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         List<UserAddress> byUser = userAddressRepository.findByUser(user);
-        return byUser.stream().map(this::toDto).collect(Collectors.toList());
+        return byUser.stream().map(address -> toDto(address, user)).collect(Collectors.toList());
     }
 
-    public UserAddressDto.GetAddress toDto(UserAddress userAddress) {
+    // toDto 메서드를 오버로드하여 User 정보를 받도록 수정
+    public UserAddressDto.GetAddress toDto(UserAddress userAddress, User user) {
         return UserAddressDto.GetAddress.builder()
                 .addressId(userAddress.getAddressId())
                 .recipientName(userAddress.getRecipientName())
-                .phoneNumber(userAddress.getPhoneNumber())
+                .phoneNumber(user.getPhoneNumber()) // User의 phoneNumber 사용
                 .postalCode(userAddress.getPostalCode())
                 .address(userAddress.getAddress())
                 .detailAddress(userAddress.getDetailAddress())
