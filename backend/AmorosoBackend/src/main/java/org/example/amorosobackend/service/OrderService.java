@@ -13,6 +13,7 @@ import org.example.amorosobackend.domain.product.AdditionalOption;
 import org.example.amorosobackend.domain.product.Product;
 import org.example.amorosobackend.domain.product.ProductOption;
 import org.example.amorosobackend.dto.OrderControllerDTO.*;
+import org.example.amorosobackend.dto.PaymentGroupDTO;
 import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.enums.ElevatorType;
 import org.example.amorosobackend.enums.OrderStatus;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class OrderService {
 
+    private final PaymentGroupRepository paymentGroupRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -46,6 +48,96 @@ public class OrderService {
     private final UserAddressRepository userAddressRepository;
     private final ReviewRepository reviewRepository;
 
+    /**
+     * PaymentGroup과 함께 주문 생성
+     */
+    public PaymentGroupDTO.PaymentGroupResponseDTO createOrdersWithPaymentGroup(String email, OrderRequestDTO requestDTO) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        UserAddress address = userAddressRepository.findById(requestDTO.getUserAddressId())
+                .orElseThrow(() -> new IllegalArgumentException("배송지를 찾을 수 없습니다"));
+
+        // PaymentGroup 생성
+        PaymentGroup paymentGroup = PaymentGroup.builder()
+                .paymentGroupCode(generatePaymentGroupCode())
+                .user(user)
+                .paymentStatus(PaymentStatus.WAITING)
+                .totalAmount(0)
+                .build();
+
+        paymentGroupRepository.save(paymentGroup);
+
+        // 판매자별 아이템 그룹핑 (기존 로직)
+        Map<Seller, List<OrderItemRequestDTO>> sellerItemMap = groupItemsBySeller(requestDTO.getOrderItems());
+
+        int totalAmount = 0;
+
+        for(Map.Entry<Seller, List<OrderItemRequestDTO>> entry : sellerItemMap.entrySet()) {
+            Seller seller = entry.getKey();
+            List<OrderItemRequestDTO> sellerOrderItems = entry.getValue();
+
+            // 주문 생성 (기존 로직과 동일)
+            Order order = Order.builder()
+                    .user(user)
+                    .seller(seller)
+                    .orderCode(generateOrderCode())
+                    .orderStatus(OrderStatus.PAYMENT_PENDING)
+                    .paymentStatus(PaymentStatus.WAITING)
+                    .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
+                    .freeLoweringService(requestDTO.getFreeLoweringService())
+                    .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())
+                    .deliveryRequest(requestDTO.getDeliveryRequest())
+                    .productInstallationAgreement(requestDTO.getProductInstallationAgreement())
+                    .build();
+
+            // PaymentGroup과 연결
+            order.setPaymentGroup(paymentGroup);
+            orderRepository.save(order);
+
+            // OrderItem 생성 및 총 가격 계산
+            int orderPrice = 0;
+            for(OrderItemRequestDTO itemRequestDTO : sellerOrderItems) {
+                OrderItem orderItem = createOrderItem(order, itemRequestDTO);
+                orderPrice += orderItem.getFinalPrice() * orderItem.getQuantity();
+            }
+
+            order.setTotalPrice(orderPrice);
+            totalAmount += orderPrice;
+            orderRepository.save(order);
+
+            createShipment(order, address, requestDTO.getDeliveryRequest());
+            paymentGroup.addOrder(order);
+        }
+
+        // PaymentGroup 총 금액 설정
+        paymentGroup.setTotalAmount(totalAmount);
+        paymentGroupRepository.save(paymentGroup);
+
+        return new PaymentGroupDTO.PaymentGroupResponseDTO(paymentGroup);
+    }
+
+    private Map<Seller, List<OrderItemRequestDTO>> groupItemsBySeller(List<OrderItemRequestDTO> orderItems) {
+        Map<Seller, List<OrderItemRequestDTO>> sellerItemMap = new HashMap<>();
+
+        for(OrderItemRequestDTO itemRequestDTO : orderItems) {
+            Product product = productRepository.findById(itemRequestDTO.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 id의 상품을 찾을 수 없습니다."));
+
+            Seller seller = product.getSeller();
+            sellerItemMap.computeIfAbsent(seller, k -> new ArrayList<>()).add(itemRequestDTO);
+        }
+
+        return sellerItemMap;
+    }
+
+    private String generatePaymentGroupCode() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String timestamp = LocalDateTime.now().format(formatter);
+        int randomNum = (int) (Math.random() * 10000);
+        String randomPart = String.format("%04d", randomNum);
+        return "PG" + timestamp + randomPart;
+    }
     /**
      * 주문 생성 - 결제 전에 미리 생성 (PAYMENT_PENDING 상태)
      */

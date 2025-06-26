@@ -7,9 +7,11 @@ import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.PaymentGroup;
 import org.example.amorosobackend.dto.PaymentDTO;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
+import org.example.amorosobackend.repository.PaymentGroupRepository;
 import org.example.amorosobackend.service.OrderService;
 import org.example.amorosobackend.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final OrderService orderService;
+    private final PaymentGroupRepository paymentGroupRepository;
 
     // 아임포트 클라이언트 선언
     private IamportClient iamportClient;
@@ -39,49 +42,49 @@ public class PaymentController {
     public PaymentController(@Value("${iamport.api_key}") String apiKey,
                              @Value("${iamport.api_secret}") String apiSecret,
                              PaymentService paymentService,
-                             OrderService orderService) {
+                             OrderService orderService,
+                            PaymentGroupRepository paymentGroupRepository) {
         this.iamportClient = new IamportClient(apiKey, apiSecret);
         this.paymentService = paymentService;
         this.orderService = orderService;
+        this.paymentGroupRepository = paymentGroupRepository;
     }
 
-    /**
-     * 결제 완료 후 아임포트로부터 imp_uid를 받아 결제 정보를 검증하고,
-     * 결제가 유효하면 해당 주문의 상태를 업데이트합니다.
-     *
-     * @return 처리 결과 메시지
-     * @throws IamportResponseException 아임포트 API 호출 시 발생하는 예외
-     * @throws IOException IO 예외
-     */
     @PostMapping("/verify")
-    public ResponseEntity<PaymentDTO.PaymentVerifyResponse> verifyPayment(@RequestBody PaymentDTO.PaymentVerifyRequest request) throws IamportResponseException, IOException {
+    public ResponseEntity<PaymentDTO.PaymentVerifyResponse> verifyPayment(
+            @RequestBody PaymentDTO.PaymentVerifyRequest request) throws Exception {
 
-
+        // 아임포트 결제 정보 조회
         IamportResponse<Payment> response = iamportClient.paymentByImpUid(request.getImpUid());
         Payment paymentData = response.getResponse();
 
         if (paymentData == null) {
-            return ResponseEntity.badRequest().body(new PaymentDTO.PaymentVerifyResponse(false, "유효하지 않은 결제 정보입니다."));
+            return ResponseEntity.badRequest()
+                    .body(new PaymentDTO.PaymentVerifyResponse(false, "유효하지 않은 결제 정보입니다."));
         }
 
-        log.info("getOrderId = {}", request.getOrderId());
-        Order order = orderService.getOrderById(request.getOrderId());
-        if (order == null) {
-            return ResponseEntity.badRequest().body(new PaymentDTO.PaymentVerifyResponse(false, "해당 주문을 찾을 수 없습니다."));
-        }
+        // PaymentGroup 조회
+        PaymentGroup paymentGroup = paymentService.getByPaymentGroupId(request.getPaymentGroupId());
 
+        // 결제 금액 검증
         BigDecimal amountPaid = paymentData.getAmount();
-        log.info("amount paid = {} order.getTotalPrice = {}", amountPaid,order.getTotalPrice());
-        if (amountPaid.compareTo(BigDecimal.valueOf(order.getTotalPrice())) != 0) {
-            return ResponseEntity.badRequest().body(new PaymentDTO.PaymentVerifyResponse(false, "결제 금액이 주문 금액과 일치하지 않습니다."));
+        if (amountPaid.compareTo(BigDecimal.valueOf(paymentGroup.getTotalAmount())) != 0) {
+            return ResponseEntity.badRequest()
+                    .body(new PaymentDTO.PaymentVerifyResponse(false, "결제 금액이 주문 금액과 일치하지 않습니다."));
         }
 
-        orderService.updatePaymentStatus(order, PaymentStatus.COMPLETED);
-        orderService.updateOrderStatus(order, OrderStatus.PAYMENT_COMPLETED);
+        // 모든 관련 주문의 상태 업데이트
+        for (Order order : paymentGroup.getOrders()) {
+            orderService.updatePaymentStatus(order, PaymentStatus.COMPLETED);
+            orderService.updateOrderStatus(order, OrderStatus.PAYMENT_COMPLETED);
+        }
+
+        // PaymentGroup 상태 업데이트
+        paymentGroup.setPaymentStatus(PaymentStatus.COMPLETED);
+        paymentGroupRepository.save(paymentGroup);
 
         return ResponseEntity.ok(new PaymentDTO.PaymentVerifyResponse(true, "결제가 성공적으로 완료되었습니다."));
     }
-
 
 }
 

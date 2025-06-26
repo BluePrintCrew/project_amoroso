@@ -81,6 +81,10 @@ public class User {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<ReformRequest> reformRequests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PaymentGroup> paymentGroups = new ArrayList<>();
+
+
     // === 빌더 생성자 ===
     @Builder
     private User(String email,

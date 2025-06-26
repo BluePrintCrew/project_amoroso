@@ -2,8 +2,10 @@ package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.Order;
 import org.example.amorosobackend.domain.Payment;
+import org.example.amorosobackend.domain.PaymentGroup;
 import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.repository.OrderRepository;
+import org.example.amorosobackend.repository.PaymentGroupRepository;
 import org.example.amorosobackend.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,15 @@ public class PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private PaymentGroupRepository paymentGroupRepository;
+
+    public PaymentGroup getByPaymentGroupId(Long paymentGroupId) {
+        return paymentGroupRepository.findById(paymentGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 결제 그룹을 찾을 수 없습니다."));
+    }
+
 
     // 주문 번호로 주문 조회
     public Order getOrder(Long orderId) {
