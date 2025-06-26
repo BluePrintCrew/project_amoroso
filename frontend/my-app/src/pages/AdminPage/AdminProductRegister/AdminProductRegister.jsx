@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./AdminProductRegister.module.css";
 import axios from "axios";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 // --- 카테고리 매핑 테이블
 const categoryMap = {
@@ -41,8 +42,8 @@ function AdminProductRegister() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
-  const isEdit = params.get('edit') === '1';
-  const productId = params.get('id');
+  const isEdit = params.get("edit") === "1";
+  const productId = params.get("id");
 
   // (1) 카테고리 상태
   const [category1, setCategory1] = useState("");
@@ -107,52 +108,53 @@ function AdminProductRegister() {
               },
             }
           );
-          
+
           const product = response.data;
-          
+
           // 카테고리 설정
-          const mainCategory = product.categoryCode?.split('_')[0];
-          setCategory1(mainCategory || '');
-          setCategory2(product.categoryCode || '');
-          
+          const mainCategory = product.categoryCode?.split("_")[0];
+          setCategory1(mainCategory || "");
+          setCategory2(product.categoryCode || "");
+
           // 기본 정보 설정
-          setProductCode(product.productCode || '');
-          setBrand(product.brand || '');
-          setModelName(product.productName || '');
-          setPrice(product.marketPrice?.toString() || '');
-          setCost(product.costPrice?.toString() || '');
-          setDiscount(product.discountRate?.toString() || '');
-          setMaker(product.manufacturer || '');
-          setOrigin(product.origin || '');
-          setBasicDesc(product.description || '');
-          setColor(product.color || '');
-          setComponents(product.components || '');
-          setMaterial(product.material || '');
-          setManufactureCountry(product.manufactureCountry || '');
-          setAsTel(product.asPhoneNumber || '');
-          setProductStatus(product.outOfStock ? 'soldOut' : 'selling');
-          setStock(product.stock?.toString() || '');
-          setStockNotify(product.stockNotificationThreshold?.toString() || '');
-          setMinPurchase(product.minPurchase?.toString() || '');
-          setMaxPurchase(product.maxPurchase?.toString() || '');
-          setShippingFee(product.shippingInstallationFee?.toString() || '');
+          setProductCode(product.productCode || "");
+          setBrand(product.brand || "");
+          setModelName(product.productName || "");
+          setPrice(product.marketPrice?.toString() || "");
+          setCost(product.costPrice?.toString() || "");
+          setDiscount(product.discountRate?.toString() || "");
+          setMaker(product.manufacturer || "");
+          setOrigin(product.origin || "");
+          setBasicDesc(product.description || "");
+          setColor(product.color || "");
+          setComponents(product.components || "");
+          setMaterial(product.material || "");
+          setManufactureCountry(product.manufactureCountry || "");
+          setAsTel(product.asPhoneNumber || "");
+          setProductStatus(product.outOfStock ? "soldOut" : "selling");
+          setStock(product.stock?.toString() || "");
+          setStockNotify(product.stockNotificationThreshold?.toString() || "");
+          setMinPurchase(product.minPurchase?.toString() || "");
+          setMaxPurchase(product.maxPurchase?.toString() || "");
+          setShippingFee(product.shippingInstallationFee?.toString() || "");
           setCouponApplicable(product.couponApplicable || false);
-          
+
           // 옵션 설정
           if (product.productOptions && product.productOptions.length > 0) {
-            setOptions(product.productOptions.map(opt => ({
-              optionName: opt.optionName,
-              optionValues: opt.optionValues || ['']
-            })));
+            setOptions(
+              product.productOptions.map((opt) => ({
+                optionName: opt.optionName,
+                optionValues: opt.optionValues || [""],
+              }))
+            );
           }
-          
+
           // 상세 설명 설정
-          setDescription(product.description || '');
-          
+          setDescription(product.description || "");
         } catch (error) {
-          console.error('상품 정보 불러오기 실패:', error);
-          alert('상품 정보를 불러오는데 실패했습니다.');
-          navigate('/admin/products');
+          console.error("상품 정보 불러오기 실패:", error);
+          alert("상품 정보를 불러오는데 실패했습니다.");
+          navigate("/admin/products");
         }
       }
     };
@@ -286,7 +288,7 @@ function AdminProductRegister() {
       };
 
       let productResponse;
-      
+
       if (isEdit) {
         // 수정 모드: PUT 요청
         productResponse = await axios.put(
@@ -304,7 +306,9 @@ function AdminProductRegister() {
       }
 
       if (!productResponse.data) {
-        throw new Error(isEdit ? "제품 수정에 실패했습니다." : "제품 등록에 실패했습니다.");
+        throw new Error(
+          isEdit ? "제품 수정에 실패했습니다." : "제품 등록에 실패했습니다."
+        );
       }
 
       const productId = productResponse.data;
@@ -338,11 +342,14 @@ function AdminProductRegister() {
       }
 
       alert(isEdit ? "제품 수정 완료!" : "제품 등록 완료!");
-      navigate('/admin/products');
-      
+      navigate("/admin/products");
     } catch (error) {
       console.error("제품 처리 중 에러:", error);
-      alert(isEdit ? "제품 수정 중 오류가 발생했습니다." : "제품 등록 중 오류가 발생했습니다.");
+      alert(
+        isEdit
+          ? "제품 수정 중 오류가 발생했습니다."
+          : "제품 등록 중 오류가 발생했습니다."
+      );
     }
   };
 
@@ -360,8 +367,15 @@ function AdminProductRegister() {
 
   // 메인 이미지 선택
   const handleMainImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setMainImage(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      const lowerName = file.name.toLowerCase();
+      if (!(lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg"))) {
+        alert("JPG 또는 JPEG 파일만 업로드할 수 있습니다.");
+        e.target.value = ""; // 파일 초기화
+        return;
+      }
+      setMainImage(file);
     }
   };
 
@@ -374,11 +388,17 @@ function AdminProductRegister() {
 
   const handleSubImagesChange = (e) => {
     if (e.target.files) {
-      // 새로 선택된 파일들 배열
       const newFiles = Array.from(e.target.files);
-      // 기존 배열 + 새 파일들
-      setSubImages((prev) => [...prev, ...newFiles]);
-      // input value 초기화 (동일 파일 재선택 가능)
+      const validFiles = newFiles.filter((file) => {
+        const name = file.name.toLowerCase();
+        return name.endsWith(".jpg") || name.endsWith(".jpeg");
+      });
+
+      if (validFiles.length < newFiles.length) {
+        alert("JPG 또는 JPEG 파일만 업로드할 수 있습니다.");
+      }
+
+      setSubImages((prev) => [...prev, ...validFiles]);
       e.target.value = "";
     }
   };
@@ -398,7 +418,16 @@ function AdminProductRegister() {
   const handleDetailImagesChange = (e) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      setDetailImages((prev) => [...prev, ...newFiles]);
+      const validFiles = newFiles.filter((file) => {
+        const name = file.name.toLowerCase();
+        return name.endsWith(".jpg") || name.endsWith(".jpeg");
+      });
+
+      if (validFiles.length < newFiles.length) {
+        alert("JPG 또는 JPEG 파일만 업로드할 수 있습니다.");
+      }
+
+      setDetailImages((prev) => [...prev, ...validFiles]);
       e.target.value = "";
     }
   };
@@ -411,7 +440,9 @@ function AdminProductRegister() {
   return (
     <div className={"mainContent"}>
       <div className={styles.topBar}>
-        <h2 className={styles.pageTitle}>{isEdit ? '상품 수정' : '상품 입력'}</h2>
+        <h2 className={styles.pageTitle}>
+          {isEdit ? "상품 수정" : "상품 입력"}
+        </h2>
         <div className={styles.topBarButtons}>
           {/*
           <button
@@ -427,7 +458,7 @@ function AdminProductRegister() {
             type="submit"
             className={styles.mainButton}
           >
-            {isEdit ? '수정하기' : '등록하기'}
+            {isEdit ? "수정하기" : "등록하기"}
           </button>
         </div>
       </div>
@@ -695,13 +726,19 @@ function AdminProductRegister() {
 
         {/* (3) 이미지 등록 */}
         <section className={styles.formSection}>
-          <h3 className={styles.sectionTitle}>이미지 등록</h3>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <h3 className={styles.sectionTitle}>이미지 등록</h3>
+            <p style={{ fontSize: "12px", marginBottom: "17px" }}>
+              *jpg, jpeg 파일만 업로드 가능합니다.
+            </p>
+          </div>
           <div className={styles.formGrid}>
             <div className={styles.formLabel}>메인 이미지</div>
             <div className={styles.formInput}>
               <input
                 className={styles.fileInput}
                 type="file"
+                accept=".jpg,.jpeg,image/jpeg"
                 onChange={handleMainImageChange}
               />
             </div>
@@ -717,6 +754,7 @@ function AdminProductRegister() {
               </button>
               <input
                 type="file"
+                accept=".jpg,.jpeg,image/jpeg"
                 ref={subInputRef}
                 style={{ display: "none" }}
                 multiple
@@ -765,6 +803,7 @@ function AdminProductRegister() {
               </button>
               <input
                 type="file"
+                accept=".jpg,.jpeg,image/jpeg"
                 ref={detailInputRef}
                 style={{ display: "none" }}
                 multiple
