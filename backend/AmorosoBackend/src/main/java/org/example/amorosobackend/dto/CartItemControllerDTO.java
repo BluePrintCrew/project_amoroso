@@ -26,9 +26,12 @@ public class CartItemControllerDTO {
         private String additionalOptionName;
         private Integer additionalPrice;
 
+
         private Long productOptionId;
         private String productOptionName;
         private String selectedOptionValue;
+
+        private int shippingInstallationFee;
 
         public CartItemResponseDTO(CartItem cartItem) {
             this.cartItemId = cartItem.getCartItemId();
@@ -36,7 +39,7 @@ public class CartItemControllerDTO {
             this.productName = cartItem.getProduct().getProductName();
             this.quantity = cartItem.getQuantity();
             this.MarketPrice = cartItem.getProduct().getMarketPrice();
-
+            this.shippingInstallationFee = cartItem.getProduct().getShippingInstallationFee();
             this.discountPrice = cartItem.getProduct().getDiscountPrice();
 
             int basePrice = (this.discountPrice > 0 ? this.discountPrice : this.MarketPrice);
