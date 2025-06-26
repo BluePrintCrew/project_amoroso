@@ -18,27 +18,66 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user);
-
+    /**
+     * PaymentGroup 상태를 고려한 주문 수 조회
+     */
     @Query("SELECT COUNT(o) FROM Order o " +
-            "JOIN o.orderItems oi " +
-            "JOIN oi.product p " +
-            "WHERE p.seller.user.userId = :sellerId " +
-            "AND o.paymentStatus = :paymentStatus " +
+            "WHERE o.seller = :seller " +
+            "AND o.paymentGroup.paymentStatus = :paymentStatus " +
             "AND o.orderStatus = :orderStatus")
-    Long countPaidOrdersBySeller(
-            @Param("sellerId") Long sellerId,
+    Long countOrdersBySellerAndPaymentGroupStatus(
+            @Param("seller") Seller seller,
             @Param("paymentStatus") PaymentStatus paymentStatus,
             @Param("orderStatus") OrderStatus orderStatus
     );
 
+    /**
+     * 주문 상태별 주문 수 조회 (PaymentGroup 무관)
+     */
     @Query("SELECT COUNT(o) FROM Order o " +
-            "JOIN o.orderItems oi " +
-            "JOIN oi.product p " +
-            "WHERE p.seller.user.userId = :sellerId " +
+            "WHERE o.seller = :seller " +
             "AND o.orderStatus = :orderStatus")
     Long countOrdersBySellerAndStatus(
-            @Param("sellerId") Long sellerId,
+            @Param("seller") Seller seller,
             @Param("orderStatus") OrderStatus orderStatus
+    );
+
+    /**
+     * PaymentGroup 상태와 날짜 범위를 고려한 Order 조회
+     */
+    @Query("SELECT o FROM Order o " +
+            "WHERE o.seller = :seller " +
+            "AND o.paymentGroup.paymentStatus = :paymentStatus " +
+            "AND o.createdAt BETWEEN :startDate AND :endDate")
+    List<Order> findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+            @Param("seller") Seller seller,
+            @Param("paymentStatus") PaymentStatus paymentStatus,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
+    /**
+     * PaymentGroup 상태를 고려한 페이징 조회
+     */
+    @Query("SELECT o FROM Order o " +
+            "WHERE o.seller = :seller " +
+            "AND o.paymentGroup.paymentStatus = :paymentStatus " +
+            "ORDER BY o.createdAt DESC")
+    Page<Order> findBySellerAndPaymentGroupStatus(
+            @Param("seller") Seller seller,
+            @Param("paymentStatus") PaymentStatus paymentStatus,
+            Pageable pageable
+    );
+
+    /**
+     * 판매자의 모든 주문 조회 (시간순 정렬)
+     */
+    @Query("SELECT o FROM Order o " +
+            "WHERE o.seller = :seller " +
+            "ORDER BY o.createdAt DESC")
+    Page<Order> findBySeller(
+            @Param("seller") Seller seller,
+            Pageable pageable
     );
 
     int countByUser(User user);

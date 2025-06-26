@@ -40,52 +40,56 @@ public class SellerService {
 
     public SellerDTO.SellerStatsResponse getSellerStats() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long sellerId = getSellerIdByEmail(email);
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
-        Long paidOrders = orderRepository.countPaidOrdersBySeller(sellerId, PaymentStatus.COMPLETED, OrderStatus.PAYMENT_COMPLETED);
-        Long readyShipments = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.PAYMENT_COMPLETED);
-        Long inTransitOrders = orderRepository.countOrdersBySellerAndStatus(sellerId, OrderStatus.DELIVERED);
+        // 수정: PaymentGroup 상태를 고려한 통계 (모든 메서드 Seller 타입 사용)
+        Long paidOrders = orderRepository.countOrdersBySellerAndPaymentGroupStatus(
+                seller, PaymentStatus.COMPLETED, OrderStatus.PAYMENT_COMPLETED);
+        Long readyShipments = orderRepository.countOrdersBySellerAndStatus(
+                seller, OrderStatus.PAYMENT_COMPLETED);
+        Long inTransitOrders = orderRepository.countOrdersBySellerAndStatus(
+                seller, OrderStatus.DELIVERED);
 
         return new SellerDTO.SellerStatsResponse(paidOrders, readyShipments, inTransitOrders);
     }
 
     public SellerDTO.TotalSaleResponse getTotalSales(int year, int month) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
         YearMonth currentMonth = YearMonth.of(year, month);
         YearMonth previousMonth = currentMonth.minusMonths(1);
 
         LocalDateTime currentStart = currentMonth.atDay(1).atStartOfDay();
         LocalDateTime currentEnd = currentMonth.atEndOfMonth().atTime(23, 59, 59);
-
         LocalDateTime prevStart = previousMonth.atDay(1).atStartOfDay();
         LocalDateTime prevEnd = previousMonth.atEndOfMonth().atTime(23, 59, 59);
 
-        List<OrderItem> currentItems = orderItemRepository.findBySellerProductAndCreatedAtBetweenAndOrderPaymentStatus(
-                seller, currentStart, currentEnd, PaymentStatus.COMPLETED);
-        List<OrderItem> previousItems = orderItemRepository.findBySellerProductAndCreatedAtBetweenAndOrderPaymentStatus(
-                seller, prevStart, prevEnd, PaymentStatus.COMPLETED);
+        // 수정: PaymentGroup 상태를 고려한 Order 조회로 변경
+        List<Order> currentOrders = orderRepository.findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+                seller, PaymentStatus.COMPLETED, currentStart, currentEnd);
+        List<Order> previousOrders = orderRepository.findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+                seller, PaymentStatus.COMPLETED, prevStart, prevEnd);
 
-        int currentTotal = currentItems.stream().mapToInt(OrderItem::getFinalPrice).sum();
-        int previousTotal = previousItems.stream().mapToInt(OrderItem::getFinalPrice).sum();
+        // 수정: Order의 totalPrice 합계로 계산 (기존: OrderItem 개별 합계)
+        int currentTotal = currentOrders.stream()
+                .mapToInt(Order::getTotalPrice)
+                .sum();
+        int previousTotal = previousOrders.stream()
+                .mapToInt(Order::getTotalPrice)
+                .sum();
 
+        // 기존 성장률 계산 로직 유지
         double growthRate = 0.0;
         if (previousTotal > 0) {
-            BigDecimal current = new BigDecimal(currentTotal); // 이번 달 매출
-            BigDecimal previous = new BigDecimal(previousTotal); // 전달 매출
+            BigDecimal current = new BigDecimal(currentTotal);
+            BigDecimal previous = new BigDecimal(previousTotal);
 
-            growthRate = current.subtract(previous)               // 증가액
-                    .divide(previous, 4, RoundingMode.HALF_UP)    // 증가율 계산
-                    .multiply(BigDecimal.valueOf(100))            // 백분율 변환
-                    .setScale(1, RoundingMode.HALF_UP)            // 소수점 첫째자리 반올림
-                    .doubleValue();                               // double로 반환
+            growthRate = current.subtract(previous)
+                    .divide(previous, 4, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .doubleValue();
         }
 
         return new SellerDTO.TotalSaleResponse(currentTotal, growthRate);
@@ -93,15 +97,7 @@ public class SellerService {
 
     public SellerDTO.TotalOrderResponse getTotalOrders(int year, Integer month) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
         LocalDateTime currentStart, currentEnd, prevStart, prevEnd;
 
@@ -122,21 +118,17 @@ public class SellerService {
             prevEnd = previousMonth.atEndOfMonth().atTime(23, 59, 59);
         }
 
-        List<OrderItem> currentItems = orderItemRepository.findBySellerProductAndCreatedAtBetweenAndOrderPaymentStatus(
-                seller, currentStart, currentEnd, PaymentStatus.COMPLETED);
-        List<OrderItem> previousItems = orderItemRepository.findBySellerProductAndCreatedAtBetweenAndOrderPaymentStatus(
-                seller, prevStart, prevEnd, PaymentStatus.COMPLETED);
+        // 수정: PaymentGroup 상태를 고려한 Order 조회로 변경
+        List<Order> currentOrders = orderRepository.findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+                seller, PaymentStatus.COMPLETED, currentStart, currentEnd);
+        List<Order> previousOrders = orderRepository.findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+                seller, PaymentStatus.COMPLETED, prevStart, prevEnd);
 
-        int currentCount = (int) currentItems.stream()
-                .map(OrderItem::getOrder)
-                .distinct()
-                .count();
+        // 수정: Order 개수 직접 계산 (기존: OrderItem에서 distinct Order 계산)
+        int currentCount = currentOrders.size();
+        int previousCount = previousOrders.size();
 
-        int previousCount = (int) previousItems.stream()
-                .map(OrderItem::getOrder)
-                .distinct()
-                .count();
-
+        // 기존 성장률 계산 로직 유지
         double growthRate = 0.0;
         if (previousCount > 0) {
             BigDecimal current = new BigDecimal(currentCount);
@@ -153,23 +145,14 @@ public class SellerService {
 
     public SellerDTO.TotalProductResponse getTotalProducts() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
-
-        // 전체 상품 수 (판매자가 등록한 모든 상품)
+        // 기존 로직 유지 (Product 통계는 PaymentGroup과 무관)
         int total = productRepository.countBySeller(seller);
 
-        // 올해 등록된 상품 수
         LocalDateTime startOfYear = LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 0, 0);
         int addedThisYear = productRepository.countBySellerAndCreatedAtAfter(seller, startOfYear);
 
-        // 작년까지 등록된 상품 수
         int previousTotal = total - addedThisYear;
 
         double growthRate = 0.0;
@@ -187,14 +170,7 @@ public class SellerService {
 
     public SellerDTO.MonthlySalesResponse getMonthlySales(int year) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
         List<Integer> monthlySales = new ArrayList<>();
 
@@ -203,35 +179,26 @@ public class SellerService {
             LocalDateTime start = ym.atDay(1).atStartOfDay();
             LocalDateTime end = ym.atEndOfMonth().atTime(23, 59, 59);
 
-            List<OrderItem> items = orderItemRepository.findBySellerProductAndCreatedAtBetweenAndOrderPaymentStatus(
-                    seller, start, end, PaymentStatus.COMPLETED
-            );
+            // 수정: PaymentGroup 상태를 고려한 Order 조회로 변경
+            List<Order> orders = orderRepository.findOrdersBySellerAndPaymentGroupStatusAndDateBetween(
+                    seller, PaymentStatus.COMPLETED, start, end);
 
-            int sum = items.stream().mapToInt(OrderItem::getFinalPrice).sum();
-            monthlySales.add(sum); // 매출 없으면 0으로 자동 처리됨
+            // 수정: Order의 totalPrice 합계로 계산 (기존: OrderItem 개별 합계)
+            int sum = orders.stream().mapToInt(Order::getTotalPrice).sum();
+            monthlySales.add(sum);
         }
 
         return new SellerDTO.MonthlySalesResponse(monthlySales);
     }
-    
 
     public List<SellerDTO.PopularProductDto> getTop5PopularProducts() {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
-
-        // 판매자가 등록한 제품 중 salesCount 기준으로 내림차순 정렬한 Top 5
+        // 기존 로직 유지 (Product 인기도는 PaymentGroup과 무관)
         List<Product> topProducts = productRepository
                 .findTop5BySellerOrderBySalesCountDesc(seller);
 
-        // DTO 변환
         return topProducts.stream()
                 .map(product -> new SellerDTO.PopularProductDto(
                         product.getProductId(),
@@ -246,36 +213,24 @@ public class SellerService {
 
     public Page<SellerDTO.SellerOrderSummaryDto> getSellerOrderSummaries(int page, int size) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        // OrderItem 기준 페이징 불가 → Order 기준으로 가져와야 함
-        Page<Order> orderPage = orderRepository.findDistinctByOrderItemsProductSeller(seller, pageable);
+        // 수정: 통일된 Seller 기반 메서드 사용 (시간순 정렬)
+        Page<Order> orderPage = orderRepository.findBySeller(seller, pageable);
 
         List<SellerDTO.SellerOrderSummaryDto> dtoList = orderPage.getContent().stream()
-                .map(order -> {
-                    // 이 주문에 포함된 판매자의 상품만 필터링
-
-                    return new SellerDTO.SellerOrderSummaryDto(
-                            order.getOrderId(),
-                            order.getOrderCode(),
-                            order.getCreatedAt(),
-                            order.getUser().getName(),
-                            order.getUserAddress().getAddress() +" "+ order.getUserAddress().getDetailAddress(),
-                            order.getOrderStatus().name(),
-                            order.getPaymentStatus().name(),
-                            order.getTotalPrice()
-                    );
-                })
+                .map(order -> new SellerDTO.SellerOrderSummaryDto(
+                        order.getOrderId(),
+                        order.getOrderCode(),
+                        order.getCreatedAt(),
+                        order.getUser().getName(),
+                        order.getUserAddress().getAddress() + " " + order.getUserAddress().getDetailAddress(),
+                        order.getOrderStatus().name(),
+                        order.getPaymentStatus().name(),
+                        order.getTotalPrice()
+                ))
                 .toList();
 
         return new PageImpl<>(dtoList, pageable, orderPage.getTotalElements());
@@ -283,19 +238,17 @@ public class SellerService {
 
     @Transactional
     public SellerRegistrationDTO.Response registerSeller(SellerRegistrationDTO.Request request) {
-        // 1. 이메일 중복 체크
+        // 기존 로직 유지 (회원가입은 PaymentGroup과 무관)
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already in use");
         }
 
-        // 2. 사업자 상태 조회 및 검증
         BusinessStatusResponse statusResponse = businessValidationService.checkBusinessStatus(request.getBusinessNumber());
-        
+
         if (!"계속사업자".equals(statusResponse.getBusinessStatus())) {
             throw new IllegalArgumentException("Only active business can register");
         }
 
-        // 3. 통신판매업 정보 조회
         EcommerceValidationResponse ecommerceValidation = ecommerceValidationService.validateEcommerceBusiness(
                 new EcommerceValidationRequest(request.getBusinessNumber(), request.getBrandName()));
 
@@ -303,7 +256,6 @@ public class SellerService {
             throw new IllegalArgumentException("Invalid e-commerce business: " + ecommerceValidation.getMessage());
         }
 
-        // 4. User 엔티티 생성
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -315,10 +267,9 @@ public class SellerService {
                 .dmConsent(request.getDmConsent())
                 .locationConsent(request.getLocationConsent())
                 .build();
-        
+
         userRepository.save(user);
 
-        // 5. Seller 엔티티 생성 (Status API 정보와 통신판매업 정보 활용)
         Seller seller = Seller.builder()
                 .user(user)
                 .brandName(request.getBrandName())
@@ -338,10 +289,9 @@ public class SellerService {
                 .salesMethod(ecommerceValidation.getSalesMethod())
                 .productCategories(ecommerceValidation.getProductCategories())
                 .build();
-        
+
         sellerRepository.save(seller);
 
-        // 6. 응답 생성
         return SellerRegistrationDTO.Response.builder()
                 .email(user.getEmail())
                 .name(user.getName())
@@ -356,63 +306,38 @@ public class SellerService {
                 .build();
     }
 
-    private Long getSellerIdByEmail(String email) {
-        // Seller 엔티티를 통해 이메일 기반으로 sellerId 조회하는 로직 구현 필요
-        return 1L; // 예제이므로 1L을 반환 (실제 구현 시 Repository 활용)
-    }
+    // 삭제: getSellerIdByEmail 메서드 (Long 반환 방식 제거)
+    // private Long getSellerIdByEmail(String email) { ... }
 
     @Transactional
     public void markOrderAsDelivered(Long orderId) {
-        // 현재 로그인한 판매자 정보 가져오기
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
-
-        // 주문 정보 가져오기
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
-        // 해당 주문이 이 판매자의 것인지 확인
         if (!order.getSeller().equals(seller)) {
             throw new RuntimeException("해당 주문에 대한 권한이 없습니다.");
         }
 
-        // 주문 상태가 PAYMENT_COMPLETED인지 확인
-        if (order.getOrderStatus() != OrderStatus.PAYMENT_COMPLETED) {
+        // 수정: PaymentGroup 상태도 확인
+        if (order.getOrderStatus() != OrderStatus.PAYMENT_COMPLETED ||
+                order.getPaymentGroup().getPaymentStatus() != PaymentStatus.COMPLETED) {
             throw new RuntimeException("결제가 완료된 주문만 배송 완료 처리할 수 있습니다.");
         }
 
-        // 주문 상태를 DELIVERED로 변경
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
     }
 
-    /**
-     * 판매자가 등록한 제품 목록 조회 (페이징 지원)
-     */
     public Page<SellerDTO.SellerProductDto> getSellerProducts(int page, int size, String sortBy, String order) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
 
-        if (!user.isSeller()) {
-            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
-        }
-
-        Seller seller = sellerRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("판매자 정보가 없습니다."));
-
-        // 정렬 방향 설정
+        // 기존 로직 유지 (Product 조회는 PaymentGroup과 무관)
         Sort.Direction direction = "asc".equalsIgnoreCase(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        // 정렬 기준 설정 (기본값: createdAt)
         String sortField = "createdAt";
         if ("productName".equals(sortBy)) {
             sortField = "productName";
@@ -426,10 +351,8 @@ public class SellerService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
-        // 판매자의 제품 조회 (페이징 지원)
         Page<Product> productPage = productRepository.findBySeller(seller, pageable);
 
-        // DTO로 변환
         List<SellerDTO.SellerProductDto> dtoList = productPage.getContent().stream()
                 .map(product -> new SellerDTO.SellerProductDto(
                         product.getProductId(),
@@ -447,5 +370,18 @@ public class SellerService {
                 .toList();
 
         return new PageImpl<>(dtoList, pageable, productPage.getTotalElements());
+    }
+
+    // 추가: 공통 Seller 조회 메서드
+    private Seller getSellerByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isSeller()) {
+            throw new RuntimeException("해당 유저는 판매자가 아닙니다.");
+        }
+
+        return sellerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
     }
 }
