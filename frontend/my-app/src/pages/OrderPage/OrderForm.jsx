@@ -75,7 +75,10 @@ const OrderForm = () => {
   );
   const totalDiscount = totalOriginalPrice - totalDiscountPrice;
 
-  const shippingPrice = 0;
+  const shippingPrice = products.reduce(
+      (sum, item) => sum + (item.shippingInstallationFee || 0) * (item.quantity || 1),
+      0
+  );
   const pointUsed = 0;
   const finalPrice = totalDiscountPrice + shippingPrice - pointUsed;
 
