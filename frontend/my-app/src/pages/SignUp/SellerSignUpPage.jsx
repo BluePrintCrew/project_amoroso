@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./SignUpPage.css";
 import PageLayout from "../../components/PageLayout/PageLayout";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
 const SellerSignUpPage = () => {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ const SellerSignUpPage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [ceoName, setCeoName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [verificationCodeInput, setVerificationCodeInput] = useState("");
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [companyPhoneNumber, setCompanyPhoneNumber] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
@@ -158,6 +163,52 @@ const SellerSignUpPage = () => {
     }
   };
 
+  function formatPhoneNumber(phone) {
+    if (phone.length === 11) {
+      return phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    } else if (phone.length === 10) {
+      return phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    }
+    return phone;
+  }
+
+  const handleSendVerificationCode = async () => {
+    if (!phoneNumber || phoneNumber.length !== 11) {
+      alert("올바른 휴대폰 번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      await axios.post(`${API_BASE_URL}/api/v1/phone-verification/send`, {
+        phoneNumber: formatPhoneNumber(phoneNumber),
+      });
+
+      alert("인증번호가 전송되었습니다.");
+      setIsCodeSent(true); // 인증번호 입력칸 활성화
+    } catch (error) {
+      console.error("휴대폰 인증번호 전송 실패:", error);
+      alert("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v1/phone-verification/verify`,
+        {
+          phoneNumber,
+          verificationCode: verificationCodeInput,
+        }
+      );
+
+      alert("휴대폰 인증이 완료되었습니다.");
+      setIsPhoneVerified(true);
+    } catch (error) {
+      console.error("인증번호 확인 실패:", error);
+      alert("인증번호가 올바르지 않거나 유효 시간이 지났습니다.");
+    }
+  };
+
   return (
     <div>
       <PageLayout>
@@ -254,14 +305,65 @@ const SellerSignUpPage = () => {
               />
             </div>
 
+            <div className="certification-group">
+              <label>휴대폰 번호</label>
+              <div>
+                <input
+                  type="text"
+                  value={phoneNumber}
+                  className="business-number-input"
+                  onChange={(e) => {
+                    const onlyNums = e.target.value.replace(/\D/g, "");
+                    setPhoneNumber(onlyNums);
+                  }}
+                  required
+                  maxLength={11}
+                  placeholder=" '-' 없이 작성하세요"
+                  readOnly={isPhoneVerified}
+                />
+                <button
+                  type="button"
+                  onClick={handleSendVerificationCode}
+                  className="certification-button"
+                  style={{ flex: "3" }}
+                  disabled={isCodeSent}
+                >
+                  인증번호 전송
+                </button>
+              </div>
+            </div>
+
+            {isCodeSent && (
+              <div className="certification-group">
+                <label>인증번호 입력</label>
+                <div>
+                  <input
+                    type="text"
+                    value={verificationCodeInput}
+                    onChange={(e) => setVerificationCodeInput(e.target.value)}
+                    className="business-number-input"
+                    placeholder="인증번호 입력"
+                    maxLength={6}
+                  />
+                  <button
+                    type="button"
+                    className="certification-button"
+                    onClick={handleVerifyCode}
+                  >
+                    확인
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="input-group">
               <label>사업장 전화번호</label>
               <input
                 type="text"
-                value={phoneNumber}
+                value={companyPhoneNumber}
                 onChange={(e) => {
                   const onlyNums = e.target.value.replace(/\D/g, "");
-                  setPhoneNumber(onlyNums);
+                  setCompanyPhoneNumber(onlyNums);
                 }}
                 required
                 maxLength={11}
@@ -271,7 +373,7 @@ const SellerSignUpPage = () => {
 
             <div className="address-group">
               <label>사업장 주소</label>
-              <div>
+              <div style={{ display: "flex", gap: "10px" }}>
                 <input
                   type="text"
                   className="zipcode"
@@ -279,10 +381,11 @@ const SellerSignUpPage = () => {
                   value={zipcode}
                   readOnly
                   required
+                  style={{ flex: "2.5" }}
                 />
                 <button
                   type="button"
-                  className="search-button"
+                  className="certification-button"
                   onClick={handleFindZipcode}
                 >
                   우편번호 찾기
