@@ -537,9 +537,9 @@ const ProductDetailPage = () => {
                       alt="좋아요 버튼"
                     />
                   </button>
-                  <button className={styles.iconButton}>
+                  {/* <button className={styles.iconButton}>
                     <img src={shareButton} alt="공유 버튼" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <h1 className={styles.productTitle}>{product.productName}</h1>

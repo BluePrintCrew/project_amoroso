@@ -167,9 +167,16 @@
 /* 주소 입력 */
 .address-group {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
   margin-bottom: 16px;
+}
+
+.address-group label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 10px;
 }
 
 .address-group .zipcode {
