@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.amorosobackend.dto.OrderControllerDTO;
+import org.example.amorosobackend.dto.PaymentGroupDTO;
 import org.example.amorosobackend.dto.ReviewDTO;
 import org.example.amorosobackend.service.OrderService;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+
     // (현재 로그인한 사용자 기준)
     @PostMapping
     @Operation(description = "현재 로그인한 사용자의 주문 생성" +
@@ -41,6 +43,20 @@ public class OrderController {
         List<OrderResponseDTO> createdOrder = orderService.createOrder(email, requestDTO);
         return ResponseEntity.ok(createdOrder);
     }
+
+    // 기존 엔드포인트는 유지하고 새로운 엔드포인트 추가
+    @PostMapping("/with-payment-group")
+    public ResponseEntity<PaymentGroupDTO.PaymentGroupResponseDTO> createOrdersWithPaymentGroup(
+            @RequestBody OrderRequestDTO requestDTO,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        PaymentGroupDTO.PaymentGroupResponseDTO response = orderService.createOrdersWithPaymentGroup(email, requestDTO);
+
+        return ResponseEntity.ok(response);
+    }
+
+
 
     // 특정 주문 조회
     @GetMapping("/{orderId}")

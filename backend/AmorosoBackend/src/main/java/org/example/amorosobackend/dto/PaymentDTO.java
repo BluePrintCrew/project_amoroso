@@ -6,12 +6,20 @@ import lombok.NoArgsConstructor;
 
 public class PaymentDTO {
 
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class PaymentVerifyRequest {
+//        private Long orderId;
+//        private String impUid; // PortOne에서 반환받은 결제 고유 ID (예: imp_uid와 유사한 값)
+//    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PaymentVerifyRequest {
-        private Long orderId;
-        private String impUid; // PortOne에서 반환받은 결제 고유 ID (예: imp_uid와 유사한 값)
+        private Long paymentGroupId; // orderId 대신
+        private String impUid;
     }
 
     @Data

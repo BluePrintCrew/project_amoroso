@@ -15,17 +15,6 @@ import OrderTable from "./OrderTable";
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
-// const paymentMethods = [
-//   '퀵 계좌이체',
-//   '신용카드(일반)',
-//   '신용카드(법인)',
-//   '결제수단1',
-//   '토스 페이',
-//   '카카오 페이',
-//   '네이버 페이',
-//   '페이코 결제',
-// ];
-
 const OrderForm = () => {
   // 1. 라우터 관련 훅
   const navigate = useNavigate();
@@ -156,6 +145,7 @@ const OrderForm = () => {
             "배송지 정보가 없습니다. 배송지를 먼저 입력해주세요."
           );
           setShouldRedirect(true);
+
           return;
         }
         if (!data.phoneNumber?.trim()) {
@@ -206,8 +196,9 @@ const OrderForm = () => {
         quantity: item.quantity || 1,
       }));
 
+      // PaymentGroup과 함께 주문 생성 - 새로운 엔드포인트 사용
       const orderResponse = await axios.post(
-        `${API_BASE_URL}/api/v1/orders`,
+        `${API_BASE_URL}/api/v1/orders/with-payment-group`,
         {
           totalPrice: finalPrice,
           orderItems,
@@ -228,7 +219,18 @@ const OrderForm = () => {
 
       console.log("✅ 주문 완료:", orderResponse.data);
 
-      const orderId = orderResponse.data.orderId;
+      // PaymentGroup 정보 추출
+      const paymentGroupId = orderResponse.data.paymentGroupId;
+      const totalAmount = orderResponse.data.totalAmount;
+      const orders = orderResponse.data.orders; // 생성된 모든 주문들
+
+      if (!paymentGroupId) {
+        alert("결제 그룹 ID를 받아오지 못했습니다.");
+        return;
+      }
+
+      console.log(`결제 그룹 ID: ${paymentGroupId}, 총 금액: ${totalAmount}`);
+      console.log(`생성된 주문 수: ${orders.length}`);
 
       const { IMP } = window;
       if (!IMP) {
@@ -237,7 +239,7 @@ const OrderForm = () => {
       }
 
       IMP.init(process.env.REACT_APP_IAMPORT_MERCHANT_CODE);
-      const merchant_uid = `order_${orderId}_${Date.now()}`;
+      const merchant_uid = `payment_group_${paymentGroupId}_${Date.now()}`;
 
       IMP.request_pay(
         {
@@ -245,8 +247,8 @@ const OrderForm = () => {
           pg: "html5_inicis",
           pay_method: "card",
           merchant_uid,
-          name: `주문번호 ${orderId}`,
-          amount: finalPrice,
+          name: `주문 ${orders.length}건 (결제그룹 ${paymentGroupId})`,
+          amount: totalAmount, // PaymentGroup의 총 금액 사용
           buyer_email: user?.email ?? "guest@example.com",
           buyer_name: user?.name ?? "비회원",
           buyer_tel: user?.phoneNumber ?? "010-0000-0000",
@@ -257,11 +259,12 @@ const OrderForm = () => {
         async function (rsp) {
           if (rsp.success) {
             try {
+              // 결제 검증 - PaymentGroup ID 사용
               const verifyRes = await axios.post(
                 `${API_BASE_URL}/api/v1/payments/verify`,
                 {
                   impUid: rsp.imp_uid,
-                  orderId: orderId,
+                  paymentGroupId: paymentGroupId, // orderId 대신 paymentGroupId 사용
                 },
                 {
                   headers: {
@@ -272,7 +275,18 @@ const OrderForm = () => {
               );
 
               if (verifyRes.data.success) {
-                alert("결제가 성공적으로 처리되었습니다.");
+                alert(
+                  `결제가 성공적으로 처리되었습니다. (주문 ${orders.length}건 완료)`
+                );
+
+                // 주문 완료 페이지로 이동 (선택사항)
+                // navigate("/order-complete", {
+                //   state: {
+                //     paymentGroupId: paymentGroupId,
+                //     orders: orders,
+                //     totalAmount: totalAmount
+                //   }
+                // });
               } else {
                 alert("결제 검증 실패: " + verifyRes.data.message);
               }
@@ -473,7 +487,6 @@ const OrderForm = () => {
             <div className={styles.deliveryDate}>
               <div className={styles.deliveryDateTop}>
                 <span>배송 예정일</span>
-                {/* <button className={styles.applyProduct}>적용상품보기</button> */}
               </div>
               <div className={styles.deliveryDateInput}>
                 <DatePicker
@@ -508,13 +521,6 @@ const OrderForm = () => {
                     <label>요일</label>
                   </div>
                 </div>
-                {/* <div className={styles.reservationTimer}>
-                  <span>⏰ 남은 예약시간은</span>
-                  <span className={styles.timerMinute}>12</span>
-                  <span>분</span>
-                  <span className={styles.timerSecond}>34</span>
-                  <span>초 입니다.</span>
-                </div> */}
               </div>
             </div>
           </div>
@@ -582,29 +588,6 @@ const OrderForm = () => {
                 </div>
               </div>
             </div>
-            {/* <div className={styles.paymentMethod}>
-              <h3>결제수단 선택</h3>
-              <hr className={styles.divider3} />
-              <div className={styles.methodOptions}>
-                {paymentMethods.map((method) => (
-                  <button
-                    key={method}
-                    className={`${styles.methodButton} ${
-                      selectedMethod === method ? styles.selectedMethod : ''
-                    }`}
-                    onClick={() => handleMethodClick(method)}
-                  >
-                    {method}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.agreement1}>
-                <input type="checkbox" id="remember-method" />
-                <label htmlFor="remember-method">
-                  선택한 결제수단을 다음에도 사용
-                </label>
-              </div>
-            </div> */}
           </div>
           <div className={styles.finalPayment}>
             <h3>최종 결제 금액</h3>

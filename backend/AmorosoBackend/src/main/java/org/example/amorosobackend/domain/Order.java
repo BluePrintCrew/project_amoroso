@@ -23,6 +23,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_group_id")
+    @Setter
+    private PaymentGroup paymentGroup;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
