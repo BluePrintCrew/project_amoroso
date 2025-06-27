@@ -5,6 +5,22 @@ echo "Environment: ${environment}" > /etc/environment
 yum update -y
 yum install -y java-21-amazon-corretto
 
+# Redis 설치 및 설정 (Amazon Linux 2023)
+echo "[$(date)] Installing Redis..."
+dnf install -y redis
+systemctl start redis
+systemctl enable redis
+
+# Redis 설정 파일 위치 확인 및 기본 보안 설정
+if [ -f /etc/redis.conf ]; then
+    sed -i 's/^bind 127.0.0.1/bind 127.0.0.1/' /etc/redis.conf
+elif [ -f /etc/redis/redis.conf ]; then
+    sed -i 's/^bind 127.0.0.1/bind 127.0.0.1/' /etc/redis/redis.conf
+fi
+systemctl restart redis
+
+echo "[$(date)] Redis installation completed"
+
 # EIP 연결 (사용 가능한 EIP가 있는 경우)
 if [ "${enable_eip}" = "true" ]; then
   echo "[$(date)] Starting EIP association..."

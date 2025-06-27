@@ -140,18 +140,25 @@ JPA `ddl-auto: create`로 스키마 자동 생성
 - Java 21
 - Node.js 18+
 - MySQL 8.0
-- Redis 6.0+
+- Redis 6.0+ (SMS 인증 기능 필요)
+- Docker & Docker Compose (로컬 Redis 실행용)
 - AWS CLI (배포 시)
 - OpenTofu (인프라 배포 시)
 
 ### 로컬 개발 환경 실행
-1. 백엔드 실행:
+1. Redis 컨테이너 실행:
+   ```bash
+   cd backend/AmorosoBackend
+   docker-compose up -d redis
+   ```
+
+2. 백엔드 실행:
    ```bash
    cd backend/AmorosoBackend
    ./gradlew bootRun
    ```
 
-2. 프론트엔드 실행:
+3. 프론트엔드 실행:
    ```bash
    cd frontend/my-app
    npm install
