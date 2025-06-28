@@ -186,6 +186,33 @@
   background: #007a0c;
 }
 
+.shippingBtn:disabled:hover {
+  background: #e0e0e0;
+}
+
+.shippingDoneBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+  border: none;
+  cursor: default;
+  min-width: 100px;
+  text-align: center;
+  position: relative;
+}
+
+.shippingDoneBadge::before {
+  content: "✓";
+  margin-right: 4px;
+  font-weight: bold;
+}
+
 .orderTable th, .orderTable td {
   padding: 16px 12px !important;
   border: 1px solid #e2e2e2 !important;
@@ -278,7 +305,12 @@
 .productTable td { color: #444; }
 .totalLabel { text-align: right; font-weight: 600; color: #766e68; }
 .totalAmount { color: #e74c3c; font-weight: 700; font-size: 1.13rem; }
-.actionButtons { text-align: right; margin-top: 18px; }
+.actionButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
 .shippingBtn { background: #766e68; }
 .shippingBtn:hover { background: #5a524c; }
 .statusTag { font-weight: 600; }
@@ -343,5 +375,22 @@
   background: #766e68;
   color: #fff;
   box-shadow: 0 2px 8px rgba(118,110,104,0.08);
+}
+
+.detailBtn {
+  background: #fff;
+  color: #766e68;
+  border: 1.5px solid #766e68;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+}
+.detailBtn:hover {
+  background: #f7f7f7;
+  color: #4CAF50;
+  border-color: #4CAF50;
 }
 

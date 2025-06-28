@@ -156,18 +156,21 @@ const OrderListPage = () => {
                 </td>
                 <td>{order.totalPrice ? order.totalPrice.toLocaleString() + '원' : '-'}</td>
                 <td>
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <div className={styles.actionButtons}>
+                    {order.orderStatus === '발송완료' || order.orderStatus === 'DELIVERED' ? (
+                      <span className={styles.shippingDoneBadge}>발송완료</span>
+                    ) : (
+                      <button
+                        className={styles.shippingBtn}
+                        disabled={order.orderStatus === '주문취소'}
+                        onClick={() => handleShippingComplete(order.orderId)}
+                      >
+                        발송완료 처리
+                      </button>
+                    )}
                     <button
-                      className={styles.shippingBtn}
-                      disabled={order.orderStatus === '발송완료' || order.orderStatus === '주문취소'}
-                      onClick={() => handleShippingComplete(order.orderId)}
-                    >
-                      발송완료
-                    </button>
-                    <button
-                      className={styles.shippingBtn}
+                      className={styles.detailBtn}
                       onClick={() => handleOrderClick(order)}
-                      style={{ background: '#666' }}
                     >
                       상세보기
                     </button>

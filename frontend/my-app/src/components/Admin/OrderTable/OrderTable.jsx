@@ -144,13 +144,25 @@ const OrderTable = () => {
               </td>
               <td>{order.totalPrice ? order.totalPrice.toLocaleString() + ' 원' : '-'}</td>
               <td onClick={e => e.stopPropagation()}>
-                <button
-                  className={styles.shippingBtn}
-                  disabled={order.orderStatus === '발송완료' || order.orderStatus === '주문취소'}
-                  onClick={() => handleShippingComplete(order.orderId)}
-                >
-                  발송 완료
-                </button>
+                <div className={styles.actionButtons}>
+                  {order.orderStatus === '발송완료' || order.orderStatus === 'DELIVERED' ? (
+                    <span className={styles.shippingDoneBadge}>발송완료</span>
+                  ) : (
+                    <button
+                      className={styles.shippingBtn}
+                      disabled={order.orderStatus === '주문취소'}
+                      onClick={() => handleShippingComplete(order.orderId)}
+                    >
+                      발송완료 처리
+                    </button>
+                  )}
+                  <button
+                    className={styles.detailBtn}
+                    onClick={() => handleRowClick(order)}
+                  >
+                    상세보기
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

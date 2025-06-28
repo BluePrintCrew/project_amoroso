@@ -131,6 +131,29 @@
   background: #e0e0e0;
 }
 
+.shippingDoneBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+  border: none;
+  cursor: default;
+  min-width: 100px;
+  text-align: center;
+  position: relative;
+}
+
+.shippingDoneBadge::before {
+  content: "✓";
+  margin-right: 4px;
+  font-weight: bold;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -278,11 +301,26 @@
 
 .actionButtons {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid #eee;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.detailBtn {
+  background: #fff;
+  color: #766e68;
+  border: 1.5px solid #766e68;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s;
+}
+.detailBtn:hover {
+  background: #f7f7f7;
+  color: #4CAF50;
+  border-color: #4CAF50;
 }
 
 @media (max-width: 768px) {
