@@ -17,6 +17,7 @@ const Footer = () => {
               회사소개
             </a>
           </div>
+          {/*
           <div>
             <a href="/terms" className={styles.footerLink}>
               이용약관
@@ -27,6 +28,7 @@ const Footer = () => {
               개인정보처리방침
             </a>
           </div>
+          */}
         </div>
       </div>
       <div className={styles.footerBorder}></div>
