@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
 import cart from '../../assets/svg/cart_button.svg';
-import login from '../../assets/svg/login_button.svg';
+import login from '../../assets/svg/log_in.svg';
 import logo from '../../assets/svg/logo.svg';
+import logout from '../../assets/svg/logout.svg';
 import mypage from '../../assets/svg/mypage_button.svg';
 import search from '../../assets/svg/search.svg';
-import logout from '../../assets/svg/logout.svg';
+import sellerLogin from '../../assets/svg/seller_login.svg';
 import styles from './Header.module.css';
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     // 컴포넌트 마운트 시 access_token 존재 여부 확인
     const checkAuth = () => {
       const token = localStorage.getItem('access_token');
       setIsAuthenticated(!!token);
     };
-    
+
     // 초기 확인
     checkAuth();
-    
+
     // 토큰 변경을 처리하기 위한 스토리지 이벤트 리스너 등록
     window.addEventListener('storage', checkAuth);
-    
+
     // 클린업
     return () => {
       window.removeEventListener('storage', checkAuth);
@@ -38,19 +40,19 @@ const Header = () => {
       navigate(`/products?keyword=${encodeURIComponent(searchQuery)}`);
     }
   };
-  
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearchClick();
     }
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     setIsAuthenticated(false);
     navigate('/');
   };
-  
+
   return (
     <header className={`${styles.header} ${styles.fullWidth}`}>
       <div className={styles.headerContent}>
@@ -83,10 +85,20 @@ const Header = () => {
         </div>
         <div className={styles.headerIcons}>
           {!isAuthenticated ? (
-            <Link to="/login" className={styles.iconWithLabel}>
-              <img src={login} alt="Login" className={styles.navIcon} />
-              <span className={styles.iconLabel}>로그인</span>
-            </Link>
+            <>
+              <Link to="/login" className={styles.iconWithLabel}>
+                <img src={login} alt="Login" className={styles.navIcon} />
+                <span className={styles.iconLabel}>로그인</span>
+              </Link>
+              <Link to="/admin/login" className={styles.iconWithLabel}>
+                <img
+                  src={sellerLogin}
+                  alt="SellerLogin"
+                  className={styles.navIcon}
+                />
+                <span className={styles.iconLabel}>판매자 로그인</span>
+              </Link>
+            </>
           ) : (
             <>
               <Link to="/cart" className={styles.iconWithLabel}>
@@ -97,10 +109,7 @@ const Header = () => {
                 <img src={mypage} alt="Mypage" className={styles.navIcon} />
                 <span className={styles.iconLabel}>마이페이지</span>
               </Link>
-              <div 
-                onClick={handleLogout} 
-                className={styles.iconWithLabel}
-              >
+              <div onClick={handleLogout} className={styles.iconWithLabel}>
                 <img src={logout} alt="Logout" className={styles.navIcon} />
                 <span className={styles.iconLabel}>로그아웃</span>
               </div>

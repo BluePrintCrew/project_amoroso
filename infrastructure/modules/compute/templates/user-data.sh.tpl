@@ -7,17 +7,16 @@ yum install -y java-21-amazon-corretto
 
 # Redis 설치 및 설정 (Amazon Linux 2023)
 echo "[$(date)] Installing Redis..."
-dnf install -y redis
-systemctl start redis
-systemctl enable redis
+dnf install -y redis6
+systemctl start redis6
+systemctl enable redis6
 
 # Redis 설정 파일 위치 확인 및 기본 보안 설정
-if [ -f /etc/redis.conf ]; then
-    sed -i 's/^bind 127.0.0.1/bind 127.0.0.1/' /etc/redis.conf
-elif [ -f /etc/redis/redis.conf ]; then
-    sed -i 's/^bind 127.0.0.1/bind 127.0.0.1/' /etc/redis/redis.conf
+REDIS_CONF="/etc/redis6.conf"
+if [ -f "$REDIS_CONF" ]; then
+    sed -i 's/^bind 127.0.0.1/bind 127.0.0.1/' "$REDIS_CONF"
+    systemctl restart redis6
 fi
-systemctl restart redis
 
 echo "[$(date)] Redis installation completed"
 
