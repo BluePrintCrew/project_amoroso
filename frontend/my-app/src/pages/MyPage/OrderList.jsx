@@ -106,8 +106,9 @@ function OrderList() {
   return (
     <div className="order-list-container">
       <div className="order-list-title-row">
-        <span className="order-list-title">구매 내역</span>
+        <span className="order-list-title">구매 내역 &gt;</span>
       </div>
+      <div className="order-list-title-divider"></div>
       <table className="order-list-table">
         <thead>
           <tr>

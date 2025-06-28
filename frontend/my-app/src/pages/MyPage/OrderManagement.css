@@ -184,9 +184,7 @@
 
 /* ===================== 주문 내역 리스트 타이틀 ===================== */
 .order-list-title-row {
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   margin-top: 32px;
 }
 .order-list-title {
@@ -194,10 +192,12 @@
   font-weight: 700;
   color: #222;
   letter-spacing: -0.5px;
-  border-bottom: 2px solid #666;
-  padding-bottom: 4px;
-  margin-right: 16px;
   font-family: "Pretendard", sans-serif;
+}
+.order-list-title-divider {
+  border-bottom: 2px solid #666;
+  width: 100%;
+  margin: 8px 0 32px 0;
 }
 
 /* ===================== 가구 쇼핑몰 감성 주문 상세 모달 ===================== */
