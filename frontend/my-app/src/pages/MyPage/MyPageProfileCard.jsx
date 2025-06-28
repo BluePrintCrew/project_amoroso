@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from "react";
-import "./MyPageProfileCard.css";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import './MyPageProfileCard.css';
 
+import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
+import axios from 'axios';
+import couponIcon from '../../assets/coupon_img.png';
+import editIcon from '../../assets/svg/edit.svg'; // 연필 아이콘 추가 필요
 // Import your images
-import pointIcon from "../../assets/point_img.png";
-import couponIcon from "../../assets/coupon_img.png";
-import reviewIcon from "../../assets/review_img.png";
-import zzimIcon from "../../assets/zzim_img.png";
-import editIcon from "../../assets/svg/edit.svg"; // 연필 아이콘 추가 필요
+import pointIcon from '../../assets/point_img.png';
+import reviewIcon from '../../assets/review_img.png';
+import zzimIcon from '../../assets/zzim_img.png';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function MyPageProfileCard() {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
-    name: "",
-    greeting: "안녕하세요!",
+    name: '',
+    greeting: '안녕하세요!',
     points: 0,
     coupons: 0,
     reviewCount: 0,
-    wishlistCount: 0
+    wishlistCount: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,32 +32,35 @@ function MyPageProfileCard() {
       try {
         // 로컬 스토리지에서 토큰 가져오기
         const token = localStorage.getItem('access_token');
-        
+
         if (!token) {
           // 토큰이 없으면 오류 처리
-          setError("로그인이 필요합니다");
+          setError('로그인이 필요합니다');
           setLoading(false);
           return;
         }
         // API 호출
-        const response = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const response = await axios.get(
+          `${API_BASE_URL}/api/v1/auth/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
-        console.log("프로필 API 응답:", response.data);
+        );
+        console.log('프로필 API 응답:', response.data);
         // API 응답 데이터를 사용자 정보 객체로 매핑
         setUserInfo({
-          name: response.data.name ? `${response.data.name}님` : "고객님",
-          greeting: "안녕하세요!",
+          name: response.data.name ? `${response.data.name}님` : '고객님',
+          greeting: '안녕하세요!',
           points: response.data.points || 0, // API에서 제공하는 포인트 정보
           coupons: response.data.availableCoupons || 0,
           reviewCount: response.data.pendingReviews || 0,
-          wishlistCount: response.data.wishlistCount || 0
+          wishlistCount: response.data.wishlistCount || 0,
         });
       } catch (error) {
-        console.error("프로필 정보 로딩 오류:", error);
-        setError("프로필 정보를 불러오는데 실패했습니다");
+        console.error('프로필 정보 로딩 오류:', error);
+        setError('프로필 정보를 불러오는데 실패했습니다');
       } finally {
         setLoading(false);
       }
@@ -82,7 +87,9 @@ function MyPageProfileCard() {
     return (
       <div className="my-page-profile-wrapper error">
         <p>{error}</p>
-        <button onClick={() => window.location.href = '/login'}>로그인하기</button>
+        <button onClick={() => (window.location.href = '/login')}>
+          로그인하기
+        </button>
       </div>
     );
   }
@@ -102,7 +109,7 @@ function MyPageProfileCard() {
         </div>
         <p className="greeting">{userInfo.greeting}</p>
       </div>
-      
+
       {/* Right side: 4 stats in a row */}
       <div className="profile-right">
         <div className="stat-box">
@@ -123,12 +130,14 @@ function MyPageProfileCard() {
           <p className="stat-title">리뷰 작성</p>
           <p className="stat-value">{userInfo.reviewCount}</p>
         </div>
-        <div className="stat-box">
-          {/* Icon for wishlist */}
-          <img src={zzimIcon} alt="찜 아이콘" className="stat-icon" />
-          <p className="stat-title">찜</p>
-          <p className="stat-value">{userInfo.wishlistCount}</p>
-        </div>
+        <Link to="like-product">
+          <div className="stat-box">
+            {/* Icon for wishlist */}
+            <img src={zzimIcon} alt="찜 아이콘" className="stat-icon" />
+            <p className="stat-title">찜</p>
+            <p className="stat-value">{userInfo.wishlistCount}</p>
+          </div>
+        </Link>
       </div>
     </div>
   );

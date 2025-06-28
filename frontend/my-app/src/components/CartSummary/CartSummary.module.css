@@ -21,10 +21,12 @@
 
 /* 중간 요약 금액들 */
 .summaryBody {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  position: relative;
   align-items: center;
   justify-content: space-evenly;
-  gap: 16px;
   padding: 24px 0;
   border-bottom: 1px solid #ddd;
   height: 120px;
@@ -46,11 +48,26 @@
 .operator {
   font-size: 1.2rem;
   color: #aaa;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.op_plus {
+  left: 50%; /* 2번째-3번째 셀 사이 */
+  transform: translate(-50%, -50%);
+}
+.op_minus {
+  left: 25%; /* 1번째-2번째 셀 사이 */
+  transform: translate(-50%, -50%);
+}
+.op_equals {
+  left: 75%; /* 3번째-4번째 셀 사이 */
+  transform: translate(-50%, -50%);
 }
 
 /* 하단 상세 영역 */
 .summaryDetail {
-  padding: 16px 20px;
+  padding: 16px 0px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -58,7 +75,6 @@
   /* 4개의 동일한 너비 컬럼 */
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px; /* 칸 사이 간격 */
 }
 
 /* 각 칸(컬럼) 공통 스타일 */

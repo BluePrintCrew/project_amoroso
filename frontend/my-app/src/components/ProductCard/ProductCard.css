@@ -41,9 +41,9 @@
   width: 24px;
   height: 24px;
   border: none;
-  background: url('../../assets/heart-icon.png') no-repeat center / contain; /* 실제 하트 아이콘 경로 */
   cursor: pointer;
   opacity: 0.8;
+  background: none;
 }
 
 .wishlist-btn:hover {
