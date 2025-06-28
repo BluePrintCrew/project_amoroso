@@ -50,12 +50,21 @@ public class UserAddressService {
 
 
         return userAddressRepository.findByUserAndIsDefaultTrue(user)
-                .map(address -> toDto(address, user)) // user 파라미터 추가
+                .map(address -> toDto(address, user))
                 .orElseGet(() -> {
-                    // Set only addressId to null, phoneNumber to user's phoneNumber, others to default values
+                    // 기본 배송지가 없을 때도 사용자 정보를 포함한 빈 객체 반환
                     UserAddressDto.GetAddress empty = new UserAddressDto.GetAddress();
                     empty.setAddressId(null);
+                    empty.setRecipientName(user.getName()); // 이름 추가!
                     empty.setPhoneNumber(user.getPhoneNumber());
+                    empty.setPostalCode(""); // 필요시 기본값 설정
+                    empty.setAddress("");
+                    empty.setDetailAddress("");
+                    empty.setIsDefault(false);
+                    empty.setFreeLoweringService(false);
+                    empty.setProductInstallationAgreement(false);
+                    empty.setVehicleEntryPossible(false);
+                    empty.setElevatorType(ElevatorType.ONE_TO_SEVEN.name());
                     return empty;
                 });
     }

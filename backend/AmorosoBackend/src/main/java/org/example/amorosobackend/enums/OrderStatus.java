@@ -10,4 +10,4 @@ public enum OrderStatus {
     CANCELLED, // 주문 취소
     RETURNED,
     EXCHANGED
-    }
+}
