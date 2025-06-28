@@ -227,8 +227,8 @@ public class SellerService {
                         order.getCreatedAt(),
                         order.getUser().getName(),
                         order.getUserAddress().getAddress() + " " + order.getUserAddress().getDetailAddress(),
-                        order.getOrderStatus().name(),
-                        order.getPaymentStatus().name(),
+                        getOrderStatusKorean(order.getOrderStatus()), // 한국어로 변환
+                        getPaymentStatusKorean(order.getPaymentStatus()), // 결제상태도 한국어로
                         order.getTotalPrice()
                 ))
                 .toList();
@@ -238,24 +238,17 @@ public class SellerService {
 
     @Transactional
     public SellerRegistrationDTO.Response registerSeller(SellerRegistrationDTO.Request request) {
-        // 기존 로직 유지 (회원가입은 PaymentGroup과 무관)
+        // 1. 기본 중복 검사만 수행
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already in use");
         }
 
-        BusinessStatusResponse statusResponse = businessValidationService.checkBusinessStatus(request.getBusinessNumber());
-
-        if (!"계속사업자".equals(statusResponse.getBusinessStatus())) {
-            throw new IllegalArgumentException("Only active business can register");
+        // 사업자등록번호 중복 검사 (같은 사업자번호로 이미 가입된 셀러가 있는지)
+        if (sellerRepository.existsByBusinessRegistrationNumber(request.getBusinessNumber())) {
+            throw new IllegalArgumentException("Business registration number already registered");
         }
 
-        EcommerceValidationResponse ecommerceValidation = ecommerceValidationService.validateEcommerceBusiness(
-                new EcommerceValidationRequest(request.getBusinessNumber(), request.getBrandName()));
-
-        if (!ecommerceValidation.isValid()) {
-            throw new IllegalArgumentException("Invalid e-commerce business: " + ecommerceValidation.getMessage());
-        }
-
+        // 2. User 생성 및 저장
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -270,6 +263,7 @@ public class SellerService {
 
         userRepository.save(user);
 
+        // 3. Seller 정보는 프론트엔드에서 검증된 데이터 그대로 사용
         Seller seller = Seller.builder()
                 .user(user)
                 .brandName(request.getBrandName())
@@ -277,18 +271,12 @@ public class SellerService {
                 .businessStartDate(request.getBusinessStartDate())
                 .businessAddress(request.getBusinessAddress())
                 .businessDetailAddress(request.getBusinessDetailAddress())
-                .taxationType(statusResponse.getTaxationType())
-                .businessStatus(statusResponse.getBusinessStatus())
                 .businessTel(request.getBusinessTel())
+                .taxationType(request.getTaxationType())
+                .businessStatus(request.getBusinessStatus())
                 .businessEmail(request.getBusinessEmail())
-                .ecommerceRegistrationNumber(ecommerceValidation.getRegistrationNumber())
-                .ecommerceRegistrationDate(ecommerceValidation.getRegistrationDate())
-                .ecommerceBusinessStatus(ecommerceValidation.getBusinessStatus())
-                .ecommerceDomain(ecommerceValidation.getDomain())
-                .serverLocation(ecommerceValidation.getServerLocation())
-                .salesMethod(ecommerceValidation.getSalesMethod())
-                .productCategories(ecommerceValidation.getProductCategories())
-                .build();
+                        .build();
+
 
         sellerRepository.save(seller);
 
@@ -305,7 +293,6 @@ public class SellerService {
                 .message("Seller registration completed")
                 .build();
     }
-
     // 삭제: getSellerIdByEmail 메서드 (Long 반환 방식 제거)
     // private Long getSellerIdByEmail(String email) { ... }
 
@@ -418,4 +405,26 @@ public class SellerService {
         return sellerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Seller 정보가 없습니다."));
     }
+
+    private String getOrderStatusKorean(OrderStatus status) {
+        return switch (status) {
+            case PAYMENT_PENDING -> "결제 대기";
+            case PAYMENT_COMPLETED -> "결제 완료";
+            case PREPARING_SHIPMENT -> "배송 준비중";
+            case SHIPPING -> "배송중";
+            case DELIVERED -> "배송 완료";
+            case CANCELLED -> "주문 취소";
+            case RETURNED -> "반품";
+            case EXCHANGED -> "교환";
+        };
+    }
+    private String getPaymentStatusKorean(PaymentStatus status) {
+        return switch (status) {
+            case WAITING -> "결제 대기";
+            case COMPLETED -> "결제 완료";
+            case CANCELED -> "결제 취소";
+        };
+    }
+
+
 }
