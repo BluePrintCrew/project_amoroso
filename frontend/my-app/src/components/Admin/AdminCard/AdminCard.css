@@ -1,32 +1,90 @@
 .admin-card {
-    /* Basic card styling */
-    width: 30%;
-    min-height: 150px;
-    background-color: #fff;
-    height: 200px;
-    /* Rounded corners + drop shadow for the “card” effect */
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  
-    /* Optional margin/padding */
-    margin: 16px 0;
-    position: relative; /* So the title can be positioned inside the card if needed */
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 25%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  padding: 24px 20px 20px 20px;
+  min-height: 140px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.admin-card-icon {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.admin-card-dropdown {
+  border: none;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.admin-card-title {
+  font-size: 1.1rem;
+  color: #888;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.admin-card-value {
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin: 8px 0 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.admin-card-value .unit {
+  font-size: 1rem;
+  color: #888;
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.admin-card-comparison {
+  font-size: 0.95rem;
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.admin-card-comparison .positive {
+  color: #2ecc40;
+  font-weight: bold;
+}
+
+.admin-card-comparison .negative {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+@media (max-width: 1200px) {
+  .admin-card {
+    max-width: 48%;
   }
-  
-  .card-content {
-    padding: 24px;
-    /* You can also add display: flex; if you want a flex layout inside the card */
+}
+@media (max-width: 700px) {
+  .admin-card {
+    max-width: 100%;
   }
-  
-  .card-title {
-    position: absolute;
-    bottom: 16px;
-    left: 24px;
-  
-    /* Font styles */
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-  }
+}
   

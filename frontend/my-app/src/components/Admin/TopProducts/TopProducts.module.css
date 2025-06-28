@@ -1,15 +1,16 @@
 .container{
     width: 100%;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 24px 20px 20px 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    background: #fff;
 }
 
 .header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
 }
 
 .dropdown{
@@ -17,6 +18,58 @@
     border: 1px solid #e3e3e3;
     border-radius: 10px;
     cursor: pointer;
+}
+
+.productTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.productTable th,
+.productTable td {
+    padding: 10px 0;
+    text-align: left;
+    font-size: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.productTable th {
+    color: #888;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.productRow:last-child td {
+    border-bottom: none;
+}
+
+.productName {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.productCategory {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.productPrice {
+    color: #1976d2;
+    font-weight: 500;
+}
+
+@media (max-width: 700px) {
+    .container {
+        padding: 12px 4px 10px 4px;
+        border-radius: 8px;
+    }
+    .productTable th, .productTable td {
+        font-size: 0.95rem;
+        padding: 6px 0;
+    }
+    .productName {
+        font-size: 0.95rem;
+    }
 }
 
 .productList{
@@ -47,16 +100,6 @@
     background: #d9d9d9;
 }
 
-.productName{
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.category{
-    font-size: 14px;
-    color: #666
-}
-
 .productMeta{
     display: flex;
     flex: 1;
@@ -71,16 +114,10 @@
     color: #666;
 }
 
-
 .codeHeader,
 .priceHeader{
     font-size: 14px;
     margin-bottom: 10px;
-}
-
-.productPrice{
-    font-size: 14px;
-    color: #0064ff;
 }
 
 .rank {
