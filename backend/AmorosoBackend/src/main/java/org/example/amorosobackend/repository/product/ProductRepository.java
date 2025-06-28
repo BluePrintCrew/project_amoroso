@@ -31,4 +31,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     int countBySellerAndCreatedAtAfter(Seller seller, LocalDateTime startOfYear);
 
     List<Product> findTop5BySellerOrderBySalesCountDesc(Seller seller);
+
+
 }
