@@ -36,6 +36,8 @@ const OrderForm = () => {
   const [checkingAddress, setCheckingAddress] = useState(true);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [redirectReason, setRedirectReason] = useState(''); // 알림 문구 저장용
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false); // 결제 처리 중 상태
+  const [paymentError, setPaymentError] = useState(null); // 결제 에러 상태
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -188,6 +190,28 @@ const OrderForm = () => {
   };
 
   const handleOrderSubmit = async () => {
+    // 배송 예정일 선택 확인
+    if (!selectedDate) {
+      alert('배송 예정일을 선택해주세요.');
+      return;
+    }
+
+    // 필수 약관 동의 확인
+    const agreeCheckbox = document.getElementById('agree');
+    if (!agreeCheckbox?.checked) {
+      alert('결제를 위해 필수약관에 동의해주세요.');
+      return;
+    }
+
+    // 제품 설치 공간 확보 동의 확인
+    if (!productInstallationAgreement) {
+      alert('제품 설치 공간 확보 및 사다리차 추가비용 동의가 필요합니다.');
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setPaymentError(null);
+
     try {
       const token = localStorage.getItem('access_token');
 
@@ -297,6 +321,10 @@ const OrderForm = () => {
     } catch (error) {
       console.error('❌ 주문 실패:', error);
       alert('주문에 실패했습니다. 다시 시도해주세요.');
+      console.error('❌ 주문 실패:', error);
+      alert('주문에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsProcessingPayment(false);
     }
   };
 
@@ -482,6 +510,14 @@ const OrderForm = () => {
               <div className={styles.deliveryDateTop}>
                 <span>배송 예정일</span>
               </div>
+              <div className={styles.deliveryNotice}>
+                <p>• 주문일로부터 약 2주 정도 소요됩니다.</p>
+                <p>
+                  • 제품 특성, 재고 상황, 배송 지역에 따라 배송일이 변경될 수
+                  있습니다.
+                </p>
+                <p>• 정확한 배송일은 주문 완료 후 별도 안내드립니다.</p>
+              </div>
               <div className={styles.deliveryDateInput}>
                 <DatePicker
                   selected={selectedDate}
@@ -553,9 +589,9 @@ const OrderForm = () => {
                   <div className={styles.priceBundle}>
                     <div className={styles.priceItem}>0</div>
                     <span>원</span>
-                    <button className={styles.couponButton}>
+                    {/* <button className={styles.couponButton}>
                       적용가능쿠폰
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -569,7 +605,7 @@ const OrderForm = () => {
                       {pointUsed.toLocaleString()}
                     </div>
                     <span>원(0원 보유)</span>
-                    <button className={styles.couponButton}>전체사용</button>
+                    {/* <button className={styles.couponButton}>전체사용</button> */}
                   </div>
                 </div>
               </div>
@@ -621,13 +657,28 @@ const OrderForm = () => {
               </span>
             </div>
             <div className={styles.agreement}>
-              <input type="checkbox" id="agree" />
+              <input
+                type="checkbox"
+                id="agree"
+                aria-label="결제 필수약관 동의"
+              />
               <label htmlFor="agree">
                 하기 필수약관을 모두 확인하였으며 결제에 동의합니다.
               </label>
             </div>
-            <button className={styles.payButton} onClick={handleOrderSubmit}>
-              결제하기
+
+            {paymentError && (
+              <div className={styles.errorMessage}>{paymentError}</div>
+            )}
+
+            <button
+              className={`${styles.payButton} ${
+                isProcessingPayment ? styles.disabled : ''
+              }`}
+              onClick={handleOrderSubmit}
+              disabled={isProcessingPayment}
+            >
+              {isProcessingPayment ? '결제 처리 중...' : '결제하기'}
             </button>
           </div>
         </div>

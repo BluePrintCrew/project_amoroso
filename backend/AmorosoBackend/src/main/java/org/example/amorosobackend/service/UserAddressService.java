@@ -72,6 +72,7 @@ public class UserAddressService {
                     // Create new default address if not exists
                     UserAddress newAddress = UserAddress.builder()
                             .user(user)
+
                             .postalCode(request.getPostalCode())
                             .address(request.getAddress())
                             .detailAddress(request.getDetailAddress())
@@ -127,7 +128,7 @@ public class UserAddressService {
     public UserAddressDto.GetAddress toDto(UserAddress userAddress, User user) {
         return UserAddressDto.GetAddress.builder()
                 .addressId(userAddress.getAddressId())
-                .recipientName(userAddress.getRecipientName())
+                .recipientName(user.getName())
                 .phoneNumber(user.getPhoneNumber()) // User의 phoneNumber 사용
                 .postalCode(userAddress.getPostalCode())
                 .address(userAddress.getAddress())

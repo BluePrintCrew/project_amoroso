@@ -57,6 +57,7 @@ function ProductListPage() {
   const [searchParams] = useSearchParams();
   const topCategories = Object.keys(categoryMap);
   const initialTop = searchParams.get('top') || topCategories[0];
+  const keyword = searchParams.get('keyword') || '';
   const [selectedTop, setSelectedTop] = useState(initialTop);
   const [selectedSub, setSelectedSub] = useState('');
   const [products, setProducts] = useState([]);
@@ -78,15 +79,26 @@ function ProductListPage() {
   }, [selectedTop]);
 
   useEffect(() => {
-    if (!selectedSub) return;
+    // 검색어가 있으면 카테고리 필터 없이 검색, 없으면 카테고리 필터 사용
+    if (keyword && !selectedSub) return;
+    if (!keyword && !selectedSub) return;
+    
     setLoading(true);
     setError(null);
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(
-          `${API_ENDPOINT}/products/?categoryCode=${selectedSub}&page=${currentPage}&sortBy=${sortBy}&order=${order}&size=${size}`
-        );
+        let url = `${API_ENDPOINT}/products/?page=${currentPage}&sortBy=${sortBy}&order=${order}&size=${size}`;
+        
+        if (keyword) {
+          // 검색어가 있으면 검색 API 사용
+          url += `&keyword=${encodeURIComponent(keyword)}`;
+        } else {
+          // 검색어가 없으면 카테고리 필터 사용
+          url += `&categoryCode=${selectedSub}`;
+        }
+
+        const response = await fetch(url);
 
         if (!response.ok)
           throw new Error('상품 데이터를 불러오는데 실패했습니다.');
@@ -104,7 +116,7 @@ function ProductListPage() {
     };
 
     fetchProducts().finally(() => setLoading(false));
-  }, [selectedSub, currentPage, sortBy, order, size]);
+  }, [selectedSub, currentPage, sortBy, order, size, keyword]);
 
   const handleTopCategoryChange = (topCategory) => {
     setSelectedTop(topCategory);
@@ -232,47 +244,59 @@ function ProductListPage() {
   return (
     <PageLayout>
       <div className="content-wrapper">
-        <nav className="breadcrumb">
-          <img src={homeicon} alt="홈 아이콘" className="home-icon" />
-          <span className="separator">&gt;</span>
-          <span className="category">{topCategoryMap[selectedTop]}</span>
-          <span className="separator">&gt;</span>
-          <span className="current">
-            {currentSubCategory ? currentSubCategory.label : ''}
-          </span>
-        </nav>
+        {keyword ? (
+          // 검색 결과일 때
+          <nav className="breadcrumb">
+            <img src={homeicon} alt="홈 아이콘" className="home-icon" />
+            <span className="separator">&gt;</span>
+            <span className="current">검색 결과: "{keyword}"</span>
+          </nav>
+        ) : (
+          // 카테고리 필터일 때
+          <nav className="breadcrumb">
+            <img src={homeicon} alt="홈 아이콘" className="home-icon" />
+            <span className="separator">&gt;</span>
+            <span className="category">{topCategoryMap[selectedTop]}</span>
+            <span className="separator">&gt;</span>
+            <span className="current">
+              {currentSubCategory ? currentSubCategory.label : ''}
+            </span>
+          </nav>
+        )}
 
-        <div className="category-selector">
-          {/* 상위 카테고리 탭 */}
-          <div className="top-category-tabs">
-            {topCategories.map((category) => (
-              <button
-                key={category}
-                className={`top-category-tab ${
-                  selectedTop === category ? 'active' : ''
-                }`}
-                onClick={() => handleTopCategoryChange(category)}
-              >
-                {topCategoryMap[category]}
-              </button>
-            ))}
-          </div>
+        {!keyword && (
+          <div className="category-selector">
+            {/* 상위 카테고리 탭 */}
+            <div className="top-category-tabs">
+              {topCategories.map((category) => (
+                <button
+                  key={category}
+                  className={`top-category-tab ${
+                    selectedTop === category ? 'active' : ''
+                  }`}
+                  onClick={() => handleTopCategoryChange(category)}
+                >
+                  {topCategoryMap[category]}
+                </button>
+              ))}
+            </div>
 
-          {/* 하위 카테고리 버튼 */}
-          <div className="sub-category-buttons">
-            {subCategoryList.map((sub) => (
-              <button
-                key={sub.value}
-                className={`sub-category-button ${
-                  selectedSub === sub.value ? 'active' : ''
-                }`}
-                onClick={() => handleSubCategoryChange(sub.value)}
-              >
-                {sub.label}
-              </button>
-            ))}
+            {/* 하위 카테고리 버튼 */}
+            <div className="sub-category-buttons">
+              {subCategoryList.map((sub) => (
+                <button
+                  key={sub.value}
+                  className={`sub-category-button ${
+                    selectedSub === sub.value ? 'active' : ''
+                  }`}
+                  onClick={() => handleSubCategoryChange(sub.value)}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {loading ? (
           <p className="loading-text">로딩 중...</p>
