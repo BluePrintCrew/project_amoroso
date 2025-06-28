@@ -31,6 +31,7 @@ public class OrderControllerDTO {
         private Boolean productInstallationAgreement;
         private Boolean vehicleEntryPossible;
         private String elevatorType;
+        private String sellerPhoneNumber;
 
         public OrderResponseDTO(Order order) {
             this.orderId = order.getOrderId();
@@ -46,6 +47,7 @@ public class OrderControllerDTO {
             this.vehicleEntryPossible = order.getVehicleEntryPossible();
             this.elevatorType = order.getElevatorType().name();
             this.freeLoweringService = order.getFreeLoweringService();
+            this.sellerPhoneNumber = order.getSeller().getBusinessTel();
         }
     }
 

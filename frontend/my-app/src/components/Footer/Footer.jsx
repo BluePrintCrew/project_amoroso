@@ -1,6 +1,6 @@
 import React from 'react';
-import kakaoButton from '../../assets/kakao_button.png';
-import logo from '../../assets/logo.png';
+import kakaoButton from '../../assets/svg/kakao_button.svg';
+import logo from '../../assets/svg/logo.svg';
 import styles from './Footer.module.css';
 
 const Footer = () => {
