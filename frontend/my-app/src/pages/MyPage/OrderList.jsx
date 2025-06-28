@@ -5,67 +5,6 @@ import "./OrderManagement.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
-// 목데이터 예시
-const MOCK_ORDERS = [
-  {
-    orderId: 1001,
-    orderDate: "2024.06.19 12:34",
-    totalAmount: 3306000,
-    sellerPhoneNumber: "010-1234-5678",
-    orderStatus: "PAYMENT_COMPLETED",
-    paymentStatus: "COMPLETED",
-    createdAt: "2024.06.19 12:34",
-    productInstallationAgreement: true,
-    freeLoweringService: true,
-    vehicleEntryPossible: true,
-    elevatorType: "승객용",
-    orderItems: [
-      { 
-        productName: "상품명이 들어갑니다. 최대 2줄까지 출력되며 길어지면 .. 처리됩니다.", 
-        productOptionName: "옵션: 블랙, XL",
-        selectedOptionValue: "블랙",
-        additionalOptionName: "추가 옵션",
-        quantity: 1,
-        finalPrice: 3306000,
-        mainImageUri: "https://via.placeholder.com/48x48"
-      }
-    ]
-  },
-  {
-    orderId: 1002,
-    orderDate: "2024.06.19 12:34",
-    totalAmount: 3306000,
-    sellerPhoneNumber: "010-5678-1234",
-    orderStatus: "PREPARING",
-    paymentStatus: "COMPLETED",
-    createdAt: "2024.06.18 15:20",
-    productInstallationAgreement: false,
-    freeLoweringService: false,
-    vehicleEntryPossible: true,
-    elevatorType: "화물용",
-    orderItems: [
-      { 
-        productName: "상품명이 들어갑니다. 최대 2줄까지 출력되며 길어지면 .. 처리됩니다.", 
-        productOptionName: "옵션: 화이트, L",
-        selectedOptionValue: "화이트",
-        additionalOptionName: null,
-        quantity: 2,
-        finalPrice: 1653000,
-        mainImageUri: "https://via.placeholder.com/48x48"
-      },
-      { 
-        productName: "다른 상품명입니다.", 
-        productOptionName: "옵션: 그레이, M",
-        selectedOptionValue: "그레이",
-        additionalOptionName: "설치 서비스",
-        quantity: 1,
-        finalPrice: 1653000,
-        mainImageUri: "https://via.placeholder.com/48x48"
-      }
-    ]
-  }
-];
-
 function OrderList() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,35 +12,86 @@ function OrderList() {
   const [modalOrder, setModalOrder] = useState(null);
 
   useEffect(() => {
-    // 실제 API 호출 대신 목데이터 사용
-    setOrders(MOCK_ORDERS);
-    setLoading(false);
-    
-    // 실제 API 연동 시 아래 주석 해제
-    /*
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('access_token');
+        if (!token) {
+          setError("로그인이 필요합니다.");
+          setLoading(false);
+          return;
+        }
+
         const response = await axios.get(`${API_BASE_URL}/api/v1/orders/my-orders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setOrders(response.data);
+        
+        // API 응답 데이터를 컴포넌트에서 사용하는 형태로 변환
+        const formattedOrders = response.data.map(order => ({
+          orderId: order.orderId,
+          orderDate: new Date(order.createdAt).toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          }).replace(/\./g, '.').replace(',', ''),
+          totalAmount: order.totalPrice || order.totalAmount,
+          sellerPhoneNumber: order.sellerPhoneNumber || "문의 필요",
+          orderStatus: order.orderStatus,
+          paymentStatus: order.paymentStatus,
+          createdAt: order.createdAt,
+          productInstallationAgreement: order.productInstallationAgreement,
+          freeLoweringService: order.freeLoweringService,
+          vehicleEntryPossible: order.vehicleEntryPossible,
+          elevatorType: order.elevatorType,
+          orderItems: order.orderItems || []
+        }));
+        
+        setOrders(formattedOrders);
       } catch (err) {
-        setError("주문 내역을 불러오지 못했습니다.");
+        console.error("주문 내역 조회 오류:", err);
+        if (err.response?.status === 401) {
+          setError("로그인이 필요합니다.");
+        } else if (err.response?.status === 404) {
+          setError("주문 내역을 찾을 수 없습니다.");
+        } else {
+          setError("주문 내역을 불러오지 못했습니다.");
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchOrders();
-    */
   }, []);
 
   const handleRowClick = (order) => {
     setModalOrder(order);
   };
 
-  if (loading) return <div>로딩 중...</div>;
-  if (error) return <div>오류: {error}</div>;
+  if (loading) return (
+    <div className="order-list-container">
+      <div className="order-list-title-row">
+        <span className="order-list-title">구매 내역 &gt;</span>
+      </div>
+      <div className="order-list-title-divider"></div>
+      <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+        주문 내역을 불러오는 중...
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="order-list-container">
+      <div className="order-list-title-row">
+        <span className="order-list-title">구매 내역 &gt;</span>
+      </div>
+      <div className="order-list-title-divider"></div>
+      <div style={{ textAlign: 'center', padding: '40px', color: '#e74c3c' }}>
+        오류: {error}
+      </div>
+    </div>
+  );
 
   return (
     <div className="order-list-container">
