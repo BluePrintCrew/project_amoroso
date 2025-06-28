@@ -2,6 +2,7 @@ package org.example.amorosobackend.repository;
 
 import org.example.amorosobackend.domain.OrderItem;
 import org.example.amorosobackend.domain.Seller;
+import org.example.amorosobackend.enums.OrderStatus;
 import org.example.amorosobackend.enums.PaymentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +24,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
 
     @Query("SELECT oi FROM OrderItem oi " +
             "WHERE oi.order.user.userId = :userId " +
-            "AND oi.order.orderStatus = 'PAYMENT_COMPLETED' " +
+            "AND oi.order.orderStatus = :status " +
             "AND NOT EXISTS (SELECT r FROM Review r WHERE r.user = oi.order.user AND r.product = oi.product)")
-    Page<OrderItem> findReviewableOrderItemsByUserId(Long userId, Pageable pageable);
+    Page<OrderItem> findReviewableOrderItemsByUserId(@Param("userId") Long userId, @Param("status") OrderStatus status, Pageable pageable);
 
     @Query("SELECT oi " +
             "FROM OrderItem oi " +
