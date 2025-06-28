@@ -173,6 +173,7 @@ public class OrderService {
                     .orderCode(generateOrderCode())
                     .orderStatus(OrderStatus.PAYMENT_PENDING)
                     .paymentStatus(PaymentStatus.WAITING)
+                    .userAddress(address)
                     .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
                     .freeLoweringService(requestDTO.getFreeLoweringService())
                     .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())

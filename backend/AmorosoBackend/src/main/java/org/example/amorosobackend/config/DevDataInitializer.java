@@ -159,6 +159,7 @@ public class DevDataInitializer implements ApplicationRunner {
                 .outOfStock(false)
                 .stockNotificationThreshold(10)
                 .discountRate(10)
+                .salesCount(0)
                 .build();
 
         productRepository.save(sampleProduct);
