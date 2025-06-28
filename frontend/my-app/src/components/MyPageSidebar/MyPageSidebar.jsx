@@ -30,7 +30,7 @@ function MyPageSidebar() {
         <li className="section-title">나의 활동</li>
         <li className="section-item">찜</li>
         <li className="section-item">최근 본 상품</li>
-        <li className="section-item">상품 후기</li>
+        <li className="section-item">리뷰 작성</li>
         <li className="section-item">상품 문의</li>
         <li className="section-item">재입고 알림 신청 내역</li>
       </ul>

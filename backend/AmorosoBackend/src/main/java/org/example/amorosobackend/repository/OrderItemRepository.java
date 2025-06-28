@@ -23,6 +23,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
 
     @Query("SELECT oi FROM OrderItem oi " +
             "WHERE oi.order.user.userId = :userId " +
+            "AND oi.order.orderStatus = 'PAYMENT_COMPLETED' " +
             "AND NOT EXISTS (SELECT r FROM Review r WHERE r.user = oi.order.user AND r.product = oi.product)")
     Page<OrderItem> findReviewableOrderItemsByUserId(Long userId, Pageable pageable);
 
