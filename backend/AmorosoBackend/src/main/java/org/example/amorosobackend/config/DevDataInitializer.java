@@ -152,7 +152,7 @@ public class DevDataInitializer implements ApplicationRunner {
                 .components("패브릭, 스틸프레임")
                 .material("패브릭")
                 .size("W200 x D90 x H80 (cm)")
-                .shippingInstallationFee(50_000)
+                .shippingInstallationFee(50)
                 .asPhoneNumber("1588-1234")
                 .costPrice(300)
                 .marketPrice(500)

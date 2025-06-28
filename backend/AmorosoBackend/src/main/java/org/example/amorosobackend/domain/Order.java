@@ -89,7 +89,8 @@ public class Order {
                   Boolean freeLoweringService,
                   Boolean productInstallationAgreement,
                   Boolean vehicleEntryPossible,
-                  String deliveryRequest) {
+                  String deliveryRequest,
+                  UserAddress userAddress) {
         this.user = user;
         this.totalPrice = totalPrice;
         this.seller = seller;
@@ -101,6 +102,7 @@ public class Order {
         this.vehicleEntryPossible =vehicleEntryPossible;
         this.elevatorType = elevatorType;
         this.deliveryRequest = deliveryRequest;
+        this.userAddress = userAddress;
 
     }
 
