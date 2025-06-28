@@ -97,6 +97,9 @@ public class SellerController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/seller-info")
+
+
     @PostMapping("/register")
     public ResponseEntity<SellerRegistrationDTO.Response> registerSeller(@RequestBody SellerRegistrationDTO.Request request) {
         // 1. 사업자등록 검증
