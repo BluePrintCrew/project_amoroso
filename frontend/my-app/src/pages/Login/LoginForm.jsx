@@ -1,12 +1,13 @@
-import PageLayout from "../../components/PageLayout/PageLayout";
-import React from "react";
-import google from "../../assets/google_login.png";
-import kakao from "../../assets/kakao_login.png";
-import naver from "../../assets/naver_login.png";
-import styles from "./LoginForm.module.css";
-import { useNavigate } from "react-router-dom";
+import PageLayout from '../../components/PageLayout/PageLayout';
+import React from 'react';
+import google from '../../assets/svg/google_login.svg';
+import kakao from '../../assets/svg/kakao_icon.svg';
+import naver from '../../assets/svg/naver_login.svg';
+import styles from './LoginForm.module.css';
+import { useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ const LoginForm = () => {
             <button className={styles.linkButton}>아이디/비밀번호 찾기</button>
             <button
               className={styles.linkButton}
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate('/signup')}
             >
               회원가입
             </button>
