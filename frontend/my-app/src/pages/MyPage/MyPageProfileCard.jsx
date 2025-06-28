@@ -120,7 +120,7 @@ function MyPageProfileCard() {
         <div className="stat-box">
           {/* Icon for reviews */}
           <img src={reviewIcon} alt="후기 아이콘" className="stat-icon" />
-          <p className="stat-title">작성 가능 후기</p>
+          <p className="stat-title">리뷰 작성</p>
           <p className="stat-value">{userInfo.reviewCount}</p>
         </div>
         <div className="stat-box">
