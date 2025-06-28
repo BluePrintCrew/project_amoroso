@@ -137,7 +137,8 @@ public class Product {
             Integer stockNotificationThreshold,
             LocalDateTime createdAt,
             Integer discountRate,
-            Integer discountPrice
+            Integer discountPrice,
+            Integer salesCount
     ) {
         this.category = category;
         this.productName = productName;
@@ -163,6 +164,7 @@ public class Product {
         this.createdAt = createdAt;
         this.discountRate = discountRate;
         this.discountPrice = discountPrice;
+        this.salesCount = salesCount;
     }
 
     @PrePersist
