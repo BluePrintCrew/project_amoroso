@@ -48,7 +48,7 @@ function OrderDetail() {
         </tbody>
       </table>
       <div style={{ marginTop: 16, color: '#666', fontSize: '1rem', textAlign: 'right', fontFamily: 'Pretendard, sans-serif' }}>
-        판매자 전화번호로 문의해보세요
+        배송 정보는 판매자 전화번호로 문의 바랍니다.
       </div>
     </div>
   );
