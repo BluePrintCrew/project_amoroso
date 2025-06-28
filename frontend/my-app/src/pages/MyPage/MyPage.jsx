@@ -3,6 +3,7 @@ import PageLayout from "../../components/PageLayout/PageLayout";
 import MyPageSidebar from "../../components/MyPageSidebar/MyPageSidebar";
 import MyPageProfileCard from "./MyPageProfileCard";
 import OrderManagement from "./OrderManagement";
+import OrderList from "./OrderList";
 import MyPageReview from "./MyPageReview";
 import ProductInquiry from "./ProductInquiry";
 import "./MyPage.css";
@@ -17,6 +18,7 @@ function MyPage() {
           {/* <MyPageSidebar /> */}
           <div className="my-page-content">
             <OrderManagement />
+            <OrderList />
             <MyPageReview />
             <ProductInquiry />
           </div>

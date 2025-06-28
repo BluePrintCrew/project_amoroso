@@ -45,16 +45,15 @@ public class TestUserController {
     private final UserAddressRepository userAddressRepository;
 
     private static final String TEST_EMAIL = "test@testEmail.com";
-    private static final String TEST_SELLER_EMAIL = "test@SELLER.com";
     private static final String TEST_PASSWORD = "test1234";
 
     @PostMapping("/setup/SELLER")
     @Operation(description = "SELLER 등급의 테스트 계정 생성 및 토큰 발급")
     public ResponseEntity<?> setupTestSeller() {
         // 1. User 생성
-        User testUser = userRepository.findByEmail(TEST_SELLER_EMAIL).orElseGet(() -> {
+        User testUser = userRepository.findByEmail(TEST_EMAIL).orElseGet(() -> {
             User newUser = User.builder()
-                    .email(TEST_SELLER_EMAIL)
+                    .email(TEST_EMAIL)
                     .password(passwordEncoder.encode(TEST_PASSWORD))
                     .name("Test Seller")
                     .phoneNumber("010-1234-5678")
@@ -76,7 +75,7 @@ public class TestUserController {
                     .taxationType("일반과세자")  // 테스트용 과세유형
                     .businessStatus("계속사업자")  // 테스트용 사업자상태
                     .businessTel("02-1234-5678")  // 테스트용 사업장 전화번호
-                    .businessEmail(TEST_SELLER_EMAIL)  // 테스트용 사업장 이메일
+                    .businessEmail("business@testbrand.com")  // 테스트용 사업장 이메일
                     .build();
             return sellerRepository.save(newSeller);
         });
@@ -102,7 +101,7 @@ public class TestUserController {
             userAddressRepository.save(address);
         }
 
-        String token = jwtProvider.createToken(TEST_SELLER_EMAIL, testUser.getRole().name());
+        String token = jwtProvider.createToken(TEST_EMAIL, testUser.getRole().name());
         return ResponseEntity.ok(Map.of("access_token", token));
     }
 
