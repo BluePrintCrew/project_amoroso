@@ -98,6 +98,7 @@ public class ProductService {
                 .outOfStock(dto.getOutOfStock())
                 .stockNotificationThreshold(dto.getStockNotificationThreshold())
                 .discountRate(dto.getDiscountRate())
+                .salesCount(0)
                 .build();
 
         log.debug("[createProduct] Product Built - Name: {}, DiscountRate: {}", product.getProductName(), product.getDiscountRate());

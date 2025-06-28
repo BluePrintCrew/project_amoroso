@@ -133,7 +133,7 @@ function MyPageReview() {
   if (loading) {
     return (
       <div className="my-page-review-container loading">
-        <h2 className="review-title">작성 가능한 후기 &gt;</h2>
+        <h2 className="review-title">리뷰 작성 &gt;</h2>
         <p>리뷰 정보를 불러오는 중...</p>
       </div>
     );
@@ -154,10 +154,10 @@ function MyPageReview() {
   if (reviews.length === 0) {
     return (
       <div className="my-page-review-container empty">
-        <h2 className="review-title">작성 가능한 후기 &gt;</h2>
+        <h2 className="review-title">리뷰 작성 &gt;</h2>
         <div className="empty-message" style={{textAlign:'center'}}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>📝</div>
-          <div>작성 가능한 후기가 없습니다.</div>
+          <div>작성 가능한 리뷰가 없습니다.</div>
           <button
             className="go-products-btn"
             onClick={() => navigate('/products')}
@@ -182,7 +182,7 @@ function MyPageReview() {
   return (
     <div className="my-page-review-container">
       <h2 className="review-title">
-        작성 가능한 후기 &gt;
+        리뷰 작성 &gt;
       </h2>
       <table className="review-table">
         <thead>

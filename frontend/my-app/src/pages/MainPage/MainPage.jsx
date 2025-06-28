@@ -77,8 +77,9 @@ function MainPage() {
           gridColumns={4}
         />
 
+        {/* 동작하지 않는 관계로 주석 처리 */}
         {/* 카테고리 네비게이션 */}
-        <CategoryNavigation categoryMap={categoryMap} />
+        {/* <CategoryNavigation categoryMap={categoryMap} /> */}
       </div>
       <Footer />
     </div>

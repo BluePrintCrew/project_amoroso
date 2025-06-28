@@ -173,6 +173,7 @@ public class OrderService {
                     .orderCode(generateOrderCode())
                     .orderStatus(OrderStatus.PAYMENT_PENDING)
                     .paymentStatus(PaymentStatus.WAITING)
+                    .userAddress(address)
                     .elevatorType(ElevatorType.valueOf(requestDTO.getElevatorType()))
                     .freeLoweringService(requestDTO.getFreeLoweringService())
                     .vehicleEntryPossible(requestDTO.getVehicleEntryPossible())
@@ -263,6 +264,8 @@ public class OrderService {
             orderItem.setOrderItemProductOption(productOrderOption);
 
         }
+        // 이 부분이 빠져있었습니다!
+        orderItemRepository.save(orderItem);
 
         return orderItem;
     }
@@ -340,7 +343,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         // 사용자가 리뷰를 남기지 않은 주문 아이템만 조회
-        Page<OrderItem> orderItems = orderItemRepository.findReviewableOrderItemsByUserId(user.getUserId(), pageable);
+        Page<OrderItem> orderItems = orderItemRepository.findReviewableOrderItemsByUserId(user.getUserId(), OrderStatus.PAYMENT_COMPLETED, pageable);
 
         // 각 OrderItem을 ReviewableProduct DTO로 매핑
         return orderItems.map(orderItem -> new ReviewDTO.ReviewableProduct(
