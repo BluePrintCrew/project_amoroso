@@ -23,6 +23,7 @@ import OrderListPage from "./pages/AdminPage/OrderListPage";
 import SellerLoginForm from "./pages/Login/SellerLoginForm";
 import SellerSignUpPage from "./pages/SignUp/SellerSignUpPage";
 import OrderDetail from "./pages/OrderPage/OrderDetail";
+import About from "./pages/About";
 
 function App() {
   const [showError, setShowError] = useState(false);
@@ -66,6 +67,8 @@ function App() {
           </Route>
 
           <Route path="/order-detail/:orderId" element={<OrderDetail />} />
+
+          <Route path="/about" element={<About />} />
         </Routes>
       </div>
     </Router>
