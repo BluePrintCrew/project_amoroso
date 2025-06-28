@@ -21,7 +21,7 @@ const ProductTable = () => {
       try {
         const accessToken = localStorage.getItem('access_token');
         const response = await axios.get(
-          `${API_BASE_URL}/api/v1/sellers/products?page=1&size=20&sortBy=createdAt&order=desc`,
+          `${API_BASE_URL}/api/v1/sellers/products?page=0&size=20&sortBy=createdAt&order=desc`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -38,16 +38,63 @@ const ProductTable = () => {
         
         // 응답 데이터 구조 확인 및 매핑
         let productList = [];
-        if (response.data && Array.isArray(response.data.content)) {
-          productList = response.data.content;
+        
+        // 응답 데이터가 어떤 형태인지 확인
+        if (response.data && typeof response.data === 'object') {
+          if (Array.isArray(response.data)) {
+            console.log('5. 응답이 배열입니다');
+            productList = response.data;
+          } else if (response.data.content) {
+            console.log('5. 응답이 content 필드를 가진 객체입니다');
+            productList = response.data.content;
+          } else if (response.data.products) {
+            console.log('5. 응답이 products 필드를 가진 객체입니다');
+            productList = response.data.products;
+          } else if (response.data.items) {
+            console.log('5. 응답이 items 필드를 가진 객체입니다');
+            productList = response.data.items;
+          } else {
+            console.log('5. 응답이 다른 형태의 객체입니다:', response.data);
+            // 직접 데이터를 배열로 변환
+            productList = Object.values(response.data);
+          }
+        }
+        
+        // 첫 번째 상품 데이터 자세히 확인
+        if (productList.length > 0) {
+          const firstProduct = productList[0];
+          console.log('=== 첫 번째 상품 데이터 ===');
+          console.log('1. 전체 데이터:', firstProduct);
+          console.log('2. 모든 키:', Object.keys(firstProduct));
+          console.log('3. productCode 값:', firstProduct.productCode);
+          console.log('4. code 값:', firstProduct.code);
+          console.log('5. 모든 값:', Object.entries(firstProduct));
         }
         
         // 데이터 매핑 전처리
-        const processedProducts = productList.map(product => ({
-          ...product
-        }));
+        const processedProducts = productList.map(product => {
+          // 각 상품의 모든 필드 확인
+          console.log('=== 상품 데이터 매핑 ===');
+          console.log('원본 데이터:', product);
+          console.log('사용 가능한 필드:', Object.keys(product));
+          
+          return {
+            ...product,
+            // 필드명이 다른 경우를 대비한 매핑
+            productCode: product.productCode || product.code || product.product_code,
+            productName: product.productName || product.name || product.product_name,
+            marketPrice: product.marketPrice || product.price || product.market_price,
+            stock: product.stock || product.quantity || product.inventory,
+            categoryName: product.categoryName || (product.category && product.category.name) || product.category_name
+          };
+        });
+        
+        console.log('=== 처리된 상품 목록 ===');
+        console.log('처리된 첫 번째 상품:', processedProducts[0]);
+        
         setProducts(processedProducts);
-        setTotal(response.data.totalElements || processedProducts.length);
+        setTotal(Array.isArray(response.data) ? response.data.length :
+                response.data.totalItems || response.data.total || processedProducts.length);
       } catch (err) {
         console.error('상품 목록 조회 에러:', err);
         console.error('에러 상세:', err.response?.data);
@@ -107,29 +154,59 @@ const ProductTable = () => {
         <table className={styles.productTable}>
           <thead>
             <tr>
-              <th>상품 ID</th>
-              <th>상품명</th>
               <th>상품 코드</th>
+              <th>상품명</th>
               <th>판매 가격</th>
               <th>시중 가격</th>
+              {/* <th>1차 카테고리</th> */}
               <th>카테고리</th>
               <th>상태</th>
               <th>관리</th>
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(products) && products.length > 0 ? (
-              products.map((product, idx) => (
-                <tr key={product.productId || idx}>
-                  <td colSpan={8} style={{fontFamily: 'monospace', fontSize: '0.95rem'}}>{JSON.stringify(product)}</td>
-                </tr>
-              ))
-            ) : (
+            {products.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
+                <td colSpan={7} style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
                   상품이 없습니다.
                 </td>
               </tr>
+            ) : (
+              products.map((product) => (
+                <tr key={product.productId}>
+                  <td>{product.productId}</td>
+                  <td>{product.productName || '-'}</td>
+                  <td>{product.marketPrice !== undefined ? product.marketPrice.toLocaleString() + ' 원' : '-'}</td>
+                  <td>{product.discountPrice !== undefined ? product.discountPrice.toLocaleString() + ' 원' : '-'}</td>
+                  {/* <td>{product.categoryCode ? product.categoryCode.split('_')[0] : '-'}</td> */}
+                  <td>{product.categoryName || product.category || (product.category && product.category.name) || '-'}</td>
+                  <td>
+                    <span
+                      className={`${styles.statusTag} ${product.outOfStock ? styles.inactive : styles.active}`}
+                    >
+                      {product.outOfStock ? '품절' : '판매중'}
+                    </span>
+                  </td>
+                  <td>
+                    <div className={styles.buttonSection}>
+                      {/*
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => navigate(`/admin/register?edit=1&id=${product.productId}`)}
+                      >
+                        <FiEdit2 />
+                      </button>
+                      */}
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => handleDelete(product.productId)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
