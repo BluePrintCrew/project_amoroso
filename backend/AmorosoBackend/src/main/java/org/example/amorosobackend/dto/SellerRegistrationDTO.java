@@ -25,7 +25,8 @@ public class SellerRegistrationDTO {
         private Boolean smsConsent;
         private Boolean dmConsent;
         private Boolean locationConsent;
-        
+        private String taxationType;
+        private String businessStatus;
 
         private String brandName;
         private String businessNumber;

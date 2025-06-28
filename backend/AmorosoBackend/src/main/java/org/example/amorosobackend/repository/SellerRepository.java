@@ -13,4 +13,5 @@ public interface SellerRepository extends JpaRepository<Seller, Long> {
     Optional<Seller> findByUser(User user);
 
 
+    boolean existsByBusinessRegistrationNumber(String businessNumber);
 }

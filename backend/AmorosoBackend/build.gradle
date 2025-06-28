@@ -36,6 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' // oauth2
     implementation 'org.springframework.boot:spring-boot-starter-data-redis' // Redis
+     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'// XML
 
     // iamport
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.21'

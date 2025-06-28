@@ -1,29 +1,31 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import React, { useState } from "react";
-import ErrorPopup from "./components/ErrorPopup/ErrorPopup";
+import React, { useState } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-import Admin from "./pages/AdminPage/AdminPage";
-import AdminTest from "./pages/AdminPage/AdminPageTest";
-import AdminLayout from "./components/Admin/AdminLayout/AdminLayout";
-import AdminProductRegister from "./pages/AdminPage/AdminProductRegister/AdminProductRegister";
-import Cart from "./pages/CartPage/CartPage";
-import Detail from "./pages/Product_Detail/ProductDetailPage";
-import Home from "./pages/MainPage/MainPage";
-import Login from "./pages/Login/LoginForm";
-import LoginSuccess from "./pages/Login/LoginSuccess";
-import MyInfo from "./pages/MyPage/MyInfoEdit";
-import MyPage from "./pages/MyPage/MyPage";
-import Order from "./pages/OrderPage/OrderForm";
-import OrderTest from "./pages/OrderPage/OrderFormTest";
-import Products from "./pages/ProductListPage/ProductListPage";
-import ProductsPage from "./pages/AdminPage/ProductsPage/ProductsPage";
-import SignUp from "./pages/SignUp/SignUpPage";
-import TestJWTProviderPage from "./pages/TestPage/TestJWTProviderPage";
-import OrderListPage from "./pages/AdminPage/OrderListPage";
-import SellerLoginForm from "./pages/Login/SellerLoginForm";
-import SellerSignUpPage from "./pages/SignUp/SellerSignUpPage";
-import OrderDetail from "./pages/OrderPage/OrderDetail";
-import About from "./pages/About";
+import About from './pages/About';
+import Admin from './pages/AdminPage/AdminPage';
+import AdminLayout from './components/Admin/AdminLayout/AdminLayout';
+import AdminProductRegister from './pages/AdminPage/AdminProductRegister/AdminProductRegister';
+import AdminTest from './pages/AdminPage/AdminPageTest';
+import Cart from './pages/CartPage/CartPage';
+import Detail from './pages/Product_Detail/ProductDetailPage';
+import ErrorPopup from './components/ErrorPopup/ErrorPopup';
+import Home from './pages/MainPage/MainPage';
+import LikeProduct from './pages/MyPage/LikeProduct';
+import Login from './pages/Login/LoginForm';
+import LoginSuccess from './pages/Login/LoginSuccess';
+import MyInfo from './pages/MyPage/MyInfoEdit';
+import MyPage from './pages/MyPage/MyPage';
+import Order from './pages/OrderPage/OrderForm';
+import OrderDetail from './pages/OrderPage/OrderDetail';
+import OrderListPage from './pages/AdminPage/OrderListPage';
+import OrderTest from './pages/OrderPage/OrderFormTest';
+import Products from './pages/ProductListPage/ProductListPage';
+import ProductsPage from './pages/AdminPage/ProductsPage/ProductsPage';
+import SellerInfoEdit from './pages/SignUp/SellerInfoEdit';
+import SellerLoginForm from './pages/Login/SellerLoginForm';
+import SellerSignUpPage from './pages/SignUp/SellerSignUpPage';
+import SignUp from './pages/SignUp/SignUpPage';
+import TestJWTProviderPage from './pages/TestPage/TestJWTProviderPage';
 
 function App() {
   const [showError, setShowError] = useState(false);
@@ -48,7 +50,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/order" element={<Order />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/mypage/*" element={<MyPage />} />
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/mypage/like-product" element={<LikeProduct />} />
           <Route path="/mypageinfo" element={<MyInfo />} />
 
           {/* 테스트 시  사용되는 페이지*/}
@@ -58,6 +61,7 @@ function App() {
 
           <Route path="admin/login" element={<SellerLoginForm />} />
           <Route path="admin/signup" element={<SellerSignUpPage />} />
+          <Route path="admin/info-edit" element={<SellerInfoEdit />} />
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Admin />} />
