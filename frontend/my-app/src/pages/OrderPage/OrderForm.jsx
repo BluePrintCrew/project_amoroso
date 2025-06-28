@@ -279,14 +279,8 @@ const OrderForm = () => {
                   `결제가 성공적으로 처리되었습니다. (주문 ${orders.length}건 완료)`
                 );
 
-                // 주문 완료 페이지로 이동 (선택사항)
-                // navigate("/order-complete", {
-                //   state: {
-                //     paymentGroupId: paymentGroupId,
-                //     orders: orders,
-                //     totalAmount: totalAmount
-                //   }
-                // });
+                // MyPage로 리디렉션
+                navigate("/mypage");
               } else {
                 alert("결제 검증 실패: " + verifyRes.data.message);
               }
