@@ -113,3 +113,286 @@
 .order-management-container.error p {
   color: #e74c3c;
 }
+
+/* ===================== 주문 내역 리스트(OrderList) ===================== */
+.order-list-container {
+  margin: 32px 0 24px 0;
+  font-family: "Pretendard", sans-serif;
+}
+
+.order-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.order-list-table th, .order-list-table td {
+  padding: 18px 8px;
+  border-bottom: 1px solid #eaeaea;
+  text-align: center;
+  font-family: inherit;
+}
+
+.order-list-table th {
+  background: #fafafa;
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: #333;
+  letter-spacing: -0.5px;
+}
+
+.order-list-table tr {
+  transition: background 0.15s;
+}
+
+.order-list-table tr:hover {
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.order-list-table td {
+  font-size: 1rem;
+  color: #222;
+}
+
+.order-list-table td span {
+  color: #888;
+  font-size: 0.98em;
+}
+
+.order-list-table .no-orders-message, .order-list-table td[colspan] {
+  color: #999;
+  font-size: 1.05rem;
+  padding: 40px 0;
+  background: #fff;
+}
+
+.order-list-table td[style*="color: red"] {
+  color: #e74c3c !important;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+
+@media (max-width: 700px) {
+  .order-list-table th, .order-list-table td {
+    padding: 10px 2px;
+    font-size: 0.95rem;
+  }
+}
+
+/* ===================== 주문 내역 리스트 타이틀 ===================== */
+.order-list-title-row {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 8px;
+  margin-top: 32px;
+}
+.order-list-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: -0.5px;
+  border-bottom: 2px solid #666;
+  padding-bottom: 4px;
+  margin-right: 16px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* ===================== 가구 쇼핑몰 감성 주문 상세 모달 ===================== */
+.furniture-modal {
+  padding: 36px 32px 28px 32px;
+  min-width: 420px;
+  max-width: 540px;
+  font-family: "Pretendard", sans-serif;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+}
+.order-detail-products {
+  margin: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.order-product-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 16px 0 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.order-product-img-wrap {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.order-product-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+.order-product-img-empty {
+  width: 60px;
+  height: 60px;
+  background: #eee;
+  border-radius: 7px;
+}
+.order-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.order-product-name {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  max-height: 2.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.order-product-option-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.98rem;
+  color: #666;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.order-product-option {
+  font-weight: 500;
+}
+.order-product-option-sub {
+  color: #aaa;
+  font-size: 0.97em;
+}
+.order-product-meta {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 1rem;
+  margin-top: 2px;
+}
+.order-product-price {
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+.order-detail-divider {
+  border-top: 1.5px solid #ececec;
+  margin: 24px 0 18px 0;
+}
+.order-detail-total-price {
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 1.13rem;
+  margin-left: 8px;
+}
+.order-detail-install {
+  margin-top: 8px;
+  color: #444;
+  font-size: 1.01rem;
+}
+.order-detail-seller-guide {
+  margin-top: 22px;
+  color: #666;
+  font-size: 1rem;
+  text-align: right;
+  font-family: "Pretendard", sans-serif;
+}
+.order-detail-install-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.order-detail-install-list li {
+  font-size: 1.01rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.order-detail-install-list .ok {
+  color: #27ae60;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.order-detail-install-list .no {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-left: 4px;
+}
+.order-detail-install-list .elevator {
+  color: #555;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.modal-close-btn-furniture {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: none;
+  font-size: 1.7rem;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, color 0.18s;
+  z-index: 10;
+}
+.modal-close-btn-furniture:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .furniture-modal {
+    min-width: 0;
+    max-width: 98vw;
+    padding: 16px 2vw 16px 2vw;
+  }
+  .order-product-img-wrap {
+    width: 48px;
+    height: 48px;
+  }
+  .order-product-img, .order-product-img-empty {
+    width: 44px;
+    height: 44px;
+  }
+  .order-product-card {
+    gap: 10px;
+    padding: 10px 0 8px 0;
+  }
+  .order-detail-seller-guide {
+    font-size: 0.97rem;
+  }
+  .modal-close-btn-furniture {
+    right: 8px;
+    top: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+  }
+}
