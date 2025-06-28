@@ -1,19 +1,19 @@
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { ko, tr } from 'date-fns/locale';
 
-import CartSummary from "../../components/CartSummary/CartSummary";
-import DatePicker from "react-datepicker";
-import { ko, tr } from "date-fns/locale";
-import PageLayout from "../../components/PageLayout/PageLayout";
-import axios from "axios";
-import styles from "./OrderForm.module.css";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import OrderTable from "./OrderTable";
+import CartSummary from '../../components/CartSummary/CartSummary';
+import DatePicker from 'react-datepicker';
+import OrderTable from './OrderTable';
+import PageLayout from '../../components/PageLayout/PageLayout';
+import axios from 'axios';
+import styles from './OrderForm.module.css';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const OrderForm = () => {
   // 1. 라우터 관련 훅
@@ -28,14 +28,14 @@ const OrderForm = () => {
   const products = Array.isArray(root?.orderItems) ? root.orderItems : [];
 
   // 돌아갈 경로 꺼냄
-  const returnPath = root?.returnPath || "/";
+  const returnPath = root?.returnPath || '/';
 
   console.log(products);
 
   // 2. 상태 변수 선언
   const [checkingAddress, setCheckingAddress] = useState(true);
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const [redirectReason, setRedirectReason] = useState(""); // 알림 문구 저장용
+  const [redirectReason, setRedirectReason] = useState(''); // 알림 문구 저장용
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -43,12 +43,12 @@ const OrderForm = () => {
   const [userAddress, setUserAddress] = useState(null);
   const [user, setUser] = useState(null);
 
-  const [deliveryRequest, setDeliveryRequest] = useState("");
+  const [deliveryRequest, setDeliveryRequest] = useState('');
   const [freeLoweringService, setFreeLoweringService] = useState(false);
   const [productInstallationAgreement, setProductInstallationAgreement] =
     useState(false);
   const [vehicleEntryPossible, setVehicleEntryPossible] = useState(true);
-  const [elevatorType, setElevatorType] = useState("ONE_TO_SEVEN");
+  const [elevatorType, setElevatorType] = useState('ONE_TO_SEVEN');
 
   // 3. 가격 계산용 변수
   const cartItems = products.map((item) => ({
@@ -78,13 +78,13 @@ const OrderForm = () => {
 
   // 4. 날짜 포맷
   const formatDate = (date) => {
-    if (!date) return { year: "", month: "", day: "", dayOfWeek: "" };
+    if (!date) return { year: '', month: '', day: '', dayOfWeek: '' };
 
     const year = date.getFullYear().toString();
     const month = (date.getMonth() + 1).toString();
     const day = date.getDate().toString();
     const dayOfWeek = date
-      .toLocaleDateString("ko-KR", { weekday: "long" })
+      .toLocaleDateString('ko-KR', { weekday: 'long' })
       .substring(0, 1);
 
     return { year, month, day, dayOfWeek };
@@ -100,7 +100,7 @@ const OrderForm = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem('access_token');
         const response = await axios.get(
           `${API_BASE_URL}/api/v1/auth/users/me`,
           {
@@ -111,7 +111,7 @@ const OrderForm = () => {
         );
         setUser(response.data);
       } catch (err) {
-        console.error("유저 이메일 가져오기 실패:", err);
+        console.error('유저 이메일 가져오기 실패:', err);
       }
     };
     fetchUserInfo();
@@ -121,7 +121,7 @@ const OrderForm = () => {
   useEffect(() => {
     const fetchUserAddress = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem('access_token');
         const response = await axios.get(
           `${API_BASE_URL}/api/v1/UserAddress/default`,
           {
@@ -142,7 +142,7 @@ const OrderForm = () => {
 
         if (isMissing) {
           setRedirectReason(
-            "배송지 정보가 없습니다. 배송지를 먼저 입력해주세요."
+            '배송지 정보가 없습니다. 배송지를 먼저 입력해주세요.'
           );
           setShouldRedirect(true);
 
@@ -150,15 +150,15 @@ const OrderForm = () => {
         }
         if (!data.phoneNumber?.trim()) {
           setRedirectReason(
-            "연락처가 입력되지 않았습니다. 정보를 확인해주세요."
+            '연락처가 입력되지 않았습니다. 정보를 확인해주세요.'
           );
           setShouldRedirect(true);
           return;
         }
       } catch (error) {
-        console.error("주소 정보 불러오기 실패:", error);
+        console.error('주소 정보 불러오기 실패:', error);
         setRedirectReason(
-          "배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다."
+          '배송지 정보를 불러오지 못했습니다. 이전 화면으로 돌아갑니다.'
         );
         setShouldRedirect(true);
       } finally {
@@ -172,7 +172,7 @@ const OrderForm = () => {
   useEffect(() => {
     if (shouldRedirect) {
       alert(redirectReason);
-      navigate("/mypageinfo");
+      navigate('/mypageinfo');
     }
   }, [shouldRedirect, redirectReason, navigate]);
 
@@ -189,7 +189,7 @@ const OrderForm = () => {
 
   const handleOrderSubmit = async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem('access_token');
 
       const orderItems = products.map((item) => ({
         productId: item.productId,
@@ -212,12 +212,12 @@ const OrderForm = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      console.log("✅ 주문 완료:", orderResponse.data);
+      console.log('✅ 주문 완료:', orderResponse.data);
 
       // PaymentGroup 정보 추출
       const paymentGroupId = orderResponse.data.paymentGroupId;
@@ -225,7 +225,7 @@ const OrderForm = () => {
       const orders = orderResponse.data.orders; // 생성된 모든 주문들
 
       if (!paymentGroupId) {
-        alert("결제 그룹 ID를 받아오지 못했습니다.");
+        alert('결제 그룹 ID를 받아오지 못했습니다.');
         return;
       }
 
@@ -234,7 +234,7 @@ const OrderForm = () => {
 
       const { IMP } = window;
       if (!IMP) {
-        alert("결제 모듈이 로드되지 않았습니다.");
+        alert('결제 모듈이 로드되지 않았습니다.');
         return;
       }
 
@@ -244,17 +244,17 @@ const OrderForm = () => {
       IMP.request_pay(
         {
           channelKey: process.env.REACT_APP_PORTONE_CHANNEL_KEY,
-          pg: "html5_inicis",
-          pay_method: "card",
+          pg: 'html5_inicis',
+          pay_method: 'card',
           merchant_uid,
           name: `주문 ${orders.length}건 (결제그룹 ${paymentGroupId})`,
           amount: totalAmount, // PaymentGroup의 총 금액 사용
-          buyer_email: user?.email ?? "guest@example.com",
-          buyer_name: user?.name ?? "비회원",
-          buyer_tel: user?.phoneNumber ?? "010-0000-0000",
-          buyer_addr: userAddress?.address ?? "",
-          buyer_postcode: userAddress?.postalCode ?? "",
-          currency: "KRW",
+          buyer_email: user?.email ?? 'guest@example.com',
+          buyer_name: user?.name ?? '비회원',
+          buyer_tel: user?.phoneNumber ?? '010-0000-0000',
+          buyer_addr: userAddress?.address ?? '',
+          buyer_postcode: userAddress?.postalCode ?? '',
+          currency: 'KRW',
         },
         async function (rsp) {
           if (rsp.success) {
@@ -269,7 +269,7 @@ const OrderForm = () => {
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                   },
                 }
               );
@@ -280,23 +280,23 @@ const OrderForm = () => {
                 );
 
                 // MyPage로 리디렉션
-                navigate("/mypage");
+                navigate('/mypage');
               } else {
-                alert("결제 검증 실패: " + verifyRes.data.message);
+                alert('결제 검증 실패: ' + verifyRes.data.message);
               }
             } catch (err) {
-              console.error("결제 검증 오류", err);
-              alert("결제 검증 중 오류가 발생했습니다.");
+              console.error('결제 검증 오류', err);
+              alert('결제 검증 중 오류가 발생했습니다.');
             }
           } else {
-            console.error("결제 실패: ", rsp.error_msg);
+            console.error('결제 실패: ', rsp.error_msg);
             alert(`결제 실패: ${rsp.error_msg}`);
           }
         }
       );
     } catch (error) {
-      console.error("❌ 주문 실패:", error);
-      alert("주문에 실패했습니다. 다시 시도해주세요.");
+      console.error('❌ 주문 실패:', error);
+      alert('주문에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -329,10 +329,10 @@ const OrderForm = () => {
                   주문자명/연락처<span className={styles.required}>*</span>
                 </div>
                 <div className={styles.cell}>
-                  {userAddress.recipientName} / {userAddress.phoneNumber}
+                  {userAddress.recipientName} /{userAddress.phoneNumber}
                   <button
                     className={styles.editButton}
-                    onClick={() => navigate("/mypageinfo")}
+                    onClick={() => navigate('/mypageinfo')}
                   >
                     주문자 정보 변경
                   </button>
@@ -344,20 +344,20 @@ const OrderForm = () => {
                 </div>
                 <div className={styles.cell}>
                   기본배송지:
-                  <br />({userAddress.postalCode}) {userAddress.address}{" "}
+                  <br />({userAddress.postalCode}) {userAddress.address}{' '}
                   {userAddress.detailAddress}
                   <button className={styles.editButton}>배송지 목록</button>
                   <br />
                   {userAddress.phoneNumber}
                 </div>
               </div>
-              <div className={styles.row} style={{ border: "none" }}>
+              <div className={styles.row} style={{ border: 'none' }}>
                 <div className={`${styles.cell} ${styles.label}`}>
                   가구배송 추가정보<span className={styles.required}>*</span>
                 </div>
                 <div
                   className={styles.cell}
-                  style={{ borderBottom: "1px solid #e6e6e6" }}
+                  style={{ borderBottom: '1px solid #e6e6e6' }}
                 >
                   <div className={styles.radioButtons}>
                     <div className={styles.elevatorOptions}>
@@ -367,8 +367,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="ONE_TO_SEVEN"
-                          checked={elevatorType === "ONE_TO_SEVEN"}
-                          onChange={() => setElevatorType("ONE_TO_SEVEN")}
+                          checked={elevatorType === 'ONE_TO_SEVEN'}
+                          onChange={() => setElevatorType('ONE_TO_SEVEN')}
                         />
                         1~7인승
                       </label>
@@ -377,8 +377,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="EIGHT_TO_TEN"
-                          checked={elevatorType === "EIGHT_TO_TEN"}
-                          onChange={() => setElevatorType("EIGHT_TO_TEN")}
+                          checked={elevatorType === 'EIGHT_TO_TEN'}
+                          onChange={() => setElevatorType('EIGHT_TO_TEN')}
                         />
                         8~10인승
                       </label>
@@ -387,8 +387,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="ELEVEN_OR_MORE"
-                          checked={elevatorType === "ELEVEN_OR_MORE"}
-                          onChange={() => setElevatorType("ELEVEN_OR_MORE")}
+                          checked={elevatorType === 'ELEVEN_OR_MORE'}
+                          onChange={() => setElevatorType('ELEVEN_OR_MORE')}
                         />
                         11인승 이상
                       </label>
@@ -397,8 +397,8 @@ const OrderForm = () => {
                           type="radio"
                           name="elevator"
                           value="NONE"
-                          checked={elevatorType === "NONE"}
-                          onChange={() => setElevatorType("NONE")}
+                          checked={elevatorType === 'NONE'}
+                          onChange={() => setElevatorType('NONE')}
                         />
                         없음
                       </label>
@@ -615,7 +615,7 @@ const OrderForm = () => {
               <span>최종결제금액</span>
               <span
                 className={styles.amount}
-                style={{ fontSize: "20px", color: "red" }}
+                style={{ fontSize: '20px', color: 'red' }}
               >
                 {finalPrice.toLocaleString()}원
               </span>

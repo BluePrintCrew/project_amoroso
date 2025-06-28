@@ -11,7 +11,7 @@ const API_BASE_URL =
 // Replace hardcoded API_BASE_URL with imported constant
 const API_ENDPOINT = `${API_BASE_URL}/api/v1`;
 
-function ProductListPage() {
+function LikeProduct() {
   const [products, setProducts] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ function ProductListPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_ENDPOINT}/wishlist`, {
+        const response = await fetch(`${API_ENDPOINT}/wishlist/page`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -62,7 +62,7 @@ function ProductListPage() {
               {products.length === 0 ? (
                 <p className="no-products">상품이 없습니다.</p>
               ) : (
-                products.map((prod) => (
+                products.content.map((prod) => (
                   <ProductCard
                     key={prod.productId}
                     product={{
@@ -80,4 +80,6 @@ function ProductListPage() {
   );
 }
 
-export default ProductListPage;
+export default LikeProduct;
+
+// 아직 페이지네이션 고려 안함.
