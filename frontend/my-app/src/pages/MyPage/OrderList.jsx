@@ -25,27 +25,34 @@ function OrderList() {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        console.log("API 응답 데이터:", response.data); // API 응답 확인용 로그
+        
         // API 응답 데이터를 컴포넌트에서 사용하는 형태로 변환
-        const formattedOrders = response.data.map(order => ({
-          orderId: order.orderId,
-          orderDate: new Date(order.createdAt).toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-          }).replace(/\./g, '.').replace(',', ''),
-          totalAmount: order.totalPrice || order.totalAmount,
-          sellerPhoneNumber: order.sellerPhoneNumber || "문의 필요",
-          orderStatus: order.orderStatus,
-          paymentStatus: order.paymentStatus,
-          createdAt: order.createdAt,
-          productInstallationAgreement: order.productInstallationAgreement,
-          freeLoweringService: order.freeLoweringService,
-          vehicleEntryPossible: order.vehicleEntryPossible,
-          elevatorType: order.elevatorType,
-          orderItems: order.orderItems || []
-        }));
+        const formattedOrders = response.data.map(order => {
+          console.log("주문 데이터:", order); // 각 주문 데이터 확인용 로그
+          console.log("주문 아이템:", order.orderItems); // 주문 아이템 확인용 로그
+          
+          return {
+            orderId: order.orderId,
+            orderDate: new Date(order.createdAt).toLocaleString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            }).replace(/\./g, '.').replace(',', ''),
+            totalAmount: order.totalPrice || order.totalAmount,
+            sellerPhoneNumber: order.sellerPhoneNumber || "문의 필요",
+            orderStatus: order.orderStatus,
+            paymentStatus: order.paymentStatus,
+            createdAt: order.createdAt,
+            productInstallationAgreement: order.productInstallationAgreement,
+            freeLoweringService: order.freeLoweringService,
+            vehicleEntryPossible: order.vehicleEntryPossible,
+            elevatorType: order.elevatorType,
+            orderItems: order.orderItems || []
+          };
+        });
         
         setOrders(formattedOrders);
       } catch (err) {
