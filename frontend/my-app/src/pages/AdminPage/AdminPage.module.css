@@ -1,5 +1,6 @@
 .cardSection{
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 25px;
 }
@@ -19,6 +20,10 @@
 .productContainer{
   flex: 4;
   display: flex;
+}
+
+.topContent {
+  margin-bottom: 40px;
 }
 
 

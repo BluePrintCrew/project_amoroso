@@ -57,7 +57,7 @@ public class ProductService {
 
         // 카테고리 찾기
         log.debug("[createProduct] Category Code: {}", dto.getCategoryCode());
-        Category category = categoryRepository.findByCategoryCode(CategoryCode.fromCode(dto.getCategoryCode()))
+        Category category = categoryRepository.findByCategoryCode(CategoryCode.valueOf(dto.getCategoryCode()))
                 .orElseThrow(() -> {
                     log.warn("[createProduct] Invalid Category Code: {}", dto.getCategoryCode());
                     return new IllegalArgumentException("유효하지 않은 카테고리 코드입니다.");

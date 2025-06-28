@@ -21,7 +21,7 @@ const ProductTable = () => {
       try {
         const accessToken = localStorage.getItem('access_token');
         const response = await axios.get(
-          `${API_BASE_URL}/api/v1/products/?page=1&size=20&sortBy=createdAt&order=desc`,
+          `${API_BASE_URL}/api/v1/sellers/products?page=0&size=20&sortBy=createdAt&order=desc`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -179,7 +179,7 @@ const ProductTable = () => {
                   <td>{product.marketPrice !== undefined ? product.marketPrice.toLocaleString() + ' 원' : '-'}</td>
                   <td>{product.discountPrice !== undefined ? product.discountPrice.toLocaleString() + ' 원' : '-'}</td>
                   {/* <td>{product.categoryCode ? product.categoryCode.split('_')[0] : '-'}</td> */}
-                  <td>{product.category || '-'}</td>
+                  <td>{product.categoryName || product.category || (product.category && product.category.name) || '-'}</td>
                   <td>
                     <span
                       className={`${styles.statusTag} ${product.outOfStock ? styles.inactive : styles.active}`}
