@@ -14,7 +14,7 @@ const Breadcrumb = () => {
         거실
       </Link>
       <span className="breadcrumb-separator">&gt;</span>
-      <Link to="/products?top=LIVING&sub=LIV_TABLE" className="breadcrumb-link">
+      <Link to="/products?top=LIVING&sub=LIVING_TABLE" className="breadcrumb-link">
         식탁의자
       </Link>
     </div>

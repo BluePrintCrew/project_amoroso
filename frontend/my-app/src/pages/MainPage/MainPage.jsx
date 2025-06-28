@@ -14,31 +14,31 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:808
 // 카테고리 맵핑 (ProductListPage에서 가져온 것)
 const categoryMap = {
   '거실': [
-    { label: '소파', value: 'LIV_SOFA' },
-    { label: '장식장', value: 'LIV_DISPLAY' },
-    { label: '탁자', value: 'LIV_TABLE' },
+    { label: '소파', value: 'LIVING_SOFA' },
+    { label: '장식장', value: 'LIVING_DISPLAY_CABINET' },
+    { label: '탁자', value: 'LIVING_TABLE' },
   ],
   '침실': [
-    { label: '침대', value: 'BED_BED' },
-    { label: '침대 깔판', value: 'BED_BASE' },
-    { label: '협탁', value: 'BED_NIGHTSTAND' },
+    { label: '침대', value: 'BEDROOM_BED' },
+    { label: '침대 깔판', value: 'BEDROOM_BED_BASE' },
+    { label: '협탁', value: 'BEDROOM_NIGHTSTAND' },
   ],
   '주방': [
-    { label: '식탁 & 의자', value: 'KIT_DINING' },
+    { label: '식탁 & 의자', value: 'KITCHEN_DINING_SET' },
   ],
   '사무실': [
-    { label: '책상', value: 'OFF_DESK' },
-    { label: '의자', value: 'OFF_CHAIR' },
-    { label: '책장', value: 'OFF_BOOKSHELF' },
+    { label: '책상', value: 'OFFICE_DESK' },
+    { label: '의자', value: 'OFFICE_CHAIR' },
+    { label: '책장', value: 'OFFICE_BOOKSHELF' },
   ],
   '드레스룸': [
-    { label: '장롱', value: 'DRESS_WARDROBE' },
-    { label: '화장대', value: 'DRESS_TABLE' },
-    { label: '드레스', value: 'DRESS_DRESSER' },
-    { label: '서랍장', value: 'DRESS_DRAWER' },
+    { label: '장롱', value: 'DRESSING_WARDROBE' },
+    { label: '화장대', value: 'DRESSING_TABLE' },
+    { label: '드레스', value: 'DRESSING_DRESSER' },
+    { label: '서랍장', value: 'DRESSING_DRAWER' },
   ],
   '기타': [
-    { label: '소품', value: 'ETC_DECOR' },
+    { label: '소품', value: 'ETC_DECORATION' },
     { label: '벽걸이 거울', value: 'ETC_WALL_MIRROR' },
     { label: '액세서리', value: 'ETC_ACCESSORY' },
     { label: '거울', value: 'ETC_GENERAL_MIRROR' },
