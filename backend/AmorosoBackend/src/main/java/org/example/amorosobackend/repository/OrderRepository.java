@@ -31,6 +31,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("orderStatus") OrderStatus orderStatus
     );
 
+    long countBySeller(Seller seller);
     /**
      * 주문 상태별 주문 수 조회 (PaymentGroup 무관)
      */

@@ -22,6 +22,7 @@ import TestJWTProviderPage from "./pages/TestPage/TestJWTProviderPage";
 import OrderListPage from "./pages/AdminPage/OrderListPage";
 import SellerLoginForm from "./pages/Login/SellerLoginForm";
 import SellerSignUpPage from "./pages/SignUp/SellerSignUpPage";
+import OrderDetail from "./pages/OrderPage/OrderDetail";
 
 function App() {
   const [showError, setShowError] = useState(false);
@@ -63,6 +64,8 @@ function App() {
             <Route path="register" element={<AdminProductRegister />} />
             <Route path="order-list" element={<OrderListPage />} />
           </Route>
+
+          <Route path="/order-detail/:orderId" element={<OrderDetail />} />
         </Routes>
       </div>
     </Router>

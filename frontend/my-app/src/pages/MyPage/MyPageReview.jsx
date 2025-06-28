@@ -122,11 +122,12 @@ function MyPageReview() {
   // 팝업 닫기 시 새로고침
   const handleClosePopup = () => {
     setShowError(false);
+    setError(null); // 에러 상태 초기화
+    setErrorMsg(""); // 에러 메시지 초기화
     if (errorMsg.includes("로그인")) {
       navigate('/login');
-    } else {
-      window.location.reload();
     }
+    // window.location.reload() 제거 - 무한 루프 방지
   };
 
   if (loading) {

@@ -1,5 +1,6 @@
 package org.example.amorosobackend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.amorosobackend.domain.category.Category;
 import org.example.amorosobackend.enums.CategoryCode;
@@ -16,13 +17,13 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Category findByCategoryCode(String categoryCode){
-        CategoryCode categoryCode1 = fromCode(categoryCode);
-
-        Category category = categoryRepository.findByCategoryCode(categoryCode1)
-                .orElseThrow(() -> new NullPointerException("invalid code, there is not Category"));
-
-        return category;
-
+    public Category findByCategoryCode(String categoryCode) {
+        try {
+            CategoryCode code = CategoryCode.valueOf(categoryCode);
+            return categoryRepository.findFirstByCategoryCode(code)
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found: " + categoryCode));
+        } catch (IllegalArgumentException e) {
+            throw new EntityNotFoundException("Invalid category code: " + categoryCode);
+        }
     }
 }
