@@ -264,6 +264,8 @@ public class OrderService {
             orderItem.setOrderItemProductOption(productOrderOption);
 
         }
+        // 이 부분이 빠져있었습니다!
+        orderItemRepository.save(orderItem);
 
         return orderItem;
     }
