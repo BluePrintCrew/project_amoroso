@@ -158,8 +158,8 @@ const ProductTable = () => {
               <th>상품명</th>
               <th>판매 가격</th>
               <th>시중 가격</th>
-              <th>1차 카테고리</th>
-              <th>2차 카테고리</th>
+              {/* <th>1차 카테고리</th> */}
+              <th>카테고리</th>
               <th>상태</th>
               <th>관리</th>
             </tr>
@@ -167,7 +167,7 @@ const ProductTable = () => {
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
+                <td colSpan={7} style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
                   상품이 없습니다.
                 </td>
               </tr>
@@ -178,7 +178,7 @@ const ProductTable = () => {
                   <td>{product.productName || '-'}</td>
                   <td>{product.marketPrice !== undefined ? product.marketPrice.toLocaleString() + ' 원' : '-'}</td>
                   <td>{product.discountPrice !== undefined ? product.discountPrice.toLocaleString() + ' 원' : '-'}</td>
-                  <td>{product.categoryCode ? product.categoryCode.split('_')[0] : '-'}</td>
+                  {/* <td>{product.categoryCode ? product.categoryCode.split('_')[0] : '-'}</td> */}
                   <td>{product.category || '-'}</td>
                   <td>
                     <span
@@ -189,12 +189,14 @@ const ProductTable = () => {
                   </td>
                   <td>
                     <div className={styles.buttonSection}>
+                      {/*
                       <button
                         className={styles.actionBtn}
                         onClick={() => navigate(`/admin/register?edit=1&id=${product.productId}`)}
                       >
                         <FiEdit2 />
                       </button>
+                      */}
                       <button
                         className={styles.actionBtn}
                         onClick={() => handleDelete(product.productId)}

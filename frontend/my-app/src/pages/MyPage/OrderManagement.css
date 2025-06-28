@@ -308,11 +308,25 @@
   font-size: 1.01rem;
 }
 .order-detail-seller-guide {
-  margin-top: 22px;
-  color: #666;
-  font-size: 1rem;
-  text-align: right;
-  font-family: "Pretendard", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  margin-top: 24px;
+  text-align: center;
+  min-width: 0;
+  word-break: keep-all;
+}
+.order-detail-guide-icon {
+  font-size: 28px;
+}
+.order-detail-guide-text {
+  font-size: 15px;
+  line-height: 1.5;
 }
 .order-detail-install-list {
   list-style: none;
@@ -394,5 +408,303 @@
     width: 32px;
     height: 32px;
     font-size: 1.3rem;
+  }
+}
+
+/* ===================== 주문 상세 모달 개선 ===================== */
+.order-detail-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 32px;
+  max-width: 600px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalShow 0.2s;
+}
+
+@keyframes modalShow {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.order-detail-section {
+  margin-bottom: 32px;
+}
+
+.order-detail-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* 주문 정보 그리드 */
+.order-detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.order-detail-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-detail-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.order-detail-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* 상태별 색상 */
+.order-status-delivered {
+  color: #2e7d32 !important;
+}
+
+.order-status-delivering {
+  color: #1565c0 !important;
+}
+
+.order-status-preparing {
+  color: #ef6c00 !important;
+}
+
+.order-status-cancelled {
+  color: #c62828 !important;
+}
+
+.payment-status-completed {
+  color: #2e7d32 !important;
+}
+
+.payment-status-pending {
+  color: #ef6c00 !important;
+}
+
+.payment-status-failed {
+  color: #c62828 !important;
+}
+
+/* 상품 정보 */
+.order-detail-products {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-product-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.order-product-img-wrap {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.order-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-product-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.order-product-option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.order-product-option {
+  font-size: 14px;
+  color: #666;
+  background: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.order-product-option-sub {
+  font-size: 12px;
+  color: #888;
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.order-product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.order-product-price {
+  font-weight: 600;
+  color: #e74c3c;
+  font-size: 16px;
+}
+
+/* 배송 및 설치 정보 */
+.order-detail-install-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.order-detail-install-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.order-detail-install-label {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.order-detail-install-value {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.order-detail-install-value.ok {
+  background: #d4edda;
+  color: #155724;
+}
+
+.order-detail-install-value.no {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.order-detail-install-value.elevator {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* 결제 정보 */
+.order-detail-payment {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.order-detail-payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-detail-payment-label {
+  font-size: 16px;
+  color: #495057;
+  font-weight: 600;
+}
+
+.order-detail-total-price {
+  font-size: 20px;
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+/* 안내 문구 */
+.order-detail-seller-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  margin-top: 24px;
+  text-align: center;
+  min-width: 0;
+  word-break: keep-all;
+}
+
+.order-detail-guide-icon {
+  font-size: 28px;
+}
+
+.order-detail-guide-text {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.order-detail-guide-text strong {
+  font-size: 16px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .order-detail-modal {
+    padding: 20px;
+    width: 95vw;
+  }
+  
+  .order-detail-info-grid,
+  .order-detail-install-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-product-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .order-product-img-wrap {
+    width: 100%;
+    height: 120px;
+  }
+  
+  .order-detail-seller-guide {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
   }
 }

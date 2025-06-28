@@ -102,4 +102,28 @@ public class SellerDTO {
         private int totalPrice;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class SellerOrderDetailDto {
+        private Long orderId;
+        private String orderCode;
+        private LocalDateTime orderDate;
+        private String orderStatus;
+        private String paymentStatus;
+        private String customerName;
+        private String customerPhone;
+        private String customerAddress;
+        private List<OrderItemDto> orderItems;
+        private int totalAmount;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OrderItemDto {
+        private Long id;
+        private String productName;
+        private Integer quantity;
+        private Integer price;
+    }
+
 }

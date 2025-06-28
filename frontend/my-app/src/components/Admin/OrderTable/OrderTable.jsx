@@ -75,13 +75,25 @@ const OrderTable = () => {
     setShowMoreOrderListModal(false);
   };
 
-  // 발송 완료 버튼 클릭 시 상태 변경 (더미용, 실제 API 연동 시 수정 필요)
-  const handleShippingComplete = (id) => {
-    setOrderList((prev) =>
-      prev.map((order) =>
-        order.orderId === id ? { ...order, orderStatus: '발송완료' } : order
-      )
-    );
+  const handleShippingComplete = async (id) => {
+    try {
+      const accessToken = localStorage.getItem('access_token');
+      await axios.patch(
+        `${API_BASE_URL}/api/v1/sellers/orders/${id}/deliver`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        }
+      );
+      setOrderList((prev) =>
+        prev.map((order) =>
+          order.orderId === id ? { ...order, orderStatus: '발송완료' } : order
+        )
+      );
+      alert('발송 완료 처리되었습니다.');
+    } catch (err) {
+      alert('발송 완료 처리에 실패했습니다.');
+    }
   };
 
   return (

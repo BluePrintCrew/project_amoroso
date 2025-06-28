@@ -372,6 +372,40 @@ public class SellerService {
         return new PageImpl<>(dtoList, pageable, productPage.getTotalElements());
     }
 
+    public SellerDTO.SellerOrderDetailDto getSellerOrderDetail(Long orderId) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Seller seller = getSellerByEmail(email);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+
+        if (!order.getSeller().equals(seller)) {
+            throw new RuntimeException("해당 주문에 대한 권한이 없습니다.");
+        }
+
+        List<SellerDTO.OrderItemDto> orderItems = order.getOrderItems().stream()
+                .map(item -> new SellerDTO.OrderItemDto(
+                        item.getOrderItemId(),
+                        item.getProduct().getProductName(),
+                        item.getQuantity(),
+                        item.getFinalPrice()
+                ))
+                .toList();
+
+        return new SellerDTO.SellerOrderDetailDto(
+                order.getOrderId(),
+                order.getOrderCode(),
+                order.getCreatedAt(),
+                order.getOrderStatus().name(),
+                order.getPaymentStatus().name(),
+                order.getUser().getName(),
+                order.getUser().getPhoneNumber(),
+                order.getUserAddress().getAddress() + " " + order.getUserAddress().getDetailAddress(),
+                orderItems,
+                order.getTotalPrice()
+        );
+    }
+
     // 추가: 공통 Seller 조회 메서드
     private Seller getSellerByEmail(String email) {
         User user = userRepository.findByEmail(email)

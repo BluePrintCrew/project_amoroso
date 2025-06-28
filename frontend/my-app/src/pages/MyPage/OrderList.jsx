@@ -113,13 +113,15 @@ function OrderList() {
             <th>주문일시</th>
             <th>상품명</th>
             <th>결제금액</th>
+            <th>결제상태</th>
+            <th>발송상태</th>
             <th>판매자 전화번호</th>
           </tr>
         </thead>
         <tbody>
           {orders.length === 0 ? (
             <tr>
-              <td colSpan="5" className="no-orders-message">
+              <td colSpan="7" className="no-orders-message">
                 주문 내역이 없습니다.
               </td>
             </tr>
@@ -138,6 +140,16 @@ function OrderList() {
                 </td>
                 <td style={{ color: "#e74c3c", fontWeight: 700 }}>
                   {order.totalAmount?.toLocaleString()}원
+                </td>
+                <td>
+                  <span className={`payment-status-${order.paymentStatus?.toLowerCase()}`}>
+                    {getPaymentStatusKR(order.paymentStatus)}
+                  </span>
+                </td>
+                <td>
+                  <span className={`order-status-${order.orderStatus?.toLowerCase()}`}>
+                    {getOrderStatusKR(order.orderStatus)}
+                  </span>
                 </td>
                 <td>{order.sellerPhoneNumber}</td>
               </tr>
@@ -158,6 +170,28 @@ function OrderList() {
       )}
     </div>
   );
+}
+
+function getOrderStatusKR(status) {
+  const ORDER_STATUS_KR = {
+    PAYMENT_COMPLETED: "결제완료",
+    PREPARING: "상품 준비중",
+    DELIVERING: "배송중",
+    DELIVERED: "배송완료",
+    CANCELLED: "주문취소",
+    // 필요시 추가
+  };
+  return ORDER_STATUS_KR[status] || status;
+}
+
+function getPaymentStatusKR(status) {
+  const PAYMENT_STATUS_KR = {
+    COMPLETED: "결제완료",
+    PENDING: "결제대기",
+    FAILED: "결제실패",
+    // 필요시 추가
+  };
+  return PAYMENT_STATUS_KR[status] || status;
 }
 
 export default OrderList; 

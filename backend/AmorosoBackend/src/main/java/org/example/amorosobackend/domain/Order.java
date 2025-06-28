@@ -36,7 +36,7 @@ public class Order {
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller; // 이제 하나의 seller는 하나의 order를 가지고있따.
 
-    @Column(name = "order_code")
+    @Column(name = "order_code", unique = true)
     private String orderCode; // - orderCode 추가 : 주문번호를 보고 seller가 배송을 보내기 위함
 
     @OneToOne

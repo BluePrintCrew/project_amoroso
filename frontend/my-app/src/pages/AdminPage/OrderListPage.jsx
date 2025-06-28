@@ -59,66 +59,48 @@ const OrderListPage = () => {
     setSelectedOrder(null);
   };
 
-  const handleStatusUpdate = async (orderId, newStatus) => {
+  const handleShippingComplete = async (orderId) => {
     try {
-      await axios.put(
+      await axios.patch(
         `${API_BASE_URL}/api/v1/sellers/orders/${orderId}/deliver`,
-        { status: newStatus },
+        {},
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` }
         }
       );
       
       // 상태 업데이트 후 목록 새로고침
       fetchOrders(currentPage);
+      alert('발송 완료 처리되었습니다.');
     } catch (err) {
-      console.error('주문 상태 업데이트 실패:', err);
-      alert('주문 상태 업데이트에 실패했습니다.');
+      console.error('발송 완료 처리 실패:', err);
+      alert('발송 완료 처리에 실패했습니다.');
     }
   };
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'PAYMENT_COMPLETE':
-        return styles.paymentComplete;
-      case 'PAYMENT_FAILED':
-        return styles.paymentFailed;
-      case 'ORDER_PENDING':
+      case '접수대기':
         return styles.statusPending;
-      case 'ORDER_CONFIRMED':
+      case '접수완료':
         return styles.statusConfirmed;
-      case 'SHIPPING':
+      case '배송중':
         return styles.statusShipping;
-      case 'DELIVERED':
+      case '발송완료':
         return styles.statusDelivered;
-      case 'CANCELED':
+      case '주문취소':
         return styles.statusCanceled;
+      case '결제완료':
+        return styles.paymentComplete;
+      case '결제실패':
+        return styles.paymentFailed;
       default:
         return '';
     }
   };
 
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'PAYMENT_COMPLETE':
-        return '결제완료';
-      case 'PAYMENT_FAILED':
-        return '결제실패';
-      case 'ORDER_PENDING':
-        return '접수대기';
-      case 'ORDER_CONFIRMED':
-        return '접수완료';
-      case 'SHIPPING':
-        return '배송중';
-      case 'DELIVERED':
-        return '배송완료';
-      case 'CANCELED':
-        return '주문취소';
-      default:
-        return status;
-    }
+  const getPaymentClass = (status) => {
+    return status === '결제완료' ? styles.paymentComplete : styles.paymentFailed;
   };
 
   if (isLoading) {
@@ -132,7 +114,7 @@ const OrderListPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.titleRow}>
-        <h2 className={styles.title}>주문 관리</h2>
+        <h2 className={styles.orderPageTitle}>주문 관리</h2>
       </div>
 
       <table className={styles.orderTable}>
@@ -164,22 +146,32 @@ const OrderListPage = () => {
                 <td>{order.fullAddress}</td>
                 <td>
                   <span className={`${styles.statusTag} ${getStatusClass(order.orderStatus)}`}>
-                    {getStatusText(order.orderStatus)}
+                    {order.orderStatus}
                   </span>
                 </td>
                 <td>
-                  <span className={`${styles.statusTag} ${getStatusClass(order.paymentStatus)}`}>
-                    {getStatusText(order.paymentStatus)}
+                  <span className={`${styles.statusTag} ${getPaymentClass(order.paymentStatus)}`}>
+                    {order.paymentStatus}
                   </span>
                 </td>
-                <td>{order.totalPrice.toLocaleString()}원</td>
+                <td>{order.totalPrice ? order.totalPrice.toLocaleString() + '원' : '-'}</td>
                 <td>
-                  <button
-                    className={styles.shippingBtn}
-                    onClick={() => handleOrderClick(order)}
-                  >
-                    상세보기
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <button
+                      className={styles.shippingBtn}
+                      disabled={order.orderStatus === '발송완료' || order.orderStatus === '주문취소'}
+                      onClick={() => handleShippingComplete(order.orderId)}
+                    >
+                      발송완료
+                    </button>
+                    <button
+                      className={styles.shippingBtn}
+                      onClick={() => handleOrderClick(order)}
+                      style={{ background: '#666' }}
+                    >
+                      상세보기
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
@@ -192,9 +184,7 @@ const OrderListPage = () => {
           <button
             key={pageNum}
             onClick={() => handlePageChange(pageNum)}
-            className={`${styles.pageButton} ${
-              currentPage === pageNum ? styles.activePage : ''
-            }`}
+            className={`${styles.pageButton} ${currentPage === pageNum ? styles.activePage : ''}`}
           >
             {pageNum}
           </button>
@@ -205,7 +195,6 @@ const OrderListPage = () => {
         <OrderDetailModal
           order={selectedOrder}
           onClose={handleCloseModal}
-          onStatusUpdate={handleStatusUpdate}
         />
       )}
     </div>

@@ -112,7 +112,7 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, opacity 0.2s;
 }
 
 .shippingBtn:hover {
@@ -120,8 +120,15 @@
 }
 
 .shippingBtn:disabled {
-  background: #ccc;
+  background: #e0e0e0;
+  color: #999;
   cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.shippingBtn:disabled:hover {
+  background: #e0e0e0;
 }
 
 .pagination {

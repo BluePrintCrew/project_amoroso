@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -364,13 +365,29 @@ public class OrderService {
     }
 
     private String generateOrderCode() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String timestamp = LocalDateTime.now().format(formatter);
-
-        int randomNum = (int) (Math.random() * 10000); // 0 ~ 9999
-        String randomPart = String.format("%04d", randomNum); // 항상 4자리 유지
-
-        return "ORD" + timestamp  + randomPart;
+        String orderCode;
+        int maxAttempts = 10;
+        int attempt = 0;
+        
+        do {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+            String timestamp = LocalDateTime.now().format(formatter);
+            
+            // ThreadLocalRandom을 사용하여 더 안전한 랜덤 값 생성
+            int randomNum = ThreadLocalRandom.current().nextInt(10000, 99999); // 5자리 랜덤 숫자
+            String randomPart = String.valueOf(randomNum);
+            
+            orderCode = "ORD" + timestamp + randomPart;
+            attempt++;
+            
+            // 최대 10번까지 시도
+            if (attempt >= maxAttempts) {
+                throw new RuntimeException("주문 코드 생성에 실패했습니다. 다시 시도해주세요.");
+            }
+            
+        } while (orderRepository.existsByOrderCode(orderCode)); // 중복 확인
+        
+        return orderCode;
     }
 
 

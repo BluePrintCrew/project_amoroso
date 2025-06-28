@@ -210,3 +210,138 @@
   background: #f9f9f9;
 }
 
+/* 모달 오버레이 */
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.38);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* 모달 컨텐츠 */
+.modalContent {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  min-width: 480px;
+  max-width: 860px;
+  width: 95vw;
+  padding: 48px 44px 40px 44px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  position: relative;
+  animation: modalShow 0.2s;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@keyframes modalShow { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.modalHeader {
+  border-bottom: 2px solid #766e68;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modalHeader h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #766e68;
+  margin: 0;
+}
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #bbb;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.closeButton:hover { color: #e74c3c; }
+
+.modalBody { padding: 0; }
+.orderInfo, .customerInfo, .productInfo { margin-bottom: 28px; }
+.infoTable, .productTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.infoTable th, .infoTable td, .productTable th, .productTable td {
+  padding: 10px 8px;
+  font-size: 1rem;
+  border: none;
+}
+.infoTable th { color: #888; font-weight: 500; background: none; }
+.infoTable td { color: #222; }
+.productTable th { background: #f7f7f7; color: #333; font-weight: 600; }
+.productTable td { color: #444; }
+.totalLabel { text-align: right; font-weight: 600; color: #766e68; }
+.totalAmount { color: #e74c3c; font-weight: 700; font-size: 1.13rem; }
+.actionButtons { text-align: right; margin-top: 18px; }
+.shippingBtn { background: #766e68; }
+.shippingBtn:hover { background: #5a524c; }
+.statusTag { font-weight: 600; }
+.statusTag.DELIVERED { color: #00940f; }
+.statusTag.CANCELED { color: #e74c3c; }
+.statusTag.PAYMENT_COMPLETE { color: #766e68; }
+
+@media (max-width: 900px) {
+  .modalContent {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 18px 6vw 18px 6vw;
+  }
+}
+
+.orderPageTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 32px !important;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 24px 0 0 0;
+  gap: 8px;
+}
+.pagination button,
+.pagination span {
+  background: #f7f7f7;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 1rem;
+  color: #766e68;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.pagination .active {
+  background: #766e68;
+  color: #fff;
+}
+
+.paginationBtn {
+  background: #f7f7f7;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 1rem;
+  color: #766e68;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  margin: 0 2px;
+}
+.paginationBtn:hover {
+  background: #ece7e2;
+}
+.paginationBtn.active {
+  background: #766e68;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(118,110,104,0.08);
+}
+

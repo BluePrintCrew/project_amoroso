@@ -169,4 +169,11 @@ public class SellerController {
     ) {
         return sellerService.getSellerProducts(page, size, sortBy, order);
     }
+
+    @GetMapping("/orders/{orderId}")
+    @Operation(summary = "판매자 주문 상세 조회",
+            description = "현재 로그인한 판매자의 특정 주문 상세 정보를 조회합니다.")
+    public SellerDTO.SellerOrderDetailDto getSellerOrderDetail(@PathVariable Long orderId) {
+        return sellerService.getSellerOrderDetail(orderId);
+    }
 }

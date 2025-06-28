@@ -91,4 +91,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                         @Param("status") PaymentStatus status);
 
     Page<Order> findDistinctByOrderItemsProductSeller(Seller seller, Pageable pageable);
+
+    /**
+     * 주문 코드로 주문 존재 여부 확인
+     */
+    boolean existsByOrderCode(String orderCode);
 }
