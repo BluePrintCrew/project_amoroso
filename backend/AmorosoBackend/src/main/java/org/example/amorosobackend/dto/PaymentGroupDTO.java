@@ -20,7 +20,7 @@ public class PaymentGroupDTO {
         private Long paymentGroupId;
         private String paymentGroupCode;
         private Integer totalAmount;
-        private PaymentStatus paymentStatus;
+        private String paymentStatus;
         private List<OrderResponseDTO> orders;
         private LocalDateTime createdAt;
 
@@ -28,7 +28,7 @@ public class PaymentGroupDTO {
             this.paymentGroupId = paymentGroup.getPaymentGroupId();
             this.paymentGroupCode = paymentGroup.getPaymentGroupCode();
             this.totalAmount = paymentGroup.getTotalAmount();
-            this.paymentStatus = paymentGroup.getPaymentStatus();
+            this.paymentStatus = paymentGroup.getPaymentStatus().getKoreanName();
             this.createdAt = paymentGroup.getCreatedAt();
             this.orders = paymentGroup.getOrders().stream()
                     .map(OrderResponseDTO::new)

@@ -410,23 +410,10 @@ public class SellerService {
     }
 
     private String getOrderStatusKorean(OrderStatus status) {
-        return switch (status) {
-            case PAYMENT_PENDING -> "결제 대기";
-            case PAYMENT_COMPLETED -> "결제 완료";
-            case PREPARING_SHIPMENT -> "배송 준비중";
-            case SHIPPING -> "배송중";
-            case DELIVERED -> "배송 완료";
-            case CANCELLED -> "주문 취소";
-            case RETURNED -> "반품";
-            case EXCHANGED -> "교환";
-        };
+        return status.getKoreanName();
     }
     private String getPaymentStatusKorean(PaymentStatus status) {
-        return switch (status) {
-            case WAITING -> "결제 대기";
-            case COMPLETED -> "결제 완료";
-            case CANCELED -> "결제 취소";
-        };
+        return status.getKoreanName();
     }
 
     public SellerDTO.SellerInfoResponse getSellerInfo() {

@@ -37,8 +37,8 @@ public class OrderControllerDTO {
             this.orderId = order.getOrderId();
             this.userEmail = order.getUser().getEmail();
             this.totalPrice = order.getTotalPrice();
-            this.orderStatus = order.getOrderStatus().name();
-            this.paymentStatus = order.getPaymentStatus().name();
+            this.orderStatus = order.getOrderStatus().getKoreanName();
+            this.paymentStatus = order.getPaymentStatus().getKoreanName();
             this.createdAt = order.getCreatedAt();
             this.orderItems = order.getOrderItems().stream()
                     .map(OrderItemResponseDTO::new)
