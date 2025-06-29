@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import OrderDetailModal from "./OrderDetailModal";
 import "./OrderManagement.css";
-import { ELEVATOR_RANGE_LABELS } from '../../constants/enums';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -32,6 +31,10 @@ function OrderList() {
         const formattedOrders = response.data.map(order => {
           console.log("주문 데이터:", order); // 각 주문 데이터 확인용 로그
           console.log("주문 아이템:", order.orderItems); // 주문 아이템 확인용 로그
+          console.log("엘리베이터 정보:", {
+            elevatorType: order.elevatorType,
+            elevatorRange: order.elevatorRange
+          }); // 엘리베이터 정보 확인용 로그
           
           return {
             orderId: order.orderId,
@@ -155,7 +158,7 @@ function OrderList() {
                   </span>
                 </td>
                 <td>
-                  {ELEVATOR_RANGE_LABELS[order.elevatorRange] || '-'}
+                  {order.elevatorRange || order.elevatorType || '-'}
                 </td>
                 <td>{order.sellerPhoneNumber}</td>
               </tr>
