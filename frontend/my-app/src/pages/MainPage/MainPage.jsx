@@ -7,6 +7,7 @@ import CategoryNavigation from '../../components/Navigation/CategoryNavigation/C
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu';
 import BestProducts from '../../components/BestProducts/BestProducts';
 import ProductSection from '../../components/ProductSection/ProductSection';
+import SkeletonProductCard from '../../components/Skeleton/SkeletonProductCard';
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -47,19 +48,32 @@ const categoryMap = {
 
 function MainPage() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const allCategories = Object.values(categoryMap).flat();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(`${API_BASE_URL}/api/v1/products/`);
         setProducts(res.data.products.slice(0, 8)); // 최대 8개 상품 표시
       } catch (err) {
         console.error('상품 불러오기 실패:', err);
+        setError('상품을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
   }, []);
+
+  // 스켈레톤 로딩 렌더링
+  const renderSkeletonProducts = () => {
+    return Array(8).fill(null).map((_, index) => (
+      <SkeletonProductCard key={index} />
+    ));
+  };
 
   return (
     <div className={styles.mainPage}>
@@ -70,12 +84,22 @@ function MainPage() {
         <BestProducts />
 
         {/* Amoroso Products 섹션 */}
-        <ProductSection
-          title="Amoroso Products"
-          products={products}
-          showMoreLink="/products"
-          gridColumns={4}
-        />
+        {loading ? (
+          <div className={styles.productGrid}>
+            {renderSkeletonProducts()}
+          </div>
+        ) : error ? (
+          <div className={styles.errorMessage}>
+            <p>{error}</p>
+          </div>
+        ) : (
+          <ProductSection
+            title="Amoroso Products"
+            products={products}
+            showMoreLink="/products"
+            gridColumns={4}
+          />
+        )}
 
         {/* 동작하지 않는 관계로 주석 처리 */}
         {/* 카테고리 네비게이션 */}

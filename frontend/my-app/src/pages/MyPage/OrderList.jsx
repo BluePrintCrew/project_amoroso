@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import OrderDetailModal from "./OrderDetailModal";
 import "./OrderManagement.css";
+import { ELEVATOR_RANGE_LABELS } from '../../constants/enums';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -50,6 +51,7 @@ function OrderList() {
             freeLoweringService: order.freeLoweringService,
             vehicleEntryPossible: order.vehicleEntryPossible,
             elevatorType: order.elevatorType,
+            elevatorRange: order.elevatorRange,
             orderItems: order.orderItems || []
           };
         });
@@ -115,13 +117,14 @@ function OrderList() {
             <th>결제금액</th>
             <th>결제상태</th>
             <th>발송상태</th>
+            <th>엘리베이터</th>
             <th>판매자 전화번호</th>
           </tr>
         </thead>
         <tbody>
           {orders.length === 0 ? (
             <tr>
-              <td colSpan="7" className="no-orders-message">
+              <td colSpan="8" className="no-orders-message">
                 주문 내역이 없습니다.
               </td>
             </tr>
@@ -150,6 +153,9 @@ function OrderList() {
                   <span className={`order-status-${order.orderStatus?.toLowerCase()}`}>
                     {getOrderStatusKR(order.orderStatus)}
                   </span>
+                </td>
+                <td>
+                  {ELEVATOR_RANGE_LABELS[order.elevatorRange] || '-'}
                 </td>
                 <td>{order.sellerPhoneNumber}</td>
               </tr>
