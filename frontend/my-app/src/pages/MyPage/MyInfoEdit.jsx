@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import magnifierIcon from "../../assets/magnifier.png";
-import "./MyInfoEdit.css";
-import PageLayout from "../../components/PageLayout/PageLayout";
-import axios from "axios";
+import './MyInfoEdit.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+import React, { useEffect, useState } from 'react';
+
+import PageLayout from '../../components/PageLayout/PageLayout';
+import axios from 'axios';
+import magnifierIcon from '../../assets/magnifier.png';
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function MyInfoEdit() {
   const [isLoading, setIsLoading] = useState(true);
@@ -12,14 +15,14 @@ function MyInfoEdit() {
 
   // 사용자 정보 상태 관리
   const [userInfo, setUserInfo] = useState({
-    email: "",
-    name: "",
-    birthDate: "",
-    phoneNumber: "",
-    nickname: "hs",
-    postalCode: "",
-    address: "",
-    detailAddress: "",
+    email: '',
+    name: '',
+    birthDate: '',
+    phoneNumber: '',
+    nickname: 'hs',
+    postalCode: '',
+    address: '',
+    detailAddress: '',
     emailConsent: false,
     smsConsent: false,
     dmConsent: false,
@@ -43,13 +46,13 @@ function MyInfoEdit() {
     setIsLoading(true);
     try {
       // 로컬 스토리지에서 토큰 가져오기
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem('access_token');
 
-      console.log("사용 중인 토큰:", token);
+      console.log('사용 중인 토큰:', token);
 
       if (!token) {
-        console.log("토큰이 없습니다.");
-        setError("로그인이 필요합니다. 로그인 페이지로 이동해주세요.");
+        console.log('토큰이 없습니다.');
+        setError('로그인이 필요합니다. 로그인 페이지로 이동해주세요.');
         setIsLoading(false);
         return;
       }
@@ -61,7 +64,7 @@ function MyInfoEdit() {
         },
       });
 
-      console.log("사용자 정보 응답:", response.data);
+      console.log('사용자 정보 응답:', response.data);
 
       // 응답에서 사용자 정보 추출
       const {
@@ -73,7 +76,7 @@ function MyInfoEdit() {
         smsConsent,
         dmConsent,
         locationConsent,
-        birthDate = "",
+        birthDate = '',
       } = response.data;
 
       try {
@@ -87,7 +90,7 @@ function MyInfoEdit() {
           }
         );
 
-        console.log("주소 정보 응답:", addressResponse.data);
+        console.log('주소 정보 응답:', addressResponse.data);
 
         // 주소 정보 추출
         const { postalCode, address, detailAddress } =
@@ -95,14 +98,14 @@ function MyInfoEdit() {
 
         // 상태 업데이트
         setUserInfo({
-          email: email || "",
-          name: name || "",
-          birthDate: birthDate || "",
-          phoneNumber: phoneNumber || "",
-          nickname: nickname || "",
-          postalCode: postalCode || "",
-          address: address || "",
-          detailAddress: detailAddress || "",
+          email: email || '',
+          name: name || '',
+          birthDate: birthDate || '',
+          phoneNumber: phoneNumber || '',
+          nickname: nickname || '',
+          postalCode: postalCode || '',
+          address: address || '',
+          detailAddress: detailAddress || '',
           emailConsent: emailConsent || false,
           smsConsent: smsConsent || false,
           dmConsent: dmConsent || false,
@@ -111,18 +114,18 @@ function MyInfoEdit() {
 
         setIsLoading(false);
       } catch (addressErr) {
-        console.error("주소 정보를 가져오는데 실패했습니다:", addressErr);
+        console.error('주소 정보를 가져오는데 실패했습니다:', addressErr);
 
         // 주소 정보 없이 기본 정보만 표시
         setUserInfo({
-          email: email || "",
-          name: name || "",
-          birthDate: birthDate || "",
-          phoneNumber: phoneNumber || "",
-          nickname: nickname || "",
-          postalCode: "",
-          address: "",
-          detailAddress: "",
+          email: email || '',
+          name: name || '',
+          birthDate: birthDate || '',
+          phoneNumber: phoneNumber || '',
+          nickname: nickname || '',
+          postalCode: '',
+          address: '',
+          detailAddress: '',
           emailConsent: emailConsent || false,
           smsConsent: smsConsent || false,
           dmConsent: dmConsent || false,
@@ -132,15 +135,15 @@ function MyInfoEdit() {
         setIsLoading(false);
       }
     } catch (err) {
-      console.error("사용자 정보를 가져오는데 실패했습니다:", err);
+      console.error('사용자 정보를 가져오는데 실패했습니다:', err);
 
       // 401 Unauthorized 오류인 경우 토큰 문제일 가능성이 높음
       if (err.response?.status === 401) {
-        setError("인증이 만료되었습니다. 다시 로그인해주세요.");
+        setError('인증이 만료되었습니다. 다시 로그인해주세요.');
       } else {
         setError(
-          "사용자 정보를 가져오는데 실패했습니다. " +
-          (err.response?.data?.message || err.message)
+          '사용자 정보를 가져오는데 실패했습니다. ' +
+            (err.response?.data?.message || err.message)
         );
       }
 
@@ -153,7 +156,7 @@ function MyInfoEdit() {
     const { name, value, type, checked } = e.target;
 
     // 날짜 입력의 경우 YYYY-MM-DD 형식으로 저장
-    if (name === "birthDate" && value) {
+    if (name === 'birthDate' && value) {
       // HTML date input은 이미 YYYY-MM-DD 형식으로 반환하므로 추가 변환 불필요
       setUserInfo({
         ...userInfo,
@@ -162,7 +165,7 @@ function MyInfoEdit() {
     } else {
       setUserInfo({
         ...userInfo,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: type === 'checkbox' ? checked : value,
       });
     }
   };
@@ -172,10 +175,10 @@ function MyInfoEdit() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem('access_token');
 
       if (!token) {
-        alert("로그인이 필요합니다");
+        alert('로그인이 필요합니다');
         return;
       }
 
@@ -195,7 +198,7 @@ function MyInfoEdit() {
         locationConsent: userInfo.locationConsent,
       };
 
-      console.log("전송 데이터:", JSON.stringify(updateData, null, 2));
+      console.log('전송 데이터:', JSON.stringify(updateData, null, 2));
 
       // 개인정보 업데이트 요청
       const response = await axios.put(
@@ -204,40 +207,40 @@ function MyInfoEdit() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      console.log("응답 데이터:", response.data);
-      alert("개인정보가 성공적으로 업데이트되었습니다!");
+      console.log('응답 데이터:', response.data);
+      alert('개인정보가 성공적으로 업데이트되었습니다!');
     } catch (err) {
-      console.error("개인정보 업데이트 실패:", err);
+      console.error('개인정보 업데이트 실패:', err);
 
       // 자세한 오류 정보 출력
       if (err.response) {
-        console.error("에러 상태:", err.response.status);
-        console.error("에러 데이터:", err.response.data);
+        console.error('에러 상태:', err.response.status);
+        console.error('에러 데이터:', err.response.data);
       }
 
       alert(
-        "개인정보 업데이트에 실패했습니다: " +
-        (err.response?.data?.message || err.message || "알 수 없는 오류")
+        '개인정보 업데이트에 실패했습니다: ' +
+          (err.response?.data?.message || err.message || '알 수 없는 오류')
       );
     }
   };
 
   // 회원 탈퇴 처리
   const handleDeleteAccount = async () => {
-    if (!window.confirm("정말로 회원탈퇴 하시겠습니까?")) {
+    if (!window.confirm('정말로 회원탈퇴 하시겠습니까?')) {
       return;
     }
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem('access_token');
 
       if (!token) {
-        alert("로그인이 필요합니다");
+        alert('로그인이 필요합니다');
         return;
       }
 
@@ -250,13 +253,13 @@ function MyInfoEdit() {
         }
       );
 
-      alert("회원탈퇴가 완료되었습니다.");
+      alert('회원탈퇴가 완료되었습니다.');
       // 로그아웃 및 홈으로 리다이렉트
-      localStorage.removeItem("access_token");
-      window.location.href = "/";
+      localStorage.removeItem('access_token');
+      window.location.href = '/';
     } catch (err) {
-      console.error("회원탈퇴 실패:", err);
-      alert("회원탈퇴에 실패했습니다.");
+      console.error('회원탈퇴 실패:', err);
+      alert('회원탈퇴에 실패했습니다.');
     }
   };
 
@@ -265,9 +268,9 @@ function MyInfoEdit() {
     // 카카오 주소 검색 API가 로드되어 있는지 확인
     if (!window.daum || !window.daum.Postcode) {
       // 카카오 주소 검색 API 스크립트 로드
-      const script = document.createElement("script");
+      const script = document.createElement('script');
       script.src =
-        "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+        '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
       script.onload = () => openPostcode();
       document.head.appendChild(script);
     } else {
@@ -286,7 +289,7 @@ function MyInfoEdit() {
           address: data.address,
         });
         // 상세주소 입력란에 포커스
-        document.getElementById("detailAddress")?.focus();
+        document.getElementById('detailAddress')?.focus();
       },
     }).open();
   };
@@ -303,7 +306,7 @@ function MyInfoEdit() {
     return (
       <div className="error">
         <p>{error}</p>
-        <button onClick={() => (window.location.href = "/login")}>
+        <button onClick={() => (window.location.href = '/login')}>
           로그인하기
         </button>
       </div>
@@ -374,22 +377,24 @@ function MyInfoEdit() {
                   {/* Two squares for 남/여 */}
                   <div className="gender-squares">
                     <div
-                      className={`gender-square male-square ${userInfo.gender === "male" ? "selected" : ""
-                        }`}
+                      className={`gender-square male-square ${
+                        userInfo.gender === 'male' ? 'selected' : ''
+                      }`}
                       onClick={() =>
                         handleInputChange({
-                          target: { name: "gender", value: "male" },
+                          target: { name: 'gender', value: 'male' },
                         })
                       }
                     >
                       남
                     </div>
                     <div
-                      className={`gender-square female-square ${userInfo.gender === "female" ? "selected" : ""
-                        }`}
+                      className={`gender-square female-square ${
+                        userInfo.gender === 'female' ? 'selected' : ''
+                      }`}
                       onClick={() =>
                         handleInputChange({
-                          target: { name: "gender", value: "female" },
+                          target: { name: 'gender', value: 'female' },
                         })
                       }
                     >
@@ -471,19 +476,19 @@ function MyInfoEdit() {
               <div className="linked-account-row">
                 <label>네이버</label>
                 <p>
-                  {linkedAccounts.naver ? "연동됨" : "연동된 계정이 없습니다."}
+                  {linkedAccounts.naver ? '연동됨' : '연동된 계정이 없습니다.'}
                 </p>
               </div>
               <div className="linked-account-row">
                 <label>카카오</label>
                 <p>
-                  {linkedAccounts.kakao ? "연동됨" : "연동된 계정이 없습니다."}
+                  {linkedAccounts.kakao ? '연동됨' : '연동된 계정이 없습니다.'}
                 </p>
               </div>
               <div className="linked-account-row">
                 <label>구글</label>
                 <p>
-                  {linkedAccounts.google ? "연동됨" : "연동된 계정이 없습니다."}
+                  {linkedAccounts.google ? '연동됨' : '연동된 계정이 없습니다.'}
                 </p>
               </div>
             </section>
