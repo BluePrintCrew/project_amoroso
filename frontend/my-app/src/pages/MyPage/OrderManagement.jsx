@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./OrderManagement.css";
+import './OrderManagement.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+import React, { useEffect, useState } from 'react';
+
+import axios from 'axios';
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function OrderManagement() {
   const [statusData, setStatusData] = useState({
-    depositConfirm: 0,     // 입금 확인중
-    paymentComplete: 0,    // 결제완료
-    prepareShipping: 0,    // 배송준비중
-    shipping: 0,           // 배송중
-    shippingComplete: 0,   // 배송완료
-    cancelCount: 0,        // 취소
-    returnCount: 0,        // 반품
-    exchangeCount: 0       // 교환
+    depositConfirm: 0, // 입금 확인중
+    paymentComplete: 0, // 결제완료
+    prepareShipping: 0, // 배송준비중
+    shipping: 0, // 배송중
+    shippingComplete: 0, // 배송완료
+    cancelCount: 0, // 취소
+    returnCount: 0, // 반품
+    exchangeCount: 0, // 교환
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,28 +25,31 @@ function OrderManagement() {
     const fetchOrderStatusSummary = async () => {
       try {
         const token = localStorage.getItem('access_token');
-        
+
         if (!token) {
-          setError("로그인이 필요합니다");
+          setError('로그인이 필요합니다');
           setLoading(false);
           return;
         }
 
         // 두 가지 API 호출 방법이 있습니다.
         // 방법 1: 사용자 프로필 API에서 주문 요약 정보를 가져오기
-        const userProfileResponse = await axios.get(`${API_BASE_URL}/api/v1/auth/users/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const userProfileResponse = await axios.get(
+          `${API_BASE_URL}/api/v1/auth/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
-        console.log("사용자 프로필 응답:", userProfileResponse.data);
+        console.log('사용자 프로필 응답:', userProfileResponse.data);
 
         // 주문 상태 요약 정보가 있는지 확인
         if (userProfileResponse.data.orderStatusSummary) {
           // API 응답에서 주문 상태 요약 정보 추출
           const orderSummary = userProfileResponse.data.orderStatusSummary;
-          
+
           setStatusData({
             depositConfirm: orderSummary.paymentPending || 0,
             paymentComplete: orderSummary.paymentCompleted || 0,
@@ -52,21 +58,24 @@ function OrderManagement() {
             shippingComplete: orderSummary.delivered || 0,
             cancelCount: orderSummary.cancelled || 0,
             returnCount: orderSummary.returned || 0,
-            exchangeCount: orderSummary.exchanged || 0
+            exchangeCount: orderSummary.exchanged || 0,
           });
-          
+
           setLoading(false);
           return;
         }
 
         // 방법 2: 주문 목록 API를 호출하여 상태별로 집계
-        const ordersResponse = await axios.get(`${API_BASE_URL}/api/v1/orders/my-orders`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const ordersResponse = await axios.get(
+          `${API_BASE_URL}/api/v1/orders/my-orders`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
-        console.log("주문 목록 응답:", ordersResponse.data);
+        console.log('주문 목록 응답:', ordersResponse.data);
 
         // 주문 목록이 있을 경우 상태별로 집계
         if (Array.isArray(ordersResponse.data)) {
@@ -79,10 +88,10 @@ function OrderManagement() {
             shippingComplete: 0,
             cancelCount: 0,
             returnCount: 0,
-            exchangeCount: 0
+            exchangeCount: 0,
           };
 
-          ordersResponse.data.forEach(order => {
+          ordersResponse.data.forEach((order) => {
             // API 응답의 주문 상태 필드명에 따라 수정 필요
             switch (order.orderStatus) {
               case 'PAYMENT_PENDING':
@@ -117,8 +126,8 @@ function OrderManagement() {
           setStatusData(summary);
         }
       } catch (error) {
-        console.error("주문 상태 요약 데이터 로딩 오류:", error);
-        setError("주문 상태 정보를 불러오는데 실패했습니다");
+        console.error('주문 상태 요약 데이터 로딩 오류:', error);
+        setError('주문 상태 정보를 불러오는데 실패했습니다');
       } finally {
         setLoading(false);
       }
@@ -150,11 +159,11 @@ function OrderManagement() {
   }
 
   // 전체 주문 건수 합계
-  const totalOrders = 
-    statusData.depositConfirm + 
-    statusData.paymentComplete + 
-    statusData.prepareShipping + 
-    statusData.shipping + 
+  const totalOrders =
+    statusData.depositConfirm +
+    statusData.paymentComplete +
+    statusData.prepareShipping +
+    statusData.shipping +
     statusData.shippingComplete;
 
   return (
@@ -199,13 +208,18 @@ function OrderManagement() {
       </div>
       {/* Sub-row for 취소, 반품, 교환 */}
       <div className="order-steps-sub">
-        <span className="cancel-text" onClick={() => window.location.href = '/orders?status=cancel'}>
+        <span
+          className="cancel-text"
+          onClick={() => (window.location.href = '/orders?status=cancel')}
+        >
           취소 <strong>{statusData.cancelCount}</strong>
         </span>
-        <span onClick={() => window.location.href = '/orders?status=return'}>
+        <span onClick={() => (window.location.href = '/orders?status=return')}>
           반품 <strong>{statusData.returnCount}</strong>
         </span>
-        <span onClick={() => window.location.href = '/orders?status=exchange'}>
+        <span
+          onClick={() => (window.location.href = '/orders?status=exchange')}
+        >
           교환 <strong>{statusData.exchangeCount}</strong>
         </span>
       </div>

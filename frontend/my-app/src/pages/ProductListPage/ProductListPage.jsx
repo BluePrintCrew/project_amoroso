@@ -68,55 +68,65 @@ function ProductListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('desc');
-  const [size] = useState(12); // 페이지당 상품 수
+  const [size] = useState(12);
 
   const subCategoryList = categoryMap[selectedTop] || [];
+  const isSearchMode = Boolean(keyword);
 
+  // 카테고리 초기화
   useEffect(() => {
-    const firstSub = categoryMap[selectedTop]?.[0]?.value || '';
-    setSelectedSub(firstSub);
-    setCurrentPage(1); // 카테고리 변경 시 페이지 초기화
-  }, [selectedTop]);
+    if (!isSearchMode) {
+      const firstSub = categoryMap[selectedTop]?.[0]?.value || '';
+      setSelectedSub(firstSub);
+    }
+    setCurrentPage(1);
+  }, [selectedTop, isSearchMode]);
 
+  // 상품 데이터 가져오기
   useEffect(() => {
-    // 검색어가 있으면 카테고리 필터 없이 검색, 없으면 카테고리 필터 사용
-    if (keyword && !selectedSub) return;
-    if (!keyword && !selectedSub) return;
-    
-    setLoading(true);
-    setError(null);
-
     const fetchProducts = async () => {
+      // 검색 모드가 아닐 때는 카테고리가 필요
+      if (!isSearchMode && !selectedSub) return;
+      
+      setLoading(true);
+      setError(null);
+
       try {
-        let url = `${API_ENDPOINT}/products/?page=${currentPage}&sortBy=${sortBy}&order=${order}&size=${size}`;
-        
-        if (keyword) {
-          // 검색어가 있으면 검색 API 사용
-          url += `&keyword=${encodeURIComponent(keyword)}`;
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          sortBy,
+          order,
+          size: size.toString(),
+        });
+
+        if (isSearchMode) {
+          params.append('keyword', keyword);
         } else {
-          // 검색어가 없으면 카테고리 필터 사용
-          url += `&categoryCode=${selectedSub}`;
+          params.append('categoryCode', selectedSub);
         }
 
-        const response = await fetch(url);
-
-        if (!response.ok)
+        const response = await fetch(`${API_ENDPOINT}/products/?${params}`);
+        
+        if (!response.ok) {
           throw new Error('상품 데이터를 불러오는데 실패했습니다.');
+        }
 
         const data = await response.json();
         setProducts(data.products || []);
         setTotalPages(data.totalPages || 0);
         setTotalItems(data.totalItems || 0);
-        return data.products || [];
       } catch (err) {
         setError(err.message);
         setProducts([]);
-        return [];
+        setTotalPages(0);
+        setTotalItems(0);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProducts().finally(() => setLoading(false));
-  }, [selectedSub, currentPage, sortBy, order, size, keyword]);
+    fetchProducts();
+  }, [isSearchMode, keyword, selectedSub, currentPage, sortBy, order, size]);
 
   const handleTopCategoryChange = (topCategory) => {
     setSelectedTop(topCategory);

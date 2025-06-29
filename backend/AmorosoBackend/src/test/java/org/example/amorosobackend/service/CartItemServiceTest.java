@@ -52,18 +52,23 @@ class CartItemServiceTest {
                 .role("ROLE_USER")
                 .name("테스트유저")
                 .build();
+        ReflectionTestUtils.setField(mockUser, "userId", 1L);
 
         // 사용자 레포 조회 모킹
         when(userRepository.findByEmail(mockUser.getEmail()))
                 .thenReturn(Optional.of(mockUser));
 
-        // 공통 상품 목
+        // 공통 상품 목 - 필수 필드들 모두 설정
         mockProduct = Product.builder()
                 .productName("테스트상품")
                 .marketPrice(1000)
                 .discountRate(0)
+                .shippingInstallationFee(0)  // 추가
+                .stock(100)  // 추가
                 .build();
         ReflectionTestUtils.setField(mockProduct, "productId", 42L);
+        // discountPrice 계산을 위해 설정
+        ReflectionTestUtils.setField(mockProduct, "discountPrice", 0);
         when(productService.getProductById(42L)).thenReturn(mockProduct);
     }
 
@@ -100,7 +105,12 @@ class CartItemServiceTest {
 
         // 저장되는 CartItem 캡처
         ArgumentCaptor<CartItem> captor = ArgumentCaptor.forClass(CartItem.class);
-        when(cartItemRepository.save(captor.capture())).thenAnswer(inv -> inv.getArgument(0));
+        when(cartItemRepository.save(captor.capture())).thenAnswer(inv -> {
+            CartItem savedItem = inv.getArgument(0);
+            // ID 설정하여 NPE 방지
+            ReflectionTestUtils.setField(savedItem, "cartItemId", 1L);
+            return savedItem;
+        });
 
         // whend
         CartItemControllerDTO.CartItemRequestDTO req =
@@ -160,12 +170,17 @@ class CartItemServiceTest {
                 .product(mockProduct)
                 .quantity(existingQty)
                 .build();
+        // CartItem ID 설정
+        ReflectionTestUtils.setField(existing, "cartItemId", 2L);
+        
         // 옵션 관계도 설정해줘야 DTO 변환 시 NPE 방지
         AdditionalOption addOpt = AdditionalOption.builder()
                 .product(mockProduct).optionName("추가포장").additionalPrice(500).build();
         ReflectionTestUtils.setField(addOpt, "id", additionalOptionId);
         CartAdditionalOption existingAddRel = CartAdditionalOption.builder()
                 .cartItem(existing).additionalOption(addOpt).build();
+        // CartAdditionalOption의 additionalPrice 필드 설정
+        ReflectionTestUtils.setField(existingAddRel, "additionalPrice", 500);
         existing.setCartAdditionalOption(existingAddRel);
 
         ProductOption prodOpt = ProductOption.builder()

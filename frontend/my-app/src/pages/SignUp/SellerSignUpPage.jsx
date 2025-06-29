@@ -291,14 +291,22 @@ const SellerSignUpPage = () => {
                 </div>
               </div>
 
-              <div className="input-group">
+              <div className="certification-group">
                 <label>통신판매업신고번호</label>
                 <input
                   type="text"
                   value={registrationNumber || ''}
-                  readOnly
-                  placeholder="인증 시 자동조회됩니다."
+                  onChange={(e) => setRegistrationNumber(e.target.value)}
+                  // readOnly
+                  // placeholder="인증 시 자동조회됩니다."
                 />
+                <button
+                  type="button"
+                  onClick={fetchSalesRegistrationInfo}
+                  className="certification-button"
+                >
+                  인증
+                </button>
               </div>
             </div>
 
