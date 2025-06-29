@@ -1,30 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#766e68" />
+    
+    <!-- 기본 메타 태그 -->
     <meta
       name="description"
-      content="Amoroso - 당신의 라이프스타일을 위한 쇼핑몰"
+      content="Amoroso - 프리미엄 가구 쇼핑몰. 거실가구, 침실가구, 주방가구, 사무용가구, 드레스룸가구 등 다양한 인테리어 가구를 합리적인 가격으로 만나보세요. 라이프스타일을 바꾸는 특별한 가구 쇼핑몰"
     />
+    <meta name="keywords" content="가구,인테리어,거실가구,침실가구,주방가구,사무용가구,드레스룸가구,소파,침대,식탁,책상,의자,장식장,화장대,장롱,서랍장,협탁,탁자,책장,화장대,가구쇼핑몰,인테리어쇼핑몰,가구브랜드,인테리어브랜드,홈퍼니싱,라이프스타일가구,프리미엄가구,합리적인가격가구,가구추천,인테리어추천,가구배송,가구설치,가구AS,가구컨설팅" />
+    <meta name="author" content="Amoroso" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Korean" />
+    
+    <!-- Open Graph 메타 태그 (Facebook, LinkedIn 등) -->
+    <meta property="og:title" content="Amoroso - 프리미엄 가구 쇼핑몰" />
+    <meta property="og:description" content="거실가구, 침실가구, 주방가구, 사무용가구, 드레스룸가구 등 다양한 인테리어 가구를 합리적인 가격으로 만나보세요. 라이프스타일을 바꾸는 특별한 가구 쇼핑몰" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://amoroso.com" />
+    <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:site_name" content="Amoroso" />
+    <meta property="og:locale" content="ko_KR" />
+    
+    <!-- Twitter 카드 메타 태그 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Amoroso - 프리미엄 가구 쇼핑몰" />
+    <meta name="twitter:description" content="거실가구, 침실가구, 주방가구, 사무용가구, 드레스룸가구 등 다양한 인테리어 가구를 합리적인 가격으로 만나보세요." />
+    <meta name="twitter:image" content="%PUBLIC_URL%/logo512.png" />
+    
+    <!-- 추가 SEO 메타 태그 -->
+    <meta name="application-name" content="Amoroso" />
+    <meta name="apple-mobile-web-app-title" content="Amoroso" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Amoroso",
+      "description": "프리미엄 가구 쇼핑몰",
+      "url": "https://amoroso.com",
+      "logo": "https://amoroso.com/logo512.png",
+      "image": "https://amoroso.com/logo512.png",
+      "telephone": "+82-1588-0000",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "KR"
+      },
+      "sameAs": [
+        "https://www.instagram.com/amoroso",
+        "https://www.facebook.com/amoroso",
+        "https://blog.naver.com/amoroso"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "가구 카탈로그",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "거실가구",
+              "category": "가구"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "침실가구",
+              "category": "가구"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "주방가구",
+              "category": "가구"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "사무용가구",
+              "category": "가구"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "드레스룸가구",
+              "category": "가구"
+            }
+          }
+        ]
+      }
+    }
+    </script>
+    
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>Amoroso</title>
+    
+    <!-- 추가 링크 태그 -->
+    <link rel="canonical" href="https://amoroso.com" />
+    <link rel="alternate" hreflang="ko" href="https://amoroso.com" />
+    
+    <title>Amoroso - 프리미엄 가구 쇼핑몰 | 거실가구, 침실가구, 주방가구, 사무용가구</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

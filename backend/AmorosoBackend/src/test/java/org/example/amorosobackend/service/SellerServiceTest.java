@@ -1,9 +1,11 @@
 package org.example.amorosobackend.service;
 
 import org.example.amorosobackend.domain.Order;
+import org.example.amorosobackend.domain.PaymentGroup;
 import org.example.amorosobackend.domain.Seller;
 import org.example.amorosobackend.domain.User;
 import org.example.amorosobackend.enums.OrderStatus;
+import org.example.amorosobackend.enums.PaymentStatus;
 import org.example.amorosobackend.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +45,7 @@ class SellerServiceTest {
     private Seller sellerInfo;
     private Seller otherSellerInfo;
     private Order order;
+    private PaymentGroup paymentGroup;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +60,7 @@ class SellerServiceTest {
                 .brandName("Test Brand")
                 .build();
 
-        // �ٸ� �Ǹ��� ����
+        // 다른 판매자 설정
         otherSeller = User.builder()
                 .email("other@test.com")
                 .role("ROLE_SELLER")
@@ -68,18 +71,24 @@ class SellerServiceTest {
                 .brandName("Other Brand")
                 .build();
 
+        // PaymentGroup 설정
+        paymentGroup = PaymentGroup.builder()
+                .paymentStatus(PaymentStatus.COMPLETED)
+                .build();
 
         order = Order.builder()
                 .orderStatus(OrderStatus.PAYMENT_COMPLETED)
                 .seller(sellerInfo)
                 .build();
-
+        
+        // PaymentGroup 설정 (Setter 사용)
+        order.setPaymentGroup(paymentGroup);
 
         SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
-
+    @DisplayName("정상적인 주문 배송완료 처리 성공")
     void markOrderAsDelivered_Success() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -97,7 +106,7 @@ class SellerServiceTest {
     }
 
     @Test
-
+    @DisplayName("다른 판매자가 주문을 배송완료 처리하려고 할 때 예외 발생")
     void markOrderAsDelivered_WrongSeller() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -106,17 +115,27 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(otherSeller)).thenReturn(Optional.of(otherSellerInfo));
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-
+        // when & then
+        RuntimeException exception = assertThrows(RuntimeException.class, 
+            () -> sellerService.markOrderAsDelivered(1L));
+        assertEquals("해당 주문에 대한 권한이 없습니다.", exception.getMessage());
     }
 
     @Test
-
+    @DisplayName("결제 완료되지 않은 주문을 배송완료 처리하려고 할 때 예외 발생")
     void markOrderAsDelivered_WrongOrderStatus() {
         // given
+        PaymentGroup pendingPaymentGroup = PaymentGroup.builder()
+                .paymentStatus(PaymentStatus.WAITING)
+                .build();
+        
         Order pendingOrder = Order.builder()
                 .orderStatus(OrderStatus.PAYMENT_PENDING)
                 .seller(sellerInfo)
                 .build();
+        
+        // PaymentGroup 설정 (Setter 사용)
+        pendingOrder.setPaymentGroup(pendingPaymentGroup);
 
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn("seller@test.com");
@@ -124,11 +143,14 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(seller)).thenReturn(Optional.of(sellerInfo));
         when(orderRepository.findById(1L)).thenReturn(Optional.of(pendingOrder));
 
-
+        // when & then
+        RuntimeException exception = assertThrows(RuntimeException.class, 
+            () -> sellerService.markOrderAsDelivered(1L));
+        assertEquals("결제가 완료된 주문만 배송 완료 처리할 수 있습니다.", exception.getMessage());
     }
 
     @Test
-
+    @DisplayName("존재하지 않는 주문을 배송완료 처리하려고 할 때 예외 발생")
     void markOrderAsDelivered_OrderNotFound() {
         // given
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -137,6 +159,9 @@ class SellerServiceTest {
         when(sellerRepository.findByUser(seller)).thenReturn(Optional.of(sellerInfo));
         when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
-
+        // when & then
+        RuntimeException exception = assertThrows(RuntimeException.class, 
+            () -> sellerService.markOrderAsDelivered(999L));
+        assertEquals("주문을 찾을 수 없습니다.", exception.getMessage());
     }
 } 

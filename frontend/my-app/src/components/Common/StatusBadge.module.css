@@ -1,0 +1,74 @@
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.statusBadge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.statusBadge.small {
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 8px;
+}
+
+.statusBadge.medium {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+}
+
+.statusBadge.large {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 16px;
+}
+
+.statusBadge.icon {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.statusBadge.label {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 애니메이션 효과 */
+.statusBadge {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .statusBadge {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  
+  .statusBadge.large {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+} 
