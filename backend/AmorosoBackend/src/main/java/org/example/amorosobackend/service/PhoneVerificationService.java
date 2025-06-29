@@ -2,6 +2,7 @@ package org.example.amorosobackend.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.*;
+
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -19,9 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -68,18 +70,28 @@ public class PhoneVerificationService {
         );
     }
 
+    @Data
+    static class message{
+        String phoneNumber;
+        String verificationCode;
+    }
     private void sendSms(String phoneNumber, String code) {
         try {
-            // 요청 본문 생성
+            // 1. 메시지 객체 생성
             Map<String, Object> message = new HashMap<>();
-            message.put("to", phoneNumber);
+            message.put("to", phoneNumber.replace("-", "")); // 하이픈 제거 필수
             message.put("from", "01083272988");
             message.put("text", "Your verification code is [" + code + "].");
 
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("message", message);
+            // 2. messages 배열 생성
+            List<Map<String, Object>> messages = new ArrayList<>();
+            messages.add(message);
 
-            String jsonBody = objectMapper.writeValueAsString(requestBody);
+            // 3. 전체 요청 본문 생성
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("messages", messages); //  Solapi는 "messages"라는 배열 키를 요구
+
+
 
             // ISO 8601 형식의 날짜 생성
             String date = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + "Z";
@@ -95,8 +107,11 @@ public class PhoneVerificationService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "HMAC-SHA256 apiKey=" + apiKey + ", date=" + date + ", salt=" + salt + ", signature=" + signature);
 
+            String jsonBody = objectMapper.writeValueAsString(requestBody);
+
             HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
 
+            System.out.println("최종 jsonBody: " + jsonBody);
             // API 호출
             JsonNode response = restTemplate.postForObject(API_URL, entity, JsonNode.class);
 

@@ -53,6 +53,9 @@ public class SellerService {
         return new SellerDTO.SellerStatsResponse(paidOrders, readyShipments, inTransitOrders);
     }
 
+
+
+
     public SellerDTO.TotalSaleResponse getTotalSales(int year, int month) {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Seller seller = getSellerByEmail(email); // 수정: 공통 메서드 사용
@@ -426,5 +429,46 @@ public class SellerService {
         };
     }
 
+    public SellerDTO.SellerInfoResponse getSellerInfo() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Seller seller = getSellerByEmail(email);
+        User user = seller.getUser();
+
+        SellerDTO.UserInfo userInfo = new SellerDTO.UserInfo(
+                user.getUserId(),
+                user.getEmail(),
+                user.getName(),
+                user.getNickname(),
+                user.getPhoneNumber(),
+                user.getEmailConsent(),
+                user.getSmsConsent(),
+                user.getDmConsent(),
+                user.getLocationConsent(),
+                user.getBirthDate()
+        );
+
+        return new SellerDTO.SellerInfoResponse(
+                seller.getSellerId(),
+                seller.getBrandName(),
+                seller.getBusinessRegistrationNumber(),
+                seller.getBusinessStartDate(),
+                seller.getBusinessAddress(),
+                seller.getBusinessDetailAddress(),
+                seller.getTaxationType(),
+                seller.getBusinessStatus(),
+                seller.getBusinessTel(),
+                seller.getBusinessEmail(),
+                seller.getEcommerceRegistrationNumber(),
+                seller.getEcommerceRegistrationDate(),
+                seller.getEcommerceBusinessStatus(),
+                seller.getEcommerceDomain(),
+                seller.getServerLocation(),
+                seller.getSalesMethod(),
+                seller.getProductCategories(),
+                userInfo,
+                seller.getCreatedAt(),
+                seller.getUpdatedAt()
+        );
+    }
 
 }
