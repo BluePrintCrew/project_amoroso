@@ -19,13 +19,13 @@ jobs:
         working-directory: ./frontend/my-app
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install basic tools
         run: |
           yum update -y
           yum install -y curl tar gzip which
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -54,13 +54,13 @@ jobs:
         working-directory: ./backend/AmorosoBackend
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install basic tools
         run: |
           dnf update -y
           dnf install -y curl tar gzip which shadow-utils
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
