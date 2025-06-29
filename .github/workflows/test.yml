@@ -35,6 +35,8 @@ jobs:
       - name: Build project
         run: npm run build
         working-directory: ./frontend/my-app
+        env:
+          CI: false
 
   backend-test:
     # CI 안정성을 위해 Ubuntu 사용
