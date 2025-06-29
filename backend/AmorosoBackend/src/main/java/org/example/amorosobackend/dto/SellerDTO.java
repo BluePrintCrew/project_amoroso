@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -124,6 +125,46 @@ public class SellerDTO {
         private String productName;
         private Integer quantity;
         private Integer price;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class SellerInfoResponse {
+        private Long sellerId;
+        private String brandName;
+        private String businessRegistrationNumber;
+        private LocalDate businessStartDate;
+        private String businessAddress;
+        private String businessDetailAddress;
+        private String taxationType;
+        private String businessStatus;
+        private String businessTel;
+        private String businessEmail;
+        private String ecommerceRegistrationNumber;
+        private LocalDate ecommerceRegistrationDate;
+        private String ecommerceBusinessStatus;
+        private String ecommerceDomain;
+        private String serverLocation;
+        private String salesMethod;
+        private String productCategories;
+        private UserInfo userInfo;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class UserInfo {
+        private Long userId;
+        private String email;
+        private String name;
+        private String nickname;
+        private String phoneNumber;
+        private Boolean emailConsent;
+        private Boolean smsConsent;
+        private Boolean dmConsent;
+        private Boolean locationConsent;
+        private LocalDateTime birthDate;
     }
 
 }

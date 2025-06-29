@@ -1,17 +1,17 @@
-import React from "react";
-import PageLayout from "../../components/PageLayout/PageLayout";
-import MyPageSidebar from "../../components/MyPageSidebar/MyPageSidebar";
-import MyPageProfileCard from "./MyPageProfileCard";
-import OrderManagement from "./OrderManagement";
-import OrderList from "./OrderList";
-import MyPageReview from "./MyPageReview";
-import ProductInquiry from "./ProductInquiry";
-import "./MyPage.css";
+import './MyPage.css';
+
+import MyPageProfileCard from './MyPageProfileCard';
+import MyPageReview from './MyPageReview';
+import MyPageSidebar from '../../components/MyPageSidebar/MyPageSidebar';
+import OrderList from './OrderList';
+import OrderManagement from './OrderManagement';
+import PageLayout from '../../components/PageLayout/PageLayout';
+import ProductInquiry from './ProductInquiry';
+import React from 'react';
 
 function MyPage() {
   return (
     <PageLayout>
-    
       <div className="my-page-container">
         <MyPageProfileCard />
         <div className="my-page-lower">

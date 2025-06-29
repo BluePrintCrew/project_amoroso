@@ -98,7 +98,18 @@ public class SellerController {
     }
 
     @GetMapping("/seller-info")
-
+    @Operation(summary = "Get seller personal information",
+            description = "Retrieve seller's personal information including business details and user information")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Seller information retrieved successfully",
+            content = @Content(schema = @Schema(implementation = SellerDTO.SellerInfoResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Not authorized to access seller information"),
+        @ApiResponse(responseCode = "404", description = "Seller not found")
+    })
+    public ResponseEntity<SellerDTO.SellerInfoResponse> getSellerInfo() {
+        SellerDTO.SellerInfoResponse response = sellerService.getSellerInfo();
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<SellerRegistrationDTO.Response> registerSeller(@RequestBody SellerRegistrationDTO.Request request) {

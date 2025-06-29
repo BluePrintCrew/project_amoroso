@@ -203,4 +203,4 @@ function getPaymentStatusKR(status) {
   return PAYMENT_STATUS_KR[status] || status;
 }
 
-export default OrderList; 
+export default OrderList;

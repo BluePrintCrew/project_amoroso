@@ -9,5 +9,18 @@ public enum OrderStatus {
 
     CANCELLED, // 주문 취소
     RETURNED,
-    EXCHANGED
+    EXCHANGED;
+
+    public String getKoreanName() {
+        return switch (this) {
+            case PAYMENT_PENDING -> "결제 대기";
+            case PAYMENT_COMPLETED -> "결제 완료";
+            case PREPARING_SHIPMENT -> "배송 준비중";
+            case SHIPPING -> "배송중";
+            case DELIVERED -> "배송 완료";
+            case CANCELLED -> "주문 취소";
+            case RETURNED -> "반품";
+            case EXCHANGED -> "교환";
+        };
+    }
 }
