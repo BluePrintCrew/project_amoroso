@@ -52,6 +52,7 @@ public class ProductServiceTest {
                 .productName("빈티지 의자")
                 .description("설명")
                 .stock(10)
+                .salesCount(0)
                 .productCode("P001")
                 .manufacturer("제조사")
                 .origin("한국")
