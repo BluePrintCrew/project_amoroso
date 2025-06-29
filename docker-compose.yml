@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # MySQL 데이터베이스
+  mysql:
+    image: mysql:8.0
+    container_name: amoroso-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: amoroso
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234"]
+      timeout: 20s
+      retries: 10
+
+  # Redis 캐시
+  redis:
+    image: redis:latest
+    container_name: amoroso-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Spring Boot 백엔드
+  backend:
+    build:
+      context: ./backend/AmorosoBackend
+      dockerfile: Dockerfile
+    container_name: amoroso-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/amoroso
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET:-default-jwt-secret-key-for-development}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - BUSINESS_VALIDATION_API_KEY=${BUSINESS_VALIDATION_API_KEY}
+      - ECOMMERCE_API_KEY=${ECOMMERCE_API_KEY}
+      - SOLAPI_API_KEY=${SOLAPI_API_KEY}
+      - SOLAPI_API_SECRET=${SOLAPI_API_SECRET}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/AmorosoBackend/src:/app/src:ro
+      - ./backend/AmorosoBackend/build.gradle:/app/build.gradle:ro
+      - ./backend/AmorosoBackend/images:/app/images
+      - ./backend/AmorosoBackend/review-images:/app/review-images
+      - gradle-cache:/root/.gradle
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # React 프론트엔드
+  frontend:
+    build:
+      context: ./frontend/my-app
+      dockerfile: Dockerfile
+    container_name: amoroso-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/my-app/src:/app/src:ro
+      - ./frontend/my-app/public:/app/public:ro
+      - node-modules:/app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+  gradle-cache:
+    driver: local
+  node-modules:
+    driver: local
+
+networks:
+  default:
+    name: amoroso-network

@@ -1,0 +1,64 @@
+# 개발 환경용 오버라이드 설정
+version: '3.8'
+
+services:
+  # MySQL 개발 환경 추가 설정
+  mysql:
+    ports:
+      - "3306:3306"  # 로컬에서 직접 접근 가능
+    environment:
+      MYSQL_ROOT_HOST: '%'  # 모든 호스트에서 접근 허용 (개발용)
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d:ro  # 초기 데이터 스크립트
+      
+  # Redis 개발 환경 추가 설정  
+  redis:
+    ports:
+      - "6379:6379"  # 로컬에서 직접 접근 가능
+    command: redis-server --appendonly yes  # 데이터 영속성 활성화
+
+  # 백엔드 개발 환경 추가 설정
+  backend:
+    environment:
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+      - SPRING_DEVTOOLS_LIVERELOAD_ENABLED=true
+    ports:
+      - "8080:8080"   # 애플리케이션 포트
+      - "5005:5005"   # 디버깅 포트 (선택사항)
+    volumes:
+      - ./backend/AmorosoBackend/logs:/app/logs  # 로그 파일 접근
+
+  # 프론트엔드 개발 환경 추가 설정
+  frontend:
+    environment:
+      - REACT_APP_DEV_MODE=true
+      - BROWSER=none  # 브라우저 자동 열기 방지
+    ports:
+      - "3000:3000"
+    
+  # 개발 편의를 위한 MySQL 관리 도구 (선택사항)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: amoroso-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: 1234
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+  # Redis 관리 도구 (선택사항)  
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: amoroso-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8082:8081"
+    depends_on:
+      - redis
+    restart: unless-stopped
