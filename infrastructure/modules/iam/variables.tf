@@ -12,3 +12,16 @@ variable "environment" {
   description = "배포 환경 (dev, prod 등)"
   type        = string
 }
+
+# GitHub Actions OIDC 관련 변수들
+variable "github_repository" {
+  description = "GitHub 리포지토리 (예: owner/repo-name)"
+  type        = string
+  default     = "chaebeomsu/project_amoroso"
+}
+
+variable "github_branches" {
+  description = "GitHub Actions에서 접근 허용할 브랜치들"
+  type        = list(string)
+  default     = ["main", "develop", "feature/github-actions-deployment"]
+}

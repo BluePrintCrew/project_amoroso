@@ -1,0 +1,222 @@
+name: Backend 배포
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+      - feature/github-actions-deployment
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '배포할 환경 선택'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+env:
+  AWS_REGION: ap-northeast-2
+  JAVA_VERSION: '21'
+
+jobs:
+  # 환경 결정
+  determine-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      aws-account-id: ${{ steps.set-env.outputs.aws-account-id }}
+    steps:
+      - name: 배포 환경 결정
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+          else
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+          
+          # AWS 계정 ID 설정 (실제 계정 ID로 교체 필요)
+          echo "aws-account-id=${{ secrets.AWS_ACCOUNT_ID }}" >> $GITHUB_OUTPUT
+
+  # 백엔드 빌드 및 배포
+  deploy-backend:
+    needs: determine-environment
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    
+    permissions:
+      id-token: write   # OIDC 토큰 요청을 위해 필요
+      contents: read    # 코드 체크아웃을 위해 필요
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Java ${{ env.JAVA_VERSION }} 설정
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'corretto'
+
+      - name: Gradle 권한 설정
+        run: chmod +x backend/AmorosoBackend/gradlew
+
+      - name: Gradle 캐시 설정
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            backend/AmorosoBackend/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('backend/AmorosoBackend/**/*.gradle*', 'backend/AmorosoBackend/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 백엔드 빌드
+        working-directory: backend/AmorosoBackend
+        run: |
+          echo "🔨 Spring Boot 애플리케이션 빌드 중..."
+          ./gradlew clean build -x test
+          echo "✅ 빌드 완료!"
+          
+          # JAR 파일 존재 확인
+          if [ ! -f build/libs/*.jar ]; then
+            echo "❌ JAR 파일을 찾을 수 없습니다!"
+            exit 1
+          fi
+          
+          # JAR 파일을 표준 이름으로 복사
+          cp build/libs/*.jar build/libs/application.jar
+          echo "📦 JAR 파일 준비 완료: $(ls -la build/libs/application.jar)"
+
+      - name: AWS 자격 증명 구성
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ needs.determine-environment.outputs.aws-account-id }}:role/github-actions-role-${{ needs.determine-environment.outputs.environment }}
+          role-session-name: GitHubActions-Backend-Deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform 출력에서 S3 버킷 이름 조회
+        id: get-bucket
+        working-directory: infrastructure/environments/${{ needs.determine-environment.outputs.environment }}
+        run: |
+          echo "🔍 S3 버킷 이름 조회 중..."
+          BUCKET_NAME=$(tofu output -raw s3_bucket_name 2>/dev/null || echo "")
+          
+          if [ -z "$BUCKET_NAME" ]; then
+            echo "❌ S3 버킷 이름을 가져올 수 없습니다. Terraform 출력을 확인해주세요."
+            exit 1
+          fi
+          
+          echo "bucket-name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+          echo "✅ S3 버킷: $BUCKET_NAME"
+
+      - name: S3에 JAR 파일 업로드
+        run: |
+          echo "📤 S3에 JAR 파일 업로드 중..."
+          aws s3 cp backend/AmorosoBackend/build/libs/application.jar \
+            s3://${{ steps.get-bucket.outputs.bucket-name }}/application.jar
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ JAR 파일 업로드 성공!"
+          else
+            echo "❌ JAR 파일 업로드 실패!"
+            exit 1
+          fi
+
+      - name: Auto Scaling Group에서 인스턴스 조회
+        id: get-instances
+        run: |
+          echo "🔍 Auto Scaling Group에서 인스턴스 조회 중..."
+          ASG_NAME="${{ needs.determine-environment.outputs.environment }}-backend-asg"
+          
+          INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names "$ASG_NAME" \
+            --query "AutoScalingGroups[0].Instances[*].InstanceId" \
+            --output text)
+          
+          if [ -z "$INSTANCE_IDS" ] || [ "$INSTANCE_IDS" = "None" ]; then
+            echo "⚠️ 실행 중인 EC2 인스턴스를 찾을 수 없습니다."
+            echo "배포가 완료되었으나, 인스턴스가 시작될 때 새 버전이 자동으로 다운로드됩니다."
+            echo "has-instances=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-instances=true" >> $GITHUB_OUTPUT
+            echo "instance-ids=$INSTANCE_IDS" >> $GITHUB_OUTPUT
+            INSTANCE_COUNT=$(echo $INSTANCE_IDS | wc -w)
+            echo "instance-count=$INSTANCE_COUNT" >> $GITHUB_OUTPUT
+            echo "✅ 총 ${INSTANCE_COUNT}개의 인스턴스를 찾았습니다: $INSTANCE_IDS"
+          fi
+
+      - name: EC2 인스턴스에서 애플리케이션 재시작
+        if: steps.get-instances.outputs.has-instances == 'true'
+        run: |
+          echo "🔄 EC2 인스턴스에서 애플리케이션 재시작 중..."
+          echo "============================================================"
+          
+          INSTANCE_IDS="${{ steps.get-instances.outputs.instance-ids }}"
+          BUCKET_NAME="${{ steps.get-bucket.outputs.bucket-name }}"
+          CURRENT=1
+          TOTAL=${{ steps.get-instances.outputs.instance-count }}
+          
+          for INSTANCE_ID in $INSTANCE_IDS; do
+            echo ""
+            echo "-------------------------------------------------------------"
+            echo "[$CURRENT/$TOTAL] 인스턴스 ${INSTANCE_ID} 업데이트 중..."
+            echo "-------------------------------------------------------------"
+            
+            # SSM 명령 실행
+            COMMAND_ID=$(aws ssm send-command \
+              --instance-ids "$INSTANCE_ID" \
+              --document-name "AWS-RunShellScript" \
+              --parameters "commands=[
+                \"aws s3 cp s3://$BUCKET_NAME/application.jar /opt/app/application.jar\",
+                \"sudo chown ec2-user:ec2-user /opt/app/application.jar\",
+                \"sudo chmod 755 /opt/app/application.jar\",
+                \"sudo systemctl restart load-env-vars.service\",
+                \"sudo systemctl restart springboot.service\"
+              ]" \
+              --comment "GitHub Actions - SpringBoot 애플리케이션 재배포" \
+              --query "Command.CommandId" \
+              --output text)
+            
+            if [ $? -eq 0 ]; then
+              echo "✅ 인스턴스 ${INSTANCE_ID} 명령 전송 완료! (Command ID: $COMMAND_ID)"
+            else
+              echo "❌ 경고: 인스턴스 ${INSTANCE_ID}에 명령 전송 실패."
+            fi
+            
+            CURRENT=$((CURRENT + 1))
+          done
+          
+          echo ""
+          echo "============================================================"
+          echo "🎉 배포 완료!"
+          echo "환경: ${{ needs.determine-environment.outputs.environment }}"
+          echo "총 인스턴스 수: $TOTAL"
+          echo "몇 초 내에 애플리케이션이 새 버전으로 실행될 것입니다."
+          echo "============================================================"
+
+      - name: 배포 결과 요약
+        if: always()
+        run: |
+          echo "## 🚀 백엔드 배포 결과" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **환경**: ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **브랜치**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **커밋**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **S3 버킷**: ${{ steps.get-bucket.outputs.bucket-name }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.get-instances.outputs.has-instances }}" = "true" ]; then
+            echo "- **업데이트된 인스턴스 수**: ${{ steps.get-instances.outputs.instance-count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **상태**: ✅ 성공" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **상태**: ⚠️ 인스턴스 없음 (S3 업로드만 완료)" >> $GITHUB_STEP_SUMMARY
+          fi

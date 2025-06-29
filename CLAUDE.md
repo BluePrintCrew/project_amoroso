@@ -77,7 +77,35 @@ tofu init
 tofu apply
 ```
 
-### 애플리케이션 배포
+### GitHub Actions 자동 배포 (추천)
+
+#### 📋 사전 설정 요구사항
+1. **GitHub Secrets 설정**:
+   - `AWS_ACCOUNT_ID`: AWS 계정 ID
+   - 기타 민감한 환경변수들
+
+2. **AWS OIDC 역할 배포**:
+   ```bash
+   # infrastructure/environments/dev 디렉토리에서
+   tofu apply  # GitHub Actions OIDC 역할 생성
+   ```
+
+#### 🚀 자동 배포 방법
+
+**백엔드 배포**:
+- `backend/` 폴더 변경 후 `main`, `develop`, 또는 `feature/github-actions-deployment` 브랜치에 push
+- 또는 GitHub Actions 탭에서 "Backend 배포" 워크플로우 수동 실행
+
+**환경변수 업로드**:
+- GitHub Actions 탭에서 "환경변수 업로드" 워크플로우 수동 실행
+- 환경변수를 `KEY=VALUE` 형태로 입력
+
+#### 📊 배포 모니터링
+- GitHub Actions 탭에서 실시간 배포 상태 확인
+- 실패시 자동 알림 (설정 가능)
+- 각 단계별 로그 상세 확인 가능
+
+### 레거시 스크립트 배포 (비추천)
 ```bash
 # infrastructure/scripts 디렉토리에서 실행
 chmod +x deploy.sh upload_env.sh  # 실행 권한 부여
@@ -92,7 +120,7 @@ chmod +x deploy.sh upload_env.sh  # 실행 권한 부여
 ./upload_env.sh dev ./env/dev.env
 ```
 
-### 배포 스크립트 동작 방식
+### 배포 시스템 동작 방식
 - JAR 파일을 S3 버킷에 업로드
 - SSM Run Command로 모든 EC2 인스턴스에 배포 명령 전송
 - 환경 변수는 SSM Parameter Store에 암호화 저장

@@ -183,13 +183,15 @@ module "storage" {
   force_destroy = true # 개발 환경에서는 버킷 삭제 시 콘텐츠도 삭제 허용
 }
 
-# IAM 모듈 추가 (EC2가 S3에 접근하기 위한 역할)
+# IAM 모듈 추가 (EC2가 S3에 접근하기 위한 역할 + GitHub Actions OIDC)
 module "iam" {
   source = "../../modules/iam"
 
-  role_name     = "ec2-s3-access"
-  environment   = "dev"
-  s3_bucket_arn = module.storage.bucket_arn
+  role_name         = "ec2-s3-access"
+  environment       = "dev"
+  s3_bucket_arn     = module.storage.bucket_arn
+  github_repository = "chaebeomsu/project_amoroso"
+  github_branches   = ["main", "develop", "feature/github-actions-deployment"]
 }
 
 # 개발 환경 태그 설정
@@ -285,4 +287,9 @@ output "amplify_default_domain" {
 output "eip_addresses" {
   description = "할당된 Elastic IP 주소 목록"
   value       = module.compute.eip_addresses
+}
+
+output "github_actions_role_arn" {
+  description = "GitHub Actions용 IAM 역할 ARN"
+  value       = module.iam.github_actions_role_arn
 }

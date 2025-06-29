@@ -7,3 +7,8 @@ output "role_arn" {
   value       = aws_iam_role.ec2_s3_role.arn
   description = "생성된 IAM 역할 ARN"
 }
+
+output "github_actions_role_arn" {
+  value       = aws_iam_role.github_actions.arn
+  description = "GitHub Actions용 IAM 역할 ARN"
+}

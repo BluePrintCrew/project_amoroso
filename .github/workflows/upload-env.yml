@@ -1,0 +1,169 @@
+name: 환경변수 업로드
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '환경변수를 업로드할 환경'
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+      env_vars:
+        description: '업로드할 환경변수들 (KEY=VALUE 형태로 한 줄씩 입력)'
+        required: true
+        type: string
+
+env:
+  AWS_REGION: ap-northeast-2
+
+jobs:
+  upload-environment-variables:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    permissions:
+      id-token: write   # OIDC 토큰 요청을 위해 필요
+      contents: read    # 코드 체크아웃을 위해 필요
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: AWS 자격 증명 구성
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-role-${{ github.event.inputs.environment }}
+          role-session-name: GitHubActions-EnvVars-Upload
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 환경변수를 임시 파일로 저장
+        run: |
+          echo "📝 환경변수 파싱 중..."
+          
+          # 입력받은 환경변수를 임시 파일에 저장
+          cat << 'EOF' > /tmp/env_vars.env
+          ${{ github.event.inputs.env_vars }}
+          EOF
+          
+          echo "✅ 환경변수 파일 생성 완료"
+          echo "파일 내용 미리보기 (민감 정보 마스킹):"
+          sed 's/\(.*=\).*/\1***MASKED***/g' /tmp/env_vars.env
+
+      - name: SSM Parameter Store에 환경변수 업로드
+        run: |
+          echo "🚀 AWS Parameter Store에 환경변수 업로드 중..."
+          
+          ENV="${{ github.event.inputs.environment }}"
+          PREFIX="/${ENV}/amoroso"
+          ENV_FILE="/tmp/env_vars.env"
+          
+          echo "환경: $ENV"
+          echo "접두사: $PREFIX"
+          
+          # 암호화할 변수들 (대소문자 구분 없음)
+          SECURE_PARAMS=("password" "secret" "key" "token" "credential")
+          
+          SUCCESS_COUNT=0
+          ERROR_COUNT=0
+          
+          # 환경변수 파일 읽기 및 파라미터 스토어에 업로드
+          while IFS='=' read -r key value || [ -n "$key" ]; do
+            # 주석이나 빈 줄 무시
+            if [[ $key =~ ^#.* ]] || [[ -z "$key" ]]; then
+              continue
+            fi
+            
+            # 변수 이름과 값 정리 (공백 제거)
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            
+            # 빈 키나 값 건너뛰기
+            if [[ -z "$key" ]] || [[ -z "$value" ]]; then
+              continue
+            fi
+            
+            # 파라미터 이름 생성 (소문자로 변환하고 _ 대신 - 사용)
+            param_name=$(echo "$key" | tr '[:upper:]' '[:lower:]' | tr '_' '-')
+            param_path="${PREFIX}/${param_name}"
+            
+            # 민감한 정보인지 확인
+            is_secure=false
+            for secure in "${SECURE_PARAMS[@]}"; do
+              if [[ "$param_name" == *"$secure"* ]]; then
+                is_secure=true
+                break
+              fi
+            done
+            
+            # 파라미터 저장
+            if [ "$is_secure" = true ]; then
+              echo "🔒 SecureString 저장 중: ${param_path}"
+              aws ssm put-parameter \
+                --name "${param_path}" \
+                --value "${value}" \
+                --type "SecureString" \
+                --overwrite \
+                --no-cli-pager
+            else
+              echo "📝 String 저장 중: ${param_path}"
+              aws ssm put-parameter \
+                --name "${param_path}" \
+                --value "${value}" \
+                --type "String" \
+                --overwrite \
+                --no-cli-pager
+            fi
+            
+            if [ $? -eq 0 ]; then
+              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+            else
+              echo "❌ 오류: '${param_path}' 파라미터 저장 실패"
+              ERROR_COUNT=$((ERROR_COUNT + 1))
+            fi
+          done < "$ENV_FILE"
+          
+          echo ""
+          echo "============================================================"
+          echo "🎉 환경변수 업로드 완료!"
+          echo "성공: $SUCCESS_COUNT개"
+          echo "실패: $ERROR_COUNT개"
+          echo "환경: $ENV"
+          echo "접두사: $PREFIX"
+          echo "============================================================"
+          
+          if [ $ERROR_COUNT -gt 0 ]; then
+            echo "⚠️ 일부 환경변수 업로드에 실패했습니다."
+            exit 1
+          fi
+
+      - name: 업로드된 파라미터 확인
+        run: |
+          echo "🔍 업로드된 파라미터 목록 확인 중..."
+          PREFIX="/${{ github.event.inputs.environment }}/amoroso"
+          
+          aws ssm get-parameters-by-path \
+            --path "$PREFIX" \
+            --recursive \
+            --query "Parameters[*].{Name:Name,Type:Type}" \
+            --output table
+          
+          echo ""
+          echo "✅ 파라미터 확인 완료!"
+          echo "💡 민감한 값들을 확인하려면 다음 명령을 사용하세요:"
+          echo "aws ssm get-parameters-by-path --path \"$PREFIX\" --recursive --with-decryption"
+
+      - name: 업로드 결과 요약
+        if: always()
+        run: |
+          echo "## 🔧 환경변수 업로드 결과" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **환경**: ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **접두사**: /${{ github.event.inputs.environment }}/amoroso" >> $GITHUB_STEP_SUMMARY
+          echo "- **상태**: ✅ 성공" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 입력된 환경변수들" >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
+          echo '${{ github.event.inputs.env_vars }}' | sed 's/\(.*=\).*/\1***MASKED***/g' >> $GITHUB_STEP_SUMMARY
+          echo "```" >> $GITHUB_STEP_SUMMARY
