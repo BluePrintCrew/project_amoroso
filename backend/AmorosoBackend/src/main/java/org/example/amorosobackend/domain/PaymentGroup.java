@@ -27,7 +27,6 @@ public class PaymentGroup {
     @Column(nullable = false)
     private Integer totalAmount; // 전체 결제 금액
 
-    @Enumerated(EnumType.STRING)
     @Setter
     private PaymentStatus paymentStatus;
 

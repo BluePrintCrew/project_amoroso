@@ -3,8 +3,13 @@ package org.example.amorosobackend.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
+import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
@@ -76,51 +81,22 @@ public class PhoneVerificationService {
         String verificationCode;
     }
     private void sendSms(String phoneNumber, String code) {
+        DefaultMessageService messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.solapi.com");
+        // Message 패키지가 중복될 경우 net.nurigo.sdk.message.model.Message로 치환하여 주세요
+        Message message = new Message();
+        message.setFrom("01083272988");
+        message.setTo(phoneNumber);
+        message.setText("amoroso :  " + code);
+
         try {
-            // 1. 메시지 객체 생성
-            Map<String, Object> message = new HashMap<>();
-            message.put("to", phoneNumber.replace("-", "")); // 하이픈 제거 필수
-            message.put("from", "01083272988");
-            message.put("text", "Your verification code is [" + code + "].");
-
-            // 2. messages 배열 생성
-            List<Map<String, Object>> messages = new ArrayList<>();
-            messages.add(message);
-
-            // 3. 전체 요청 본문 생성
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("messages", messages); //  Solapi는 "messages"라는 배열 키를 요구
-
-
-
-            // ISO 8601 형식의 날짜 생성
-            String date = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + "Z";
-
-            // 12-64바이트 랜덤 salt 생성
-            String salt = generateRandomSalt();
-
-            // HMAC-SHA256 서명 생성 (date + salt를 연결한 문자열로)
-            String signature = generateHmacSignature(date + salt);
-
-            // 헤더 설정 (공식 문서 형식에 맞춤)
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "HMAC-SHA256 apiKey=" + apiKey + ", date=" + date + ", salt=" + salt + ", signature=" + signature);
-
-            String jsonBody = objectMapper.writeValueAsString(requestBody);
-
-            HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
-
-            System.out.println("최종 jsonBody: " + jsonBody);
-            // API 호출
-            JsonNode response = restTemplate.postForObject(API_URL, entity, JsonNode.class);
-
-            // 응답 로깅 (선택사항)
-            System.out.println("SMS 전송 응답: " + response);
-
-        } catch (Exception e) {
-            System.err.println("SMS 전송 실패: " + e.getMessage());
-            throw new RuntimeException("Failed to send verification code", e);
+            // send 메소드로 ArrayList<Message> 객체를 넣어도 동작합니다!
+            messageService.send(message);
+        } catch (NurigoMessageNotReceivedException exception) {
+            // 발송에 실패한 메시지 목록을 확인할 수 있습니다!
+            System.out.println(exception.getFailedMessageList());
+            System.out.println(exception.getMessage());
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
         }
     }
 

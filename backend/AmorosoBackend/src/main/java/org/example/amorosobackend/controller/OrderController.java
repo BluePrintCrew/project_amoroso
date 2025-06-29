@@ -100,7 +100,7 @@ public class OrderController {
     @GetMapping("/reviewable-items")
     @Operation(description = "사용자가 주문한 모든 아이템 중 리뷰를 작성할 수 있는 상품 조회 (최신순 페이징)")
     public ResponseEntity<Page<ReviewDTO.ReviewableProduct>> getAllReviewableProducts(
-            @PageableDefault(size = 10, sort = "orderDate", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         String email = getCurrentUserEmail();
         Page<ReviewDTO.ReviewableProduct> reviewableProducts = orderService.getAllReviewableProducts(email, pageable);

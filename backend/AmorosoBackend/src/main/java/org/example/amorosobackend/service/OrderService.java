@@ -343,9 +343,9 @@ public class OrderService {
         // 사용자를 이메일로 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        // 사용자가 리뷰를 남기지 않은 주문 아이템만 조회
-        Page<OrderItem> orderItems = orderItemRepository.findReviewableOrderItemsByUserId(user.getUserId(), OrderStatus.PAYMENT_COMPLETED, pageable);
+        
+        // 사용자가 리뷰를 남기지 않은 주문 아이템만 조회 (PaymentGroup 기준으로 결제 완료된 것만)
+        Page<OrderItem> orderItems = orderItemRepository.findReviewableOrderItemsByUserId(user.getUserId(), PaymentStatus.COMPLETED, pageable);
 
         // 각 OrderItem을 ReviewableProduct DTO로 매핑
         return orderItems.map(orderItem -> new ReviewDTO.ReviewableProduct(
