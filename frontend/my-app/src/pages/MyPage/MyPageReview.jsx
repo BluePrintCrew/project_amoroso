@@ -15,14 +15,23 @@ function MyPageReview() {
   const [error, setError] = useState(null);
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('MyPageReview useEffect 실행됨');
+    
+    // 이미 로딩 중이면 중복 실행 방지
+    if (!loading) return;
+    
     const fetchReviewableProducts = async () => {
+      console.log('fetchReviewableProducts 함수 시작');
       try {
         const token = localStorage.getItem('access_token');
+        console.log('토큰 확인:', token ? '토큰 있음' : '토큰 없음');
 
         if (!token) {
+          console.log('토큰이 없어서 early return');
           setError('로그인이 필요합니다');
           setErrorMsg('로그인이 필요합니다. 로그인 후 다시 시도해 주세요.');
           setShowError(true);
@@ -30,35 +39,15 @@ function MyPageReview() {
           return;
         }
 
-        // 현재 사용자 ID 가져오기
-        const userResponse = await axios.get(
-          `${API_BASE_URL}/api/v1/auth/users/me`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const userId = userResponse.data.id || userResponse.data.userId;
-
-        if (!userId) {
-          setReviews([]); // 빈 상태로 처리
-          setLoading(false);
-          return;
-        }
-
-        // 리뷰 작성 가능한 상품 목록 가져오기
+        // 리뷰 작성 가능한 상품 목록 가져오기 (JWT 토큰으로 사용자 식별)
+        console.log('reviewable-items API 호출 시작');
         const reviewableResponse = await axios.get(
           `${API_BASE_URL}/api/v1/orders/reviewable-items`,
           {
             params: {
-              userId: userId,
-              pageable: {
-                page: 0,
-                size: 10,
-                sort: ['orderDate,desc'],
-              },
+              page: 0,
+              size: 10,
+              sort: 'createdAt,desc'
             },
             headers: {
               Authorization: `Bearer ${token}`,
@@ -66,6 +55,7 @@ function MyPageReview() {
             },
           }
         );
+        console.log('reviewable-items 응답:', reviewableResponse.data);
 
         // 이미 작성한 리뷰 목록 가져오기
         const writtenReviewsResponse = await axios.get(
@@ -77,7 +67,7 @@ function MyPageReview() {
           }
         );
 
-        // 리뷰 가능한 상품 목록과 이미 작성한 리뷰를 결합하여 데이터 구성
+        // 리뷰 가능한 상품 목록 데이터 구성
         let reviewableProducts = [];
 
         if (
@@ -86,14 +76,11 @@ function MyPageReview() {
         ) {
           reviewableProducts = reviewableResponse.data.content.map(
             (product) => {
-              // 이미 작성한 리뷰가 있는지 확인
-              const hasReview = !product.reviewable;
-
               return {
                 productId: product.productId,
                 productName: product.productName,
                 purchaseDate: formatDate(product.orderDate),
-                hasReview: hasReview,
+                hasReview: false, // 리뷰 가능한 상품이므로 false
                 mainImageUrl: product.mainImageUri,
               };
             }
@@ -103,12 +90,15 @@ function MyPageReview() {
         setReviews(reviewableProducts);
       } catch (error) {
         console.error('리뷰 데이터 로딩 오류:', error);
+        console.error('에러 상세:', error.response?.status, error.response?.data);
+        console.error('에러 메시지:', error.message);
         setError('리뷰 목록을 불러오는데 실패했습니다');
         setErrorMsg(
           error.response?.data?.message || '리뷰 목록을 불러오는데 실패했습니다'
         );
         setShowError(true);
       } finally {
+        console.log('finally 블록 실행');
         setLoading(false);
       }
     };
@@ -135,7 +125,8 @@ function MyPageReview() {
 
   // 리뷰 작성 페이지로 이동
   const handleWriteReview = (productId) => {
-    navigate(`/write-review/${productId}`);
+    // navigate(`/write-review/${productId}`);
+    setShowComingSoonModal(true);
   };
 
   // 작성한 리뷰 보기
@@ -261,6 +252,64 @@ function MyPageReview() {
           ))}
         </tbody>
       </table>
+
+      {/* 기능 준비중 모달 */}
+      {showComingSoonModal && (
+        <div 
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowComingSoonModal(false)}
+        >
+          <div 
+            className="modal-content"
+            style={{
+              backgroundColor: 'white',
+              padding: '40px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              maxWidth: '400px',
+              width: '90%',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚧</div>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '600' }}>
+              기능 준비중입니다
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#666', fontSize: '14px' }}>
+              리뷰 작성 기능을 준비중입니다.<br />
+              빠른 시일 내에 제공할 예정입니다.
+            </p>
+            <button
+              style={{
+                padding: '10px 24px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: '#766e68',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer'
+              }}
+              onClick={() => setShowComingSoonModal(false)}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
