@@ -37,19 +37,11 @@ jobs:
         working-directory: ./frontend/my-app
 
   backend-test:
-    # EC2(Amazon Linux 2023) 환경
+    # CI 안정성을 위해 Ubuntu 사용
     name: Backend Tests
     runs-on: ubuntu-latest
-    container:
-      image: amazonlinux:2023
-      options: --user root
 
     steps:
-      - name: Install basic tools
-        run: |
-          dnf update -y
-          dnf install -y curl tar gzip which shadow-utils git
-
       - name: Checkout code
         uses: actions/checkout@v4
 
