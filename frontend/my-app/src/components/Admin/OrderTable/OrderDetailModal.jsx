@@ -138,6 +138,18 @@ const OrderDetailModal = ({ order, onClose, onStatusUpdate }) => {
     }
   };
 
+  // 엘리베이터 타입 한글 변환
+  const getElevatorTypeKR = (type) => {
+    if (!type) return '-';
+    switch (type) {
+      case 'ONE_TO_SEVEN': return '1층~7층';
+      case 'EIGHT_TO_TEN': return '8층~10층';
+      case 'ELEVEN_OR_MORE': return '11층 이상';
+      case 'NONE': return '엘리베이터 없음';
+      default: return type;
+    }
+  };
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
@@ -244,6 +256,26 @@ const OrderDetailModal = ({ order, onClose, onStatusUpdate }) => {
                   <td className={styles.totalAmount}>{totalAmount ? totalAmount.toLocaleString() + '원' : '-'}</td>
                 </tr>
               </tfoot>
+            </table>
+          </div>
+          {/* 배송 및 설치 정보 */}
+          <div className={styles.deliveryInfo}>
+            <h3>배송 및 설치 정보</h3>
+            <table className={styles.infoTable}>
+              <tbody>
+                <tr>
+                  <th>설치 동의</th>
+                  <td>{orderDetails.productInstallationAgreement ? '동의' : '미동의'}</td>
+                  <th>사다리차/하역</th>
+                  <td>{orderDetails.freeLoweringService ? '가능' : '불가능'}</td>
+                </tr>
+                <tr>
+                  <th>차량진입</th>
+                  <td>{orderDetails.vehicleEntryPossible ? '가능' : '불가능'}</td>
+                  <th>엘리베이터</th>
+                  <td>{getElevatorTypeKR(orderDetails.elevatorType)}</td>
+                </tr>
+              </tbody>
             </table>
           </div>
           {/* 상태 변경 버튼 */}

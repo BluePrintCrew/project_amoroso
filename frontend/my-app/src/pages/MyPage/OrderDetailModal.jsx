@@ -16,11 +16,24 @@ const PAYMENT_STATUS_KR = {
   FAILED: '결제실패',
   // 필요시 추가
 };
+
 function getOrderStatusKR(status) {
   return ORDER_STATUS_KR[status] || status;
 }
+
 function getPaymentStatusKR(status) {
   return PAYMENT_STATUS_KR[status] || status;
+}
+
+function getElevatorTypeKR(type) {
+  const ELEVATOR_TYPE_KR = {
+    ONE_TO_SEVEN: "1층~7층",
+    EIGHT_TO_TEN: "8층~10층",
+    ELEVEN_OR_MORE: "11층 이상",
+    NONE: "엘리베이터 없음",
+    // 필요시 추가
+  };
+  return ELEVATOR_TYPE_KR[type] || type;
 }
 
 function OrderDetailModal({ order, onClose }) {
@@ -168,7 +181,7 @@ function OrderDetailModal({ order, onClose }) {
             <div className="order-detail-install-item">
               <span className="order-detail-install-label">엘리베이터</span>
               <span className="order-detail-install-value elevator">
-                {order.elevatorType || '없음'}
+                {getElevatorTypeKR(order.elevatorType)}
               </span>
             </div>
           </div>
