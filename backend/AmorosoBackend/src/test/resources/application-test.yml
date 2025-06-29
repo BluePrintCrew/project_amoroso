@@ -77,3 +77,18 @@ logging:
 # Application specific settings
 app:
   image-directory: "./test-images"
+
+# API Keys for external services (test dummy values)
+business:
+  validation:
+    api:
+      key: test-business-validation-key
+
+api:
+  ecommerce:
+    key: test-ecommerce-key
+
+solapi:
+  api:
+    key: test-solapi-key
+    secret: test-solapi-secret
