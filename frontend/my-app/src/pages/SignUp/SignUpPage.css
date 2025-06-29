@@ -153,6 +153,7 @@
 
 .certification-button {
   flex: 1;
+  height: 48px;
   background-color: #efefef;
   border: 1px solid #e2e2e2;
   border-radius: 15px;

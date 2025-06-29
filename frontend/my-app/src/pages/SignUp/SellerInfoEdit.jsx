@@ -1,6 +1,6 @@
 import './SignUpPage.css';
 
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import PageLayout from '../../components/PageLayout/PageLayout';
 import axios from 'axios';
@@ -20,6 +20,7 @@ const SellerInfoEdit = () => {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [ceoName, setCeoName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState('');
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
@@ -27,6 +28,7 @@ const SellerInfoEdit = () => {
   const [zipcode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [error, setError] = useState('');
@@ -54,6 +56,49 @@ const SellerInfoEdit = () => {
       },
     }).open();
   };
+
+  const fetchSellerInfo = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) return null;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/sellers/seller-info`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        return await res.json(); // 판매자 정보 객체
+      } else {
+        console.warn('판매자 정보 불러오기 실패');
+        return null;
+      }
+    } catch (err) {
+      console.error('판매자 정보 조회 오류:', err);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadSellerInfo = async () => {
+      const info = await fetchSellerInfo();
+      if (!info) return;
+      console.log('판매자 정보 전체:', info);
+
+      setEmail(info.businessEmail || '');
+      setCeoName(info.userInfo.name || '');
+      setPhoneNumber(info.userInfo.phoneNumber || '');
+      setCompanyPhoneNumber(info.businessTel || '');
+      setAddress(info.businessAddress || '');
+      setDetailAddress(info.businessDetailAddress);
+      setBusinessNumber(info.businessRegistrationNumber || '');
+      setCompanyName(info.brandName || '');
+      setRegistrationNumber(info.ecommerceRegistrationNumber || '');
+    };
+
+    loadSellerInfo();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -220,7 +265,7 @@ const SellerInfoEdit = () => {
     <div>
       <PageLayout>
         <div className="signup-container">
-          <h1 className="signup-title">판매자 회원가입</h1>
+          <h1 className="signup-title">회원정보 수정</h1>
           {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="input-group">
@@ -233,7 +278,7 @@ const SellerInfoEdit = () => {
               />
             </div>
 
-            <div className="input-group">
+            {/* <div className="input-group">
               <label>비밀번호</label>
               <input
                 type="password"
@@ -251,7 +296,7 @@ const SellerInfoEdit = () => {
                 onChange={(e) => setPasswordConfirm(e.target.value)}
                 required
               />
-            </div>
+            </div> */}
 
             <div className="business-verification-box">
               <div className="input-group">
@@ -314,31 +359,46 @@ const SellerInfoEdit = () => {
 
             <div className="certification-group">
               <label>휴대폰 번호</label>
-              <div>
-                <input
-                  type="text"
-                  value={phoneNumber}
-                  className="business-number-input"
-                  onChange={(e) => {
-                    const onlyNums = e.target.value.replace(/\D/g, '');
-                    setPhoneNumber(onlyNums);
-                  }}
-                  required
-                  maxLength={11}
-                  placeholder=" '-' 없이 작성하세요"
-                  readOnly={isPhoneVerified}
-                />
-                {!isPhoneVerified && (
+              {isEditingPhone ? (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="text"
+                    value={phoneNumber}
+                    className="business-number-input"
+                    onChange={(e) => {
+                      const onlyNums = e.target.value.replace(/\D/g, '');
+                      setPhoneNumber(onlyNums);
+                    }}
+                    required
+                    maxLength={11}
+                    placeholder=" '-' 없이 작성하세요"
+                    style={{ flex: '2.5' }}
+                  />
                   <button
                     type="button"
                     onClick={handleSendVerificationCode}
                     className="certification-button"
-                    style={{ flex: '2.5' }}
                   >
                     인증번호 전송
                   </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px', height: '48px' }}>
+                  <div
+                    className="input-group"
+                    style={{ flex: '8', margin: '0' }}
+                  >
+                    <input type="text" value={phoneNumber} readOnly />
+                  </div>
+                  <button
+                    type="button"
+                    className="certification-button"
+                    onClick={() => setIsEditingPhone(true)}
+                  >
+                    수정
+                  </button>
+                </div>
+              )}
             </div>
 
             {isCodeSent && !isPhoneVerified && (
@@ -381,47 +441,75 @@ const SellerInfoEdit = () => {
 
             <div className="address-group">
               <label>사업장 주소</label>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <input
-                  type="text"
-                  className="zipcode"
-                  placeholder="우편번호"
-                  value={zipcode}
-                  readOnly
-                  required
-                  style={{ flex: '2.5' }}
-                />
-                <button
-                  type="button"
-                  className="certification-button"
-                  onClick={handleFindZipcode}
-                >
-                  우편번호 찾기
-                </button>
-              </div>
-            </div>
+              {isEditingAddress ? (
+                <>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '10px',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    <input
+                      type="text"
+                      className="zipcode"
+                      placeholder="우편번호"
+                      value={zipcode}
+                      readOnly
+                      required
+                      style={{ flex: '2.5' }}
+                    />
+                    <button
+                      type="button"
+                      className="certification-button"
+                      onClick={handleFindZipcode}
+                    >
+                      우편번호 찾기
+                    </button>
+                  </div>
 
-            <div className="input-group">
-              <input
-                type="text"
-                placeholder="주소"
-                value={address}
-                readOnly
-                required
-              />
-            </div>
+                  <div className="input-group" style={{ marginBottom: '10px' }}>
+                    <input
+                      type="text"
+                      placeholder="주소"
+                      value={address}
+                      readOnly
+                      required
+                    />
+                  </div>
 
-            <div className="input-group">
-              <input
-                type="text"
-                id="detailAddress"
-                placeholder="상세주소"
-                value={detailAddress}
-                onChange={(e) => setDetailAddress(e.target.value)}
-                required
-              />
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      id="detailAddress"
+                      placeholder="상세주소"
+                      value={detailAddress}
+                      onChange={(e) => setDetailAddress(e.target.value)}
+                      required
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', gap: '8px', height: '60px' }}>
+                    <div className="input-group" style={{ flex: '8' }}>
+                      <input type="text" value={address} readOnly />
+                    </div>
+                    <button
+                      type="button"
+                      className="certification-button"
+                      onClick={() => setIsEditingAddress(true)}
+                    >
+                      수정
+                    </button>
+                  </div>
+                  <div className="input-group">
+                    <input type="text" value={detailAddress} readOnly />
+                  </div>
+                </>
+              )}
             </div>
-
+            {/* 
             <div className="input-group">
               <label>
                 <input
@@ -442,7 +530,7 @@ const SellerInfoEdit = () => {
                 />
                 개인정보 처리방침 동의 (필수)
               </label>
-            </div>
+            </div> */}
 
             <div className="button-group">
               <button
@@ -450,7 +538,7 @@ const SellerInfoEdit = () => {
                 className="submit-button"
                 disabled={loading}
               >
-                {loading ? '가입 처리 중...' : '가입 완료'}
+                {loading ? '수정 처리 중...' : '수정 완료'}
               </button>
             </div>
           </form>
