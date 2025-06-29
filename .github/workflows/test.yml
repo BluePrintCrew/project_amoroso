@@ -9,20 +9,13 @@ on:
 
 jobs:
   frontend-test:
-    # AWS Amplify(Amazon Linux 2) 환경
+    # Node.js 호환성을 위해 Ubuntu 사용
     name: Frontend Tests
     runs-on: ubuntu-latest
-    container:
-      image: amazonlinux:2
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install basic tools
-        run: |
-          yum update -y
-          yum install -y curl tar gzip which
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,15 +42,16 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: amazonlinux:2023
+      options: --user root
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Install basic tools
         run: |
           dnf update -y
-          dnf install -y curl tar gzip which shadow-utils
+          dnf install -y curl tar gzip which shadow-utils git
+
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
