@@ -85,13 +85,13 @@ module "security" {
 module "certificate" {
   source = "../../modules/certificate"
   providers = {
-    aws        = aws
+    aws         = aws
     aws.route53 = aws.route53
   }
 
   environment     = "dev"
   domain_name     = "amoroso.blue"
-  create_wildcard = true  # 와일드카드 인증서 활성화
+  create_wildcard = true # 와일드카드 인증서 활성화
 }
 
 # DNS 모듈 추가
@@ -104,7 +104,7 @@ module "dns" {
   environment            = "dev"
   domain_name            = "amoroso.blue"
   subdomain              = "api"
-  create_wildcard        = false  # 와일드카드 비활성화 - api 서브도메인만 생성
+  create_wildcard        = false # 와일드카드 비활성화 - api 서브도메인만 생성
   create_root_record     = false
   alb_dns_name           = module.compute.alb_dns_name
   alb_zone_id            = module.compute.alb_zone_id
@@ -132,7 +132,7 @@ module "compute" {
 
   # 오토 스케일링 설정
   asg_min_size         = 1
-  asg_max_size         = 1  # EIP 1개 사용을 위해 1로 제한
+  asg_max_size         = 1 # EIP 1개 사용을 위해 1로 제한
   asg_desired_capacity = 1
 
   # EIP 설정
@@ -190,7 +190,7 @@ module "iam" {
   role_name         = "ec2-s3-access"
   environment       = "dev"
   s3_bucket_arn     = module.storage.bucket_arn
-  github_repository = "chaebeomsu/project_amoroso"
+  github_repository = "BluePrintCrew/project_amoroso"
   github_branches   = ["main", "develop", "feature/github-actions-deployment"]
 }
 
@@ -216,7 +216,7 @@ module "cost" {
 module "frontend" {
   source = "../../modules/frontend"
   providers = {
-    aws        = aws
+    aws         = aws
     aws.route53 = aws.route53
   }
 
