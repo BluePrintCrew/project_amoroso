@@ -87,14 +87,20 @@ jobs:
           ./gradlew clean build -x test
           echo "✅ 빌드 완료!"
           
-          # JAR 파일 존재 확인
-          if [ ! -f build/libs/*.jar ]; then
-            echo "❌ JAR 파일을 찾을 수 없습니다!"
+          # JAR 파일 목록 확인
+          echo "📋 생성된 JAR 파일들:"
+          ls -la build/libs/
+          
+          # 실행 가능한 JAR 파일 찾기 (-plain이 아닌 파일)
+          EXECUTABLE_JAR=$(find build/libs/ -name "*.jar" ! -name "*-plain.jar" | head -1)
+          
+          if [ -z "$EXECUTABLE_JAR" ]; then
+            echo "❌ 실행 가능한 JAR 파일을 찾을 수 없습니다!"
             exit 1
           fi
           
           # JAR 파일을 표준 이름으로 복사
-          cp build/libs/*.jar build/libs/application.jar
+          cp "$EXECUTABLE_JAR" build/libs/application.jar
           echo "📦 JAR 파일 준비 완료: $(ls -la build/libs/application.jar)"
 
       - name: AWS 자격 증명 구성
