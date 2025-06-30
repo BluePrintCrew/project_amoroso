@@ -80,14 +80,20 @@ jobs:
           echo "✅ 사용 중인 역할: $ROLE_ARN"
 
       - name: 필수 AWS 리소스 존재 확인
-        working-directory: infrastructure/environments/${{ needs.determine-environment.outputs.environment }}
         run: |
           echo "🔍 배포에 필요한 AWS 리소스 확인 중..."
           
-          # S3 버킷 존재 및 접근 권한 확인
-          BUCKET_NAME=$(tofu output -raw s3_bucket_name 2>/dev/null || echo "")
-          if [ -z "$BUCKET_NAME" ]; then
-            echo "❌ S3 버킷 이름을 가져올 수 없습니다."
+          # S3 버킷 존재 및 접근 권한 확인 (AWS API 사용)
+          ENV="${{ needs.determine-environment.outputs.environment }}"
+          BUCKET_PATTERN="amoroso-app-*-${ENV}"
+          
+          echo "🔍 S3 버킷 검색 중... (패턴: $BUCKET_PATTERN)"
+          BUCKET_NAME=$(aws s3api list-buckets \
+            --query "Buckets[?contains(Name, 'amoroso-app') && contains(Name, '${ENV}')].Name" \
+            --output text | head -1)
+          
+          if [ -z "$BUCKET_NAME" ] || [ "$BUCKET_NAME" = "None" ]; then
+            echo "❌ S3 버킷을 찾을 수 없습니다. (패턴: $BUCKET_PATTERN)"
             exit 1
           fi
           
@@ -180,15 +186,19 @@ jobs:
           role-session-name: GitHubActions-Backend-Deploy
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform 출력에서 S3 버킷 이름 조회
+      - name: S3 버킷 이름 조회 (AWS API 사용)
         id: get-bucket
-        working-directory: infrastructure/environments/${{ needs.determine-environment.outputs.environment }}
         run: |
           echo "🔍 S3 버킷 이름 조회 중..."
-          BUCKET_NAME=$(tofu output -raw s3_bucket_name 2>/dev/null || echo "")
           
-          if [ -z "$BUCKET_NAME" ]; then
-            echo "❌ S3 버킷 이름을 가져올 수 없습니다. Terraform 출력을 확인해주세요."
+          # S3 버킷 검색 (AWS API 사용)
+          ENV="${{ needs.determine-environment.outputs.environment }}"
+          BUCKET_NAME=$(aws s3api list-buckets \
+            --query "Buckets[?contains(Name, 'amoroso-app') && contains(Name, '${ENV}')].Name" \
+            --output text | head -1)
+          
+          if [ -z "$BUCKET_NAME" ] || [ "$BUCKET_NAME" = "None" ]; then
+            echo "❌ S3 버킷을 찾을 수 없습니다. (환경: $ENV)"
             exit 1
           fi
           

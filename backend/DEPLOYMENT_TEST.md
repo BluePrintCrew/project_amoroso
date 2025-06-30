@@ -26,3 +26,7 @@
   - IAM 신뢰 정책에 Environment 조건 추가
   - `repo:BluePrintCrew/project_amoroso:environment:dev` 허용
   - GitHub Actions Environment 사용 시 sub claim 형태 변경 대응
+- **2025-06-30 10:30:00**: S3 버킷 조회 방식 변경
+  - Terraform 출력 → AWS API 직접 조회로 변경
+  - GitHub Actions에서 Terraform 상태 파일 없는 문제 해결
+  - 패턴 매칭으로 환경별 S3 버킷 자동 검색
