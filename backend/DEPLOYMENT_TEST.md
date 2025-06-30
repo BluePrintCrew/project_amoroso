@@ -13,4 +13,8 @@
 - **AWS 계정**: 375004071350
 - **IAM 역할**: github-actions-role-dev
 
-테스트 일시: 2025-06-30 09:16:00 (KST)
+## 변경 이력
+- **2025-06-30 09:16:00**: 초기 테스트
+- **2025-06-30 10:07:00**: Environment Variables 문제 해결 후 재테스트
+  - `dev` Environment에 `AWS_ACCOUNT_ID` Variable 추가
+  - Repository Variables → Environment Variables 스코프 문제 해결
