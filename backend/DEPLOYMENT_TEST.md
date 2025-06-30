@@ -18,3 +18,7 @@
 - **2025-06-30 10:07:00**: Environment Variables 문제 해결 후 재테스트
   - `dev` Environment에 `AWS_ACCOUNT_ID` Variable 추가
   - Repository Variables → Environment Variables 스코프 문제 해결
+- **2025-06-30 10:15:00**: AWS 인증 사전 검증 Job 추가
+  - `validate-aws-access` Job으로 빌드 전 AWS 권한 확인
+  - 빌드 시간 낭비 방지 (실패 시 30초 내 조기 발견)
+  - OIDC 인증, S3 버킷, ASG, SSM 권한 검증

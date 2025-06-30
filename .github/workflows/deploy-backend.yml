@@ -46,9 +46,79 @@ jobs:
           # AWS 계정 ID 설정
           echo "aws-account-id=${{ vars.AWS_ACCOUNT_ID }}" >> $GITHUB_OUTPUT
 
+  # AWS 접근 권한 사전 검증
+  validate-aws-access:
+    needs: determine-environment
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    
+    permissions:
+      id-token: write   # OIDC 토큰 요청을 위해 필요
+      contents: read    # 코드 체크아웃을 위해 필요
+
+    steps:
+      - name: 코드 체크아웃 (검증용)
+        uses: actions/checkout@v4
+
+      - name: AWS 자격 증명 구성 (검증용)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ needs.determine-environment.outputs.aws-account-id }}:role/github-actions-role-${{ needs.determine-environment.outputs.environment }}
+          role-session-name: GitHubActions-AWS-Validation
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: AWS 접근 권한 검증
+        run: |
+          echo "🔐 AWS 인증 및 권한 검증 중..."
+          
+          # AWS 계정 정보 확인
+          AWS_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          echo "✅ AWS 계정: $AWS_ACCOUNT"
+          
+          # 현재 역할 확인
+          ROLE_ARN=$(aws sts get-caller-identity --query Arn --output text)
+          echo "✅ 사용 중인 역할: $ROLE_ARN"
+
+      - name: 필수 AWS 리소스 존재 확인
+        working-directory: infrastructure/environments/${{ needs.determine-environment.outputs.environment }}
+        run: |
+          echo "🔍 배포에 필요한 AWS 리소스 확인 중..."
+          
+          # S3 버킷 존재 및 접근 권한 확인
+          BUCKET_NAME=$(tofu output -raw s3_bucket_name 2>/dev/null || echo "")
+          if [ -z "$BUCKET_NAME" ]; then
+            echo "❌ S3 버킷 이름을 가져올 수 없습니다."
+            exit 1
+          fi
+          
+          echo "📦 S3 버킷: $BUCKET_NAME"
+          aws s3 ls "s3://$BUCKET_NAME" > /dev/null
+          echo "✅ S3 버킷 접근 권한 확인"
+          
+          # Auto Scaling Group 존재 확인
+          ASG_NAME="${{ needs.determine-environment.outputs.environment }}-backend-asg"
+          ASG_EXISTS=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names "$ASG_NAME" \
+            --query "AutoScalingGroups[0].AutoScalingGroupName" \
+            --output text 2>/dev/null || echo "None")
+          
+          if [ "$ASG_EXISTS" = "None" ]; then
+            echo "❌ Auto Scaling Group '$ASG_NAME'을 찾을 수 없습니다."
+            exit 1
+          fi
+          
+          echo "✅ Auto Scaling Group: $ASG_NAME"
+          
+          # SSM 권한 확인 (간단한 명령으로 테스트)
+          aws ssm describe-parameters --max-items 1 > /dev/null
+          echo "✅ SSM 권한 확인"
+          
+          echo ""
+          echo "🎉 모든 AWS 리소스 및 권한 검증 완료!"
+
   # 백엔드 빌드 및 배포
   deploy-backend:
-    needs: determine-environment
+    needs: [determine-environment, validate-aws-access]
     runs-on: ubuntu-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
     
