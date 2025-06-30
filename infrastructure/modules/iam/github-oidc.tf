@@ -35,10 +35,17 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = [
-              for branch in var.github_branches : 
-              "repo:${var.github_repository}:ref:refs/heads/${branch}"
-            ]
+            "token.actions.githubusercontent.com:sub" = concat(
+              # Branch 기반 접근 허용
+              [
+                for branch in var.github_branches : 
+                "repo:${var.github_repository}:ref:refs/heads/${branch}"
+              ],
+              # Environment 기반 접근 허용
+              [
+                "repo:${var.github_repository}:environment:${var.environment}"
+              ]
+            )
           }
         }
       }

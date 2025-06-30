@@ -22,3 +22,7 @@
   - `validate-aws-access` Job으로 빌드 전 AWS 권한 확인
   - 빌드 시간 낭비 방지 (실패 시 30초 내 조기 발견)
   - OIDC 인증, S3 버킷, ASG, SSM 권한 검증
+- **2025-06-30 10:25:00**: OIDC Environment sub claim 문제 해결
+  - IAM 신뢰 정책에 Environment 조건 추가
+  - `repo:BluePrintCrew/project_amoroso:environment:dev` 허용
+  - GitHub Actions Environment 사용 시 sub claim 형태 변경 대응
