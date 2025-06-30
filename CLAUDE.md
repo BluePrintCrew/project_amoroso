@@ -197,3 +197,33 @@ JPA `ddl-auto: create`로 스키마 자동 생성
 - 백엔드 테스트: `./gradlew test`
 - 프론트엔드 테스트: `npm test`
 - 특정 테스트 클래스: `./gradlew test --tests "클래스명"`
+
+## GitHub 협업 가이드
+
+### 커밋 메시지 규칙
+Conventional Commits 사용:
+```
+feat(scope): 새 기능 추가
+fix(scope): 버그 수정
+docs: 문서 변경
+refactor: 코드 리팩토링
+```
+
+### 브랜치 전략
+- `main`: 프로덕션 배포
+- `develop`: 개발 통합  
+- `feature/기능명`: 새 기능 개발
+- `fix/버그명`: 버그 수정
+
+### 보안 원칙
+**커밋 금지 (민감 정보):**
+- AWS Secret Key, Private Key
+- JWT Secret, 데이터베이스 비밀번호
+- OAuth Client Secret, PortOne Secret Key
+
+**커밋 가능 (공개 정보):**
+- AWS Account ID, OAuth Client ID
+- PortOne Store ID, 도메인명
+- GitHub Repository 이름
+
+**원칙**: 노출 시 실제 보안 피해가 발생하는지 판단

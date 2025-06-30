@@ -43,8 +43,8 @@ jobs:
             echo "environment=dev" >> $GITHUB_OUTPUT
           fi
           
-          # AWS 계정 ID 설정 (실제 계정 ID로 교체 필요)
-          echo "aws-account-id=${{ secrets.AWS_ACCOUNT_ID }}" >> $GITHUB_OUTPUT
+          # AWS 계정 ID 설정
+          echo "aws-account-id=${{ vars.AWS_ACCOUNT_ID }}" >> $GITHUB_OUTPUT
 
   # 백엔드 빌드 및 배포
   deploy-backend:
