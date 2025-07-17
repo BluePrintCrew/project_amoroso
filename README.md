@@ -45,3 +45,4 @@
 - AWS (EC2, RDS, S3, ALB, Route53, Amplify)
 - Terraform (OpenTofu)
 - Docker & Docker Compose
+- GitHub Actions (CI/CD)
