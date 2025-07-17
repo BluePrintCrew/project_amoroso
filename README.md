@@ -16,9 +16,9 @@
 ## 팀 구성
 
 **Blueprint SW 융합 창업동아리**
-- Backend: 이현제, 채범수
-- Frontend & PM: 손영현, 정현민
-- Business & Operations: 정래혁
+- Backend: [이현제](https://github.com/LEE-HYUN-JE), [채범수](https://github.com/tayobus)
+- Frontend & PM: [손영현](https://github.com/Son0H2), [정현민](https://github.com/hyeonmin111)
+- Business & Operations: [정래혁](https://github.com/jeongraehyuk)
 
 ## 기술 스택
 
