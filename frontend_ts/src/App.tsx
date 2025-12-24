@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Header from './components/Header/Header';
 import LoginForm from './pages/Login/LoginForm';
+import MainPage from './pages/MainPage/MainPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import ProductsPage from './pages/ProductsPage';
 import './App.css';
@@ -13,7 +14,7 @@ const App = () => {
         <Header />
         <main className="appMain">
           <Routes>
-            <Route path="/" element={<PlaceholderPage title="Home" />} />
+            <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<LoginForm />} />
             <Route
               path="/admin/login"
